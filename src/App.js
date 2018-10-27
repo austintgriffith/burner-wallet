@@ -11,7 +11,7 @@ import eth from './ethereum.png';
 var QRCode = require('qrcode.react');
 let WEB3_PROVIDER = 'http://0.0.0.0:8545'
 
-WEB3_PROVIDER = new Web3("https://dai.poa.network")
+//WEB3_PROVIDER = new Web3("https://dai.poa.network")
 //WEB3_PROVIDER = new Web3("wss://dai.infura.io/ws")
 //https://core.poa.network'
 
