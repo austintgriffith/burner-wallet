@@ -1,0 +1,13 @@
+{
+  "provider": "http://localhost:8545",
+  "gasprice": 3.2,
+  "ethprice": 204.091338641,
+  "deploygas": 5500000,
+  "xfergas": 1300000,
+  "DEBUG": true,
+  "USE_INFURA": false,
+  "ROOT_FOLDER": "/Users/austingriffith/hot-wallet",
+  "CRA_FOLDER": "./src",
+  "TESTS_FOLDER": "tests",
+  "CONTRACTS_FOLDER": "contracts"
+}
