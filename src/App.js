@@ -9,7 +9,17 @@ import ReactLoading from 'react-loading';
 import eth from './ethereum.png';
 
 var QRCode = require('qrcode.react');
-const WEB3_PROVIDER = 'http://0.0.0.0:8545'
+let WEB3_PROVIDER = 'http://0.0.0.0:8545'
+
+WEB3_PROVIDER = new Web3("https://dai.poa.network")
+//WEB3_PROVIDER = new Web3("wss://dai.infura.io/ws")
+//https://core.poa.network'
+
+if(window.location.hostname.indexOf("qreth")>=0){
+  WEB3_PROVIDER = "https://mainnet.infura.io/v3/e59c464c322f47e2963f5f00638be2f8"
+}else if(window.location.hostname.indexOf("xdai")>=0){
+  WEB3_PROVIDER = "https://dai.poa.network"
+}
 
 class App extends Component {
   constructor(props) {
@@ -32,7 +42,16 @@ class App extends Component {
   }
   onQRCodeValidate(location){
     console.log("onQRCodeValidate",location)
-    window.location = location
+    if(location.indexOf("http")>=0){
+      //we are good this is already an http address
+      window.location = location
+    } else {
+      //maybe they just scanned an address?
+      window.location = "/"+location
+    }
+
+
+
   }
   onQRCodeError(a,b){
     console.log("onQRCodeError",a,b)
@@ -100,6 +119,13 @@ class App extends Component {
             uiopacity=0.5
           }
 
+          let moneytype = (
+            <img style={{maxHeight:30,verticalAlign:"middle"}} src={eth}/>
+          )
+          if(window.location.hostname.indexOf("xdai")>=0){
+            moneytype="$"
+          }
+
           connectedDisplay.push(
             <div key={"mainui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
               {loaderBar}
@@ -108,7 +134,7 @@ class App extends Component {
              <div>send</div>
                 <div>
 
-                <img style={{maxHeight:30,verticalAlign:"middle"}} src={eth}/><input
+                {moneytype}<input
               style={{fontSize:30,verticalAlign:"middle",width:90,margin:6,padding:5,border:'2px solid #ccc',borderRadius:5}}
               type="text" name="amount" value={this.state.amount} onChange={this.handleInput.bind(this)}
           /></div>
@@ -191,7 +217,7 @@ class App extends Component {
       connectedDisplay.push(
         <Transactions
           key="Transactions"
-          config={{DEBUG:false}}
+          config={{DEBUG:false,hide:true}}
           account={account}
           gwei={gwei}
           web3={web3}
@@ -257,7 +283,7 @@ class App extends Component {
             DEBUG:false,
             requiredNetwork:['Unknown','Rinkeby',"Mainnet"],
           }}
-          fallbackWeb3Provider={new Web3.providers.HttpProvider(WEB3_PROVIDER)}
+          fallbackWeb3Provider={WEB3_PROVIDER}
           onUpdate={(state)=>{
            console.log("metamask state update:",state)
            if(state.web3Provider) {
