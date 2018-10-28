@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "clevis": "0.0.96",
+    "clevis": "0.0.97",
     "dapparatus": "^1.0.31",
     "mocha": "^5.2.0",
     "qrcode.react": "^0.8.0",
@@ -11,7 +11,6 @@
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.6.0",
     "react-loading": "^2.0.3",
-    "react-qr-code": "^0.1.2",
     "react-qr-reader": "^2.1.1",
     "react-scripts": "2.0.5",
     "s3": "^4.4.0"
