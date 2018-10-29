@@ -32,7 +32,8 @@ class App extends Component {
       scanning: false,
       sendTo: false,
       copied:false,
-      amount:0.01
+      amount:0.01,
+      copiedPrivate:false,
     }
   }
   handleInput(e){
@@ -176,6 +177,47 @@ class App extends Component {
             qrDisplay="Copied Address!"
           }
 
+
+          let bottomDisplay = ""
+          if(this.state.metaAccount){
+            console.log("this.state.metaAccount",this.state.metaAccount.privateKey)
+
+            let copiedPrivateText = "Copy Private Key"
+            if(this.state.copiedPrivate){
+              copiedPrivateText = "Copied Private Key"
+            }
+
+            bottomDisplay = (
+              <div style={{marginTop:100}}>
+              <CopyToClipboard text={this.state.metaAccount.privateKey}
+                 onCopy={() => {
+                   this.setState({copiedPrivate: true})
+                   setTimeout(()=>{
+                     this.setState({copiedPrivate: false})
+                   },3000)
+                 }}>
+                 <Button size="2" color={"orange"} onClick={()=>{
+                   }}>
+                   {copiedPrivateText}
+                 </Button>
+               </CopyToClipboard>
+
+
+               <div style={{marginTop:200,marginBottom:100}}>
+                 <Button size="2" color={"red"} onClick={()=>{
+                   if(this.state.balance>=0.001){
+                     alert("Can't burn a key that holds 0.001 or more ETH")
+                   }else{
+                     this.state.burnMetaAccount()
+                   }
+                   }}>
+                   Burn Private Key
+                 </Button>
+               </div>
+              </div>
+            )
+          }
+
           connectedDisplay.push(
             <div key={"mainui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
             <CopyToClipboard text={this.state.account}
@@ -203,6 +245,9 @@ class App extends Component {
                  Send
                </Button>
              </div>
+
+
+             {bottomDisplay}
             </div>
           )
         }
@@ -293,10 +338,11 @@ class App extends Component {
           config={{
             DEBUG:false,
             requiredNetwork:['Unknown','Rinkeby',"Mainnet"],
+            metatxAccountGenerator: false, /*generate locally*/
           }}
           fallbackWeb3Provider={WEB3_PROVIDER}
           onUpdate={(state)=>{
-           console.log("metamask state update:",state)
+           console.log("Dapparatus state update:",state)
            if(state.web3Provider) {
              state.web3 = new Web3(state.web3Provider)
              this.setState(state)

@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "clevis": "0.0.97",
-    "dapparatus": "^1.0.31",
+    "dapparatus": "^1.0.32",
     "mocha": "^5.2.0",
     "qrcode.react": "^0.8.0",
     "react": "^16.6.0",
