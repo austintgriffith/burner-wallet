@@ -202,6 +202,20 @@ class App extends Component {
             </div>
           )
 
+          let bridgeButton = ""
+
+          if(window.location.hostname.indexOf("xdai")>=0){
+            bridgeButton = (
+              <div style={{marginTop:60,marginBottom:60}}>
+              <Button size="2" color={"blue"} onClick={()=>{
+                window.location = "https://dai-bridge.poa.network"
+                }}>
+                xDai Bridge
+              </Button>
+              </div>
+            )
+          }
+
           let bottomDisplay = ""
           if(this.state.metaAccount){
             console.log("this.state.metaAccount",this.state.metaAccount.privateKey)
@@ -272,6 +286,7 @@ class App extends Component {
 
              {sentToDisplay}
 
+             {bridgeButton}
 
              {bottomDisplay}
             </div>
