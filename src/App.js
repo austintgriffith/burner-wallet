@@ -172,6 +172,13 @@ class App extends Component {
                  }}>
                  Send
                </Button>
+               <div style={{marginTop:60}}>
+                 <Button size="2" color={"orange"} onClick={()=>{
+                    window.location = "/"
+                   }}>
+                   Cancel
+                 </Button>
+               </div>
              </div>
             </div>
           )
@@ -368,7 +375,9 @@ class App extends Component {
            }
          }}
         />
-        <div style={{position:'absolute',left:5,top:0,letterSpacing:-0.8,fontSize:50}}>
+        <div style={{cursor:"pointer",position:'absolute',left:5,top:0,letterSpacing:-0.8,fontSize:50}}
+          onClick={()=>{window.location = "/"}}
+        >
           {window.location.hostname}
         </div>
         {connectedDisplay}
