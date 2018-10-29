@@ -1,1 +1,13 @@
-{"provider":"http://localhost:8545","gasprice":4,"ethprice":400,"deploygas":5500000,"xfergas":1300000,"DEBUG":true,"USE_INFURA":false,"ROOT_FOLDER":"/Users/austingriffith/hot-wallet","CRA_FOLDER":"./src","TESTS_FOLDER":"tests","CONTRACTS_FOLDER":"contracts"}
+{
+  "provider": "http://localhost:8545",
+  "gasprice": 7.1,
+  "ethprice": 197.637906693,
+  "deploygas": 5500000,
+  "xfergas": 1300000,
+  "DEBUG": true,
+  "USE_INFURA": false,
+  "ROOT_FOLDER": "/Users/austingriffith/burner-wallet",
+  "CRA_FOLDER": "./src",
+  "TESTS_FOLDER": "tests",
+  "CONTRACTS_FOLDER": "contracts"
+}

@@ -38,6 +38,11 @@ class App extends Component {
   }
   handleInput(e){
     let update = {}
+    if(e.target.name=="sendToInput"){
+      if(e.target.value.length==42){
+        window.location = "/"+e.target.value
+      }
+    }
     update[e.target.name] = e.target.value
     this.setState(update)
   }
@@ -177,6 +182,15 @@ class App extends Component {
             qrDisplay="Copied Address!"
           }
 
+          let sentToDisplay = (
+            <div style={{marginTop:60}}>
+              <div>or send to address:</div>
+              <input
+                  style={{verticalAlign:"middle",width:400,margin:6,maxHeight:20,padding:5,border:'2px solid #ccc',borderRadius:5}}
+                  type="text" name="sendToInput" value={this.state.sendToInput} onChange={this.handleInput.bind(this)}
+              />
+            </div>
+          )
 
           let bottomDisplay = ""
           if(this.state.metaAccount){
@@ -239,12 +253,14 @@ class App extends Component {
 
 
              <div style={{padding:10}}>
-               <Button size="2" onClick={()=>{
+               <Button color={"green"} size="2" onClick={()=>{
                    this.setState({scanning:true})
                  }}>
-                 Send
+                 Scan to Send
                </Button>
              </div>
+
+             {sentToDisplay}
 
 
              {bottomDisplay}
