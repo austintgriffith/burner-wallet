@@ -1,6 +1,6 @@
 Burner Wallet research
 
-Lets you send and receive funds in an ephemeral account. 
+Lets you send and receive funds with an ephemeral account. 
 
 If you are out to dinner and you need to send/receive a quick amount of ETH/DAI, open up https://qreth.io and do so. 
 
