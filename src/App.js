@@ -57,9 +57,18 @@ class App extends Component {
     console.log("onQRCodeError",a,b)
     //this.setState({scanning:!this.state.scanning})
   }
-  onQRCodeScan(a,b){
-    console.log("onQRCodeScan",a,b)
-    this.setState({scanning:false})
+  onQRCodeScan(location){
+    //THIS DOESN:T SEEM TO EVER GET CALLED
+    //BUT I HAVE IT HERE JUST IN CASE ? IDK
+    console.log("onQRCodeScan",location)
+    if(location.indexOf("http")>=0){
+      //we are good this is already an http address
+      window.location = location
+    } else {
+      //maybe they just scanned an address?
+      window.location = "/"+location.replace("Ethereum:","")
+    }
+
   }
   toggleQRCodeScanner(){
     console.log("toggleQRCodeScanner")
@@ -145,9 +154,11 @@ class App extends Component {
                /></div>
                <Button size="2" color={"green"} onClick={()=>{
                   this.setState({sending:true})
-                   this.state.send(this.state.sendTo,this.state.amount,(result)=>{
-                     this.setState({sending:false})
-                     window.location = "/"
+                  alert(this.state.sendTo,this.state.amount)
+                   this.state.send(this.state.sendTo,this.state.amount,(result,e)=>{
+                     alert(result.toString(),e)
+                     //this.setState({sending:false})
+                     //window.location = "/"
                    })
                  }}>
                  Send
