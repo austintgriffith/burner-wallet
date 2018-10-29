@@ -154,11 +154,11 @@ class App extends Component {
                /></div>
                <Button size="2" color={"green"} onClick={()=>{
                   this.setState({sending:true})
-                  alert(this.state.sendTo,this.state.amount)
+                  //alert(this.state.sendTo,this.state.amount)
                    this.state.send(this.state.sendTo,this.state.amount,(result,e)=>{
-                     alert(result.toString(),e)
-                     //this.setState({sending:false})
-                     //window.location = "/"
+                    // alert(result.toString(),e)
+                     this.setState({sending:false})
+                     window.location = "/"
                    })
                  }}>
                  Send
