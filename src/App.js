@@ -31,6 +31,7 @@ class App extends Component {
       doingTransaction: false,
       scanning: false,
       sendTo: false,
+      sendWithLink: false,
       copied:false,
       amount:0.01,
       copiedPrivate:false,
@@ -81,9 +82,19 @@ class App extends Component {
     this.setState({scanning:!this.state.scanning})
   }
   componentDidMount(){
-    if(window.location.pathname&&window.location.pathname.length==43){
-      let account = window.location.pathname.substring(1)
-      this.setState({sendTo:account})
+    if(window.location.pathname){
+      if(window.location.pathname.length==43){
+        let account = window.location.pathname.substring(1)
+        this.setState({sendTo:account})
+      }else if(window.location.pathname.length==200){
+        let parts = window.location.pathname.split("/")
+
+        let claimId = parts[1]
+        let claimSig = parts[2]
+        //alert("DO CLAIM"+claimId+claimSig)
+
+        this.setState({claimId,claimSig})
+      }
     }
   }
   render() {
@@ -96,6 +107,14 @@ class App extends Component {
     if(window.location.port&&window.location.port!=80&&window.location.port!=443){
       url = url+":"+window.location.port
     }
+
+    let moneytype = (
+      <img style={{maxHeight:30,verticalAlign:"middle"}} src={eth}/>
+    )
+    if(window.location.hostname.indexOf("xdai")>=0 || window.location.hostname.indexOf("localhost")>=0){
+      moneytype="$"
+    }
+
 
     if(web3){
       connectedDisplay.push(
@@ -120,26 +139,114 @@ class App extends Component {
           />
         )
       }else{
+        let loaderBar = ""
+        let uiopacity = 1.0
 
+        if(this.state.sending){
+          loaderBar = (
+            <div style={{opacity:0.5,position:"absolute",top:"-20%",left:0,width:"100%"}}>
+              <ReactLoading type={"cubes"} color={"#38a5d8"} width={"100%"} />
+            </div>
+          )
+          uiopacity=0.5
+        }
 
-        if(this.state.sendTo){
+        let alertStyle = {border:"1px solid #cccccc",padding:20,background:"#666666",color:"#bbbbbb",clear: "both",width:'100%',textAlign:'center',margin:'100 auto !important'}
 
-          let loaderBar = ""
-          let uiopacity = 1.0
-          if(this.state.sending){
-            loaderBar = (
-              <div style={{opacity:0.5,position:"absolute",top:"-20%",left:0,width:"100%"}}>
-                <ReactLoading type={"cubes"} color={"#38a5d8"} width={"100%"} />
-              </div>
-            )
-            uiopacity=0.5
+        if(this.state.claimed){
+          connectedDisplay.push(
+            <div key={"claimedui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
+              Claimed!!!
+            </div>
+          )
+        }else if(this.state.claimId){
+          connectedDisplay.push(
+            <div key={"claimui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
+              Claiming {this.state.claimId}...
+            </div>
+          )
+        }else if(this.state.sendLink){
+          let qrValue = url+"/"+this.state.sendLink+"/"+this.state.sendSig
+
+          let qrDisplay = qrValue
+          if(this.state.copied){
+            qrDisplay="Copied Link!"
           }
 
-          let moneytype = (
-            <img style={{maxHeight:30,verticalAlign:"middle"}} src={eth}/>
+          connectedDisplay.push(
+            <div key={"sendwithlinkui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
+              <div>
+                Click anywhere to copy link:
+              </div>
+              <div style={{fontSize:14}}>
+                {qrDisplay}
+              </div>
+            </div>
           )
-          if(window.location.hostname.indexOf("xdai")>=0){
-            moneytype="$"
+        }else if(this.state.sendWithLink){
+
+          if(this.state.balance<=0){
+            connectedDisplay.push(
+              <div style={alertStyle}>
+                Not enough funds to send.
+              </div>
+            )
+            setTimeout(()=>{
+              window.location = "/"
+            },1000)
+          }
+
+          connectedDisplay.push(
+            <div key={"sendwithlinkui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
+              {loaderBar}
+             <div style={{padding:10,opacity:uiopacity}}>
+
+             <div>send</div>
+                <div>
+
+                {moneytype}<input
+              style={{fontSize:30,verticalAlign:"middle",width:90,margin:6,padding:5,border:'2px solid #ccc',borderRadius:5}}
+              type="text" name="amount" value={this.state.amount} onChange={this.handleInput.bind(this)}
+          /></div>
+
+               <Button size="2" color={"green"} onClick={()=>{
+                  this.setState({sending:true})
+                  let randomHash = this.state.web3.utils.sha3(""+Math.random())
+                  //try hardcoding one to make sure you can only post it once:
+                  //let randomHash = "0x92e3f323940c7bc4b0bd4ed93636f25aad612d83a6f368371d22143a1241adbb"
+                  console.log("~~~ RAND:",randomHash,randomHash.length)
+                  tx(contracts.Links.send(randomHash),300000,false,this.state.amount*10**18,()=>{
+                    let sig = this.state.web3.eth.accounts.sign(randomHash, this.state.metaAccount.privateKey);
+                    sig = sig.signature
+                    this.setState({sending:false,sendLink:randomHash,sendSig:sig})
+
+                  })
+                 }}>
+                 Send
+               </Button>
+               <div style={{marginTop:60}}>
+                 <Button size="2" color={"orange"} onClick={()=>{
+                    window.location = "/"
+                   }}>
+                   Cancel
+                 </Button>
+               </div>
+             </div>
+            </div>
+          )
+
+
+        }else if(this.state.sendTo){
+
+          if(this.state.balance<=0){
+            connectedDisplay.push(
+              <div style={alertStyle}>
+                Not enough funds to send.
+              </div>
+            )
+            setTimeout(()=>{
+              window.location = "/"
+            },1000)
           }
 
           connectedDisplay.push(
@@ -161,13 +268,14 @@ class App extends Component {
                /></div>
                <Button size="2" color={"green"} onClick={()=>{
                   this.setState({sending:true})
-                   alert("Sending "+this.state.amount+" to "+this.state.sendTo)
+                   //alert("Sending "+this.state.amount+" to "+this.state.sendTo)
                    this.state.send(this.state.sendTo,this.state.amount,(result,e)=>{
-                     alert("DONE",result.toString())
-                     this.setState({sending:false},()=>{
-                       window.location = "/"
-                     })
-
+                     if(result){
+                       this.setState({sending:false},()=>{
+                         //alert("DONE")
+                         window.location = "/"
+                       })
+                     }
                    })
                  }}>
                  Send
@@ -256,47 +364,64 @@ class App extends Component {
             )
           }
 
+          let dividerStyle = {padding:40,borderTop:"1px solid #dddddd"}
+
           connectedDisplay.push(
             <div key={"mainui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
-            <CopyToClipboard text={this.state.account}
-               onCopy={() => {
-                 this.setState({copied: true})
-                 setTimeout(()=>{
-                   this.setState({copied: false})
-                 },3000)
-               }}>
-               <div style={{cursor:"pointer"}}>
-
-               <QRCode value={qrValue} size={300} />
-               <div style={{fontSize:13}}>
-                 {qrDisplay}
-               </div>
-
-               </div>
-             </CopyToClipboard>
-
-
-             <div style={{padding:10}}>
-               <Button color={"green"} size="2" onClick={()=>{
-                   this.setState({scanning:true})
+            <div style={dividerStyle}>
+              <CopyToClipboard text={this.state.account}
+                 onCopy={() => {
+                   this.setState({copied: true})
+                   setTimeout(()=>{
+                     this.setState({copied: false})
+                   },3000)
                  }}>
-                 Scan to Send
-               </Button>
+                 <div style={{cursor:"pointer"}}>
+
+                 <QRCode value={qrValue} size={300} />
+                 <div style={{fontSize:13}}>
+                   {qrDisplay}
+                 </div>
+
+                 </div>
+               </CopyToClipboard>
+             </div>
+             <div style={dividerStyle}>
+
+                 <Button color={"green"} size="2" onClick={()=>{
+                     this.setState({sendWithLink:true})
+                   }}>
+                   Send with Link
+                 </Button>
+
+             </div>
+             <div style={dividerStyle}>
+
+                 <Button color={"green"} size="2" onClick={()=>{
+                     this.setState({scanning:true})
+                   }}>
+                   Send with Scan
+                 </Button>
+
              </div>
 
-             {sentToDisplay}
+             <div style={dividerStyle}>
+              {sentToDisplay}
+             </div>
 
-             {bridgeButton}
+             <div style={dividerStyle}>
+              {bridgeButton}
+             </div>
 
-             {bottomDisplay}
+             <div style={dividerStyle}>
+              {bottomDisplay}
+             </div>
             </div>
           )
         }
       }
 
 
-
-      /*
       connectedDisplay.push(
         <ContractLoader
          key="ContractLoader"
@@ -307,10 +432,29 @@ class App extends Component {
            console.log("contracts loaded",contracts)
            this.setState({contracts:contracts},async ()=>{
              console.log("Contracts Are Ready:",this.state.contracts)
+             //check if we are trying to claim
+             if(this.state.claimId&&this.state.claimSig){
+               console.log("DOING CLAIM",this.state.claimId,this.state.claimSig)
+               this.setState({sending:true})
+               tx(contracts.Links.claim(this.state.claimId,this.state.claimSig),300000,false,0,(result)=>{
+                 if(result){
+                   console.log("CLAIMED!!!",result)
+                   this.setState({claimed:true})
+                   setTimeout(()=>{
+                     this.setState({sending:false},()=>{
+                       //alert("DONE")
+                       window.location = "/"
+                     })
+                   },2000)
+                 }
+
+               })
+             }
+
            })
          }}
         />
-      )*/
+      )
       connectedDisplay.push(
         <Transactions
           key="Transactions"
@@ -325,6 +469,7 @@ class App extends Component {
           onReady={(state)=>{
             console.log("Transactions component is ready:",state)
             this.setState(state)
+
           }}
           onReceipt={(transaction,receipt)=>{
             // this is one way to get the deployed contract address, but instead I'll switch
@@ -372,6 +517,12 @@ class App extends Component {
     }
 
 
+    let balanceDisplay  = this.state.balance //Math.round(this.state.balance*100,2)/100
+    if(balanceDisplay){
+      balanceDisplay = balanceDisplay.toFixed(2)
+    }
+    //console.log("balanceDisplay",balanceDisplay)
+  //  if(!balanceDisplay) balanceDisplay="0"
 
     return (
       <div className="App">
@@ -380,6 +531,13 @@ class App extends Component {
             DEBUG:false,
             requiredNetwork:['Unknown','Rinkeby',"Mainnet"],
             metatxAccountGenerator: false, /*generate locally*/
+          }}
+          customContent = {()=>{
+            return (
+              <div style={{fontSize:50,marginBottom:5,marginBottom:5}}>
+                {moneytype}{balanceDisplay}
+              </div>
+            )
           }}
           fallbackWeb3Provider={WEB3_PROVIDER}
           onUpdate={(state)=>{

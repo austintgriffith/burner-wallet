@@ -6,7 +6,7 @@
   "xfergas": 1300000,
   "DEBUG": true,
   "USE_INFURA": false,
-  "ROOT_FOLDER": "/Users/austingriffith/burner-wallet",
+  "ROOT_FOLDER": "/Users/austingriffith/hot-wallet",
   "CRA_FOLDER": "./src",
   "TESTS_FOLDER": "tests",
   "CONTRACTS_FOLDER": "contracts"
