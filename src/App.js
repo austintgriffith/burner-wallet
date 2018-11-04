@@ -38,6 +38,7 @@ class App extends Component {
       copied:false,
       amount:0.01,
       copiedPrivate:false,
+      copiedLink:false,
     }
   }
   handleInput(e){
@@ -156,34 +157,66 @@ class App extends Component {
 
         let alertStyle = {border:"1px solid #cccccc",padding:20,background:"#666666",color:"#bbbbbb",clear: "both",width:'100%',textAlign:'center',margin:'100 auto !important'}
 
+        let balanceDisplay  = this.state.balance //Math.round(this.state.balance*100,2)/100
+        if(balanceDisplay){
+          balanceDisplay = balanceDisplay.toFixed(2)
+        }
+        connectedDisplay.push(
+          <div style={{clear:'both',borderTop:"1px solid #cccccc"}}>
+            <div style={{width:"100%",textAlign:"center",fontSize:70,letterSpacing:-2,padding:10,marginBottom:5,marginBottom:5}}>
+              {moneytype}{balanceDisplay}
+            </div>
+          </div>
+        )
+
         if(this.state.claimed){
           connectedDisplay.push(
-            <div key={"claimedui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
+            <div key={"claimedui"} style={{clear:'both',borderTop:"1px solid #cccccc",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
               Claimed!!!
             </div>
           )
         }else if(this.state.claimId){
           connectedDisplay.push(
-            <div key={"claimui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
+            <div key={"claimui"} style={{clear:'both',borderTop:"1px solid #cccccc",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
               Claiming {this.state.claimId}...
             </div>
           )
         }else if(this.state.sendLink){
           let qrValue = url+"/"+this.state.sendLink+"/"+this.state.sendSig
 
-          let qrDisplay = qrValue
-          if(this.state.copied){
-            qrDisplay="Copied Link!"
+          let extraDisplay = ""
+          if(this.state.copiedLink){
+            extraDisplay="Copied Link!"
           }
 
           connectedDisplay.push(
-            <div key={"sendwithlinkui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
-              <div>
-                Click anywhere to copy link:
-              </div>
-              <div style={{fontSize:14}}>
-                {qrDisplay}
-              </div>
+            <div key={"sendwithlinkui"} style={{clear:'both',borderTop:"1px solid #cccccc",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
+              <CopyToClipboard text={qrValue}
+               onCopy={() => {
+                 this.setState({copiedLink: true})
+                 setTimeout(()=>{
+                   this.setState({copiedLink: false})
+                 },3000)
+               }}>
+                <div style={{textAlign:"center",cursor:'pointer'}}>
+                   <div>
+                     Click to copy link:
+                   </div>
+
+                   <div style={{wordWrap:'break-word',fontSize:14,width:'80%',border:'1px solid #ededed',paddingLeft:"10%",paddingRight:"10%",paddingTop:"15",paddingBottom:"15",backgroundColor:"#dfdfdf",margin:'0 auto !important'}}>
+                     {qrValue}
+                   </div>
+                   {extraDisplay}
+                   <div style={{padding:15}}>
+                    <QRCode value={qrValue} size={300} />
+                   </div>
+                 </div>
+              </CopyToClipboard>
+              <Button size="2" color={"blue"} onClick={()=>{
+                window.location = "/"
+                }}>
+                Done
+              </Button>
             </div>
           )
         }else if(this.state.sendWithLink){
@@ -200,7 +233,7 @@ class App extends Component {
           }
 
           connectedDisplay.push(
-            <div key={"sendwithlinkui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
+            <div key={"sendwithlinkui"} style={{clear:'both',borderTop:"1px solid #cccccc",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
               {loaderBar}
              <div style={{padding:10,opacity:uiopacity}}>
 
@@ -218,9 +251,15 @@ class App extends Component {
                   //try hardcoding one to make sure you can only post it once:
                   //let randomHash = "0x92e3f323940c7bc4b0bd4ed93636f25aad612d83a6f368371d22143a1241adbb"
                   console.log("~~~ RAND:",randomHash,randomHash.length)
-                  tx(contracts.Links.send(randomHash),300000,false,this.state.amount*10**18,()=>{
-                    let sig = this.state.web3.eth.accounts.sign(randomHash, this.state.metaAccount.privateKey);
-                    sig = sig.signature
+                  tx(contracts.Links.send(randomHash),300000,false,this.state.amount*10**18,async ()=>{
+                    let sig
+                    if(this.state.metaAccount){
+                      sig = this.state.web3.eth.accounts.sign(randomHash, this.state.metaAccount.privateKey);
+                      sig = sig.signature
+                    }else{
+                      sig = await this.state.web3.eth.personal.sign(""+randomHash,this.state.account)
+                    }
+
                     this.setState({sending:false,sendLink:randomHash,sendSig:sig})
 
                   })
@@ -253,7 +292,7 @@ class App extends Component {
           }
 
           connectedDisplay.push(
-            <div key={"mainui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
+            <div key={"mainui"} style={{clear:'both',borderTop:"1px solid #cccccc",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
               {loaderBar}
              <div style={{padding:10,opacity:uiopacity}}>
 
@@ -307,7 +346,7 @@ class App extends Component {
             <div style={{marginTop:60}}>
               <div>or send to address:</div>
               <input
-                  style={{verticalAlign:"middle",width:400,margin:6,maxHeight:20,padding:5,border:'2px solid #ccc',borderRadius:5}}
+                  style={{verticalAlign:"middle",width:280,margin:6,maxHeight:20,padding:5,border:'2px solid #ccc',borderRadius:5}}
                   type="text" name="sendToInput" value={this.state.sendToInput} onChange={this.handleInput.bind(this)}
               />
             </div>
@@ -315,7 +354,7 @@ class App extends Component {
 
           let bridgeButton = ""
 
-          if(window.location.hostname.indexOf("xdai")>=0){
+          if(window.location.hostname.indexOf("xdai")>=0||window.location.hostname.indexOf("localhost")>=0){
             bridgeButton = (
               <div style={{marginTop:60,marginBottom:60}}>
               <Button size="2" color={"blue"} onClick={()=>{
@@ -363,14 +402,20 @@ class App extends Component {
                    Burn Private Key
                  </Button>
                </div>
+
+
               </div>
+
             )
           }
 
           let dividerStyle = {padding:40,borderTop:"1px solid #dddddd"}
 
+
+
           connectedDisplay.push(
             <div key={"mainui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
+
             <div style={dividerStyle}>
               <CopyToClipboard text={this.state.account}
                  onCopy={() => {
@@ -419,6 +464,16 @@ class App extends Component {
              <div style={dividerStyle}>
               {bottomDisplay}
              </div>
+
+             <div style={dividerStyle}>
+               <div style={{marginTop:200,marginBottom:100}}>
+                 <Button size="2" color={"yellow"} onClick={()=>{
+                   window.location = "https://github.com/austintgriffith/burner-wallet"
+                   }}>
+                   Learn More
+                 </Button>
+               </div>
+             </div>
             </div>
           )
         }
@@ -440,6 +495,7 @@ class App extends Component {
                if(this.state.balance>0.005){
                  console.log("DOING CLAIM ONCHAIN",this.state.claimId,this.state.claimSig,this.state.account)
                  this.setState({sending:true})
+
                  tx(contracts.Links.claim(this.state.claimId,this.state.claimSig,this.state.account),300000,false,0,(result)=>{
                    if(result){
                      console.log("CLAIMED!!!",result)
@@ -452,6 +508,7 @@ class App extends Component {
                      },2000)
                    }
                  })
+
                }else{
                  console.log("DOING CLAIM THROUGH RELAY",this.state.claimId,this.state.claimSig,this.state.account)
                  this.setState({sending:true})
@@ -548,10 +605,6 @@ class App extends Component {
     }
 
 
-    let balanceDisplay  = this.state.balance //Math.round(this.state.balance*100,2)/100
-    if(balanceDisplay){
-      balanceDisplay = balanceDisplay.toFixed(2)
-    }
     //console.log("balanceDisplay",balanceDisplay)
   //  if(!balanceDisplay) balanceDisplay="0"
 
@@ -562,14 +615,9 @@ class App extends Component {
             DEBUG:false,
             requiredNetwork:['Unknown','Rinkeby',"Mainnet"],
             metatxAccountGenerator: false, /*generate locally*/
+            onlyShowBlockie: true,
           }}
-          customContent = {()=>{
-            return (
-              <div style={{fontSize:50,marginBottom:5,marginBottom:5}}>
-                {moneytype}{balanceDisplay}
-              </div>
-            )
-          }}
+
           fallbackWeb3Provider={WEB3_PROVIDER}
           onUpdate={(state)=>{
            console.log("Dapparatus state update:",state)
@@ -584,6 +632,7 @@ class App extends Component {
         >
           {window.location.hostname}
         </div>
+
         {connectedDisplay}
         {contractsDisplay}
       </div>
