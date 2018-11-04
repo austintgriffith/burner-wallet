@@ -5,11 +5,14 @@ import Web3 from 'web3';
 import QRCodeScanner from "./QRCodeScanner.js"
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import ReactLoading from 'react-loading';
+import axios from 'axios';
 
 import eth from './ethereum.png';
 
 var QRCode = require('qrcode.react');
 let WEB3_PROVIDER = 'http://0.0.0.0:8545'
+
+let CLAIM_RELAY = 'http://0.0.0.0:9999'
 
 //WEB3_PROVIDER = new Web3("https://dai.poa.network")
 //WEB3_PROVIDER = new Web3("wss://dai.infura.io/ws")
@@ -351,8 +354,8 @@ class App extends Component {
 
                <div style={{marginTop:200,marginBottom:100}}>
                  <Button size="2" color={"red"} onClick={()=>{
-                   if(this.state.balance>=0.001){
-                     alert("Can't burn a key that holds 0.001 or more ETH")
+                   if(this.state.balance>0.1){
+                     alert("Can't burn a key that holds $0.10")
                    }else{
                      this.state.burnMetaAccount()
                    }
@@ -434,21 +437,49 @@ class App extends Component {
              console.log("Contracts Are Ready:",this.state.contracts)
              //check if we are trying to claim
              if(this.state.claimId&&this.state.claimSig){
-               console.log("DOING CLAIM",this.state.claimId,this.state.claimSig)
-               this.setState({sending:true})
-               tx(contracts.Links.claim(this.state.claimId,this.state.claimSig),300000,false,0,(result)=>{
-                 if(result){
-                   console.log("CLAIMED!!!",result)
-                   this.setState({claimed:true})
-                   setTimeout(()=>{
-                     this.setState({sending:false},()=>{
-                       //alert("DONE")
-                       window.location = "/"
-                     })
-                   },2000)
+               if(this.state.balance>0.005){
+                 console.log("DOING CLAIM ONCHAIN",this.state.claimId,this.state.claimSig,this.state.account)
+                 this.setState({sending:true})
+                 tx(contracts.Links.claim(this.state.claimId,this.state.claimSig,this.state.account),300000,false,0,(result)=>{
+                   if(result){
+                     console.log("CLAIMED!!!",result)
+                     this.setState({claimed:true})
+                     setTimeout(()=>{
+                       this.setState({sending:false},()=>{
+                         //alert("DONE")
+                         window.location = "/"
+                       })
+                     },2000)
+                   }
+                 })
+               }else{
+                 console.log("DOING CLAIM THROUGH RELAY",this.state.claimId,this.state.claimSig,this.state.account)
+                 this.setState({sending:true})
+                 let postData = {
+                   id:this.state.claimId,
+                   sig:this.state.claimSig,
+                   dest:this.state.account
                  }
+                 console.log("CLAIM_RELAY:",CLAIM_RELAY)
+                 axios.post(CLAIM_RELAY+"/link", postData, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                  }).then((response)=>{
+                    console.log("TX RESULT",response.data.transactionHash)
+                    this.setState({claimed:true})
+                    setTimeout(()=>{
+                      this.setState({sending:false},()=>{
+                        //alert("DONE")
+                        window.location = "/"
+                      })
+                    },2000)
+                  })
+                  .catch((error)=>{
+                    console.log(error);
+                  });
+               }
 
-               })
              }
 
            })

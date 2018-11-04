@@ -30,21 +30,21 @@ contract Links {
   }
   event Send(bytes32 id,address indexed sender, uint256 value, uint64 expires);
 
-  function claim(bytes32 id, bytes sig) public returns(bool result){
+  function claim(bytes32 id, bytes sig, address destination) public returns(bool result){
     //make sure there is fund here
     require(funds[id].sender!=address(0),"Links::claim id does not exists");
     //make sure it hasn't expired
     require(uint64(block.number)<=funds[id].expires,"Links::claim id does not exists");
     //makes sure sig is correct
     require(recoverSigner(id,sig)==funds[id].sender,"Links::claim sig did not recover right");
+    //send out events for frontend parsing
+    Claim(id,funds[id].sender,funds[id].value,destination);
     //save value in temp so we can destory before sending
     uint256 value = funds[id].value;
     //DESTROY object so it can't be claimed again
     delete funds[id];
-    //send out events for frontend parsing
-    Claim(id,funds[id].sender,funds[id].value,msg.sender);
-    //send funds to the msg.sender (receiver)
-    msg.sender.call.value(value).gas(msg.gas)();
+    //send funds to the destination (receiver)
+    destination.call.value(value).gas(msg.gas)();
     return true;
   }
   event Claim(bytes32 id,address indexed sender, uint256 value, address indexed receiver);

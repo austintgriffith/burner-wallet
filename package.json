@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
     "clevis": "0.0.97",
+    "cors": "^2.8.4",
     "dapparatus": "^1.0.35",
+    "express": "^4.16.4",
+    "helmet": "^3.14.0",
     "mocha": "^5.2.0",
     "qrcode.react": "^0.8.0",
     "react": "^16.6.0",
