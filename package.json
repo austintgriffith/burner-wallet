@@ -6,7 +6,7 @@
     "axios": "^0.18.0",
     "clevis": "0.0.97",
     "cors": "^2.8.4",
-    "dapparatus": "^1.0.35",
+    "dapparatus": "^1.0.36",
     "express": "^4.16.4",
     "helmet": "^3.14.0",
     "mocha": "^5.2.0",
