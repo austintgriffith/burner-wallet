@@ -365,7 +365,8 @@ class App extends Component {
             )
           }
 
-          let bottomDisplay = ""
+          let copyDisplay = ""
+          let burnDisplay = ""
           if(this.state.metaAccount){
             console.log("this.state.metaAccount",this.state.metaAccount.privateKey)
 
@@ -374,8 +375,8 @@ class App extends Component {
               copiedPrivateText = "Copied Private Key"
             }
 
-            bottomDisplay = (
-              <div style={{marginTop:100}}>
+            copyDisplay = (
+              <div >
               <CopyToClipboard text={this.state.metaAccount.privateKey}
                  onCopy={() => {
                    this.setState({copiedPrivate: true})
@@ -389,8 +390,14 @@ class App extends Component {
                  </Button>
                </CopyToClipboard>
 
+              </div>
 
-               <div style={{marginTop:200,marginBottom:100}}>
+            )
+
+            burnDisplay = (
+              <div>
+
+               <div>
                  <Button size="2" color={"red"} onClick={()=>{
                    if(this.state.balance>0.1){
                      alert("Can't burn a key that holds $0.10")
@@ -406,6 +413,8 @@ class App extends Component {
               </div>
 
             )
+
+
           }
 
           let dividerStyle = {padding:40,borderTop:"1px solid #dddddd"}
@@ -444,7 +453,7 @@ class App extends Component {
 
              </div>
 
-             
+
              <div style={dividerStyle}>
 
                  <Button color={"green"} size="2" onClick={()=>{
@@ -465,7 +474,11 @@ class App extends Component {
              </div>
 
              <div style={dividerStyle}>
-              {bottomDisplay}
+              {copyDisplay}
+             </div>
+
+             <div style={dividerStyle}>
+              {burnDisplay}
              </div>
 
              <div style={dividerStyle}>
