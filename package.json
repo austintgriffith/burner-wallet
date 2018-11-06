@@ -1,10 +1,10 @@
 {
-  "name": "hot-wallet",
+  "name": "burner-wallet",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
-    "clevis": "0.0.97",
+    "clevis": "0.0.100",
     "cors": "^2.8.4",
     "dapparatus": "^1.0.36",
     "express": "^4.16.4",

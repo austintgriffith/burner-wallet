@@ -433,15 +433,7 @@ class App extends Component {
                  </div>
                </CopyToClipboard>
              </div>
-             <div style={dividerStyle}>
 
-                 <Button color={"green"} size="2" onClick={()=>{
-                     this.setState({sendWithLink:true})
-                   }}>
-                   Send with Link
-                 </Button>
-
-             </div>
              <div style={dividerStyle}>
 
                  <Button color={"green"} size="2" onClick={()=>{
@@ -451,6 +443,18 @@ class App extends Component {
                  </Button>
 
              </div>
+
+             
+             <div style={dividerStyle}>
+
+                 <Button color={"green"} size="2" onClick={()=>{
+                     this.setState({sendWithLink:true})
+                   }}>
+                   Send with Link
+                 </Button>
+
+             </div>
+
 
              <div style={dividerStyle}>
               {sentToDisplay}
