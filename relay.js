@@ -62,37 +62,45 @@ app.get('/miner', (req, res) => {
 app.post('/link', async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   console.log("/link",req.body)
-  console.log("RECOVER:",req.body.id,req.body.sig,req.body.sig)
-  let account = web3.eth.accounts.recover(req.body.id,req.body.sig)
-  console.log("RECOVERED:",account)
 
-  console.log("Correct sig... relay transaction to contract... might want more filtering here, but just blindly do it for now")
-  let txparams = {
-    from: accounts[DESKTOPMINERACCOUNT],
-    gas: 120000,
-    gasPrice:Math.round(4 * 1000000000)
+
+  let validClaim = await contracts.Links.methods.isClaimValid(req.body.id,req.body.sig,req.body.dest).call()
+
+  if(!validClaim){
+    console.log("INVALID CLAIM!!!!")
+    res.set('Content-Type', 'application/json');
+    res.end(JSON.stringify({invalid:"claim"}));
+  }else{
+    console.log("CLAIM IS VALID...")
+    let txparams = {
+      from: accounts[DESKTOPMINERACCOUNT],
+      gas: 100000,
+      gasPrice:Math.round(4 * 1000000000)
+    }
+
+    console.log("PARAMS",txparams)
+    contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.dest).send(
+      txparams ,(error, transactionHash)=>{
+        console.log("TX CALLBACK",error,transactionHash)
+        res.set('Content-Type', 'application/json');
+        res.end(JSON.stringify({transactionHash:transactionHash}));
+      }
+    )
+    .on('error',(err,receiptMaybe)=>{
+      console.log("TX ERROR",err,receiptMaybe)
+    })
+    .on('transactionHash',(transactionHash)=>{
+      console.log("TX HASH",transactionHash)
+    })
+    .on('receipt',(receipt)=>{
+      console.log("TX RECEIPT",receipt)
+    })
+    .then((receipt)=>{
+      console.log("TX THEN",receipt)
+    })
   }
 
-  console.log("PARAMS",txparams)
-  contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.dest).send(
-    txparams ,(error, transactionHash)=>{
-      console.log("TX CALLBACK",error,transactionHash)
-      res.set('Content-Type', 'application/json');
-      res.end(JSON.stringify({transactionHash:transactionHash}));
-    }
-  )
-  .on('error',(err,receiptMaybe)=>{
-    console.log("TX ERROR",err,receiptMaybe)
-  })
-  .on('transactionHash',(transactionHash)=>{
-    console.log("TX HASH",transactionHash)
-  })
-  .on('receipt',(receipt)=>{
-    console.log("TX RECEIPT",receipt)
-  })
-  .then((receipt)=>{
-    console.log("TX THEN",receipt)
-  })
+
 
 
 });

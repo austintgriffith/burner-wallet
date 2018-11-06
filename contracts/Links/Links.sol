@@ -8,12 +8,13 @@ contract Links {
 
   struct Fund {
     address sender;
+    address signer;
     uint256 value;
     uint64 expires;
   }
   mapping (bytes32 => Fund) public funds;
 
-  function send(bytes32 id) public payable returns(bool result){
+  function send(bytes32 id, bytes sig) public payable returns(bool result){
     //make sure there isnt already a fund here
     require(funds[id].sender==address(0),"Links::send id already exists");
     //create hardcoded expires time for now
@@ -21,6 +22,7 @@ contract Links {
     //create fund
     funds[id] = Fund({
       sender: msg.sender,
+      signer: recoverSigner(id,sig),
       value: msg.value,
       expires: expires
     });
@@ -31,12 +33,10 @@ contract Links {
   event Send(bytes32 id,address indexed sender, uint256 value, uint64 expires);
 
   function claim(bytes32 id, bytes sig, address destination) public returns(bool result){
-    //make sure there is fund here
-    require(funds[id].sender!=address(0),"Links::claim id does not exists");
-    //make sure it hasn't expired
-    require(uint64(block.number)<=funds[id].expires,"Links::claim id does not exists");
     //makes sure sig is correct
-    require(recoverSigner(id,sig)==funds[id].sender,"Links::claim sig did not recover right");
+    //make sure there is fund here
+    //make sure it hasn't expired
+    require(isClaimValid(id,sig,destination),"Links::claim is not valid");
     //send out events for frontend parsing
     Claim(id,funds[id].sender,funds[id].value,destination);
     //save value in temp so we can destory before sending
@@ -48,6 +48,16 @@ contract Links {
     return true;
   }
   event Claim(bytes32 id,address indexed sender, uint256 value, address indexed receiver);
+
+  //this lets an off chain relayer make sure the claim is valid before submitting
+  function isClaimValid(bytes32 id, bytes sig, address destination) public view returns(bool){
+    //makes sure sig is correct
+    return (
+      recoverSigner(keccak256(destination),sig)==funds[id].signer &&
+      funds[id].sender!=address(0) &&
+      uint64(block.number)<=funds[id].expires
+    );
+  }
 
   function recoverSigner(bytes32 _hash, bytes _signature) internal view returns (address){
     bytes32 r;

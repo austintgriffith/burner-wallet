@@ -60,9 +60,6 @@ class App extends Component {
       //maybe they just scanned an address?
       window.location = "/"+location
     }
-
-
-
   }
   onQRCodeError(a,b){
     console.log("onQRCodeError",a,b)
@@ -90,15 +87,17 @@ class App extends Component {
       if(window.location.pathname.length==43){
         let account = window.location.pathname.substring(1)
         this.setState({sendTo:account})
-      }else if(window.location.pathname.length==200){
+      }else if(window.location.pathname.length==134){
         let parts = window.location.pathname.split("/")
 
         let claimId = parts[1]
-        let claimSig = parts[2]
+        let claimKey = parts[2]
         //alert("DO CLAIM"+claimId+claimSig)
 
-        this.setState({claimId,claimSig})
-      }
+        this.setState({claimId,claimKey})
+      }/*else{
+        alert(window.location.pathname.length)
+      }*/
     }
   }
   render() {
@@ -160,10 +159,12 @@ class App extends Component {
         let balanceDisplay  = this.state.balance //Math.round(this.state.balance*100,2)/100
         if(balanceDisplay){
           balanceDisplay = balanceDisplay.toFixed(2)
+        }else{
+          balanceDisplay = "0.00"
         }
         connectedDisplay.push(
           <div style={{clear:'both',borderTop:"1px solid #cccccc"}}>
-            <div style={{width:"100%",textAlign:"center",fontSize:70,letterSpacing:-2,padding:10,marginBottom:5,marginBottom:5}}>
+            <div style={{width:"100%",marginLeft:-12,textAlign:"center",fontSize:70,letterSpacing:-2,padding:10,marginBottom:5,marginBottom:5}}>
               {moneytype}{balanceDisplay}
             </div>
           </div>
@@ -182,7 +183,7 @@ class App extends Component {
             </div>
           )
         }else if(this.state.sendLink){
-          let qrValue = url+"/"+this.state.sendLink+"/"+this.state.sendSig
+          let qrValue = url+"/"+this.state.sendLink+"/"+this.state.sendKey
 
           let extraDisplay = ""
           if(this.state.copiedLink){
@@ -248,20 +249,18 @@ class App extends Component {
                <Button size="2" color={"green"} onClick={()=>{
                   this.setState({sending:true})
                   let randomHash = this.state.web3.utils.sha3(""+Math.random())
-                  //try hardcoding one to make sure you can only post it once:
-                  //let randomHash = "0x92e3f323940c7bc4b0bd4ed93636f25aad612d83a6f368371d22143a1241adbb"
+
+                  let randomWallet = this.state.web3.eth.accounts.create()
+                  let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
+
+                  console.log("randomHash",randomHash)
+                  console.log("randomWallet",randomWallet)
+                  console.log("sig",sig.signature)
+
+
                   console.log("~~~ RAND:",randomHash,randomHash.length)
-                  tx(contracts.Links.send(randomHash),300000,false,this.state.amount*10**18,async ()=>{
-                    let sig
-                    if(this.state.metaAccount){
-                      sig = this.state.web3.eth.accounts.sign(randomHash, this.state.metaAccount.privateKey);
-                      sig = sig.signature
-                    }else{
-                      sig = await this.state.web3.eth.personal.sign(""+randomHash,this.state.account)
-                    }
-
-                    this.setState({sending:false,sendLink:randomHash,sendSig:sig})
-
+                  tx(contracts.Links.send(randomHash,sig.signature),140000,false,this.state.amount*10**18,async ()=>{
+                    this.setState({sending:false,sendLink:randomHash,sendKey:randomWallet.privateKey})
                   })
                  }}>
                  Send
@@ -491,12 +490,18 @@ class App extends Component {
            this.setState({contracts:contracts},async ()=>{
              console.log("Contracts Are Ready:",this.state.contracts)
              //check if we are trying to claim
-             if(this.state.claimId&&this.state.claimSig){
+             if(this.state.claimId&&this.state.claimKey){
                if(this.state.balance>0.005){
-                 console.log("DOING CLAIM ONCHAIN",this.state.claimId,this.state.claimSig,this.state.account)
+                 console.log("DOING CLAIM ONCHAIN",this.state.claimId,this.state.claimKey,this.state.account)
                  this.setState({sending:true})
 
-                 tx(contracts.Links.claim(this.state.claimId,this.state.claimSig,this.state.account),300000,false,0,(result)=>{
+                 let hashOfDestination = this.state.web3.utils.sha3(this.state.account)
+                 console.log("hashOfDestination",hashOfDestination)
+                 console.log("this.state.claimKey",this.state.claimKey)
+                 let sig = this.state.web3.eth.accounts.sign(hashOfDestination,this.state.claimKey);
+                 sig = sig.signature
+                 console.log("CLAIM TX:",this.state.claimId,sig,this.state.account)
+                 tx(contracts.Links.claim(this.state.claimId,sig,this.state.account),100000,false,0,(result)=>{
                    if(result){
                      console.log("CLAIMED!!!",result)
                      this.setState({claimed:true})
@@ -510,11 +515,19 @@ class App extends Component {
                  })
 
                }else{
-                 console.log("DOING CLAIM THROUGH RELAY",this.state.claimId,this.state.claimSig,this.state.account)
+                 console.log("DOING CLAIM THROUGH RELAY")
+
+                 let hashOfDestination = this.state.web3.utils.sha3(this.state.account)
+                 console.log("hashOfDestination",hashOfDestination)
+                 console.log("this.state.claimKey",this.state.claimKey)
+                 let sig = this.state.web3.eth.accounts.sign(hashOfDestination,this.state.claimKey);
+                 sig = sig.signature
+                 console.log("CLAIM TX:",this.state.claimId,sig,this.state.account)
+
                  this.setState({sending:true})
                  let postData = {
                    id:this.state.claimId,
-                   sig:this.state.claimSig,
+                   sig:sig,
                    dest:this.state.account
                  }
                  console.log("CLAIM_RELAY:",CLAIM_RELAY)
