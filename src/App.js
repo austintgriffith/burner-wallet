@@ -162,13 +162,24 @@ class App extends Component {
         }else{
           balanceDisplay = "0.00"
         }
-        connectedDisplay.push(
-          <div style={{clear:'both',borderTop:"1px solid #cccccc"}}>
-            <div style={{width:"100%",marginLeft:-12,textAlign:"center",fontSize:70,letterSpacing:-2,padding:10,marginBottom:5,marginBottom:5}}>
-              {moneytype}{balanceDisplay}
+        if(this.state.network == "xDai" || this.state.network == "Unknown" ){
+          connectedDisplay.push(
+            <div style={{clear:'both',borderTop:"1px solid #cccccc"}}>
+              <div style={{width:"100%",marginLeft:-12,textAlign:"center",fontSize:70,letterSpacing:-2,padding:10,marginBottom:5,marginBottom:5}}>
+                {moneytype}{balanceDisplay}
+              </div>
             </div>
-          </div>
-        )
+          )
+        }else{
+          connectedDisplay.push(
+            <div style={{clear:'both',border:"1px solid #ffeeee",backgroundColor:"#eedddd",padding:40}}>
+              <div style={{width:"100%",color:"#665555",marginLeft:-12,textAlign:"center",fontSize:20,padding:10,marginBottom:5,marginBottom:5}}>
+                {"Wrong Network: Please use 'Custom RPC' endpoint: https://dai.poa.network"}
+              </div>
+            </div>
+          )
+        }
+
 
         if(this.state.claimed){
           connectedDisplay.push(
@@ -208,9 +219,9 @@ class App extends Component {
                      {qrValue}
                    </div>
                    {extraDisplay}
-                   <div style={{padding:15}}>
+                   <Scaler config={{startZoomAt:300}}>
                     <QRCode value={qrValue} size={300} />
-                   </div>
+                   </Scaler>
                  </div>
               </CopyToClipboard>
               <Button size="2" color={"blue"} onClick={()=>{
@@ -225,7 +236,7 @@ class App extends Component {
           if(this.state.balance<=0){
             connectedDisplay.push(
               <div style={alertStyle}>
-                Not enough funds to send.
+                No Funds.
               </div>
             )
             setTimeout(()=>{
@@ -282,7 +293,7 @@ class App extends Component {
           if(this.state.balance<=0){
             connectedDisplay.push(
               <div style={alertStyle}>
-                Not enough funds to send.
+                No Funds.
               </div>
             )
             setTimeout(()=>{
@@ -369,12 +380,10 @@ class App extends Component {
           let burnDisplay = ""
           if(this.state.metaAccount){
             console.log("this.state.metaAccount",this.state.metaAccount.privateKey)
-
             let copiedPrivateText = "Copy Private Key"
             if(this.state.copiedPrivate){
               copiedPrivateText = "Copied Private Key"
             }
-
             copyDisplay = (
               <div >
               <CopyToClipboard text={this.state.metaAccount.privateKey}
@@ -389,14 +398,11 @@ class App extends Component {
                    {copiedPrivateText}
                  </Button>
                </CopyToClipboard>
-
               </div>
-
             )
 
             burnDisplay = (
               <div>
-
                <div>
                  <Button size="2" color={"red"} onClick={()=>{
                    if(this.state.balance>0.1){
@@ -408,13 +414,8 @@ class App extends Component {
                    Burn Private Key
                  </Button>
                </div>
-
-
               </div>
-
             )
-
-
           }
 
           let dividerStyle = {padding:40,borderTop:"1px solid #dddddd"}
@@ -433,8 +434,9 @@ class App extends Component {
                    },3000)
                  }}>
                  <div style={{cursor:"pointer"}}>
-
-                 <QRCode value={qrValue} size={300} />
+                 <Scaler config={{startZoomAt:400}}>
+                   <QRCode value={qrValue} size={300} />
+                 </Scaler>
                  <div style={{fontSize:13}}>
                    {qrDisplay}
                  </div>
@@ -566,9 +568,7 @@ class App extends Component {
                     console.log(error);
                   });
                }
-
              }
-
            })
          }}
         />
@@ -596,54 +596,14 @@ class App extends Component {
           }}
         />
       )
-      /*
-      if(contracts){
-        contractsDisplay.push(
-          <div key="UI" style={{padding:30}}>
-            <div>
-              <Address
-                {...this.state}
-                address={contracts.YOURCONTRACT._address}
-              />
-            </div>
-            broadcast string: <input
-                style={{verticalAlign:"middle",width:400,margin:6,maxHeight:20,padding:5,border:'2px solid #ccc',borderRadius:5}}
-                type="text" name="broadcastText" value={this.state.broadcastText} onChange={this.handleInput.bind(this)}
-            />
-            <Button color={this.state.doingTransaction?"orange":"green"} size="2" onClick={()=>{
-                this.setState({doingTransaction:true})
-                //tx(contracts.YOURCONTRACT.YOURFUNCTION(YOURARGUMENTS),(receipt)=>{
-                //  this.setState({doingTransaction:false})
-                //})
-              }}>
-              Send
-            </Button>
-            <Events
-              config={{hide:false}}
-              contract={contracts.YOURCONTRACT}
-              eventName={"YOUREVENT"}
-              block={block}
-              onUpdate={(eventData,allEvents)=>{
-                console.log("EVENT DATA:",eventData)
-                this.setState({events:allEvents})
-              }}
-            />
-          </div>
-        )
-      }
-      */
     }
-
-
-    //console.log("balanceDisplay",balanceDisplay)
-  //  if(!balanceDisplay) balanceDisplay="0"
 
     return (
       <div className="App">
         <Dapparatus
           config={{
             DEBUG:false,
-            requiredNetwork:['Unknown','Rinkeby',"Mainnet"],
+            requiredNetwork:['Unknown','xDai'],
             metatxAccountGenerator: false, /*generate locally*/
             onlyShowBlockie: true,
           }}
