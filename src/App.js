@@ -342,8 +342,8 @@ class App extends Component {
           }
 
           let sentToDisplay = (
-            <div style={{marginTop:60}}>
-              <div>or send to address:</div>
+            <div>
+              <div>send to address:</div>
               <input
                   style={{verticalAlign:"middle",width:280,margin:6,maxHeight:20,padding:5,border:'2px solid #ccc',borderRadius:5}}
                   type="text" name="sendToInput" value={this.state.sendToInput} onChange={this.handleInput.bind(this)}
@@ -355,7 +355,7 @@ class App extends Component {
 
           if(window.location.hostname.indexOf("xdai")>=0||window.location.hostname.indexOf("localhost")>=0){
             bridgeButton = (
-              <div style={{marginTop:60,marginBottom:60}}>
+              <div>
               <Button size="2" color={"blue"} onClick={()=>{
                 window.location = "https://dai-bridge.poa.network"
                 }}>

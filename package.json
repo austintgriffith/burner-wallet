@@ -6,7 +6,7 @@
     "axios": "^0.18.0",
     "clevis": "0.0.100",
     "cors": "^2.8.4",
-    "dapparatus": "^1.0.36",
+    "dapparatus": "^1.0.38",
     "express": "^4.16.4",
     "helmet": "^3.14.0",
     "mocha": "^5.2.0",
@@ -16,7 +16,8 @@
     "react-dom": "^16.6.0",
     "react-loading": "^2.0.3",
     "react-scripts": "2.0.5",
-    "s3": "^4.4.0"
+    "s3": "^4.4.0",
+    "webpack": "^4.25.1"
   },
   "scripts": {
     "start": "react-scripts start",
