@@ -22,6 +22,7 @@ if(window.location.hostname.indexOf("qreth")>=0){
   WEB3_PROVIDER = "https://mainnet.infura.io/v3/e59c464c322f47e2963f5f00638be2f8"
 }else if(window.location.hostname.indexOf("xdai")>=0){
   WEB3_PROVIDER = "https://dai.poa.network"
+  CLAIM_RELAY = 'https://x.xdai.io/'
 }
 
 class App extends Component {
