@@ -89,11 +89,11 @@ class App extends Component {
         let account = window.location.pathname.substring(1)
         this.setState({sendTo:account})
       }else if(window.location.pathname.length==134){
-        let parts = window.location.pathname.split("/")
+        let parts = window.location.pathname.split(";")
 
-        let claimId = parts[1]
-        let claimKey = parts[2]
-        //alert("DO CLAIM"+claimId+claimSig)
+        let claimId = parts[0].replace("/","")
+        let claimKey = parts[1]
+        console.log("DO CLAIM",claimId,claimKey)
 
         this.setState({claimId,claimKey})
       }/*else{
@@ -195,7 +195,7 @@ class App extends Component {
             </div>
           )
         }else if(this.state.sendLink){
-          let qrValue = url+"/"+this.state.sendLink+"/"+this.state.sendKey
+          let qrValue = url+"/"+this.state.sendLink+";"+this.state.sendKey
 
           let extraDisplay = ""
           if(this.state.copiedLink){

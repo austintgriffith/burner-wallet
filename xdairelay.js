@@ -33,14 +33,21 @@ let relayHttpProvider = fs.readFileSync("relayhttpprovider.env").toString()
 let transactions = {}
 
 const HDWalletProvider = require("truffle-hdwallet-provider")
+let DESKTOPMINERACCOUNT = 0
 
-let web3 = new Web3(
-    new HDWalletProvider(
-      process.env.mnemonic,
-      relayHttpProvider
-    )
-);
-const DESKTOPMINERACCOUNT = 0
+let web3
+if(relayHttpProvider.indexOf("localhost")>=0){
+  web3 = new Web3(
+     new HDWalletProvider(
+       process.env.mnemonic,
+       relayHttpProvider
+     )
+ );
+}else{
+  web3 = new Web3();
+  web3.setProvider(new web3.providers.HttpProvider(relayHttpProvider));
+}
+
 
 let accounts
 web3.eth.getAccounts().then((_accounts)=>{
