@@ -28,7 +28,8 @@ app.use(cors())
 let contracts;
 var Web3 = require('web3');
 var web3 = new Web3();
-web3.setProvider(new web3.providers.HttpProvider('http://0.0.0.0:8545'));
+let relayHttpProvider = fs.readFileSync("relayhttpprovider.env").toString()
+web3.setProvider(new web3.providers.HttpProvider(relayHttpProvider));
 
 let transactions = {}
 
