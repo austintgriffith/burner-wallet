@@ -143,7 +143,7 @@ module.exports = {
     describe('#transfer() ', function() {
       it('should give metamask account some ether or tokens to test', async function() {
         this.timeout(600000)
-        let result = await clevis("sendTo","5.00","0","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")///<<<-------- change this to your metamask accounts
+        let result = await clevis("sendTo","9.99","0","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")///<<<-------- change this to your metamask accounts
         printTxResult(result)
         result = await clevis("sendTo","5","0","0x16b54975cce74f88c9ebf49609b31b653f8c4792")///<<<-------- change this to your metamask accounts
         printTxResult(result)
