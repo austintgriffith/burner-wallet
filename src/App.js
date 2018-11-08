@@ -219,7 +219,7 @@ class App extends Component {
                      {qrValue}
                    </div>
                    {extraDisplay}
-                   <Scaler config={{startZoomAt:300}}>
+                   <Scaler config={{startZoomAt:400}}>
                     <QRCode value={qrValue} size={300} />
                    </Scaler>
                  </div>
