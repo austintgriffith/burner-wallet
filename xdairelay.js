@@ -3,6 +3,7 @@ const express = require('express');
 const helmet = require('helmet');
 const app = express();
 const fs = require('fs');
+require('dotenv').config()
 const ContractLoader = function(contractList,web3){
   let contracts = []
   for(let c in contractList){
@@ -27,13 +28,19 @@ var cors = require('cors')
 app.use(cors())
 let contracts;
 var Web3 = require('web3');
-var web3 = new Web3();
 let relayHttpProvider = fs.readFileSync("relayhttpprovider.env").toString()
-web3.setProvider(new web3.providers.HttpProvider(relayHttpProvider));
 
 let transactions = {}
 
-const DESKTOPMINERACCOUNT = 3 //index in geth
+const HDWalletProvider = require("truffle-hdwallet-provider")
+
+let web3 = new Web3(
+    new HDWalletProvider(
+      process.env.mnemonic,
+      relayHttpProvider
+    )
+);
+const DESKTOPMINERACCOUNT = 0
 
 let accounts
 web3.eth.getAccounts().then((_accounts)=>{
