@@ -23,5 +23,5 @@ A burner wallet is automatically generated upon visiting https://xdai.io and you
 
 This can also be very handy in everyday use even for the crypto-initiated. If you are share a Lyft or a pizza with a friend and want to split the cost, just shoot their QR code with your camera and it will open up a new burner wallet to exchange value with them. Just don't forget to sweep to cold storage and burn your key when you get home!
 
-Here is a follow up video to show how to go from Fiat to DAI to xDai and back:
+Here is a follow up video to show how to go from fiat to DAI to xDai and back:
 [![onrampscreencast](https://user-images.githubusercontent.com/2653167/48295187-cb08df00-e446-11e8-9506-ff74a6d19604.png)](https://youtu.be/sbHIyDMpqyY)
