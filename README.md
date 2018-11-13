@@ -72,18 +72,21 @@ tail -f geth.log
 
 If you would like to give your intial account some eth to start out:
 ```
-clevis sendTo 5 0 ***YOUR_ETH_ADDRESS***
+🗜️ Clevis:/dapp 🗜️ clevis sendTo 5 0 ***YOUR_ETH_ADDRESS***
 ```
 
 Or better yet, edit the tests/clevis.js to send you xDai every time you run the test suite:
 ![image](https://user-images.githubusercontent.com/2653167/48427338-c3d32100-e725-11e8-8751-fda17b113fad.png)
+
 Then run:
 ```
 clevis test full
 ```
+
 Your frontend should automatically reload and your account should have xDai:
 ![image](https://user-images.githubusercontent.com/2653167/48427446-f54bec80-e725-11e8-9248-6f6cf9145a52.png)
 
+-------------
 
 To learn more about Clevis and Dapparatus check out some of the following articles:
 
