@@ -49,6 +49,9 @@ If you visit http://localhost:3000 you will see an initial error that React is m
 🗜️ Clevis:/dapp 🗜️ clevis test full
 ```
 
+Don't forget to point your MetaMask at the local RPC endpoint (http://localhost:8545):
+![image](https://user-images.githubusercontent.com/2653167/48443559-c007c480-e74e-11e8-9c23-5421785a1016.png)
+
 You can view and edit the code with your IDE of choice within the terminal (not from inside Docker container):
 ```
 atom ~/burner-wallet
