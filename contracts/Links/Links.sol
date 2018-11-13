@@ -61,9 +61,8 @@ contract Links {
         address signer = recoverSigner(keccak256(abi.encode(_destination)),_sig);
         require(signer != address(0),"Links::invalid signer");
         return( 
-          _sig.length == 65 && fundExists(_id) &&
-          signer == funds[_id].signer &&
-          uint64(block.number) <= funds[_id].expires
+          _sig.length == 65 && fundExists(_id) && !funds[_id].claimed &&
+          signer == funds[_id].signer && uint64(block.number) <= funds[_id].expires
         );
     }
 
