@@ -39,10 +39,10 @@ Then, fire up a Docker container with your environment all prepared for you:
 ```
 docker run -ti --rm --name clevis -p 3000:3000 -p 8545:8545 -p 18462:18462 -v ~/burner-wallet:/dapp austingriffith/clevis:latest
 ```
-Note: You will be prompted for directories to store things, just use the defaults:
+Note: You will be prompted for directories to store things, just use the defaults (hit enter):
 ![image](https://user-images.githubusercontent.com/2653167/48425351-e4997780-e721-11e8-9228-f8e28d69704c.png)
 
-This will take a while. Eventually it will stand up React, Ganache, and Clevis. 
+This will take a while. Eventually it will stand up React, Ganache, and Clevis. (Note: make sure you don't have anything running on port 3000 or 8545 already)
 
 If you visit http://localhost:3000 you will see an initial error that React is missing the injected contracts. To compile, deploy, and inject those contract, run:
 ```
