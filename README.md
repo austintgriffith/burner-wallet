@@ -25,3 +25,40 @@ This can also be very handy in everyday use even for the crypto-initiated. If yo
 
 Here is a follow up video to show how to go from fiat to DAI to xDai and back:
 [![onrampscreencast](https://user-images.githubusercontent.com/2653167/48295187-cb08df00-e446-11e8-9506-ff74a6d19604.png)](https://youtu.be/sbHIyDMpqyY)
+
+----------
+
+### Contributing as a Developer/Designer
+
+You will want to fork this repo and then clone it down. Since I own the repo I'll just clone it:
+```
+cd ~;git clone https://github.com/austintgriffith/burner-wallet.git
+```
+
+Then, fire up a Docker container with your environment all prepared for you:
+```
+docker run -ti --rm --name clevis -p 3000:3000 -p 8545:8545 -p 18462:18462 -v ~/burner-wallet:/dapp austingriffith/clevis:latest
+```
+Note: You will be prompted for directories to store things, just use the defaults:
+![image](https://user-images.githubusercontent.com/2653167/48425351-e4997780-e721-11e8-9228-f8e28d69704c.png)
+
+This will take a while. Eventually it will stand up React, Ganache, and Clevis. 
+
+If you visit http://localhost:3000 you will see an initial error that React is missing the injected contracts. To compile, deploy, and inject those contract, run:
+```
+clevis test full
+```
+
+You can view and edit the code with your IDE of choice within the terminal (not from inside Docker container):
+```
+atom ~/burner-wallet
+```
+
+To learn more about Clevis and Dapparatus check out some of the following articles:
+
+[https://github.com/austintgriffith/clevis](https://github.com/austintgriffith/clevis)
+[https://github.com/austintgriffith/dapparatus](https://github.com/austintgriffith/dapparatus)
+[https://medium.com/@austin_48503/buidlguidl-0x0-clevis-dapparatus-533936a8236a](https://medium.com/@austin_48503/buidlguidl-0x0-clevis-dapparatus-533936a8236a)
+[https://medium.com/@austin_48503/buidlguidl-0x1-guidlcoin-3be30c6ac76f](https://medium.com/@austin_48503/buidlguidl-0x1-guidlcoin-3be30c6ac76f)
+[https://medium.com/@austin_48503/%EF%B8%8Fclevis-blockchain-orchestration-682d2396aeef](https://medium.com/@austin_48503/%EF%B8%8Fclevis-blockchain-orchestration-682d2396aeef)
+
