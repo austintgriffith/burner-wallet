@@ -19,17 +19,17 @@ export default class CopyDisplay extends React.Component {
 
         copyDisplay = (
           <div >
-          <CopyToClipboard text={this.props.metaAccount.privateKey}
-             onCopy={() => {
-               this.props.setCopiedPrivate(true);
-               setTimeout(()=>{
-                 this.props.setCopiedPrivate(false);
-               },3000)
-             }}>
-             <Button size="2" color={"orange"} onClick={() => { }}>
-               {copiedPrivateText}
-             </Button>
-           </CopyToClipboard>
+            <CopyToClipboard text={this.props.metaAccount.privateKey}
+               onCopy={() => {
+                 this.props.setCopiedPrivate(true);
+                 setTimeout(()=>{
+                   this.props.setCopiedPrivate(false);
+                 },3000)
+               }}>
+               <Button size="2" color={"orange"} onClick={() => { }}>
+                 {copiedPrivateText}
+               </Button>
+             </CopyToClipboard>
           </div>)
       }
     return copyDisplay;

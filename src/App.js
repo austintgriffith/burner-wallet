@@ -89,6 +89,10 @@ class App extends Component {
     this.setState({sendWithLink: sendWithLink});
   }
 
+  setCopiedPrivate = (isCopiedPrivate) => {
+    this.setState({copiedPrivate: isCopiedPrivate});
+  }
+
   componentDidMount(){
     if(window.location.pathname){
       if(window.location.pathname.length === 43){
@@ -118,16 +122,16 @@ class App extends Component {
   }
 
   chainClaim(tx, contracts){
-     console.log("DOING CLAIM ONCHAIN",this.state.claimId, this.state.claimKey, this.state.account);
+     console.log("DOING CLAIM ONCHAIN", this.state.claimId, this.state.claimKey, this.state.account);
      this.setState({sending:true})
 
      let hashOfDestination = this.state.web3.utils.sha3(this.state.account)
      console.log("hashOfDestination",hashOfDestination)
      console.log("this.state.claimKey",this.state.claimKey)
      let sig = this.state.web3.eth.accounts.sign(hashOfDestination, this.state.claimKey);
-     sig = sig.signaturemkm
-     console.log("CLAIM TX:",this.state.claimId,sig,this.state.account)
-     tx(contracts.Links.claim(this.state.claimId,sig,this.state.account), 100000, false, 0, (result) => {
+     sig = sig.signature;
+     console.log("CLAIM TX:",this.state.claimId, sig, this.state.account)
+     tx(contracts.Links.claim(this.state.claimId, sig, this.state.account), 100000, false, 0, (result) => {
        if(result){
          console.log("CLAIMED!!!", result)
          this.setState({claimed: true})
@@ -217,6 +221,9 @@ class App extends Component {
       let send = this.state.send;
       let copied = this.state.copied;
       let sendToInput = this.state.sendToInput;
+      let metaAccount = this.state.metaAccount;
+      let copiedPrivate = this.state.copiedPrivate;
+      let burnMetaAccount = this.state.burnMetaAccount;
 
       if(this.state.scanning){
         connectedDisplay.push(<Scanner setQrIsScanning={this.setScanning} scanning={scanning} web3={web3}/>);
@@ -234,9 +241,9 @@ class App extends Component {
         }else if(this.state.sendWithLink){
           connectedDisplay.push(<SendWithLink sendWithLink={sendWithLink} alertStyle={alertStyle} sending={sending} moneytype={moneytype} setSending={this.setSending} web3={web3} tx={tx} contracts={contracts} amount={amount} setSendInfo={this.setSendInfo} handleInput={this.handleInput} balance={balance}/>);
         }else if(this.state.sendTo){
-          connectedDisplay.push(<SendTo sendTo={sendTo} alertStyle={alertStyle} sending={sending} moneytype={moneytype} amount={amount} handleInput={this.handleInput} send={send} balance={balance}/>);
+          connectedDisplay.push(<SendTo sendTo={sendTo} alertStyle={alertStyle} sending={sending} moneytype={moneytype} amount={amount} handleInput={this.handleInput} send={send} balance={balance} setSending={this.setSending}/>);
         }else{
-          connectedDisplay.push(<Main setCopied={this.setCopied} setScanning={this.setScanning} setSendWithLink={this.setSendWithLink} account={account} copied={copied} sendToInput={sendToInput} handleInput={this.handleInput}/>);
+          connectedDisplay.push(<Main setCopied={this.setCopied} setScanning={this.setScanning} setSendWithLink={this.setSendWithLink} account={account} copied={copied} sendToInput={sendToInput} handleInput={this.handleInput} metaAccount={this.metaAccount} setCopiedPrivate={this.setCopiedPrivate} copiedPrivate={this.copiedPrivate} balance={balance} burnMetaAccount={burnMetaAccount}/>);
         }
       }
 

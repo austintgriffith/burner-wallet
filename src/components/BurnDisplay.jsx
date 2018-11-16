@@ -31,8 +31,8 @@ export default class BurnDisplay extends React.Component {
            </div>
           </div>
         )
-    }
+      }
 
-    return burnDisplay;
+      return burnDisplay;
   }
 }

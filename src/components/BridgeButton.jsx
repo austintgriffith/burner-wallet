@@ -2,9 +2,6 @@ import React from 'react';
 import { Button } from "dapparatus"
 
 export default class BridgeButton extends React.Component {
-    constructor(props) {
-      super(props);
-    }
 
     render() {
       let element = "";

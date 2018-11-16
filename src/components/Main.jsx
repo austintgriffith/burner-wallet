@@ -76,11 +76,11 @@ export default class ClaimId extends React.Component {
            </div>
 
            <div style={dividerStyle}>
-            <CopyDisplay />
+            <CopyDisplay metaAccount={this.props.metaAccount} setCopiedPrivate={this.props.setCopiedPrivate} copiedPrivate={this.props.copiedPrivate}/>
            </div>
 
            <div style={dividerStyle}>
-            <BurnDisplay />
+            <BurnDisplay metaAccount={this.props.metaAccount} copiedPrivate={this.props.copiedPrivate} balance={this.props.balance} burnMetaAccount={this.props.burnMetaAccount}/>
            </div>
 
            <div style={dividerStyle}>
