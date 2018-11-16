@@ -16,7 +16,7 @@ import Main from './components/Main';
 
 import eth from './ethereum.png';
 
-let WEB3_PROVIDER = 'http://0.0.0.0:8545'
+let WEB3_PROVIDER = 'http://0.0.0.0:8545';
 
 let CLAIM_RELAY = 'http://0.0.0.0:18462'
 
@@ -243,7 +243,7 @@ class App extends Component {
         }else if(this.state.sendTo){
           connectedDisplay.push(<SendTo sendTo={sendTo} alertStyle={alertStyle} sending={sending} moneytype={moneytype} amount={amount} handleInput={this.handleInput} send={send} balance={balance} setSending={this.setSending}/>);
         }else{
-          connectedDisplay.push(<Main setCopied={this.setCopied} setScanning={this.setScanning} setSendWithLink={this.setSendWithLink} account={account} copied={copied} sendToInput={sendToInput} handleInput={this.handleInput} metaAccount={this.metaAccount} setCopiedPrivate={this.setCopiedPrivate} copiedPrivate={this.copiedPrivate} balance={balance} burnMetaAccount={burnMetaAccount}/>);
+          connectedDisplay.push(<Main setCopied={this.setCopied} setScanning={this.setScanning} setSendWithLink={this.setSendWithLink} account={account} copied={copied} sendToInput={sendToInput} handleInput={this.handleInput} metaAccount={metaAccount} setCopiedPrivate={this.setCopiedPrivate} copiedPrivate={this.copiedPrivate} balance={balance} burnMetaAccount={burnMetaAccount}/>);
         }
       }
 
