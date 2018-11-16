@@ -50,18 +50,15 @@ class App extends Component {
   }
 
   handleInput = (e) => {
+    console.log("HAndle inout test" + e.target.name)
     let update = {}
     if(e.target.name === "sendToInput"){
       if(e.target.value.length === 42){
-        window.location = "/"+e.target.value
+        window.location = "/" + e.target.value
       }
     }
     update[e.target.name] = e.target.value
     this.setState(update)
-  }
-
-  setQrIsScanning = (IsScanning) => {
-    this.setState({scanning: IsScanning});
   }
 
   setCopiedLink = (isCopied) => {
@@ -84,6 +81,7 @@ class App extends Component {
   }
 
   setScanning = (isScanning) => {
+    console.log('Set scanning: ' + isScanning);
     this.setState({scanning: isScanning});
   }
 
@@ -190,6 +188,7 @@ class App extends Component {
     }
 
     if(web3){
+
       connectedDisplay.push(
        <Gas
          key="Gas"
@@ -217,20 +216,28 @@ class App extends Component {
       let sendTo = this.state.sendTo;
       let send = this.state.send;
       let copied = this.state.copied;
+      let sendToInput = this.state.sendToInput;
 
       if(this.state.scanning){
-        connectedDisplay.push(<Scanner setQrIsScanning={this.setQrIsScanning} scanning={scanning} web3={web3}/>);
+        connectedDisplay.push(<Scanner setQrIsScanning={this.setScanning} scanning={scanning} web3={web3}/>);
       }
       else{
         let alertStyle = {border:"1px solid #cccccc",padding:20,background:"#666666",color:"#bbbbbb",clear: "both",width:'100%',textAlign:'center',margin:'100 auto !important'}
 
         connectedDisplay.push(<BalanceDisplay web3={web3} balance={balance} network={network} moneytype={moneytype}/>);
-        connectedDisplay.push(<Claimed claimed={claimed}/>);
-        connectedDisplay.push(<ClaimId claimId={claimId}/>);
-        connectedDisplay.push(<SendLink sendLink={sendLink} sendKey={sendKey} copiedLink={copiedLink} setCopiedLink={this.setCopiedLink}/>);
-        connectedDisplay.push(<SendWithLink sendWithLink={sendWithLink} alertStyle={alertStyle} sending={sending} moneytype={moneytype} setSending={this.setSending} web3={web3} tx={tx} contracts={contracts} amount={amount} setSendInfo={this.setSendInfo} handleInput={this.handleInput}/>);
-        connectedDisplay.push(<SendTo sendTo={sendTo} alertStyle={alertStyle} sending={sending} moneytype={moneytype} amount={amount} handleInput={this.handleInput} send={send}/>);
-        connectedDisplay.push(<Main setCopied={this.setCopied} setScanning={this.setScanning} setSendWithLink={this.setSendWithLink} account={account} copied={copied}/>);
+        if(this.state.claimed){
+          connectedDisplay.push(<Claimed claimed={claimed}/>);
+        }else if(this.state.claimId){
+          connectedDisplay.push(<ClaimId claimId={claimId}/>);
+        }else if(this.state.sendLink){
+          connectedDisplay.push(<SendLink sendLink={sendLink} sendKey={sendKey} copiedLink={copiedLink} setCopiedLink={this.setCopiedLink}/>);
+        }else if(this.state.sendWithLink){
+          connectedDisplay.push(<SendWithLink sendWithLink={sendWithLink} alertStyle={alertStyle} sending={sending} moneytype={moneytype} setSending={this.setSending} web3={web3} tx={tx} contracts={contracts} amount={amount} setSendInfo={this.setSendInfo} handleInput={this.handleInput} balance={balance}/>);
+        }else if(this.state.sendTo){
+          connectedDisplay.push(<SendTo sendTo={sendTo} alertStyle={alertStyle} sending={sending} moneytype={moneytype} amount={amount} handleInput={this.handleInput} send={send} balance={balance}/>);
+        }else{
+          connectedDisplay.push(<Main setCopied={this.setCopied} setScanning={this.setScanning} setSendWithLink={this.setSendWithLink} account={account} copied={copied} sendToInput={sendToInput} handleInput={this.handleInput}/>);
+        }
       }
 
       connectedDisplay.push(

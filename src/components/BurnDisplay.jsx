@@ -19,7 +19,7 @@ export default class BurnDisplay extends React.Component {
         burnDisplay = (
           <div>
            <div>
-             <Button size="2" color={"red"} onClick={()=>{
+             <Button size="2" color={"red"} onClick={ () => {
                if(this.props.balance > 0.1){
                  alert("Can't burn a key that holds $0.10")
                }else{

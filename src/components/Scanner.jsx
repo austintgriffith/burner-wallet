@@ -36,9 +36,8 @@ export default class Scanner extends React.Component {
     }
 
     toggleQRCodeScanner(){
-      console.log("Scanner: toggleQRCodeScanner");
+      console.log("Scanner: toggleQRCodeScanner: " + this.props.scanning);
       this.props.setQrIsScanning(!this.props.scanning);
-      // this.setState({scanning:!this.state.scanning})
     }
 
     render() {

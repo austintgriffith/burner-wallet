@@ -19,15 +19,15 @@ export default class BalanceDisplay extends React.Component {
 
       if(network === "xDai" || network === "Unknown" ){
         balanceDiv = (
-          <div style={{clear:'both',borderTop:"1px solid #cccccc"}}>
-            <div style={{width:"100%",marginLeft:-12,textAlign:"center",fontSize:70,letterSpacing:-2,padding:10,marginBottom:5,marginBottom:5}}>
+          <div key={"test1"} style={{clear:'both',borderTop:"1px solid #cccccc"}}>
+            <div key={"test1a"} style={{width:"100%",marginLeft:-12,textAlign:"center",fontSize:70,letterSpacing:-2,padding:10,marginBottom:5,marginBottom:5}}>
               {moneytype}{balanceDisplay}
             </div>
           </div>)
       }else{
         balanceDiv = (
-          <div style={{clear:'both',border:"1px solid #ffeeee",backgroundColor:"#eedddd",padding:40}}>
-            <div style={{width:"100%",color:"#665555",marginLeft:-12,textAlign:"center",fontSize:20,padding:10,marginBottom:5,marginBottom:5}}>
+          <div key={"test2"} style={{clear:'both',border:"1px solid #ffeeee",backgroundColor:"#eedddd",padding:40}}>
+            <div key={"test2a"} style={{width:"100%",color:"#665555",marginLeft:-12,textAlign:"center",fontSize:20,padding:10,marginBottom:5,marginBottom:5}}>
               {"Wrong Network: Please use 'Custom RPC' endpoint: https://dai.poa.network"}
             </div>
           </div>

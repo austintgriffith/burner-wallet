@@ -44,7 +44,7 @@ export default class SendLink extends React.Component {
                  </div>
               </CopyToClipboard>
 
-              <Button size="2" color={"blue"} onClick={()=>{
+              <Button size="2" color={"blue"} onClick={() => {
                 window.location = "/"
                 }}>
                 Done

@@ -29,7 +29,7 @@ export default class SendTo extends React.Component {
       }
 
       if(this.props.sendTo){
-        if(this.state.balance <= 0){
+        if(this.props.balance <= 0){
           element.push(
             <div style={this.props.alertStyle}>No Funds.</div>
           )
@@ -53,9 +53,9 @@ export default class SendTo extends React.Component {
               <div style={{padding:10}}>
                 <Blockie config={{size:20}} address={this.props.sendTo}/>
               </div>
-              <Button size="2" color={"green"} onClick={this.sendingClick.bind(this)}>Send</Button>
+              <Button size="2" color={"green"} onClick={ this.sendingClick.bind(this) }>Send</Button>
               <div style={{marginTop:60}}>
-                <Button size="2" color={"orange"} onClick={()=>{ window.location = "/"}}>
+                <Button size="2" color={"orange"} onClick={ () => { window.location = "/"}}>
                   Cancel
                 </Button>
               </div>

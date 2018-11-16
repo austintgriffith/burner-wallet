@@ -26,8 +26,7 @@ export default class CopyDisplay extends React.Component {
                  this.props.setCopiedPrivate(false);
                },3000)
              }}>
-             <Button size="2" color={"orange"} onClick={()=>{
-               }}>
+             <Button size="2" color={"orange"} onClick={() => { }}>
                {copiedPrivateText}
              </Button>
            </CopyToClipboard>
