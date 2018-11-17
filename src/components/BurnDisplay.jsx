@@ -1,10 +1,29 @@
 import React from 'react';
 import { Button } from "dapparatus";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
 
 export default class BurnDisplay extends React.Component {
     constructor(props) {
       super(props);
     }
+
+    submit = () => {
+      confirmAlert({
+        title: 'Confirm to submit',
+        message: 'Burn Baby Burn?',
+        buttons: [
+          {
+            label: 'Yes',
+            onClick: () => { this.props.burnMetaAccount(); }
+
+          },
+          {
+            label: 'No'
+          }
+        ]
+      })
+    };
 
     render() {
       let burnDisplay = "";
@@ -23,7 +42,7 @@ export default class BurnDisplay extends React.Component {
                if(this.props.balance > 0.1){
                  alert("Can't burn a key that holds $0.10")
                }else{
-                 this.props.burnMetaAccount()
+                 this.submit();
                }
                }}>
                Burn Private Key
