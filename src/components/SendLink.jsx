@@ -10,7 +10,16 @@ export default class SendLink extends React.Component {
     }
 
     render() {
-      let url = window.location.protocol + "//" + window.location.hostname;
+
+
+      let port = window.location.port
+      if(port && port!="80"){
+        port=":"+port
+      }else{
+        port=""
+      }
+
+      let url = window.location.protocol + "//" + window.location.hostname+port;
       let element = "";
       let qrValue = url + "/" + this.props.sendLink + ";" + this.props.sendKey;
       let extraDisplay = "";

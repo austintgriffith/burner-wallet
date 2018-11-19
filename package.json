@@ -4,9 +4,9 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
-    "clevis": "0.0.104",
+    "clevis": "0.0.105",
     "cors": "^2.8.4",
-    "dapparatus": "^1.0.40",
+    "dapparatus": "^1.0.42",
     "dotenv": "^6.1.0",
     "express": "^4.16.4",
     "helmet": "^3.14.0",
