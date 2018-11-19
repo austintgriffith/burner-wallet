@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Dapparatus, Metamask, Gas, ContractLoader, Transactions, Events, Scaler, Blockie, Address, Button } from "dapparatus"
+import { Dapparatus, Gas, ContractLoader, Transactions } from "dapparatus";
 import Web3 from 'web3';
-import QRCodeScanner from "./QRCodeScanner.js"
-import {CopyToClipboard} from 'react-copy-to-clipboard';
-import ReactLoading from 'react-loading';
 import axios from 'axios';
+
+import HostName from './components/HostName';
+import Scanner from './components/Scanner';
+import BalanceDisplay from './components/BalanceDisplay';
+import Claimed from './components/Claimed';
+import ClaimId from './components/ClaimId';
+import SendLink from './components/SendLink';
+import SendWithLink from './components/SendWithLink';
+import SendTo from './components/SendTo';
+import Main from './components/Main';
 
 import eth from './ethereum.png';
 
-var QRCode = require('qrcode.react');
-let WEB3_PROVIDER = 'http://0.0.0.0:8545'
+let WEB3_PROVIDER = 'http://0.0.0.0:8545';
 
 let CLAIM_RELAY = 'http://0.0.0.0:18462'
 
@@ -42,53 +48,57 @@ class App extends Component {
       copiedLink:false,
     }
   }
-  handleInput(e){
+
+  handleInput = (e) => {
+    console.log("HAndle inout test" + e.target.name)
     let update = {}
-    if(e.target.name=="sendToInput"){
-      if(e.target.value.length==42){
-        window.location = "/"+e.target.value
+    if(e.target.name === "sendToInput"){
+      if(e.target.value.length === 42){
+        window.location = "/" + e.target.value
       }
     }
     update[e.target.name] = e.target.value
     this.setState(update)
   }
-  onQRCodeValidate(location){
-    console.log("onQRCodeValidate",location)
-    if(location.indexOf("http")>=0){
-      //we are good this is already an http address
-      window.location = location
-    } else {
-      //maybe they just scanned an address?
-      window.location = "/"+location
-    }
-  }
-  onQRCodeError(a,b){
-    console.log("onQRCodeError",a,b)
-    //this.setState({scanning:!this.state.scanning})
-  }
-  onQRCodeScan(location){
-    //THIS DOESN:T SEEM TO EVER GET CALLED
-    //BUT I HAVE IT HERE JUST IN CASE ? IDK
-    console.log("onQRCodeScan",location)
-    if(location.indexOf("http")>=0){
-      //we are good this is already an http address
-      window.location = location
-    } else {
-      //maybe they just scanned an address?
-      window.location = "/"+location.replace("Ethereum:","")
-    }
 
+  setCopiedLink = (isCopied) => {
+    this.setState({copiedLink: isCopied});
   }
-  toggleQRCodeScanner(){
-    console.log("toggleQRCodeScanner")
-    this.setState({scanning:!this.state.scanning})
+
+  setSending = (isSending) => {
+    this.setState({sending: isSending});
   }
+
+  setSendInfo = (randomHash, privateKey) => {
+    this.setState({
+      sendLink: randomHash,
+      sendKey: privateKey
+    })
+  }
+
+  setCopied = (isCopied) => {
+    this.setState({copied: isCopied});
+  }
+
+  setScanning = (isScanning) => {
+    console.log('Set scanning: ' + isScanning);
+    this.setState({scanning: isScanning});
+  }
+
+  setSendWithLink = (sendWithLink) => {
+    this.setState({sendWithLink: sendWithLink});
+  }
+
+  setCopiedPrivate = (isCopiedPrivate) => {
+    this.setState({copiedPrivate: isCopiedPrivate});
+  }
+
   componentDidMount(){
     if(window.location.pathname){
-      if(window.location.pathname.length==43){
+      if(window.location.pathname.length === 43){
         let account = window.location.pathname.substring(1)
         this.setState({sendTo:account})
-      }else if(window.location.pathname.length==134){
+      }else if(window.location.pathname.length === 134){
         let parts = window.location.pathname.split(";")
 
         let claimId = parts[0].replace("/","")
@@ -96,21 +106,83 @@ class App extends Component {
         console.log("DO CLAIM",claimId,claimKey)
 
         this.setState({claimId,claimKey})
-      }/*else{
-        alert(window.location.pathname.length)
-      }*/
+      }
     }
   }
+
+  checkClaim(tx, contracts){
+   //check if we are trying to claim
+   if(this.state.claimId && this.state.claimKey){
+     if(this.state.balance > 0.005){
+       this.chainClaim(tx, contracts);
+     }else{
+       this.relayClaim();
+     }
+   }
+  }
+
+  chainClaim(tx, contracts){
+     console.log("DOING CLAIM ONCHAIN", this.state.claimId, this.state.claimKey, this.state.account);
+     this.setState({sending:true})
+
+     let hashOfDestination = this.state.web3.utils.sha3(this.state.account)
+     console.log("hashOfDestination",hashOfDestination)
+     console.log("this.state.claimKey",this.state.claimKey)
+     let sig = this.state.web3.eth.accounts.sign(hashOfDestination, this.state.claimKey);
+     sig = sig.signature;
+     console.log("CLAIM TX:",this.state.claimId, sig, this.state.account)
+     tx(contracts.Links.claim(this.state.claimId, sig, this.state.account), 100000, false, 0, (result) => {
+       if(result){
+         console.log("CLAIMED!!!", result)
+         this.setState({claimed: true})
+         setTimeout(() => {
+           this.setState({sending: false}, () => {
+             //alert("DONE")
+             window.location = "/"
+           })
+         }, 2000)
+       }
+     })
+  }
+
+  relayClaim(){
+     console.log("DOING CLAIM THROUGH RELAY")
+
+     let hashOfDestination = this.state.web3.utils.sha3(this.state.account)
+     console.log("hashOfDestination", hashOfDestination)
+     console.log("this.state.claimKey", this.state.claimKey)
+     let sig = this.state.web3.eth.accounts.sign(hashOfDestination, this.state.claimKey);
+     sig = sig.signature
+     console.log("CLAIM TX:", this.state.claimId,sig, this.state.account)
+
+     this.setState({sending:true})
+     let postData = {
+       id:this.state.claimId,
+       sig:sig,
+       dest:this.state.account
+     }
+     console.log("CLAIM_RELAY:", CLAIM_RELAY)
+     axios.post(CLAIM_RELAY + "/link", postData, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }).then((response)=>{
+        console.log("TX RESULT", response.data.transactionHash)
+        this.setState({claimed: true})
+        setTimeout(()=>{
+          this.setState({sending: false}, () => {
+            //alert("DONE")
+            window.location = "/"
+          })
+        }, 2000)
+      })
+      .catch((error)=>{
+        console.log(error);
+      });
+  }
   render() {
-    let {web3,account,contracts,tx,gwei,block,avgBlockTime,etherscan} = this.state
-    let connectedDisplay = []
-    let contractsDisplay = []
-
-    let url = window.location.protocol+"//"+window.location.hostname
-
-    if(window.location.port&&window.location.port!=80&&window.location.port!=443){
-      url = url+":"+window.location.port
-    }
+    let {web3,account,contracts,tx,gwei,block,avgBlockTime,etherscan} = this.state;
+    let connectedDisplay = [];
 
     let moneytype = (
       <img style={{maxHeight:30,verticalAlign:"middle"}} src={eth}/>
@@ -119,8 +191,8 @@ class App extends Component {
       moneytype="$"
     }
 
-
     if(web3){
+
       connectedDisplay.push(
        <Gas
          key="Gas"
@@ -133,371 +205,47 @@ class App extends Component {
          config={{gasBoostPrice:0.15}}
        />
       )
+
+      let sending = this.state.sending;
+      let scanning = this.state.scanning;
+      let balance = this.state.balance;
+      let network = this.state.network;
+      let claimed = this.state.claimed;
+      let claimId = this.state.claimId;
+      let sendLink = this.state.sendLink;
+      let sendKey = this.state.sendKey;
+      let copiedLink = this.state.copiedLink;
+      let sendWithLink = this.state.sendWithLink;
+      let amount = this.state.amount;
+      let sendTo = this.state.sendTo;
+      let send = this.state.send;
+      let copied = this.state.copied;
+      let sendToInput = this.state.sendToInput;
+      let metaAccount = this.state.metaAccount;
+      let copiedPrivate = this.state.copiedPrivate;
+      let burnMetaAccount = this.state.burnMetaAccount;
+
       if(this.state.scanning){
-        connectedDisplay.push(
-          <QRCodeScanner
-            onValidate={this.onQRCodeValidate.bind(this)}
-            onError={this.onQRCodeError.bind(this)}
-            onScan={this.onQRCodeScan.bind(this)}
-            onClose={this.toggleQRCodeScanner.bind(this)}
-          />
-        )
-      }else{
-        let loaderBar = ""
-        let uiopacity = 1.0
-
-        if(this.state.sending){
-          loaderBar = (
-            <div style={{opacity:0.5,position:"absolute",top:"-20%",left:0,width:"100%"}}>
-              <ReactLoading type={"cubes"} color={"#38a5d8"} width={"100%"} />
-            </div>
-          )
-          uiopacity=0.5
-        }
-
+        connectedDisplay.push(<Scanner setQrIsScanning={this.setScanning} scanning={scanning} web3={web3}/>);
+      }
+      else{
         let alertStyle = {border:"1px solid #cccccc",padding:20,background:"#666666",color:"#bbbbbb",clear: "both",width:'100%',textAlign:'center',margin:'100 auto !important'}
 
-        let balanceDisplay  = this.state.balance //Math.round(this.state.balance*100,2)/100
-        if(balanceDisplay){
-          balanceDisplay = balanceDisplay.toFixed(2)
-        }else{
-          balanceDisplay = "0.00"
-        }
-        if(this.state.network == "xDai" || this.state.network == "Unknown" ){
-          connectedDisplay.push(
-            <div style={{clear:'both',borderTop:"1px solid #cccccc"}}>
-              <div style={{width:"100%",marginLeft:-12,textAlign:"center",fontSize:70,letterSpacing:-2,padding:10,marginBottom:5,marginBottom:5}}>
-                {moneytype}{balanceDisplay}
-              </div>
-            </div>
-          )
-        }else{
-          connectedDisplay.push(
-            <div style={{clear:'both',border:"1px solid #ffeeee",backgroundColor:"#eedddd",padding:40}}>
-              <div style={{width:"100%",color:"#665555",marginLeft:-12,textAlign:"center",fontSize:20,padding:10,marginBottom:5,marginBottom:5}}>
-                {"Wrong Network: Please use 'Custom RPC' endpoint: https://dai.poa.network"}
-              </div>
-            </div>
-          )
-        }
-
-
+        connectedDisplay.push(<BalanceDisplay web3={web3} balance={balance} network={network} moneytype={moneytype}/>);
         if(this.state.claimed){
-          connectedDisplay.push(
-            <div key={"claimedui"} style={{clear:'both',borderTop:"1px solid #cccccc",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
-              Claimed!!!
-            </div>
-          )
+          connectedDisplay.push(<Claimed claimed={claimed}/>);
         }else if(this.state.claimId){
-          connectedDisplay.push(
-            <div key={"claimui"} style={{clear:'both',borderTop:"1px solid #cccccc",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
-              Claiming {this.state.claimId}...
-            </div>
-          )
+          connectedDisplay.push(<ClaimId claimId={claimId}/>);
         }else if(this.state.sendLink){
-          let qrValue = url+"/"+this.state.sendLink+";"+this.state.sendKey
-
-          let extraDisplay = ""
-          if(this.state.copiedLink){
-            extraDisplay="Copied Link!"
-          }
-
-          connectedDisplay.push(
-            <div key={"sendwithlinkui"} style={{clear:'both',borderTop:"1px solid #cccccc",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
-              <CopyToClipboard text={qrValue}
-               onCopy={() => {
-                 this.setState({copiedLink: true})
-                 setTimeout(()=>{
-                   this.setState({copiedLink: false})
-                 },3000)
-               }}>
-                <div style={{textAlign:"center",cursor:'pointer'}}>
-                   <div>
-                     Click to copy link:
-                   </div>
-
-                   <div style={{wordWrap:'break-word',fontSize:14,width:'80%',border:'1px solid #ededed',paddingLeft:"10%",paddingRight:"10%",paddingTop:"15",paddingBottom:"15",backgroundColor:"#dfdfdf",margin:'0 auto !important'}}>
-                     {qrValue}
-                   </div>
-                   {extraDisplay}
-                   <Scaler config={{startZoomAt:400}}>
-                    <QRCode value={qrValue} size={300} />
-                   </Scaler>
-                 </div>
-              </CopyToClipboard>
-              <Button size="2" color={"blue"} onClick={()=>{
-                window.location = "/"
-                }}>
-                Done
-              </Button>
-            </div>
-          )
+          connectedDisplay.push(<SendLink sendLink={sendLink} sendKey={sendKey} copiedLink={copiedLink} setCopiedLink={this.setCopiedLink}/>);
         }else if(this.state.sendWithLink){
-
-          if(this.state.balance<=0){
-            connectedDisplay.push(
-              <div style={alertStyle}>
-                No Funds.
-              </div>
-            )
-            setTimeout(()=>{
-              window.location = "/"
-            },1000)
-          }
-
-          connectedDisplay.push(
-            <div key={"sendwithlinkui"} style={{clear:'both',borderTop:"1px solid #cccccc",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
-              {loaderBar}
-             <div style={{padding:10,opacity:uiopacity}}>
-
-             <div>send</div>
-                <div>
-
-                {moneytype}<input
-              style={{fontSize:30,verticalAlign:"middle",width:90,margin:6,padding:5,border:'2px solid #ccc',borderRadius:5}}
-              type="text" name="amount" value={this.state.amount} onChange={this.handleInput.bind(this)}
-          /></div>
-
-               <Button size="2" color={"green"} onClick={()=>{
-                  this.setState({sending:true})
-                  let randomHash = this.state.web3.utils.sha3(""+Math.random())
-
-                  let randomWallet = this.state.web3.eth.accounts.create()
-                  let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
-
-                  console.log("randomHash",randomHash)
-                  console.log("randomWallet",randomWallet)
-                  console.log("sig",sig.signature)
-
-
-                  console.log("~~~ RAND:",randomHash,randomHash.length)
-                  tx(contracts.Links.send(randomHash,sig.signature),140000,false,this.state.amount*10**18,async ()=>{
-                    this.setState({sending:false,sendLink:randomHash,sendKey:randomWallet.privateKey})
-                  })
-                 }}>
-                 Send
-               </Button>
-               <div style={{marginTop:60}}>
-                 <Button size="2" color={"orange"} onClick={()=>{
-                    window.location = "/"
-                   }}>
-                   Cancel
-                 </Button>
-               </div>
-             </div>
-            </div>
-          )
-
-
+          connectedDisplay.push(<SendWithLink sendWithLink={sendWithLink} alertStyle={alertStyle} sending={sending} moneytype={moneytype} setSending={this.setSending} web3={web3} tx={tx} contracts={contracts} amount={amount} setSendInfo={this.setSendInfo} handleInput={this.handleInput} balance={balance}/>);
         }else if(this.state.sendTo){
-
-          if(this.state.balance<=0){
-            connectedDisplay.push(
-              <div style={alertStyle}>
-                No Funds.
-              </div>
-            )
-            setTimeout(()=>{
-              window.location = "/"
-            },1000)
-          }
-
-          connectedDisplay.push(
-            <div key={"mainui"} style={{clear:'both',borderTop:"1px solid #cccccc",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
-              {loaderBar}
-             <div style={{padding:10,opacity:uiopacity}}>
-
-             <div>send</div>
-                <div>
-
-                {moneytype}<input
-              style={{fontSize:30,verticalAlign:"middle",width:90,margin:6,padding:5,border:'2px solid #ccc',borderRadius:5}}
-              type="text" name="amount" value={this.state.amount} onChange={this.handleInput.bind(this)}
-          /></div>
-          <div>to</div>
-               <div style={{padding:10}}><Blockie
-                config={{size:20}}
-                address={this.state.sendTo}
-               /></div>
-               <Button size="2" color={"green"} onClick={()=>{
-                  this.setState({sending:true})
-                   //alert("Sending "+this.state.amount+" to "+this.state.sendTo)
-                   this.state.send(this.state.sendTo,this.state.amount,(result,e)=>{
-                     if(result){
-                       this.setState({sending:false},()=>{
-                         //alert("DONE")
-                         window.location = "/"
-                       })
-                     }
-                   })
-                 }}>
-                 Send
-               </Button>
-               <div style={{marginTop:60}}>
-                 <Button size="2" color={"orange"} onClick={()=>{
-                    window.location = "/"
-                   }}>
-                   Cancel
-                 </Button>
-               </div>
-             </div>
-            </div>
-          )
-
+          connectedDisplay.push(<SendTo sendTo={sendTo} alertStyle={alertStyle} sending={sending} moneytype={moneytype} amount={amount} handleInput={this.handleInput} send={send} balance={balance} setSending={this.setSending}/>);
         }else{
-
-          let qrValue = url+"/"+this.state.account
-
-          let qrDisplay = this.state.account
-          if(this.state.copied){
-            qrDisplay="Copied Address!"
-          }
-
-          let sentToDisplay = (
-            <div>
-              <div>send to address:</div>
-              <input
-                  style={{verticalAlign:"middle",width:280,margin:6,maxHeight:20,padding:5,border:'2px solid #ccc',borderRadius:5}}
-                  type="text" name="sendToInput" value={this.state.sendToInput} onChange={this.handleInput.bind(this)}
-              />
-            </div>
-          )
-
-          let bridgeButton = ""
-
-          if(window.location.hostname.indexOf("xdai")>=0||window.location.hostname.indexOf("localhost")>=0){
-            bridgeButton = (
-              <div>
-              <Button size="2" color={"blue"} onClick={()=>{
-                window.location = "https://dai-bridge.poa.network"
-                }}>
-                xDai Bridge
-              </Button>
-              </div>
-            )
-          }
-
-          let copyDisplay = ""
-          let burnDisplay = ""
-          if(this.state.metaAccount){
-            console.log("this.state.metaAccount",this.state.metaAccount.privateKey)
-            let copiedPrivateText = "Copy Private Key"
-            if(this.state.copiedPrivate){
-              copiedPrivateText = "Copied Private Key"
-            }
-            copyDisplay = (
-              <div >
-              <CopyToClipboard text={this.state.metaAccount.privateKey}
-                 onCopy={() => {
-                   this.setState({copiedPrivate: true})
-                   setTimeout(()=>{
-                     this.setState({copiedPrivate: false})
-                   },3000)
-                 }}>
-                 <Button size="2" color={"orange"} onClick={()=>{
-                   }}>
-                   {copiedPrivateText}
-                 </Button>
-               </CopyToClipboard>
-              </div>
-            )
-
-            burnDisplay = (
-              <div>
-               <div>
-                 <Button size="2" color={"red"} onClick={()=>{
-                   if(this.state.balance>0.1){
-                     alert("Can't burn a key that holds $0.10")
-                   }else{
-                     this.state.burnMetaAccount()
-                   }
-                   }}>
-                   Burn Private Key
-                 </Button>
-               </div>
-              </div>
-            )
-          }
-
-          let dividerStyle = {padding:40,borderTop:"1px solid #dddddd"}
-
-
-
-          connectedDisplay.push(
-            <div key={"mainui"} style={{clear: "both",width:'100%',textAlign:'center',margin:'0 auto !important'}}>
-
-            <div style={dividerStyle}>
-              <CopyToClipboard text={this.state.account}
-                 onCopy={() => {
-                   this.setState({copied: true})
-                   setTimeout(()=>{
-                     this.setState({copied: false})
-                   },3000)
-                 }}>
-                 <div style={{cursor:"pointer"}}>
-                 <Scaler config={{startZoomAt:400}}>
-                   <QRCode value={qrValue} size={300} />
-                 </Scaler>
-                 <div style={{fontSize:13}}>
-                   {qrDisplay}
-                 </div>
-
-                 </div>
-               </CopyToClipboard>
-             </div>
-
-             <div style={dividerStyle}>
-
-                 <Button color={"green"} size="2" onClick={()=>{
-                     this.setState({scanning:true})
-                   }}>
-                   Send with Scan
-                 </Button>
-
-             </div>
-
-
-             <div style={dividerStyle}>
-
-                 <Button color={"green"} size="2" onClick={()=>{
-                     this.setState({sendWithLink:true})
-                   }}>
-                   Send with Link
-                 </Button>
-
-             </div>
-
-
-             <div style={dividerStyle}>
-              {sentToDisplay}
-             </div>
-
-             <div style={dividerStyle}>
-              {bridgeButton}
-             </div>
-
-             <div style={dividerStyle}>
-              {copyDisplay}
-             </div>
-
-             <div style={dividerStyle}>
-              {burnDisplay}
-             </div>
-
-             <div style={dividerStyle}>
-               <div style={{marginTop:200,marginBottom:100}}>
-                 <Button size="2" color={"yellow"} onClick={()=>{
-                   window.location = "https://github.com/austintgriffith/burner-wallet"
-                   }}>
-                   Learn More
-                 </Button>
-               </div>
-             </div>
-            </div>
-          )
+          connectedDisplay.push(<Main setCopied={this.setCopied} setScanning={this.setScanning} setSendWithLink={this.setSendWithLink} account={account} copied={copied} sendToInput={sendToInput} handleInput={this.handleInput} metaAccount={metaAccount} setCopiedPrivate={this.setCopiedPrivate} copiedPrivate={this.copiedPrivate} balance={balance} burnMetaAccount={burnMetaAccount}/>);
         }
       }
-
 
       connectedDisplay.push(
         <ContractLoader
@@ -506,74 +254,15 @@ class App extends Component {
          web3={web3}
          require={path => {return require(`${__dirname}/${path}`)}}
          onReady={(contracts,customLoader)=>{
-           console.log("contracts loaded",contracts)
-           this.setState({contracts:contracts},async ()=>{
-             console.log("Contracts Are Ready:",this.state.contracts)
-             //check if we are trying to claim
-             if(this.state.claimId&&this.state.claimKey){
-               if(this.state.balance>0.005){
-                 console.log("DOING CLAIM ONCHAIN",this.state.claimId,this.state.claimKey,this.state.account)
-                 this.setState({sending:true})
-
-                 let hashOfDestination = this.state.web3.utils.sha3(this.state.account)
-                 console.log("hashOfDestination",hashOfDestination)
-                 console.log("this.state.claimKey",this.state.claimKey)
-                 let sig = this.state.web3.eth.accounts.sign(hashOfDestination,this.state.claimKey);
-                 sig = sig.signature
-                 console.log("CLAIM TX:",this.state.claimId,sig,this.state.account)
-                 tx(contracts.Links.claim(this.state.claimId,sig,this.state.account),100000,false,0,(result)=>{
-                   if(result){
-                     console.log("CLAIMED!!!",result)
-                     this.setState({claimed:true})
-                     setTimeout(()=>{
-                       this.setState({sending:false},()=>{
-                         //alert("DONE")
-                         window.location = "/"
-                       })
-                     },2000)
-                   }
-                 })
-
-               }else{
-                 console.log("DOING CLAIM THROUGH RELAY")
-
-                 let hashOfDestination = this.state.web3.utils.sha3(this.state.account)
-                 console.log("hashOfDestination",hashOfDestination)
-                 console.log("this.state.claimKey",this.state.claimKey)
-                 let sig = this.state.web3.eth.accounts.sign(hashOfDestination,this.state.claimKey);
-                 sig = sig.signature
-                 console.log("CLAIM TX:",this.state.claimId,sig,this.state.account)
-
-                 this.setState({sending:true})
-                 let postData = {
-                   id:this.state.claimId,
-                   sig:sig,
-                   dest:this.state.account
-                 }
-                 console.log("CLAIM_RELAY:",CLAIM_RELAY)
-                 axios.post(CLAIM_RELAY+"/link", postData, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                  }).then((response)=>{
-                    console.log("TX RESULT",response.data.transactionHash)
-                    this.setState({claimed:true})
-                    setTimeout(()=>{
-                      this.setState({sending:false},()=>{
-                        //alert("DONE")
-                        window.location = "/"
-                      })
-                    },2000)
-                  })
-                  .catch((error)=>{
-                    console.log(error);
-                  });
-               }
-             }
+           console.log("contracts loaded", contracts)
+           this.setState({contracts: contracts}, async() => {
+             console.log("Contracts Are Ready:", this.state.contracts)
+             this.checkClaim(tx, contracts);
            })
          }}
         />
       )
+
       connectedDisplay.push(
         <Transactions
           key="Transactions"
@@ -586,7 +275,7 @@ class App extends Component {
           etherscan={etherscan}
           metaAccount={this.state.metaAccount}
           onReady={(state)=>{
-            console.log("Transactions component is ready:",state)
+            console.log("Transactions component is ready:", state)
             this.setState(state)
 
           }}
@@ -618,14 +307,10 @@ class App extends Component {
            }
          }}
         />
-        <div style={{cursor:"pointer",position:'absolute',left:5,top:0,letterSpacing:-0.8,fontSize:50}}
-          onClick={()=>{window.location = "/"}}
-        >
-          {window.location.hostname}
-        </div>
+        <HostName/>
 
         {connectedDisplay}
-        {contractsDisplay}
+
       </div>
     );
   }
