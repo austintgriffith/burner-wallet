@@ -5,16 +5,24 @@ import LoaderBar from './LoaderBar';
 export default class RequestReceive extends React.Component {
     constructor(props) {
       super(props);
-      this.state = {value: '0'};
-      this.handleChange = this.handleChange.bind(this);
+      this.state = {
+        amount: '0',
+        message: 'Gimme Gimme Gimme'
+      };
+      this.handleAmountChange = this.handleAmountChange.bind(this);
+      this.handleMessageChange = this.handleMessageChange.bind(this);
     }
 
-    handleChange(event) {
-      this.setState({value: event.target.value});
+    handleAmountChange(event) {
+      this.setState({amount: event.target.value});
+    }
+
+    handleMessageChange(event) {
+      this.setState({message: event.target.value});
     }
 
     sendingClick(event){
-      console.log("CLICK")
+      this.props.setReceiveInfo(this.state.amount, this.props.account, this.state.message);
     }
 
     render() {
@@ -31,9 +39,17 @@ export default class RequestReceive extends React.Component {
               <div style={{marginTop:20}}>
                 Amount ({this.props.moneytype}):<input
                 style={{fontSize:30, verticalAlign:"middle", width:90, margin:6, padding:5, border:'2px solid #ccc', borderRadius:5}}
-                type="text" name="amount" value={this.state.value} onChange={this.handleChange}
+                type="text" name="amount" value={this.state.amount} onChange={this.handleAmountChange}
                 />
               </div>
+
+              <div style={{marginTop:20}}>
+                Message:<input
+                style={{fontSize:30, verticalAlign:"middle", width:90, margin:6, padding:5, border:'2px solid #ccc', borderRadius:5}}
+                type="text" name="message" value={this.state.message} onChange={this.handleMessageChange}
+                />
+              </div>
+
               <div style={{marginTop:20}}>
                 To Account:
                 <Blockie config={{size:4}} address={this.props.account}/>
