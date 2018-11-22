@@ -13,6 +13,7 @@ import SendLink from './components/SendLink';
 import SendWithLink from './components/SendWithLink';
 import SendTo from './components/SendTo';
 import Main from './components/Main';
+import RequestReceive from './components/RequestReceive';
 
 import eth from './ethereum.png';
 
@@ -91,6 +92,10 @@ class App extends Component {
 
   setCopiedPrivate = (isCopiedPrivate) => {
     this.setState({copiedPrivate: isCopiedPrivate});
+  }
+
+  setRequestReceive = (requestReceive) => {
+    this.setState({requestReceive: requestReceive});
   }
 
   componentDidMount(){
@@ -224,6 +229,8 @@ class App extends Component {
       let metaAccount = this.state.metaAccount;
       let copiedPrivate = this.state.copiedPrivate;
       let burnMetaAccount = this.state.burnMetaAccount;
+      let requestReceive = this.state.requestReceive;
+      let account = this.state.account;
 
       if(this.state.scanning){
         connectedDisplay.push(<Scanner setQrIsScanning={this.setScanning} scanning={scanning} web3={web3}/>);
@@ -242,8 +249,10 @@ class App extends Component {
           connectedDisplay.push(<SendWithLink sendWithLink={sendWithLink} alertStyle={alertStyle} sending={sending} moneytype={moneytype} setSending={this.setSending} web3={web3} tx={tx} contracts={contracts} amount={amount} setSendInfo={this.setSendInfo} handleInput={this.handleInput} balance={balance}/>);
         }else if(this.state.sendTo){
           connectedDisplay.push(<SendTo sendTo={sendTo} alertStyle={alertStyle} sending={sending} moneytype={moneytype} amount={amount} handleInput={this.handleInput} send={send} balance={balance} setSending={this.setSending}/>);
+        }else if(this.state.requestReceive){
+          connectedDisplay.push(<RequestReceive requestReceive={requestReceive} moneytype={moneytype} amount={amount} setSendInfo={this.setSendInfo} handleInput={this.handleInput} balance={balance} account={account}/>);
         }else{
-          connectedDisplay.push(<Main setCopied={this.setCopied} setScanning={this.setScanning} setSendWithLink={this.setSendWithLink} account={account} copied={copied} sendToInput={sendToInput} handleInput={this.handleInput} metaAccount={metaAccount} setCopiedPrivate={this.setCopiedPrivate} copiedPrivate={this.copiedPrivate} balance={balance} burnMetaAccount={burnMetaAccount}/>);
+          connectedDisplay.push(<Main setCopied={this.setCopied} setScanning={this.setScanning} setSendWithLink={this.setSendWithLink} account={account} copied={copied} sendToInput={sendToInput} handleInput={this.handleInput} metaAccount={metaAccount} setCopiedPrivate={this.setCopiedPrivate} copiedPrivate={this.copiedPrivate} balance={balance} burnMetaAccount={burnMetaAccount} setRequestReceive={this.setRequestReceive}/>);
         }
       }
 
