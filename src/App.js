@@ -48,6 +48,7 @@ class App extends Component {
       amount:0.01,
       copiedPrivate:false,
       copiedLink:false,
+      requestMessage: false
     }
   }
 
@@ -111,26 +112,23 @@ class App extends Component {
   componentDidMount(){
     if(window.location.pathname){
 
-      console.log("JGS TEST")
-      console.log(window.location.pathname);
-
       if(window.location.pathname.indexOf('/receive_request/') !== -1){
-        console.log("SETTING SEND DETAILS");
-        let parts = window.location.pathname.replace('/receive_request/','').split(";")
+        let parts = window.location.pathname.replace('/receive_request/','').split(";")               // Used when a request payment link is received
         let amount = parts[0];
         let address = parts[1];
         let message = decodeURI(parts[2]);
 
-        console.log(amount)
-        console.log(address)
-        console.log(message)
+        this.setState({
+          amount: amount,                                                                             // So the requested amount is displayed in SendTo component
+          sendTo: address,                                                                            // Once this is set it triggers the SendTo component to display
+          requestMessage: message
+        });
       }
-
-      if(window.location.pathname.length === 43){
-        let account = window.location.pathname.substring(1)
-        this.setState({sendTo:account})
+      else if(window.location.pathname.length === 43){
+        let account = window.location.pathname.substring(1);                                          // Used when 'send to address' input is populate with address
+        this.setState({sendTo:account});
       }else if(window.location.pathname.length === 134){
-        let parts = window.location.pathname.split(";")
+        let parts = window.location.pathname.split(";")                                                 // Used when a link to claim eth is used
 
         let claimId = parts[0].replace("/","")
         let claimKey = parts[1]
@@ -260,6 +258,7 @@ class App extends Component {
       let receiveAmount = this.state.receiveAmount;
       let receiveAddress = this.state.receiveAddress;
       let receiveMessage = this.state.receiveMessage;
+      let requestMessage = this.state.requestMessage;
 
       if(this.state.scanning){
         connectedDisplay.push(<Scanner setQrIsScanning={this.setScanning} scanning={scanning} web3={web3}/>);
@@ -277,7 +276,7 @@ class App extends Component {
         }else if(this.state.sendWithLink){
           connectedDisplay.push(<SendWithLink sendWithLink={sendWithLink} alertStyle={alertStyle} sending={sending} moneytype={moneytype} setSending={this.setSending} web3={web3} tx={tx} contracts={contracts} amount={amount} setSendInfo={this.setSendInfo} handleInput={this.handleInput} balance={balance}/>);
         }else if(this.state.sendTo){
-          connectedDisplay.push(<SendTo sendTo={sendTo} alertStyle={alertStyle} sending={sending} moneytype={moneytype} amount={amount} handleInput={this.handleInput} send={send} balance={balance} setSending={this.setSending}/>);
+          connectedDisplay.push(<SendTo sendTo={sendTo} alertStyle={alertStyle} sending={sending} moneytype={moneytype} amount={amount} handleInput={this.handleInput} send={send} balance={balance} setSending={this.setSending} requestMessage={requestMessage}/>);
         }else if(this.state.receiveAmount){
           connectedDisplay.push(<ReceiveLink sendLink={sendLink} sendKey={sendKey} copiedLink={copiedLink} setCopiedLink={this.setCopiedLink} receiveAmount={receiveAmount} receiveAddress={receiveAddress} receiveMessage={receiveMessage}/>);
         }else if(this.state.requestReceive){

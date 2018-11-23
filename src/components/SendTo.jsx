@@ -22,6 +22,15 @@ export default class SendTo extends React.Component {
 
     render() {
       let element = [];
+      let requestMessage = this.props.requestMessage;
+
+      let message = "";
+
+      if(requestMessage){
+        message = (
+          <div style={{padding:10}}>Request Message: {requestMessage}</div>
+        )
+      }
 
       let uiopacity = 1.0
       if(this.props.sending){
@@ -50,15 +59,17 @@ export default class SendTo extends React.Component {
               />
             </div>
             <div>to</div>
-              <div style={{padding:10}}>
-                <Blockie config={{size:20}} address={this.props.sendTo}/>
-              </div>
-              <Button size="2" color={"green"} onClick={ this.sendingClick.bind(this) }>Send</Button>
-              <div style={{marginTop:60}}>
-                <Button size="2" color={"orange"} onClick={ () => { window.location = "/"}}>
-                  Cancel
-                </Button>
-              </div>
+            <div style={{padding:10}}>Address: {this.props.sendTo}</div>
+            <div style={{padding:10}}>
+              <Blockie config={{size:20}} address={this.props.sendTo}/>
+            </div>
+
+            {message}
+
+            <Button size="2" color={"green"} onClick={ this.sendingClick.bind(this) }>Send</Button>
+            <div style={{marginTop:60}}>
+              <Button size="2" color={"orange"} onClick={ () => { window.location = "/"}}>Cancel</Button>
+            </div>
             </div>
           </div>
         )
