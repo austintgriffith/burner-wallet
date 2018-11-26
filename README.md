@@ -37,7 +37,7 @@ cd ~;git clone https://github.com/austintgriffith/burner-wallet.git
 
 Then, fire up a Docker container with your environment all prepared for you:
 ```
-docker run -ti --rm --name clevis -p 3000:3000 -p 8545:8545 -p 18462:18462 -v ~/burner-wallet:/dapp austingriffith/clevis:latest
+docker run -e "HTTPS=true" -ti --rm --name clevis -p 3000:3000 -p 8545:8545 -p 18462:18462 -v ~/burner-wallet:/dapp austingriffith/clevis:latest
 ```
 Note: You will be prompted for directories to store things, just use the defaults (hit enter):
 ![image](https://user-images.githubusercontent.com/2653167/48425351-e4997780-e721-11e8-9228-f8e28d69704c.png)
