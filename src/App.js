@@ -13,6 +13,8 @@ import SendLink from './components/SendLink';
 import SendWithLink from './components/SendWithLink';
 import SendTo from './components/SendTo';
 import Main from './components/Main';
+import RequestReceive from './components/RequestReceive';
+import ReceiveLink from './components/ReceiveLink'
 
 import eth from './ethereum.png';
 
@@ -46,6 +48,7 @@ class App extends Component {
       amount:0.01,
       copiedPrivate:false,
       copiedLink:false,
+      requestMessage: false
     }
   }
 
@@ -93,13 +96,39 @@ class App extends Component {
     this.setState({copiedPrivate: isCopiedPrivate});
   }
 
+  setRequestReceive = (requestReceive) => {
+    this.setState({requestReceive: requestReceive});
+  }
+
+  setReceiveInfo = (amount, address, message) => {
+    console.log('Setting Receive')
+    this.setState({
+      receiveAmount: amount,
+      receiveAddress: address,
+      receiveMessage: message
+    });
+  }
+
   componentDidMount(){
     if(window.location.pathname){
-      if(window.location.pathname.length === 43){
-        let account = window.location.pathname.substring(1)
-        this.setState({sendTo:account})
+
+      if(window.location.pathname.indexOf('/receive_request/') !== -1){
+        let parts = window.location.pathname.replace('/receive_request/','').split(";")               // Used when a request payment link is received
+        let amount = parts[0];
+        let address = parts[1];
+        let message = decodeURI(parts[2]);
+
+        this.setState({
+          amount: amount,                                                                             // So the requested amount is displayed in SendTo component
+          sendTo: address,                                                                            // Once this is set it triggers the SendTo component to display
+          requestMessage: message
+        });
+      }
+      else if(window.location.pathname.length === 43){
+        let account = window.location.pathname.substring(1);                                          // Used when 'send to address' input is populate with address
+        this.setState({sendTo:account});
       }else if(window.location.pathname.length === 134){
-        let parts = window.location.pathname.split(";")
+        let parts = window.location.pathname.split(";")                                                 // Used when a link to claim eth is used
 
         let claimId = parts[0].replace("/","")
         let claimKey = parts[1]
@@ -224,6 +253,12 @@ class App extends Component {
       let metaAccount = this.state.metaAccount;
       let copiedPrivate = this.state.copiedPrivate;
       let burnMetaAccount = this.state.burnMetaAccount;
+      let requestReceive = this.state.requestReceive;
+      let account = this.state.account;
+      let receiveAmount = this.state.receiveAmount;
+      let receiveAddress = this.state.receiveAddress;
+      let receiveMessage = this.state.receiveMessage;
+      let requestMessage = this.state.requestMessage;
 
       if(this.state.scanning){
         connectedDisplay.push(<Scanner setQrIsScanning={this.setScanning} scanning={scanning} web3={web3}/>);
@@ -241,9 +276,13 @@ class App extends Component {
         }else if(this.state.sendWithLink){
           connectedDisplay.push(<SendWithLink sendWithLink={sendWithLink} alertStyle={alertStyle} sending={sending} moneytype={moneytype} setSending={this.setSending} web3={web3} tx={tx} contracts={contracts} amount={amount} setSendInfo={this.setSendInfo} handleInput={this.handleInput} balance={balance}/>);
         }else if(this.state.sendTo){
-          connectedDisplay.push(<SendTo sendTo={sendTo} alertStyle={alertStyle} sending={sending} moneytype={moneytype} amount={amount} handleInput={this.handleInput} send={send} balance={balance} setSending={this.setSending}/>);
+          connectedDisplay.push(<SendTo sendTo={sendTo} alertStyle={alertStyle} sending={sending} moneytype={moneytype} amount={amount} handleInput={this.handleInput} send={send} balance={balance} setSending={this.setSending} requestMessage={requestMessage}/>);
+        }else if(this.state.receiveAmount){
+          connectedDisplay.push(<ReceiveLink sendLink={sendLink} sendKey={sendKey} copiedLink={copiedLink} setCopiedLink={this.setCopiedLink} receiveAmount={receiveAmount} receiveAddress={receiveAddress} receiveMessage={receiveMessage}/>);
+        }else if(this.state.requestReceive){
+          connectedDisplay.push(<RequestReceive requestReceive={requestReceive} moneytype={moneytype} amount={amount} setSendInfo={this.setSendInfo} handleInput={this.handleInput} balance={balance} account={account} setReceiveInfo={this.setReceiveInfo}/>);
         }else{
-          connectedDisplay.push(<Main setCopied={this.setCopied} setScanning={this.setScanning} setSendWithLink={this.setSendWithLink} account={account} copied={copied} sendToInput={sendToInput} handleInput={this.handleInput} metaAccount={metaAccount} setCopiedPrivate={this.setCopiedPrivate} copiedPrivate={this.copiedPrivate} balance={balance} burnMetaAccount={burnMetaAccount}/>);
+          connectedDisplay.push(<Main setCopied={this.setCopied} setScanning={this.setScanning} setSendWithLink={this.setSendWithLink} account={account} copied={copied} sendToInput={sendToInput} handleInput={this.handleInput} metaAccount={metaAccount} setCopiedPrivate={this.setCopiedPrivate} copiedPrivate={this.copiedPrivate} balance={balance} burnMetaAccount={burnMetaAccount} setRequestReceive={this.setRequestReceive}/>);
         }
       }
 

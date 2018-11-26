@@ -84,6 +84,12 @@ export default class ClaimId extends React.Component {
            </div>
 
            <div style={dividerStyle}>
+             <Button color={"green"} size="2" onClick={() => this.props.setRequestReceive(true)}>
+               Request A Payment
+             </Button>
+           </div>
+
+           <div style={dividerStyle}>
              <div style={{marginTop:200,marginBottom:100}}>
                <Button size="2" color={"yellow"} onClick={() => {
                  window.location = "https://github.com/austintgriffith/burner-wallet"
