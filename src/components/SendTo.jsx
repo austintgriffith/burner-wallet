@@ -28,7 +28,7 @@ export default class SendTo extends React.Component {
 
       if(requestMessage){
         message = (
-          <div style={{padding:10}}>Request Message: {requestMessage}</div>
+          <div style={{padding:10,fontSize:13}}>{requestMessage}</div>
         )
       }
 
