@@ -16,7 +16,7 @@ export default class ReceiveLink extends React.Component {
         url = url + ":3000";
 
       let element = "";
-      let qrValue = url + "/receive_request/" + this.props.receiveAmount + ";" + this.props.receiveAddress + ";" + encodeURIComponent(this.props.receiveMessage);
+      let qrValue = url + "/receive_request;" + this.props.receiveAmount + ";" + this.props.receiveAddress + ";" + encodeURIComponent(this.props.receiveMessage);
       let extraDisplay = "";
 
       console.log('QrValue: ' + qrValue);

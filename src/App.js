@@ -112,8 +112,8 @@ class App extends Component {
   componentDidMount(){
     if(window.location.pathname){
 
-      if(window.location.pathname.indexOf('/receive_request/') !== -1){
-        let parts = window.location.pathname.replace('/receive_request/','').split(";")               // Used when a request payment link is received
+      if(window.location.pathname.indexOf('/receive_request;') !== -1){
+        let parts = window.location.pathname.replace('/receive_request;','').split(";")               // Used when a request payment link is received
         let amount = parts[0];
         let address = parts[1];
 
