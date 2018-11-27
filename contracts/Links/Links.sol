@@ -13,10 +13,12 @@ contract Links {
     uint64 expires;
   }
   mapping (bytes32 => Fund) public funds;
+  mapping (bytes32 => bool) public claimed;
 
   function send(bytes32 id, bytes sig) public payable returns(bool result){
     //make sure there isnt already a fund here
     require(funds[id].sender==address(0),"Links::send id already exists");
+    require(!claimed[id],"Links::send id already claimed");
     //create hardcoded expires time for now
     uint64 expires = uint64(block.number+10);//expires in 100 blocks
     //create fund
@@ -37,14 +39,17 @@ contract Links {
     //make sure there is fund here
     //make sure it hasn't expired
     require(isClaimValid(id,sig,destination),"Links::claim is not valid");
+    require(!claimed[id],"Links::send id already claimed");
     //send out events for frontend parsing
     Claim(id,funds[id].sender,funds[id].value,destination);
     //save value in temp so we can destory before sending
     uint256 value = funds[id].value;
     //DESTROY object so it can't be claimed again
     delete funds[id];
+    claimed[id] = true;
     //send funds to the destination (receiver)
-    destination.call.value(value).gas(msg.gas)();
+    //destination.call.value(value).gas(msg.gas)();
+    destination.transfer(value);
     return true;
   }
   event Claim(bytes32 id,address indexed sender, uint256 value, address indexed receiver);
