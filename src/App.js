@@ -116,7 +116,13 @@ class App extends Component {
         let parts = window.location.pathname.replace('/receive_request/','').split(";")               // Used when a request payment link is received
         let amount = parts[0];
         let address = parts[1];
-        let message = decodeURI(parts[2]);
+
+        let message = "";
+
+        try{
+          message = decodeURI(parts[2]);
+        }catch(e){}
+
 
         this.setState({
           amount: amount,                                                                             // So the requested amount is displayed in SendTo component
