@@ -157,33 +157,54 @@ class App extends Component {
   }
 
   chainClaim(tx, contracts){
-     console.log("DOING CLAIM ONCHAIN", this.state.claimId, this.state.claimKey, this.state.account);
-     this.setState({sending:true})
+    console.log("DOING CLAIM ONCHAIN", this.state.claimId, this.state.claimKey, this.state.account);
+    this.setState({sending:true})
 
-     let hashOfDestination = this.state.web3.utils.sha3(this.state.account)
-     console.log("hashOfDestination",hashOfDestination)
-     console.log("this.state.claimKey",this.state.claimKey)
-     let sig = this.state.web3.eth.accounts.sign(hashOfDestination, this.state.claimKey);
-     sig = sig.signature;
-     console.log("CLAIM TX:",this.state.claimId, sig, this.state.account)
-     tx(contracts.Links.claim(this.state.claimId, sig, this.state.account), 100000, false, 0, (result) => {
-       if(result){
-         console.log("CLAIMED!!!", result)
-         this.setState({claimed: true})
-         setTimeout(() => {
-           this.setState({sending: false}, () => {
-             //alert("DONE")
-             window.location = "/"
-           })
-         }, 2000)
-       }
-     })
-  }
+    contracts.Links.funds(this.state.claimId).call().then((fund) => {
+     if(fund){
+       this.setState({fund: fund})
+       console.log("FUND: ",fund)
+       
+       let hashOfDestination = this.state.web3.utils.soliditySha3(
+         {type: 'bytes32', value: this.state.claimId}, // fund id
+         {type: 'address', value: this.state.account}, // destination address
+         {type: 'uint256', value: fund[3]}, // nonce
+         {type: 'address', value: contracts.Links._address} // contract address
+         )
+       console.log("hashOfDestination",hashOfDestination)
+       console.log("this.state.claimKey",this.state.claimKey)
+       let sig = this.state.web3.eth.accounts.sign(hashOfDestination, this.state.claimKey);
+       sig = sig.signature;
+       console.log("CLAIM TX:",this.state.claimId, sig, this.state.account)
+       tx(contracts.Links.claim(this.state.claimId, sig, this.state.account), 150000, false, 0, (result) => {
+         if(result){
+           console.log("CLAIMED!!!", result)
+           this.setState({claimed: true})
+           setTimeout(() => {
+             this.setState({sending: false}, () => {
+               //alert("DONE")
+               window.location = "/"
+             })
+           }, 2000)
+         }
+       })
+     }
+   })
+ }
 
-  relayClaim(){
-     console.log("DOING CLAIM THROUGH RELAY")
+ relayClaim(){
+    console.log("DOING CLAIM THROUGH RELAY")
+    this.state.contracts.Links.funds(this.state.claimId).call().then((fund) => {
+       if(fund){
+         this.setState({fund: fund})
+         console.log("FUND: ",fund)
 
-     let hashOfDestination = this.state.web3.utils.sha3(this.state.account)
+     let hashOfDestination = this.state.web3.utils.soliditySha3(
+       {type: 'bytes32', value: this.state.claimId}, // fund id
+       {type: 'address', value: this.state.account}, // destination address
+       {type: 'uint256', value: fund[3]}, // nonce
+       {type: 'address', value: this.state.contracts.Links._address} // contract address
+       )
      console.log("hashOfDestination", hashOfDestination)
      console.log("this.state.claimKey", this.state.claimKey)
      let sig = this.state.web3.eth.accounts.sign(hashOfDestination, this.state.claimKey);
@@ -198,23 +219,26 @@ class App extends Component {
      }
      console.log("CLAIM_RELAY:", CLAIM_RELAY)
      axios.post(CLAIM_RELAY + "/link", postData, {
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      }).then((response)=>{
-        console.log("TX RESULT", response.data.transactionHash)
-        this.setState({claimed: true})
-        setTimeout(()=>{
-          this.setState({sending: false}, () => {
-            //alert("DONE")
-            window.location = "/"
-          })
-        }, 2000)
-      })
-      .catch((error)=>{
-        console.log(error);
-      });
-  }
+         headers: {
+           'Content-Type': 'application/json',
+         }
+       }).then((response)=>{
+         console.log("TX RESULT", response.data.transactionHash)
+         this.setState({claimed: true})
+         setTimeout(()=>{
+           this.setState({sending: false}, () => {
+             //alert("DONE")
+             window.location = "/"
+           })
+         }, 2000)
+       })
+       .catch((error)=>{
+         console.log(error);
+       });
+     }
+   })
+ }
+
   render() {
     let {web3,account,contracts,tx,gwei,block,avgBlockTime,etherscan} = this.state;
     let connectedDisplay = [];
