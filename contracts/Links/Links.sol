@@ -12,6 +12,7 @@ contract Links {
     uint256 public  contractNonce = 1;
     mapping (bytes32 => Fund) public funds;
 
+
     event Send(
         bytes32 id,
         address indexed sender,

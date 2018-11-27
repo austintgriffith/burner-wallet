@@ -39,7 +39,7 @@ class App extends Component {
     this.state = {
       web3: false,
       account: false,
-      gwei: 4,
+      gwei: 1.1,
       doingTransaction: false,
       scanning: false,
       sendTo: false,
@@ -112,11 +112,17 @@ class App extends Component {
   componentDidMount(){
     if(window.location.pathname){
 
-      if(window.location.pathname.indexOf('/receive_request/') !== -1){
-        let parts = window.location.pathname.replace('/receive_request/','').split(";")               // Used when a request payment link is received
+      if(window.location.pathname.indexOf('/receive_request;') !== -1){
+        let parts = window.location.pathname.replace('/receive_request;','').split(";")               // Used when a request payment link is received
         let amount = parts[0];
         let address = parts[1];
-        let message = decodeURI(parts[2]);
+
+        let message = "";
+
+        try{
+          message = decodeURI(parts[2]);
+        }catch(e){}
+
 
         this.setState({
           amount: amount,                                                                             // So the requested amount is displayed in SendTo component
@@ -246,7 +252,7 @@ class App extends Component {
 
     if(web3){
 
-      connectedDisplay.push(
+      /*connectedDisplay.push(
        <Gas
          key="Gas"
          onUpdate={(state)=>{
@@ -257,7 +263,7 @@ class App extends Component {
          }}
          config={{gasBoostPrice:0.15}}
        />
-      )
+     )*/
 
       let sending = this.state.sending;
       let scanning = this.state.scanning;

@@ -68,6 +68,12 @@ export default class ClaimId extends React.Component {
            </div>
 
            <div style={dividerStyle}>
+             <Button color={"green"} size="2" onClick={() => this.props.setRequestReceive(true)}>
+               Request A Payment
+             </Button>
+           </div>
+
+           <div style={dividerStyle}>
             <SentToDisplay sendToInput={sendToInput} handleInput={this.props.handleInput}/>
            </div>
 
@@ -83,11 +89,7 @@ export default class ClaimId extends React.Component {
             <BurnDisplay metaAccount={this.props.metaAccount} copiedPrivate={this.props.copiedPrivate} balance={this.props.balance} burnMetaAccount={this.props.burnMetaAccount}/>
            </div>
 
-           <div style={dividerStyle}>
-             <Button color={"green"} size="2" onClick={() => this.props.setRequestReceive(true)}>
-               Request A Payment
-             </Button>
-           </div>
+
 
            <div style={dividerStyle}>
              <div style={{marginTop:200,marginBottom:100}}>

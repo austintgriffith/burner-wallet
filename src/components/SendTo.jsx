@@ -28,7 +28,7 @@ export default class SendTo extends React.Component {
 
       if(requestMessage){
         message = (
-          <div style={{padding:10}}>Request Message: {requestMessage}</div>
+          <div style={{padding:10,fontSize:13}}>{requestMessage}</div>
         )
       }
 
@@ -59,7 +59,7 @@ export default class SendTo extends React.Component {
               />
             </div>
             <div>to</div>
-            <div style={{padding:10}}>Address: {this.props.sendTo}</div>
+            <div style={{padding:10,fontSize:13}}>{this.props.sendTo}</div>
             <div style={{padding:10}}>
               <Blockie config={{size:20}} address={this.props.sendTo}/>
             </div>
