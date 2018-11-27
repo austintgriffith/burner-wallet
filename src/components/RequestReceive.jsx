@@ -6,7 +6,7 @@ export default class RequestReceive extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        amount: '0',
+        amount: '0.01',
         message: ''
       };
       this.handleAmountChange = this.handleAmountChange.bind(this);

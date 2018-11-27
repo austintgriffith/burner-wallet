@@ -39,7 +39,7 @@ class App extends Component {
     this.state = {
       web3: false,
       account: false,
-      gwei: 4,
+      gwei: 1.1,
       doingTransaction: false,
       scanning: false,
       sendTo: false,
@@ -228,7 +228,7 @@ class App extends Component {
 
     if(web3){
 
-      connectedDisplay.push(
+      /*connectedDisplay.push(
        <Gas
          key="Gas"
          onUpdate={(state)=>{
@@ -239,7 +239,7 @@ class App extends Component {
          }}
          config={{gasBoostPrice:0.15}}
        />
-      )
+     )*/
 
       let sending = this.state.sending;
       let scanning = this.state.scanning;
