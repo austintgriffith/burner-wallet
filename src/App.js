@@ -18,6 +18,8 @@ import ReceiveLink from './components/ReceiveLink'
 
 import eth from './ethereum.png';
 
+// JOHNS BRANCH TEST
+
 let WEB3_PROVIDER = 'http://0.0.0.0:8545';
 
 let CLAIM_RELAY = 'http://0.0.0.0:18462'
@@ -164,7 +166,7 @@ class App extends Component {
      if(fund){
        this.setState({fund: fund})
        console.log("FUND: ",fund)
-       
+
        let hashOfDestination = this.state.web3.utils.soliditySha3(
          {type: 'bytes32', value: this.state.claimId}, // fund id
          {type: 'address', value: this.state.account}, // destination address
