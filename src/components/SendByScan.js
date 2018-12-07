@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import QrReader from "react-qr-reader";
 
-class QRCodeScanner extends Component {
+class SendByScan extends Component {
   state = {
     delay: 500
   };
@@ -23,7 +23,7 @@ class QRCodeScanner extends Component {
   };
   onClose = () => {
     this.stopRecording();
-    this.props.onClose();
+    this.props.goBack();
   };
   componentWillUnmount() {
     this.stopRecording();
@@ -45,4 +45,4 @@ class QRCodeScanner extends Component {
   }
 }
 
-export default QRCodeScanner;
+export default SendByScan;
