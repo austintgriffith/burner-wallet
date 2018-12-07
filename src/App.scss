@@ -1,0 +1,142 @@
+.row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+i.fas {
+  cursor: pointer;
+}
+
+.header {
+  position: relative;
+  color: white;
+  i {
+    font-size: 28px;
+  }
+  span {
+    font-size: 20px;
+    font-weight: 600;
+    font-family: "Arial Rounded MT Bold", sans-serif;
+    margin-left: 10px;
+  }
+  .fa-info-circle {
+    position: absolute;
+    right: 0;
+  }
+  margin-bottom: 25px;
+}
+
+.card {
+  width: 100%;
+  padding: 15px;
+  font-weight: 600;
+  margin: 0;
+  .icons {
+    * {
+      cursor: pointer;
+      margin-left: 16px;
+    }
+    color: #8762A6;
+    font-weight: 800;
+  }
+  margin-bottom: 10px;
+}
+
+.main-card {
+  padding: 15px 0;
+  margin-bottom: 20px;
+  .content {
+    margin: 0 15px;
+  }
+
+  .qr {
+
+    canvas {
+      margin: 0 auto;
+      height: 256px;
+      margin-bottom: 1rem;
+    }
+
+    input {
+      background: white;
+    }
+
+    span {
+      cursor: pointer;
+      background: white;
+      i {
+        color: #8762A6;
+      }
+    }
+  }
+
+  .bridge, .ops {
+    .btn {
+      background-color: #8762A6;
+      color: white;
+      font-weight: 500;
+    }
+  }
+}
+
+.balance {
+  width: 100%;
+  max-height: 60px;
+
+  .avatar {
+    max-width: 60px;
+    margin-right: 10px;
+    canvas {
+      max-width: 60px;
+      max-height: 60px;
+    }
+  }
+
+  span {
+    font-size: 16px;
+    vertical-align: top;
+  }
+
+  div {
+    font-weight: 500;
+    font-size: 34px;
+    line-height: 30px;
+  }
+}
+
+.nav-card {
+  i {
+    color: #8762A6;
+    line-height: 30px;
+  }
+  span {
+    margin-left: 20px;
+  }
+}
+
+.send-to-address {
+  label {
+    font-size: 14px;
+  }
+  button {
+    margin-top: 10px;
+    font-size: 16px ;
+  }
+}
+
+.save-to-home {
+  font-size: 16px;
+  color: white;
+  font-weight: 500;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  .alert {
+    font-size: 16px;
+    margin: 10px;
+  }
+}
