@@ -115,6 +115,10 @@ i.fas {
 }
 
 .send-to-address {
+  .form-group .identicon {
+    display: block;
+    margin: 0 auto;
+  }
   label {
     font-size: 14px;
   }

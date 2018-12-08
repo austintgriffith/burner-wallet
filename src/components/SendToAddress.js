@@ -1,6 +1,7 @@
 import React from 'react';
 import Ruler from "./Ruler";
 import Balance from "./Balance";
+import Blockies from 'react-blockies';
 
 
 export default class SendToAddress extends React.Component {
@@ -31,7 +32,7 @@ export default class SendToAddress extends React.Component {
   };
 
   render() {
-    let { canSend } = this.state;
+    let { canSend, address } = this.state;
     return (
       <div className="send-to-address card w-100">
         <Balance amount={this.props.balance} address={this.props.address}/>
@@ -48,6 +49,7 @@ export default class SendToAddress extends React.Component {
             </div>
           </div>
           <div className="form-group w-100">
+            { canSend && <Blockies seed={address} scale={10} /> }
             <label htmlFor="amount_input">Address</label>
             <input type="text" className="form-control" placeholder="0x..."
                    onChange={event => this.updateState('address', event.target.value)} />
