@@ -173,7 +173,8 @@ class App extends Component {
 
   render() {
     let {
-      web3, account, tx, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert
+      web3, account, tx, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert,
+      send
     } = this.state;
 
     let web3_setup = (
@@ -268,7 +269,7 @@ class App extends Component {
                 return (
                   <div>
                     <NavCard title={'Send to Address'} goBack={() => this.changeView('main')} />
-                    <SendToAddress balance={balance} address={account} />
+                    <SendToAddress balance={balance} address={account} send={send} goBack={() => this.changeView('main')} />
                   </div>
                 );
               case 'send_with_link':
