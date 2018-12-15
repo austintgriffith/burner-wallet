@@ -22,7 +22,7 @@
     "react-loading": "^2.0.3",
     "react-scripts": "2.0.5",
     "s3": "^4.4.0",
-    "web3": "^1.0.0-beta.36",
+    "web3": "^1.0.0-beta.37",
     "webpack": "^4.25.1"
   },
   "scripts": {
