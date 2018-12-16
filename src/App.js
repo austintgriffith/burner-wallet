@@ -5,12 +5,12 @@ import axios from 'axios';
 import './App.scss';
 import Header from './components/Header';
 import NavCard from './components/NavCard';
-import SendCard from './components/SendCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
 import SendWithLink from './components/SendWithLink';
 import MainCard from './components/MainCard';
-import SaveToHome from './components/SaveToHome';
+import BottomLinks from './components/BottomLinks';
+import BridgeCard from './components/BridgeCard';
 import Footer from './components/Footer';
 
 
@@ -35,6 +35,24 @@ class App extends Component {
       alert: null
     };
     this.alertTimeout = null;
+  }
+
+  componentDidMount(){
+    if(window.location.pathname){
+      if(window.location.pathname.length==43){
+        let toAddress = window.location.pathname.substring(1)
+        console.log("toAddress",toAddress)
+        this.setState({sendTo:toAddress},()=>{
+          this.changeView('send_to_address')
+        })
+      }else if(window.location.pathname.length==134){
+        let parts = window.location.pathname.split(";")
+        let claimId = parts[0].replace("/","")
+        let claimKey = parts[1]
+        console.log("DO CLAIM",claimId,claimKey)
+        this.setState({claimId,claimKey})
+      }
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -240,28 +258,28 @@ class App extends Component {
         {web3_setup}
 
         <div className="container-fluid">
-          <Header/>
+          <Header changeView={this.changeView} />
           {web3 && this.checkNetwork() && (() => {
             switch(view) {
               case 'main':
                 return (
                   <div>
-                    <SendCard changeView={this.changeView} />
-                    <MainCard address={account}
-                              balance={balance}
-                              changeAlert={this.changeAlert}
-                              privateKey={metaAccount.privateKey}
-                              burnWallet={burnMetaAccount}
+                    <MainCard
+                      address={account}
+                      balance={balance}
+                      changeAlert={this.changeAlert}
+                      changeView={this.changeView}
                     />
-                    <SaveToHome/>
+                    <BridgeCard
+                      privateKey={metaAccount.privateKey}
+                      burnWallet={burnMetaAccount}
+                    />
+                    <BottomLinks/>
                   </div>
                 );
               case 'send_by_scan':
                 return (
                   <SendByScan
-                    onValidate={this.onScan}
-                    onScan={this.onScan}
-                    onError={console.log}
                     goBack={() => this.changeView('main')}
                   />
                 );
@@ -269,14 +287,21 @@ class App extends Component {
                 return (
                   <div>
                     <NavCard title={'Send to Address'} goBack={() => this.changeView('main')} />
-                    <SendToAddress balance={balance} address={account} send={send} goBack={() => this.changeView('main')} />
+                    <SendToAddress
+                      balance={balance}
+                      address={account}
+                      toAddress={this.state.sendTo}
+                      send={send}
+                      goBack={() => this.changeView('main')}
+                      changeAlert={this.changeAlert}
+                    />
                   </div>
                 );
               case 'send_with_link':
                 return (
                   <div>
                     <NavCard title={'Send with Link'} goBack={() => this.changeView('main')} />
-                    <SendWithLink balance={balance} address={account} />
+                    <SendWithLink balance={balance} address={account} goBack={() => this.changeView('main')} />
                   </div>
                 );
               default:

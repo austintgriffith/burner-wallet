@@ -8,13 +8,15 @@ class SendByScan extends Component {
   stopRecording = () => this.setState({ delay: false });
   handleScan = data => {
     if (data) {
-      const validate = this.props.onValidate(data);
-      if (validate.result) {
-        this.stopRecording();
-        this.props.onScan(validate.data);
+      this.stopRecording();
+      if(data.indexOf("http")>=0){
+        //we are good this is already an http address
+        window.location = data
       } else {
-        validate.onError();
+        //maybe they just scanned an address?
+        window.location = "/"+data
       }
+
     }
   };
   handleError = error => {

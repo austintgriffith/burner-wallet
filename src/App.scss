@@ -14,14 +14,10 @@ i.fas {
     font-size: 28px;
   }
   span {
-    font-size: 20px;
+    font-size: 28px;
     font-weight: 600;
     font-family: "Arial Rounded MT Bold", sans-serif;
     margin-left: 10px;
-  }
-  .fa-info-circle {
-    position: absolute;
-    right: 0;
   }
   margin-bottom: 25px;
 }
@@ -79,6 +75,7 @@ i.fas {
   }
 }
 
+
 .balance {
   width: 100%;
   max-height: 60px;
@@ -128,7 +125,8 @@ i.fas {
   }
 }
 
-.save-to-home {
+.bottom-text{
+  margin-top: 20px;
   font-size: 16px;
   color: white;
   font-weight: 500;
