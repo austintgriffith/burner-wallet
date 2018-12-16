@@ -280,7 +280,9 @@ class App extends Component {
                   </div>
                 );
               default:
-                return null
+                return (
+                  <div>unknown view</div>
+                )
             }
           })()}
           { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
