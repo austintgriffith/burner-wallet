@@ -1,6 +1,4 @@
 import React from 'react';
-import Ruler from "./Ruler";
-import Balance from "./Balance";
 import Blockies from 'react-blockies';
 
 
@@ -12,6 +10,20 @@ export default class SendToAddress extends React.Component {
       address: null,
       amount: null,
       canSend: false,
+    };
+    this.addressRef = React.createRef();
+    this.amountRef = React.createRef();
+  }
+
+  componentDidMount() {
+    let { amount, address } = this.props.requestSend;
+    if (address) {
+      this.addressRef.current.value = address;
+      this.updateState('address', address);
+    }
+    if (amount) {
+      this.addressRef.current.value = amount;
+      this.updateState('amount', amount);
     }
   }
 
@@ -35,8 +47,7 @@ export default class SendToAddress extends React.Component {
     let { canSend, address } = this.state;
     return (
       <div className="send-to-address card w-100">
-        <Balance amount={this.props.balance} address={this.props.address}/>
-        <Ruler/>
+        { this.props.children }
         <div className="content row">
           <div className="form-group w-100">
             <label htmlFor="amount_input">Amount</label>
@@ -45,14 +56,16 @@ export default class SendToAddress extends React.Component {
                 <div className="input-group-text">$</div>
               </div>
               <input type="text" className="form-control" placeholder="0.00"
-                     onChange={event => this.updateState('amount', event.target.value)} />
+                     onChange={event => this.updateState('amount', event.target.value)}
+                     ref={this.amountRef} />
             </div>
           </div>
           <div className="form-group w-100">
             { canSend && <Blockies seed={address} scale={10} /> }
             <label htmlFor="amount_input">Address</label>
             <input type="text" className="form-control" placeholder="0x..."
-                   onChange={event => this.updateState('address', event.target.value)} />
+                   onChange={event => this.updateState('address', event.target.value)}
+                   ref={this.addressRef} />
           </div>
           <button className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
                   onClick={this.send}>

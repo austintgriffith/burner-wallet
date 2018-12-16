@@ -115,6 +115,26 @@ i.fas {
 }
 
 .send-to-address {
+  .qr {
+
+    canvas {
+      margin: 0 auto;
+      height: 256px;
+      margin-bottom: 1rem;
+    }
+
+    input {
+      background: white;
+    }
+
+    span {
+      cursor: pointer;
+      background: white;
+      i {
+        color: #8762A6;
+      }
+    }
+  }
   .form-group .identicon {
     display: block;
     margin: 0 auto;

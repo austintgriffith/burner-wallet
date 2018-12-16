@@ -3,7 +3,9 @@ import { ContractLoader, Dapparatus, Transactions } from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
 import './App.scss';
+import Ruler from './components/Ruler';
 import Header from './components/Header';
+import Balance from './components/Balance';
 import NavCard from './components/NavCard';
 import SendCard from './components/SendCard';
 import SendByScan from './components/SendByScan';
@@ -32,9 +34,46 @@ class App extends Component {
       account: false,
       gwei: 1.1,
       view: 'main',
+      requestSend: {
+        address: null,
+        amount: null
+      },
       alert: null
     };
     this.alertTimeout = null;
+  }
+
+  componentDidMount() {
+    let path = window.location.pathname;
+    if (!path) return;
+
+    if (path.indexOf('/receive_request;') !== -1) {
+      let parts = path.replace('/receive_request;', '').split(";")               // Used when a request payment link is received
+      this.setState({
+        view: 'send_to_address',
+        requestSend: {
+          amount: parts[0],
+          address: parts[1]
+        }
+      });
+    }
+    else if (path.length === 43) {
+      this.setState({
+        view: 'send_to_address',
+        requestSend: {
+          address: path.substring(1)
+        }
+      });
+    }
+    else if (path.length === 134) {
+      let parts = window.location.pathname.split(";")                                                 // Used when a link to claim eth is used
+
+      let claimId = parts[0].replace("/", "")
+      let claimKey = parts[1]
+      console.log("DO CLAIM", claimId, claimKey)
+
+      this.setState({ claimId, claimKey })
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -53,6 +92,16 @@ class App extends Component {
     return network === "xDai" || network === "Unknown";
   }
 
+  onScan = (data) => {
+    if (data.indexOf("http") >= 0){
+      // we are good this is already an http address
+      window.location = data
+    } else {
+      // maybe they just scanned an address?
+      window.location = "/" + data
+    }
+  }
+
   checkClaim(tx, contracts) {
     //check if we are trying to claim
     if (this.state.claimId && this.state.claimKey) {
@@ -66,18 +115,18 @@ class App extends Component {
 
   chainClaim(tx, contracts) {
     console.log("DOING CLAIM ONCHAIN", this.state.claimId, this.state.claimKey, this.state.account);
-    this.setState({sending: true})
+    this.setState({ sending: true })
 
     contracts.Links.funds(this.state.claimId).call().then((fund) => {
       if (fund) {
-        this.setState({fund: fund})
+        this.setState({ fund: fund })
         console.log("FUND: ", fund)
 
         let hashOfDestination = this.state.web3.utils.soliditySha3(
-          {type: 'bytes32', value: this.state.claimId}, // fund id
-          {type: 'address', value: this.state.account}, // destination address
-          {type: 'uint256', value: fund[3]}, // nonce
-          {type: 'address', value: contracts.Links._address} // contract address
+          { type: 'bytes32', value: this.state.claimId }, // fund id
+          { type: 'address', value: this.state.account }, // destination address
+          { type: 'uint256', value: fund[3] }, // nonce
+          { type: 'address', value: contracts.Links._address } // contract address
         )
         console.log("hashOfDestination", hashOfDestination)
         console.log("this.state.claimKey", this.state.claimKey)
@@ -87,9 +136,9 @@ class App extends Component {
         tx(contracts.Links.claim(this.state.claimId, sig, this.state.account), 150000, false, 0, (result) => {
           if (result) {
             console.log("CLAIMED!!!", result)
-            this.setState({claimed: true})
+            this.setState({ claimed: true })
             setTimeout(() => {
-              this.setState({sending: false}, () => {
+              this.setState({ sending: false }, () => {
                 //alert("DONE")
                 window.location = "/"
               })
@@ -104,14 +153,14 @@ class App extends Component {
     console.log("DOING CLAIM THROUGH RELAY")
     this.state.contracts.Links.funds(this.state.claimId).call().then((fund) => {
       if (fund) {
-        this.setState({fund: fund})
+        this.setState({ fund: fund })
         console.log("FUND: ", fund)
 
         let hashOfDestination = this.state.web3.utils.soliditySha3(
-          {type: 'bytes32', value: this.state.claimId}, // fund id
-          {type: 'address', value: this.state.account}, // destination address
-          {type: 'uint256', value: fund[3]}, // nonce
-          {type: 'address', value: this.state.contracts.Links._address} // contract address
+          { type: 'bytes32', value: this.state.claimId }, // fund id
+          { type: 'address', value: this.state.account }, // destination address
+          { type: 'uint256', value: fund[3] }, // nonce
+          { type: 'address', value: this.state.contracts.Links._address } // contract address
         )
         console.log("hashOfDestination", hashOfDestination)
         console.log("this.state.claimKey", this.state.claimKey)
@@ -119,7 +168,7 @@ class App extends Component {
         sig = sig.signature
         console.log("CLAIM TX:", this.state.claimId, sig, this.state.account)
 
-        this.setState({sending: true})
+        this.setState({ sending: true })
         let postData = {
           id: this.state.claimId,
           sig: sig,
@@ -132,9 +181,9 @@ class App extends Component {
           }
         }).then((response) => {
           console.log("TX RESULT", response.data.transactionHash)
-          this.setState({claimed: true})
+          this.setState({ claimed: true })
           setTimeout(() => {
-            this.setState({sending: false}, () => {
+            this.setState({ sending: false }, () => {
               //alert("DONE")
               window.location = "/"
             })
@@ -161,7 +210,7 @@ class App extends Component {
     this.setState({ view });
   };
 
-  changeAlert = (alert, hide=true) => {
+  changeAlert = (alert, hide = true) => {
     clearTimeout(this.alertTimeout);
     this.setState({ alert });
     if (alert && hide) {
@@ -174,7 +223,7 @@ class App extends Component {
   render() {
     let {
       web3, account, tx, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert,
-      send
+      send, contracts, requestSend
     } = this.state;
 
     let web3_setup = (
@@ -197,14 +246,14 @@ class App extends Component {
         />
         <ContractLoader
           key="ContractLoader"
-          config={{DEBUG: true}}
+          config={{ DEBUG: true }}
           web3={web3}
           require={path => {
             return require(`${__dirname}/${path}`)
           }}
           onReady={(contracts, customLoader) => {
             console.log("contracts loaded", contracts)
-            this.setState({contracts: contracts}, async () => {
+            this.setState({ contracts: contracts }, async () => {
               console.log("Contracts Are Ready:", contracts)
               this.checkClaim(tx, contracts);
             })
@@ -212,7 +261,7 @@ class App extends Component {
         />
         <Transactions
           key="Transactions"
-          config={{DEBUG: false, hide: true}}
+          config={{ DEBUG: false, hide: true }}
           account={account}
           gwei={gwei}
           web3={web3}
@@ -240,20 +289,20 @@ class App extends Component {
         {web3_setup}
 
         <div className="container-fluid">
-          <Header/>
+          <Header />
           {web3 && this.checkNetwork() && (() => {
-            switch(view) {
+            switch (view) {
               case 'main':
                 return (
                   <div>
                     <SendCard changeView={this.changeView} />
                     <MainCard address={account}
-                              balance={balance}
-                              changeAlert={this.changeAlert}
-                              privateKey={metaAccount.privateKey}
-                              burnWallet={burnMetaAccount}
+                      balance={balance}
+                      changeAlert={this.changeAlert}
+                      privateKey={metaAccount.privateKey}
+                      burnWallet={burnMetaAccount}
                     />
-                    <SaveToHome/>
+                    <SaveToHome />
                   </div>
                 );
               case 'send_by_scan':
@@ -269,21 +318,31 @@ class App extends Component {
                 return (
                   <div>
                     <NavCard title={'Send to Address'} goBack={() => this.changeView('main')} />
-                    <SendToAddress balance={balance} address={account} send={send} goBack={() => this.changeView('main')} />
+                    <SendToAddress send={send} requestSend={requestSend} goBack={() => this.changeView('main')}>
+                      <>
+                        <Balance amount={balance} address={account} />
+                        <Ruler />
+                      </>
+                    </SendToAddress>
                   </div>
                 );
               case 'send_with_link':
                 return (
                   <div>
                     <NavCard title={'Send with Link'} goBack={() => this.changeView('main')} />
-                    <SendWithLink balance={balance} address={account} />
+                    <SendWithLink tx={tx} contracts={contracts} web3={web3} changeAlert={this.changeAlert}>
+                      <>
+                        <Balance amount={balance} address={account} />
+                        <Ruler />
+                      </>
+                    </SendWithLink>
                   </div>
                 );
               default:
                 return null
             }
           })()}
-          { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
+          {alert && <Footer alert={alert} changeAlert={this.changeAlert} />}
         </div>
 
       </div>
