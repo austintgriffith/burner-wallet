@@ -12,7 +12,7 @@ import MainCard from './components/MainCard';
 import BottomLinks from './components/BottomLinks';
 import BridgeCard from './components/BridgeCard';
 import Footer from './components/Footer';
-
+import Loader from './components/Loader';
 
 let WEB3_PROVIDER = 'http://0.0.0.0:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
 if (window.location.hostname.indexOf("qreth") >= 0) {
@@ -32,7 +32,8 @@ class App extends Component {
       account: false,
       gwei: 1.1,
       view: 'main',
-      alert: null
+      alert: null,
+      loadingTitle:'loading...'
     };
     this.alertTimeout = null;
   }
@@ -165,6 +166,7 @@ class App extends Component {
     })
   }
 
+
   changeView = (view) => {
     if (view.startsWith('send')) {
       if (this.state.balance <= 0) {
@@ -194,6 +196,7 @@ class App extends Component {
       web3, account, tx, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert,
       send
     } = this.state;
+
 
     let web3_setup = (
       <div>
@@ -293,6 +296,7 @@ class App extends Component {
                       toAddress={this.state.sendTo}
                       send={send}
                       goBack={() => this.changeView('main')}
+                      changeView={this.changeView}
                       changeAlert={this.changeAlert}
                     />
                   </div>
@@ -301,7 +305,18 @@ class App extends Component {
                 return (
                   <div>
                     <NavCard title={'Send with Link'} goBack={() => this.changeView('main')} />
-                    <SendWithLink balance={balance} address={account} goBack={() => this.changeView('main')} />
+                    <SendWithLink balance={balance}
+                      address={account}
+                      changeView={this.changeView}
+                      goBack={() => this.changeView('main')}
+                    />
+                  </div>
+                );
+              case 'loader':
+                return (
+                  <div>
+                    <NavCard title={"Sending..."} goBack={() => this.changeView('main')}/>
+                    <Loader />
                   </div>
                 );
               default:
