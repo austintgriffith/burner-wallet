@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ContractLoader, Dapparatus, Transactions } from "dapparatus";
+import { ContractLoader, Dapparatus, Transactions, Scaler } from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
 import './App.scss';
@@ -256,7 +256,7 @@ class App extends Component {
     );
 
     return (
-      <div>
+      <Scaler config={{startZoomAt:450,origin:"50% 50%",adjustedZoom:1}}>
 
         {web3_setup}
 
@@ -328,7 +328,7 @@ class App extends Component {
           { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
         </div>
 
-      </div>
+      </Scaler>
     )
   }
 }

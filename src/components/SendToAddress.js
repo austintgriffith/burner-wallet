@@ -38,6 +38,7 @@ export default class SendToAddress extends React.Component {
         this.props.send(address, amount, (result) => {
           if(result.transactionHash){
             this.props.goBack();
+            window.history.pushState({},"", "/");
             this.props.changeAlert({
               type: 'success',
               message: 'Sent! '+result.transactionHash,
