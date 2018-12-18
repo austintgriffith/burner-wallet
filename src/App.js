@@ -8,13 +8,14 @@ import NavCard from './components/NavCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
 import SendWithLink from './components/SendWithLink';
+import ShareLink from './components/ShareLink'
 import MainCard from './components/MainCard';
 import BottomLinks from './components/BottomLinks';
 import BridgeCard from './components/BridgeCard';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
 
-let WEB3_PROVIDER = 'http://10.0.0.107:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
+let WEB3_PROVIDER = 'http://0.0.0.0:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
 if (window.location.hostname.indexOf("qreth") >= 0) {
   WEB3_PROVIDER = "https://mainnet.infura.io/v3/e59c464c322f47e2963f5f00638be2f8"
 }
@@ -32,6 +33,8 @@ class App extends Component {
       account: false,
       gwei: 1.1,
       view: 'main',
+      sendLink: "",
+      sendKey: "",
       alert: null,
       loadingTitle:'loading...'
     };
@@ -71,6 +74,7 @@ class App extends Component {
   checkClaim(tx, contracts) {
     //check if we are trying to claim
     if (this.state.claimId && this.state.claimKey) {
+      this.changeView('claimer')
       if (this.state.balance > 0.005) {
         this.chainClaim(tx, contracts);
       } else {
@@ -186,7 +190,10 @@ class App extends Component {
       }, 2000);
     }
   };
-
+  goBack(){
+    this.changeView('main')
+    window.scrollTo(0,0);
+  }
   render() {
     let {
       web3, account, tx, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert,
@@ -194,63 +201,49 @@ class App extends Component {
     } = this.state;
 
 
-    let web3_setup = (
-      <div>
-        <Dapparatus
-          config={{
-            DEBUG: false,
-            hide: true,
-            requiredNetwork: ['Unknown', 'xDai'],
-            metatxAccountGenerator: false,
-          }}
-          fallbackWeb3Provider={WEB3_PROVIDER}
-          onUpdate={(state) => {
-            console.log("Dapparatus state update:", state)
-            if (state.web3Provider) {
-              state.web3 = new Web3(state.web3Provider)
+    let web3_setup = ""
+    if(web3){
+      web3_setup = (
+        <div>
+          <ContractLoader
+            key="ContractLoader"
+            config={{DEBUG: true}}
+            web3={web3}
+            require={path => {
+              return require(`${__dirname}/${path}`)
+            }}
+            onReady={(contracts, customLoader) => {
+              console.log("contracts loaded", contracts)
+              this.setState({contracts: contracts}, async () => {
+                console.log("Contracts Are Ready:", contracts)
+                this.checkClaim(tx, contracts);
+              })
+            }}
+          />
+          <Transactions
+            key="Transactions"
+            config={{DEBUG: false, hide: true}}
+            account={account}
+            gwei={gwei}
+            web3={web3}
+            block={block}
+            avgBlockTime={avgBlockTime}
+            etherscan={etherscan}
+            metaAccount={metaAccount}
+            onReady={(state) => {
+              console.log("Transactions component is ready:", state);
               this.setState(state)
-            }
-          }}
-        />
-        <ContractLoader
-          key="ContractLoader"
-          config={{DEBUG: true}}
-          web3={web3}
-          require={path => {
-            return require(`${__dirname}/${path}`)
-          }}
-          onReady={(contracts, customLoader) => {
-            console.log("contracts loaded", contracts)
-            this.setState({contracts: contracts}, async () => {
-              console.log("Contracts Are Ready:", contracts)
-              this.checkClaim(tx, contracts);
-            })
-          }}
-        />
-        <Transactions
-          key="Transactions"
-          config={{DEBUG: false, hide: true}}
-          account={account}
-          gwei={gwei}
-          web3={web3}
-          block={block}
-          avgBlockTime={avgBlockTime}
-          etherscan={etherscan}
-          metaAccount={metaAccount}
-          onReady={(state) => {
-            console.log("Transactions component is ready:", state);
-            this.setState(state)
 
-          }}
-          onReceipt={(transaction, receipt) => {
-            // this is one way to get the deployed contract address, but instead I'll switch
-            //  to a more straight forward callback system above
-            console.log("Transaction Receipt", transaction, receipt)
-          }}
-        />
-      </div>
-    );
-
+            }}
+            onReceipt={(transaction, receipt) => {
+              // this is one way to get the deployed contract address, but instead I'll switch
+              //  to a more straight forward callback system above
+              console.log("Transaction Receipt", transaction, receipt)
+            }}
+          />
+        </div>
+      )
+    }
     return (
       <div>
 
@@ -280,7 +273,7 @@ class App extends Component {
               case 'send_by_scan':
                 return (
                   <SendByScan
-                    goBack={() => this.changeView('main')}
+                    goBack={this.goBack.bind(this)}
                     onError={(error) =>{
                       this.changeAlert("danger",error)
                     }}
@@ -289,32 +282,66 @@ class App extends Component {
               case 'send_to_address':
                 return (
                   <div>
-                    <NavCard title={'Send to Address'} goBack={() => this.changeView('main')} />
+                    <NavCard title={'Send to Address'} goBack={this.goBack.bind(this)}/>
                     <SendToAddress
                       balance={balance}
                       address={account}
                       send={send}
-                      goBack={() => this.changeView('main')}
+                      goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
+                    />
+                  </div>
+                );
+              case 'share-link':
+                return (
+                  <div>
+                    <NavCard title={'Share Link'} goBack={this.goBack.bind(this)} />
+                    <ShareLink
+                      sendKey={this.state.sendKey}
+                      sendLink={this.state.sendLink}
+                      balance={balance}
+                      address={account}
+                      changeAlert={this.changeAlert}
+                      goBack={this.goBack.bind(this)}
                     />
                   </div>
                 );
               case 'send_with_link':
                 return (
                   <div>
-                    <NavCard title={'Send with Link'} goBack={() => this.changeView('main')} />
+                    <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
                     <SendWithLink balance={balance}
+                      changeAlert={this.changeAlert}
+                      sendWithLink={(amount,cb)=>{
+                        let randomHash = this.state.web3.utils.sha3(""+Math.random())
+                        let randomWallet = this.state.web3.eth.accounts.create()
+                        let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
+                        console.log("STATE",this.state,this.state.contracts)
+                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature),140000,false,amount*10**18,async (receipt)=>{
+                          this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
+                            console.log("STATE SAVED",this.state)
+                          })
+                          cb(receipt)
+                        })
+                      }}
                       address={account}
                       changeView={this.changeView}
-                      goBack={() => this.changeView('main')}
+                      goBack={this.goBack.bind(this)}
                     />
                   </div>
                 );
               case 'loader':
                 return (
                   <div>
-                    <NavCard title={"Sending..."} goBack={() => this.changeView('main')}/>
+                    <NavCard title={"Sending..."} goBack={this.goBack.bind(this)}/>
+                    <Loader />
+                  </div>
+                );
+              case 'claimer':
+                return (
+                  <div>
+                    <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)}/>
                     <Loader />
                   </div>
                 );
@@ -327,6 +354,22 @@ class App extends Component {
           { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
         </div>
 
+        <Dapparatus
+          config={{
+            DEBUG: false,
+            hide: true,
+            requiredNetwork: ['Unknown', 'xDai'],
+            metatxAccountGenerator: false,
+          }}
+          fallbackWeb3Provider={WEB3_PROVIDER}
+          onUpdate={(state) => {
+            console.log("Dapparatus state update:", state)
+            if (state.web3Provider) {
+              state.web3 = new Web3(state.web3Provider)
+              this.setState(state)
+            }
+          }}
+        />
       </div>
     )
   }

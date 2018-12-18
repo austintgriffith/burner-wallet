@@ -89,8 +89,8 @@ app.post('/link', async (req, res) => {
     console.log("CLAIM IS VALID...")
     let txparams = {
       from: accounts[DESKTOPMINERACCOUNT],
-      gas: 100000,
-      gasPrice:Math.round(4 * 1000000000)
+      gas: 250000,
+      gasPrice:Math.round(1000000000)
     }
 
     console.log("PARAMS",txparams)

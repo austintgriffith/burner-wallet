@@ -16,7 +16,6 @@ export default class SendToAddress extends React.Component {
       amount: props.amount,
       canSend: false,
     }
-    console.log("SendWithLink constructor",this.state)
   }
 
   updateState = (key, value) => {
@@ -29,9 +28,19 @@ export default class SendToAddress extends React.Component {
   send = () => {
     let { amount } = this.state;
     if(this.state.canSend){
-      this.props.sendWithLink(amount, (result, error) => {
-        if (result) {
-          this.props.goBack();
+      this.props.changeView('loader')
+      this.props.sendWithLink(amount, (result) => {
+        if(result && result.transactionHash){
+          this.props.changeView('share-link')
+          this.props.changeAlert({
+            type: 'success',
+            message: 'Sent! '+result.transactionHash,
+          });
+        }else{
+          this.props.changeAlert({
+            type: 'danger',
+            message: 'Error Sending!',
+          });
         }
       })
     }else{
