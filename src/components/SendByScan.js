@@ -13,8 +13,12 @@ class SendByScan extends Component {
     this.openImageDialog = this.openImageDialog.bind(this)
   }
   stopRecording = () => this.setState({ delay: false });
+  onImageLoad = data => {
+    console.log(data)
+    alert("onImageLoad!"+data)
+  }
   handleScan = data => {
-    alert(data)
+    alert("SCAN!"+data)
     if (data) {
       this.stopRecording();
       if(data.indexOf("http")>=0){
@@ -32,7 +36,7 @@ class SendByScan extends Component {
   }
   handleError = error => {
     console.error(error);
-    alert(error)
+      alert("ERROR!"+error)
     this.setState({legacyMode:true})
     this.props.onError(error);
   };
@@ -51,10 +55,12 @@ class SendByScan extends Component {
     let legacyOverlay = ""
     if(this.state.legacyMode){
       legacyOverlay = (
-        <div style={{position: 'absolute',zIndex:11,top:20,left:20,color:"#FFFFFF"}}>
-          <div>Legacy Mode</div>
-          <div>Take a picture of the QR Code:</div>
-          <input type="button" value="Take a Picture" onClick={this.openImageDialog} />
+        <div style={{position: 'absolute',zIndex:11,top:0,left:0,width:"100%",height:"100%",color:"#FFFFFF",cursor:"pointer"}} onClick={this.openImageDialog}>
+          <div style={{textAlign:"center",paddingTop:"30%"}}>
+            <div style={{marginBottom:20}}><i className="fas fa-camera"></i> Click Here </div>
+            <div>Take a picture of the QR Code:</div>
+            <input type="button" value="Take a Picture"/>
+          </div>
         </div>
       )
     }
@@ -62,7 +68,7 @@ class SendByScan extends Component {
     return (
       <div style={{  position: "fixed",top:0,left:0,right:0,bottom:0,zIndex:5,margin:'0 auto !important',background:"#000000"}}>
         <div style={{ position: 'absolute',zIndex: 10,top:20,right:20,fontSize:80,paddingRight:20,color:"#FFFFFF",cursor:'pointer'}} onClick={this.onClose} >
-          <i class="fa fa-times" aria-hidden="true"></i>
+          <i className="fa fa-times" aria-hidden="true"></i>
         </div>
         {legacyOverlay}
         <QrReader
@@ -70,11 +76,12 @@ class SendByScan extends Component {
           delay={this.state.delay}
           onError={this.handleError}
           onScan={this.handleScan}
+          onImageLoad={this.onImageLoad}
           facingMode="rear"
           legacyMode={this.state.legacyMode}
           style={{ width: "100%" }}
         />
-        <div style={{position: 'absolute',zIndex:11,bottom:20,left:20,color:"#FFFFFF"}}>
+        <div style={{position: 'absolute',zIndex:11,bottom:20,fontSize:12,left:20,color:"#FFFFFF"}}>
           {this.state.browser}
         </div>
       </div>
