@@ -2,7 +2,7 @@ var fs = require('fs'),
     http = require('http'),
     https = require('https'),
     express = require('express');
-
+var path = require('path');
 var port = 443;
 
 var options = {
@@ -17,6 +17,10 @@ var server = https.createServer(options, app).listen(port, function(){
 });
 
 app.use(express.static('./build'))
+
+app.get("/*", function (req, res) {
+  res.sendFile(path.join(__dirname, 'build/index.html'));
+});
 
 /*
 var StaticServer = require('static-server');
