@@ -5,9 +5,10 @@ class SendByScan extends Component {
   constructor(props){
     super(props)
     this.state = {
-      delay: 500,
+      delay: 100,
       browser: "loading...",
       legacyMode: false,
+      maxImageSize: 320
     };
     this.handleScan = this.handleScan.bind(this)
     this.openImageDialog = this.openImageDialog.bind(this)
@@ -38,7 +39,7 @@ class SendByScan extends Component {
   }
   handleError = error => {
     console.error(error);
-      alert("ERROR!"+error)
+      alert(this.state.maxImageSize+"ERROR!"+error)
     this.setState({legacyMode:true})
     this.props.onError(error);
   };
@@ -80,7 +81,7 @@ class SendByScan extends Component {
           onScan={this.handleScan}
           onImageLoad={this.onImageLoad}
           /*facingMode="rear"*/
-          maxImageSize={1500}
+          maxImageSize={this.state.maxImageSize}
           legacyMode={this.state.legacyMode}
           /*chooseDeviceId={this.chooseDeviceId}*/
           style={{ width: "100%" }}
