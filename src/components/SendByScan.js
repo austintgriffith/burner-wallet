@@ -8,7 +8,6 @@ class SendByScan extends Component {
       delay: 100,
       browser: "loading...",
       legacyMode: false,
-      maxImageSize: 1000
     };
     this.handleScan = this.handleScan.bind(this)
     this.openImageDialog = this.openImageDialog.bind(this)
@@ -16,7 +15,9 @@ class SendByScan extends Component {
   stopRecording = () => this.setState({ delay: false });
   onImageLoad = data => {
     console.log(data)
-    alert("onImageLoad!"+data)
+    setTimeout(()=>{
+      alert("Please Try Again. Maybe farther away? QRCode should be ~20% of the image.")
+    },4000)
   }
   handleScan = data => {
     if (data) {
@@ -31,7 +32,6 @@ class SendByScan extends Component {
     }
   };
   chooseDeviceId = (a,b) => {
-    alert("choose"+JSON.stringify(a)+":"+JSON.stringify(b))
     console.log("choose",a,b)
   }
   openImageDialog() {
@@ -39,7 +39,6 @@ class SendByScan extends Component {
   }
   handleError = error => {
     console.error(error);
-      alert(""+this.state.maxImageSize+"ERROR!"+error)
     this.setState({legacyMode:true})
     this.props.onError(error);
   };
@@ -81,7 +80,7 @@ class SendByScan extends Component {
           onScan={this.handleScan}
           onImageLoad={this.onImageLoad}
           /*facingMode="rear"*/
-          maxImageSize={this.state.maxImageSize}
+          /*maxImageSize={this.state.maxImageSize}*/
           legacyMode={this.state.legacyMode}
           /*chooseDeviceId={this.chooseDeviceId}*/
           style={{ width: "100%" }}
