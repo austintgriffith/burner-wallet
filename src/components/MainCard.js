@@ -19,20 +19,19 @@ export default ({address, balance, changeAlert, changeView}) => {
     <div className="main-card card w-100">
       <Balance amount={balance} address={address}/>
       <Ruler/>
-      <div className="content qr row">
-        <QRCode value={qrValue} size={qrSize}/>
-        <div className="input-group">
-          <input
-            type="text" className="form-control" value={address} disabled/>
-          <CopyToClipboard text={address}>
-            <div className="input-group-append"
-                 onClick={() => changeAlert({type: 'success', message: 'Address copied to clipboard'})}>
+      <CopyToClipboard text={address} onCopy={() => {
+        changeAlert({type: 'success', message: 'Address copied to clipboard'})
+      }}>
+        <div className="content qr row" style={{cursor:"pointer"}}>
+          <QRCode value={qrValue} size={qrSize}/>
+          <div className="input-group">
+            <input type="text" className="form-control" value={address} disabled/>
+            <div className="input-group-append">
               <span className="input-group-text"><i className="fas fa-copy"/></span>
             </div>
-          </CopyToClipboard>
+          </div>
         </div>
-      </div>
-
+      </CopyToClipboard>
       <div>
         <Ruler/>
         <div className="content ops row">

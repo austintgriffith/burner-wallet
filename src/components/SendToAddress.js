@@ -49,11 +49,6 @@ export default class SendToAddress extends React.Component {
               type: 'success',
               message: 'Sent! '+result.transactionHash,
             });
-          }else{
-            this.props.changeAlert({
-              type: 'danger',
-              message: 'Error Sending!',
-            });
           }
         })
       }
