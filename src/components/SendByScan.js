@@ -7,13 +7,14 @@ class SendByScan extends Component {
     this.state = {
       delay: 500,
       browser: "loading...",
-      legacyMode: false,
+      legacyMode: true,
     };
     this.handleScan = this.handleScan.bind(this)
     this.openImageDialog = this.openImageDialog.bind(this)
   }
   stopRecording = () => this.setState({ delay: false });
   handleScan = data => {
+    alert(data)
     if (data) {
       this.stopRecording();
       if(data.indexOf("http")>=0){
