@@ -21,6 +21,7 @@
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.6.0",
     "react-loading": "^2.0.3",
+    "react-qr-scanner": "0.0.8",
     "react-scripts": "2.0.5",
     "s3": "^4.4.0",
     "web3": "^1.0.0-beta.37",
