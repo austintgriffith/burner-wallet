@@ -39,7 +39,7 @@ class SendByScan extends Component {
   }
   handleError = error => {
     console.error(error);
-      alert(this.state.maxImageSize+"ERROR!"+error)
+      alert(""+this.state.maxImageSize+"ERROR!"+error)
     this.setState({legacyMode:true})
     this.props.onError(error);
   };
