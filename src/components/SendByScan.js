@@ -2,10 +2,16 @@ import React, { Component } from "react";
 import QrReader from "react-qr-scanner";
 
 class SendByScan extends Component {
-  state = {
-    delay: 500,
-    browser: "loading..."
-  };
+  constructor(props){
+    super(props)
+    this.state = {
+      delay: 500,
+      browser: "loading...",
+      legacyMode: false,
+    };
+    this.handleScan = this.handleScan.bind(this)
+    this.openImageDialog = this.openImageDialog.bind(this)
+  }
   stopRecording = () => this.setState({ delay: false });
   handleScan = data => {
     if (data) {
@@ -20,9 +26,13 @@ class SendByScan extends Component {
 
     }
   };
+  openImageDialog() {
+    this.refs.qrReader1.openImageDialog()
+  }
   handleError = error => {
     console.error(error);
     alert(error)
+    this.setState({legacyMode:true})
     this.props.onError(error);
   };
   onClose = () => {
@@ -36,15 +46,31 @@ class SendByScan extends Component {
     this.stopRecording();
   }
   render() {
+
+    let legacyOverlay = ""
+    if(this.state.legacyMode){
+      legacyOverlay = (
+        <div style={{position: 'absolute',zIndex:11,top:20,left:20,color:"#FFFFFF"}}>
+          <div>Legacy Mode</div>
+          <div>Take a picture of the QR Code:</div>
+          <input type="button" value="Take a Picture" onClick={this.openImageDialog} />
+        </div>
+      )
+    }
+
     return (
       <div style={{  position: "fixed",top:0,left:0,right:0,bottom:0,zIndex:5,margin:'0 auto !important',background:"#000000"}}>
         <div style={{ position: 'absolute',zIndex: 10,top:20,right:20,fontSize:80,paddingRight:20,color:"#FFFFFF",cursor:'pointer'}} onClick={this.onClose} >
           <i class="fa fa-times" aria-hidden="true"></i>
         </div>
+        {legacyOverlay}
         <QrReader
+          ref="qrReader1"
           delay={this.state.delay}
           onError={this.handleError}
           onScan={this.handleScan}
+          facingMode="rear"
+          legacyMode={this.state.legacyMode}
           style={{ width: "100%" }}
         />
         <div style={{position: 'absolute',zIndex:11,bottom:20,left:20,color:"#FFFFFF"}}>
