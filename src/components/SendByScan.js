@@ -79,9 +79,10 @@ class SendByScan extends Component {
           onError={this.handleError}
           onScan={this.handleScan}
           onImageLoad={this.onImageLoad}
-          facingMode="rear"
+          /*facingMode="rear"*/
+          /*maxImageSize={3200}*/
           legacyMode={this.state.legacyMode}
-          chooseDeviceId={this.chooseDeviceId}
+          /*chooseDeviceId={this.chooseDeviceId}*/
           style={{ width: "100%" }}
         />
         <div style={{position: 'absolute',zIndex:11,bottom:20,fontSize:12,left:20,color:"#FFFFFF"}}>
