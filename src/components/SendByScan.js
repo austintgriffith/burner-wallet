@@ -80,7 +80,7 @@ class SendByScan extends Component {
           onScan={this.handleScan}
           onImageLoad={this.onImageLoad}
           /*facingMode="rear"*/
-          /*maxImageSize={999999999}*/
+          maxImageSize={1500}
           legacyMode={this.state.legacyMode}
           /*chooseDeviceId={this.chooseDeviceId}*/
           style={{ width: "100%" }}
