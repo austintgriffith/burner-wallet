@@ -12,8 +12,14 @@ export default class SendToAddress extends React.Component {
     if(props.amount){
       startingAmount = props.amount
     }
+    let toAddress = ""
+    if(window.location.pathname){
+      if(window.location.pathname.length==43){
+        toAddress = window.location.pathname.substring(1)
+      }
+    }
     this.state = {
-      address: props.toAddress,
+      address: toAddress,
       amount: props.amount,
       canSend: false,
     }
@@ -65,7 +71,7 @@ export default class SendToAddress extends React.Component {
           <Ruler/>
           <div className="content row">
             <div className="form-group w-100">
-              <label htmlFor="amount_input">Amount</label>
+              <label htmlFor="amount_input">Send Amount</label>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>

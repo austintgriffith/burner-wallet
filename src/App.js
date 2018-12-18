@@ -41,11 +41,7 @@ class App extends Component {
   componentDidMount(){
     if(window.location.pathname){
       if(window.location.pathname.length==43){
-        let toAddress = window.location.pathname.substring(1)
-        console.log("toAddress",toAddress)
-        this.setState({sendTo:toAddress},()=>{
-          this.changeView('send_to_address')
-        })
+        this.changeView('send_to_address')
       }else if(window.location.pathname.length==134){
         let parts = window.location.pathname.split(";")
         let claimId = parts[0].replace("/","")
@@ -297,7 +293,6 @@ class App extends Component {
                     <SendToAddress
                       balance={balance}
                       address={account}
-                      toAddress={this.state.sendTo}
                       send={send}
                       goBack={() => this.changeView('main')}
                       changeView={this.changeView}

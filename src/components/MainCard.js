@@ -8,14 +8,19 @@ const QRCode = require('qrcode.react');
 
 export default ({address, balance, changeAlert, changeView}) => {
 
+  let url = window.location.protocol+"//"+window.location.hostname
+  if(window.location.port&&window.location.port!=80&&window.location.port!=443){
+    url = url+":"+window.location.port
+  }
   let qrSize = Math.min(document.documentElement.clientWidth,512)-90
+  let qrValue = url+"/"+address
 
   return (
     <div className="main-card card w-100">
       <Balance amount={balance} address={address}/>
       <Ruler/>
       <div className="content qr row">
-        <QRCode value={address} size={qrSize}/>
+        <QRCode value={qrValue} size={qrSize}/>
         <div className="input-group">
           <input
             type="text" className="form-control" value={address} disabled/>
