@@ -8,7 +8,7 @@ class SendByScan extends Component {
       delay: 100,
       browser: "loading...",
       legacyMode: false,
-      maxImageSize: 320
+      maxImageSize: 100
     };
     this.handleScan = this.handleScan.bind(this)
     this.openImageDialog = this.openImageDialog.bind(this)
