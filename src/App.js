@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ContractLoader, Dapparatus, Transactions, Scaler } from "dapparatus";
+import { ContractLoader, Dapparatus, Transactions } from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
 import './App.scss';
@@ -14,7 +14,7 @@ import BridgeCard from './components/BridgeCard';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
 
-let WEB3_PROVIDER = 'http://0.0.0.0:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
+let WEB3_PROVIDER = 'http://10.0.0.107:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
 if (window.location.hostname.indexOf("qreth") >= 0) {
   WEB3_PROVIDER = "https://mainnet.infura.io/v3/e59c464c322f47e2963f5f00638be2f8"
 }
@@ -256,7 +256,7 @@ class App extends Component {
     );
 
     return (
-      <Scaler config={{startZoomAt:450,origin:"50% 50%",adjustedZoom:1}}>
+      <div>
 
         {web3_setup}
 
@@ -276,6 +276,7 @@ class App extends Component {
                     <BridgeCard
                       privateKey={metaAccount.privateKey}
                       burnWallet={burnMetaAccount}
+                      changeAlert={this.changeAlert}
                     />
                     <BottomLinks/>
                   </div>
@@ -284,6 +285,9 @@ class App extends Component {
                 return (
                   <SendByScan
                     goBack={() => this.changeView('main')}
+                    onError={(error) =>{
+                      this.changeAlert("danger",error)
+                    }}
                   />
                 );
               case 'send_to_address':
@@ -328,7 +332,7 @@ class App extends Component {
           { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
         </div>
 
-      </Scaler>
+      </div>
     )
   }
 }

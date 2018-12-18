@@ -145,7 +145,7 @@ module.exports = {
         this.timeout(600000)
         let result = await clevis("sendTo","9.99","0","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")///<<<-------- change this to your metamask accounts
         printTxResult(result)
-        result = await clevis("sendTo","5","0","0x16b54975cce74f88c9ebf49609b31b653f8c4792")///<<<-------- change this to your metamask accounts
+        result = await clevis("sendTo","5","0","0xbfbe9f1fda0c941d4f89603c5b1604ef1e14505b")///<<<-------- change this to your metamask accounts
         printTxResult(result)
         //here is an example of running a funtion from within this object:
         //module.exports.mintTo("Greens",0,"0x2a906694d15df38f59e76ed3a5735f8aabcce9cb",20)

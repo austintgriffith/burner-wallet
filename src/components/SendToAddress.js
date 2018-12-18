@@ -36,7 +36,7 @@ export default class SendToAddress extends React.Component {
         console.log("SWITCH TO LOADER VIEW...")
         this.props.changeView('loader')
         this.props.send(address, amount, (result) => {
-          if(result.transactionHash){
+          if(result && result.transactionHash){
             this.props.goBack();
             window.history.pushState({},"", "/");
             this.props.changeAlert({
