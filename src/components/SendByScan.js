@@ -60,7 +60,7 @@ class SendByScan extends Component {
         <div style={{position: 'absolute',zIndex:11,top:0,left:0,width:"100%",height:"100%",color:"#FFFFFF",cursor:"pointer"}} onClick={this.openImageDialog}>
           <div style={{textAlign:"center",paddingTop:"38%"}}>
             <div style={{marginBottom:20}}><i className="fas fa-camera"></i> Click Here </div>
-            <div>Take a picture of the QR Code:</div>
+            <div>Take a picture of a QR Code:</div>
             <input type="button" value="Take a Picture"/>
           </div>
         </div>
@@ -80,7 +80,6 @@ class SendByScan extends Component {
           onScan={this.handleScan}
           onImageLoad={this.onImageLoad}
           facingMode="rear"
-          maxImageSize={3200}
           legacyMode={this.state.legacyMode}
           chooseDeviceId={this.chooseDeviceId}
           style={{ width: "100%" }}
