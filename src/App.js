@@ -274,6 +274,7 @@ class App extends Component {
                 return (
                   <SendByScan
                     goBack={this.goBack.bind(this)}
+                    changeView={this.changeView}
                     onError={(error) =>{
                       this.changeAlert("danger",error)
                     }}
@@ -335,6 +336,13 @@ class App extends Component {
                 return (
                   <div>
                     <NavCard title={"Sending..."} goBack={this.goBack.bind(this)}/>
+                    <Loader />
+                  </div>
+                );
+              case 'reader':
+                return (
+                  <div>
+                    <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)}/>
                     <Loader />
                   </div>
                 );

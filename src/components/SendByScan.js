@@ -7,7 +7,7 @@ class SendByScan extends Component {
     super(props)
     this.state = {
       delay: 100,
-      legacyMode: true,
+      legacyMode: false,
     };
     this.handleScan = this.handleScan.bind(this)
     this.openImageDialog = this.openImageDialog.bind(this)
@@ -22,12 +22,17 @@ class SendByScan extends Component {
   handleScan = data => {
     if (data) {
       this.stopRecording();
+      this.props.changeView('reader')
       if(data.indexOf("http")>=0){
-        //we are good this is already an http address
-        window.location = data
+        setTimeout(()=>{
+          //we are good this is already an http address
+          window.location = data
+        },100)
       } else {
-        //maybe they just scanned an address?
-        window.location = "/"+data
+        setTimeout(()=>{
+          //maybe they just scanned an address?
+          window.location = "/"+data
+        },100)
       }
     }
   };
