@@ -8,6 +8,10 @@ export default class SendToAddress extends React.Component {
 
   constructor(props) {
     super(props);
+    if(props.balance<=0){
+      this.props.goBack();
+      window.history.pushState({},"", "/");
+    }
     let startingAmount = 0.15
     if(props.amount){
       startingAmount = props.amount
