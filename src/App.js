@@ -263,6 +263,7 @@ class App extends Component {
                       changeView={this.changeView}
                     />
                     <BridgeCard
+                      balance={balance}
                       privateKey={metaAccount.privateKey}
                       burnWallet={burnMetaAccount}
                       changeAlert={this.changeAlert}
