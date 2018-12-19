@@ -26,6 +26,8 @@ else if (window.location.hostname.indexOf("xdai") >= 0) {
   CLAIM_RELAY = 'https://x.xdai.io'
 }
 
+const BLOCKS_TO_PARSE_PER_BLOCKTIME = 15
+
 class App extends Component {
 
   constructor(props) {
@@ -211,6 +213,42 @@ class App extends Component {
     this.changeView('main')
     setTimeout(()=>{window.scrollTo(0,0)},60)
   }
+  async parseBlocks(parseBlock,recentTxs){
+    let block = await this.state.web3.eth.getBlock(parseBlock)
+    let transactions = block.transactions
+    let updatedTxs = false
+    //console.log("transactions",transactions)
+    for(let t in transactions){
+      //console.log("TX",transactions[t])
+      let tx = await this.state.web3.eth.getTransaction(transactions[t])
+      if(tx.to && tx.from){
+        let smallerTx = {
+          hash:tx.hash,
+          to:tx.to.toLowerCase(),
+          from:tx.from.toLowerCase(),
+          value:this.state.web3.utils.fromWei(""+tx.value,"ether"),
+          blockNumber:tx.blockNumber
+        }
+        //console.log(smallerTx)
+        if(smallerTx.from==this.state.account || smallerTx.to==this.state.account){
+          let found = false
+          for(let r in recentTxs){
+            if(recentTxs[r].hash==smallerTx.hash){
+              found=true
+              break
+            }
+          }
+          if(!found){
+            console.log("+TX",smallerTx)
+            //console.log("recentTxs length is ",recentTxs.length)
+            recentTxs.push(smallerTx)
+            updatedTxs=true
+          }
+        }
+      }
+    }
+    return {recentTxs,updatedTxs}
+  }
   render() {
     let {
       web3, account, tx, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert,
@@ -282,6 +320,7 @@ class App extends Component {
                     />
                     <RecentTransactions
                       address={account}
+                      block={this.state.block}
                       recentTxs={this.state.recentTxs}
                     />
                     <MoreButtons
@@ -434,9 +473,9 @@ class App extends Component {
                     if(localStorage&&typeof localStorage.setItem == "function"){
                       let recentTxs = this.state.recentTxs
                       if(!recentTxs){
-                        console.log("no recent tx found, checking storage")
+                        //console.log("no recent tx found, checking storage")
                         recentTxs = localStorage.getItem("recentTxs")
-                        console.log("recentTxs txt is",recentTxs)
+                        //console.log("recentTxs txt is",recentTxs)
                         try{
                           recentTxs=JSON.parse(recentTxs)
                         }catch(e){
@@ -446,8 +485,8 @@ class App extends Component {
                       if(!recentTxs){
                         recentTxs=[]
                       }
-                      console.log("Starting with recentTxs",recentTxs)
-                      console.log("recentTxs length is ",recentTxs.length)
+                      //console.log("Starting with recentTxs",recentTxs)
+                      //console.log("recentTxs length is ",recentTxs.length)
 
                       let loadedBlocksTop = this.state.loadedBlocksTop
                       if(!loadedBlocksTop){
@@ -464,67 +503,57 @@ class App extends Component {
                       let updatedTxs = false
                       if(!loadedBlocksTop || loadedBlocksTop<this.state.block){
                         if(!loadedBlocksTop) loadedBlocksTop = Math.max(2,this.state.block-5)
-                        let paddedLoadedBlocks = parseInt(loadedBlocksTop)+25
-                        console.log("choosing the min of ",paddedLoadedBlocks,"and",this.state.block)
+                        let paddedLoadedBlocks = parseInt(loadedBlocksTop)+BLOCKS_TO_PARSE_PER_BLOCKTIME
+                        //console.log("choosing the min of ",paddedLoadedBlocks,"and",this.state.block)
                         let parseBlock=Math.min(paddedLoadedBlocks,this.state.block)
-                        console.log("MIN:",parseBlock)
+                        //console.log("MIN:",parseBlock)
                         upperBoundOfSearch = parseBlock
+                        //first, if we are still back parsing, we need to look at *this* block too
+                        if(upperBoundOfSearch<this.state.block){
+                          console.log(" +++++++======= Parsing recent blocks ~"+this.state.block)
+                          for(let b=this.state.block;b>this.state.block-6;b--){
+                            //console.log(" ++ Parsing *CURRENT BLOCK* Block "+b+" for transactions...")
+                            let result = await this.parseBlocks(b,recentTxs)
+                            //console.log(" result of parse: ",result)
+                            recentTxs =  result.recentTxs
+                            updatedTxs = updatedTxs||result.updatedTxs
+                            //console.log("updatedTxs",updatedTxs)
+                          }
+                        }
                         console.log(" +++++++======= Parsing from "+loadedBlocksTop+" to "+upperBoundOfSearch+"....")
                         while(loadedBlocksTop<parseBlock){
-                          console.log(" ++ Parsing Block "+parseBlock+" for transactions...")
-                          let block = await state.web3.eth.getBlock(parseBlock)
-                          let transactions = block.transactions
-                          //console.log("transactions",transactions)
-                          for(let t in transactions){
-                            //console.log("TX",transactions[t])
-                            let tx = await state.web3.eth.getTransaction(transactions[t])
-                            let smallerTx = {
-                              hash:tx.hash,
-                              to:tx.to.toLowerCase(),
-                              from:tx.from.toLowerCase(),
-                              value:state.web3.utils.fromWei(""+tx.value,"ether"),
-                              blockNumber:tx.blockNumber
-                            }
-                            //console.log(smallerTx)
-                            if(smallerTx.from==state.account || smallerTx.to==state.account){
-                              let found = false
-                              for(let r in recentTxs){
-                                if(recentTxs[r].hash==smallerTx.hash){
-                                  found=true
-                                  break
-                                }
-                              }
-                              if(!found){
-                                console.log("+TX",smallerTx)
-                                console.log("recentTxs length is ",recentTxs.length)
-                                recentTxs.push(smallerTx)
-                                updatedTxs=true
-                              }
-                            }
-                          }
+                          //console.log(" ++ Parsing Block "+parseBlock+" for transactions...")
+                          let result = await this.parseBlocks(parseBlock,recentTxs)
+                          //console.log(" result of parse: ",result)
+                          recentTxs =  result.recentTxs
+                          updatedTxs = updatedTxs||result.updatedTxs
                           parseBlock--
                         }
+
                       }
 
-                      recentTxs.sort((a,b)=>{
-                        if(b.blockNumber<a.blockNumber){
-                          return -1;
-                        }
-                        if(b.blockNumber>a.blockNumber){
-                          return 1;
-                        }
-                        return 0;
-                      })
+                      if(updatedTxs||!this.state.recentTxs){
+                        //console.log("!!!! TX UPDATE, SORT AND SLICE")
+                        //console.log("BEFORE",JSON.stringify(recentTxs))
+                        recentTxs.sort((a,b)=>{
+                          if(b.blockNumber<a.blockNumber){
+                            return -1;
+                          }
+                          if(b.blockNumber>a.blockNumber){
+                            return 1;
+                          }
+                          return 0;
+                        })
+                        //console.log("AFTER",JSON.stringify(recentTxs))
+                        recentTxs = recentTxs.slice(0,12)
+                        //console.log("ending with recentTxs",recentTxs)
 
-                      recentTxs = recentTxs.slice(0,12)
-                      console.log("ending with recentTxs",recentTxs)
-
-                      if(updatedTxs){
                         localStorage.setItem("recentTxs",JSON.stringify(recentTxs))
+                        this.setState({recentTxs:recentTxs})
                       }
 
                       localStorage.setItem("loadedBlocksTop",upperBoundOfSearch)
-                      this.setState({parsingTheChain:false,loadedBlocksTop:upperBoundOfSearch,recentTxs:recentTxs})
+                      this.setState({parsingTheChain:false,loadedBlocksTop:upperBoundOfSearch})
                     }
 
                   })

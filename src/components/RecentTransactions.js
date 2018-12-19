@@ -6,7 +6,7 @@ import { Scaler } from "dapparatus";
 
 const BockieSize = 4
 
-export default ({account, recentTxs}) => {
+export default ({account, recentTxs, block}) => {
   let txns = []
   for(let r in recentTxs){
     if(txns.length>0){
@@ -16,22 +16,25 @@ export default ({account, recentTxs}) => {
     }
     txns.push(
       <div key={recentTxs[r].hash} className="content bridge row">
-        <div className="col-4 p-1" style={{textAlign:'right'}}>
+        <div className="col-3 p-1" style={{textAlign:'center'}}>
           <Blockie
             address={recentTxs[r].from}
             config={{size:BockieSize}}
           />
         </div>
-        <div className="col-4 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
+        <div className="col-3 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
           <Scaler config={{startZoomAt:600,origin:"25% 50%",adjustedZoom:1}}>
             <span style={{opacity:0.33}}>-</span>${parseFloat(recentTxs[r].value).toFixed(2)}<span style={{opacity:0.33}}>-></span>
           </Scaler>
         </div>
-        <div className="col-4 p-1" style={{textAlign:'left'}}>
+        <div className="col-3 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
           <Blockie
             address={recentTxs[r].to}
             config={{size:BockieSize}}
           />
+        </div>
+        <div className="col-3 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
+          <span style={{marginLeft:5,marginTop:-5,opacity:0.4,fontSize:12}}>{cleanTime((block-recentTxs[r].blockNumber)*5)} ago</span>
         </div>
       </div>
     )
@@ -46,5 +49,15 @@ export default ({account, recentTxs}) => {
     return (
       <span></span>
     )
+  }
+}
+
+let cleanTime = (s)=>{
+  if(s<60){
+    return s+"s"
+  }else if(s/60<60){
+    return Math.round(s/6)/10+"m"
+  }else {
+    return Math.round((s/60/6)/24)/10+"d"
   }
 }
