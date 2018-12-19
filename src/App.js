@@ -404,6 +404,11 @@ class App extends Component {
                 )
             }
           })()}
+          { ( !web3 || !this.checkNetwork() ) &&
+            <div>
+              <Loader />
+            </div>
+          }
           { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
         </div>
 
@@ -454,7 +459,7 @@ class App extends Component {
                 let updatedTxs = false
                 let parseBlock=state.block
                 if(!loadedBlocksTop || loadedBlocksTop<state.block){
-                  if(!loadedBlocksTop) loadedBlocksTop = Math.max(2,state.block-25)
+                  if(!loadedBlocksTop) loadedBlocksTop = Math.max(2,state.block-5)
                   while(loadedBlocksTop<parseBlock){
                     console.log(" ++ Parsing Block "+parseBlock+" for transactions...")
                     let block = await state.web3.eth.getBlock(parseBlock)
@@ -497,7 +502,15 @@ class App extends Component {
                   localStorage.setItem("recentTxs",JSON.stringify(recentTxs))
                 }
 
+                recentTxs.sort((a,b)=>{
+                  console.log("sorting",a,b)
+                  let result = (parseInt(a.blockNumber)<parseInt(b.blockNumber));
+                  console.log(result)
+                  return result;
+                })
+                recentTxs = recentTxs.slice(0,12)
                 console.log("ending with recentTxs",recentTxs)
+
                 state.recentTxs=recentTxs
               }
 

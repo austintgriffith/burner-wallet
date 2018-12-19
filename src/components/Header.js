@@ -3,7 +3,7 @@ import { Scaler } from "dapparatus";
 export  default ({changeView}) => {
   return (
     <div className="header">
-      <Scaler config={{startZoomAt:510,origin:"0% 0%",adjustedZoom:1}}>
+      <Scaler config={{startZoomAt:600,origin:"0% 0%",adjustedZoom:1}}>
         <a href="/" style={{color:"#FFFFFF"}}>
           <i className="fas fa-fire" />
           <span style={{paddingLeft:10}}>Burner Wallet</span>

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import QrScanner from "react-qr-scanner";
 import QrReader from "react-qr-reader";
-import { Scaler } from "dapparatus";
+
 import qrimage from '../qrcode.png';
 class SendByScan extends Component {
   constructor(props){
