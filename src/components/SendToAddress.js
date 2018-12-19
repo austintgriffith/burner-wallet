@@ -45,6 +45,7 @@ export default class SendToAddress extends React.Component {
       }else{
         console.log("SWITCH TO LOADER VIEW...")
         this.props.changeView('loader')
+        setTimeout(()=>{window.scrollTo(0,0)},60)
         this.props.send(address, amount, (result) => {
           if(result && result.transactionHash){
             this.props.goBack();

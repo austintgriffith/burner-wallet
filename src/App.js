@@ -192,7 +192,7 @@ class App extends Component {
   };
   goBack(){
     this.changeView('main')
-    window.scrollTo(0,0);
+    setTimeout(()=>{window.scrollTo(0,0)},60)
   }
   render() {
     let {
@@ -263,7 +263,6 @@ class App extends Component {
                       changeView={this.changeView}
                     />
                     <BridgeCard
-                      balance={balance}
                       privateKey={metaAccount.privateKey}
                       burnWallet={burnMetaAccount}
                       changeAlert={this.changeAlert}

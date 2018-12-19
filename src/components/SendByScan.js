@@ -19,7 +19,7 @@ class SendByScan extends Component {
     console.log(data)
     setTimeout(()=>{
       alert("Please Try Again. Maybe farther away? QRCode should be ~20% of the image.")
-    },4500)
+    },5500)
   }
   handleScan = data => {
     if (data) {
