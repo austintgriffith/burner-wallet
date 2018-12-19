@@ -183,7 +183,7 @@ class App extends Component {
 
 
   changeView = (view) => {
-    if (view.startsWith('send')) {
+    if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
       console.log("This is a send...")
       if (this.state.balance <= 0) {
         console.log("no funds...")
@@ -305,7 +305,10 @@ class App extends Component {
         {web3_setup}
 
         <div className="container-fluid">
-          <Header changeView={this.changeView} />
+          <Header
+            changeView={this.changeView}
+            balance={balance}
+          />
           {web3 && this.checkNetwork() && (() => {
             console.log("VIEW:",view)
             switch(view) {

@@ -1,6 +1,10 @@
 import React from 'react';
 import { Scaler } from "dapparatus";
-export  default ({changeView}) => {
+export  default ({balance, changeView}) => {
+  let actionWord = "Send"
+  if(balance<=0){
+    actionWord = "Scan"
+  }
   return (
     <div className="header">
       <Scaler config={{startZoomAt:600,origin:"0% 0%",adjustedZoom:1}}>
@@ -13,7 +17,7 @@ export  default ({changeView}) => {
         <button className="btn btn-large w-100" style={{backgroundColor:"#FFFFFF",border:"3px solid #8762A6"}}>
           <a href="#" style={{color:"#8762A6"}}>
             <span style={{paddingRight:10,fontSize:22,paddingBottom:10}}>
-              Send
+              {actionWord}
             </span>
             <i className="fas fa-camera" />
           </a>
