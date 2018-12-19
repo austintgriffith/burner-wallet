@@ -32,7 +32,8 @@ export default ({balance, privateKey, burnWallet, changeAlert}) => {
           <div className="col-6 p-1">
             <button className="btn btn-large w-100"
                     onClick={()=>{
-                      if(balance<=.1){
+                      console.log("BALANCE",balance)
+                      if(parseFloat(balance)<=.1){
                         burnWallet()
                       }else{
                         changeAlert({type: 'danger', message: 'Can\'t burn more than $0.10'})
