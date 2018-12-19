@@ -3,7 +3,7 @@ import { Scaler } from "dapparatus";
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 
-export default ({privateKey, burnWallet, changeAlert}) => {
+export default ({balance, privateKey, burnWallet, changeAlert}) => {
   return (
     <div className="main-card card w-100">
       <div className="content bridge row" style={{padding:10}}>
@@ -31,7 +31,13 @@ export default ({privateKey, burnWallet, changeAlert}) => {
           </CopyToClipboard>
           <div className="col-6 p-1">
             <button className="btn btn-large w-100"
-                    onClick={burnWallet}>
+                    onClick={()=>{
+                      if(balance<=.1){
+                        burnWallet()
+                      }else{
+                        changeAlert({type: 'danger', message: 'Can\'t burn more than $0.10'})
+                      }
+                    }}>
               <Scaler config={{startZoomAt:500,origin:"25% 50%",adjustedZoom:1}}>
                 <i className="fas fa-fire"/> Burn Wallet
               </Scaler>
