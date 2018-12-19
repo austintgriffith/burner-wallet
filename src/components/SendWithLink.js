@@ -4,7 +4,7 @@ import Balance from "./Balance";
 import Blockies from 'react-blockies';
 
 
-export default class SendToAddress extends React.Component {
+export default class SendWithLink extends React.Component {
 
   constructor(props) {
     super(props);

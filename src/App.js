@@ -7,11 +7,12 @@ import Header from './components/Header';
 import NavCard from './components/NavCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
+import RequestFunds from './components/RequestFunds';
 import SendWithLink from './components/SendWithLink';
 import ShareLink from './components/ShareLink'
 import MainCard from './components/MainCard';
 import BottomLinks from './components/BottomLinks';
-import BridgeCard from './components/BridgeCard';
+import MoreButtons from './components/MoreButtons';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
 
@@ -51,6 +52,17 @@ class App extends Component {
         let claimKey = parts[1]
         console.log("DO CLAIM",claimId,claimKey)
         this.setState({claimId,claimKey})
+      }else{
+        let parts = window.location.pathname.split(";")
+        console.log("PARTS",parts)
+        if(parts.length>=2){
+          let sendToAddress = parts[0].replace("/","")
+          let sendToAmount = parts[1]
+          if(parseFloat(sendToAmount)>0 && sendToAddress.length==42){
+            this.changeView('send_to_address')
+          }
+        }
+
       }
     }
   }
@@ -262,8 +274,9 @@ class App extends Component {
                       changeAlert={this.changeAlert}
                       changeView={this.changeView}
                     />
-                    <BridgeCard
+                    <MoreButtons
                       balance={balance}
+                      changeView={this.changeView}
                       privateKey={metaAccount.privateKey}
                       burnWallet={burnMetaAccount}
                       changeAlert={this.changeAlert}
@@ -295,6 +308,20 @@ class App extends Component {
                     />
                   </div>
                 );
+                case 'request_funds':
+                  return (
+                    <div>
+                      <NavCard title={'Request Funds'} goBack={this.goBack.bind(this)}/>
+                      <RequestFunds
+                        balance={balance}
+                        address={account}
+                        send={send}
+                        goBack={this.goBack.bind(this)}
+                        changeView={this.changeView}
+                        changeAlert={this.changeAlert}
+                      />
+                    </div>
+                  );
               case 'share-link':
                 return (
                   <div>
