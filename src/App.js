@@ -424,98 +424,113 @@ class App extends Component {
             console.log("Dapparatus state update:", state)
             if (state.web3Provider) {
               state.web3 = new Web3(state.web3Provider)
-
-              //parse through recent transactions and store in local storage
-              if(localStorage&&typeof localStorage.setItem == "function"){
-                let recentTxs = this.state.recentTxs
-                if(!recentTxs){
-                  console.log("no recent tx found, checking storage")
-                  recentTxs = localStorage.getItem("recentTxs")
-                  console.log("recentTxs txt is",recentTxs)
-                  try{
-                    recentTxs=JSON.parse(recentTxs)
-                  }catch(e){
-                    recentTxs=[]
-                  }
-                }
-                if(!recentTxs){
-                  recentTxs=[]
-                }
-                console.log("Starting with recentTxs",recentTxs)
-                console.log("recentTxs length is ",recentTxs.length)
-
-                let loadedBlocksTop = this.state.loadedBlocksTop
-                if(!loadedBlocksTop){
-                  loadedBlocksTop = localStorage.getItem("loadedBlocksTop")
-                }
-
-                /*
-                    Look back through previous blocks since this account
-                    was last online... this could be bad. We might need a
-                    central server keeping track of all these and delivering
-                    a list of recent transactions
-                 */
-
-                let updatedTxs = false
-                let parseBlock=state.block
-                if(!loadedBlocksTop || loadedBlocksTop<state.block){
-                  if(!loadedBlocksTop) loadedBlocksTop = Math.max(2,state.block-5)
-                  while(loadedBlocksTop<parseBlock){
-                    console.log(" ++ Parsing Block "+parseBlock+" for transactions...")
-                    let block = await state.web3.eth.getBlock(parseBlock)
-                    let transactions = block.transactions
-                    //console.log("transactions",transactions)
-                    for(let t in transactions){
-                      //console.log("TX",transactions[t])
-                      let tx = await state.web3.eth.getTransaction(transactions[t])
-                      let smallerTx = {
-                        hash:tx.hash,
-                        to:tx.to.toLowerCase(),
-                        from:tx.from.toLowerCase(),
-                        value:state.web3.utils.fromWei(""+tx.value,"ether"),
-                        blockNumber:tx.blockNumber
-                      }
-                      //console.log(smallerTx)
-                      if(smallerTx.from==state.account || smallerTx.to==state.account){
-                        let found = false
-                        for(let r in recentTxs){
-                          if(recentTxs[r].hash==smallerTx.hash){
-                            found=true
-                            break
-                          }
-                        }
-                        if(!found){
-                          console.log("+TX",smallerTx)
-                          console.log("recentTxs length is ",recentTxs.length)
-                          recentTxs.push(smallerTx)
-                          updatedTxs=true
-                        }
-                      }
-                    }
-                    parseBlock--
-                  }
-                  this.state.loadedBlocksTop=state.block
-                  localStorage.setItem("loadedBlocksTop",this.state.loadedBlocksTop)
-                }
-
-                if(updatedTxs){
-                  localStorage.setItem("recentTxs",JSON.stringify(recentTxs))
-                }
-
-                recentTxs.sort((a,b)=>{
-                  console.log("sorting",a,b)
-                  let result = (parseInt(a.blockNumber)<parseInt(b.blockNumber));
-                  console.log(result)
-                  return result;
-                })
-                recentTxs = recentTxs.slice(0,12)
-                console.log("ending with recentTxs",recentTxs)
-
-                state.recentTxs=recentTxs
-              }
-
               this.setState(state,()=>{
                 console.log("state set:",this.state)
+
+                if(!this.state.parsingTheChain){
+                  this.setState({parsingTheChain:true},async ()=>{
+                    let upperBoundOfSearch = this.state.block
+                    //parse through recent transactions and store in local storage
+                    if(localStorage&&typeof localStorage.setItem == "function"){
+                      let recentTxs = this.state.recentTxs
+                      if(!recentTxs){
+                        console.log("no recent tx found, checking storage")
+                        recentTxs = localStorage.getItem("recentTxs")
+                        console.log("recentTxs txt is",recentTxs)
+                        try{
+                          recentTxs=JSON.parse(recentTxs)
+                        }catch(e){
+                          recentTxs=[]
+                        }
+                      }
+                      if(!recentTxs){
+                        recentTxs=[]
+                      }
+                      console.log("Starting with recentTxs",recentTxs)
+                      console.log("recentTxs length is ",recentTxs.length)
+
+                      let loadedBlocksTop = this.state.loadedBlocksTop
+                      if(!loadedBlocksTop){
+                        loadedBlocksTop = localStorage.getItem("loadedBlocksTop")
+                      }
+
+                      /*
+                          Look back through previous blocks since this account
+                          was last online... this could be bad. We might need a
+                          central server keeping track of all these and delivering
+                          a list of recent transactions
+                       */
+
+                      let updatedTxs = false
+                      if(!loadedBlocksTop || loadedBlocksTop<this.state.block){
+                        if(!loadedBlocksTop) loadedBlocksTop = Math.max(2,this.state.block-5)
+                        let paddedLoadedBlocks = parseInt(loadedBlocksTop)+25
+                        console.log("choosing the min of ",paddedLoadedBlocks,"and",this.state.block)
+                        let parseBlock=Math.min(paddedLoadedBlocks,this.state.block)
+                        console.log("MIN:",parseBlock)
+                        upperBoundOfSearch = parseBlock
+                        console.log(" +++++++======= Parsing from "+loadedBlocksTop+" to "+upperBoundOfSearch+"....")
+                        while(loadedBlocksTop<parseBlock){
+                          console.log(" ++ Parsing Block "+parseBlock+" for transactions...")
+                          let block = await state.web3.eth.getBlock(parseBlock)
+                          let transactions = block.transactions
+                          //console.log("transactions",transactions)
+                          for(let t in transactions){
+                            //console.log("TX",transactions[t])
+                            let tx = await state.web3.eth.getTransaction(transactions[t])
+                            let smallerTx = {
+                              hash:tx.hash,
+                              to:tx.to.toLowerCase(),
+                              from:tx.from.toLowerCase(),
+                              value:state.web3.utils.fromWei(""+tx.value,"ether"),
+                              blockNumber:tx.blockNumber
+                            }
+                            //console.log(smallerTx)
+                            if(smallerTx.from==state.account || smallerTx.to==state.account){
+                              let found = false
+                              for(let r in recentTxs){
+                                if(recentTxs[r].hash==smallerTx.hash){
+                                  found=true
+                                  break
+                                }
+                              }
+                              if(!found){
+                                console.log("+TX",smallerTx)
+                                console.log("recentTxs length is ",recentTxs.length)
+                                recentTxs.push(smallerTx)
+                                updatedTxs=true
+                              }
+                            }
+                          }
+                          parseBlock--
+                        }
+                      }
+
+                      recentTxs.sort((a,b)=>{
+                        if(b.blockNumber<a.blockNumber){
+                          return -1;
+                        }
+                        if(b.blockNumber>a.blockNumber){
+                          return 1;
+                        }
+                        return 0;
+                      })
+
+                      recentTxs = recentTxs.slice(0,12)
+                      console.log("ending with recentTxs",recentTxs)
+
+                      if(updatedTxs){
+                        localStorage.setItem("recentTxs",JSON.stringify(recentTxs))
+                      }
+
+                      localStorage.setItem("loadedBlocksTop",upperBoundOfSearch)
+                      this.setState({parsingTheChain:false,loadedBlocksTop:upperBoundOfSearch,recentTxs:recentTxs})
+                    }
+
+                  })
+                }
+
+
               })
             }
           }}
