@@ -29,6 +29,7 @@ export default class SendToAddress extends React.Component {
     let { amount } = this.state;
     if(this.state.canSend){
       this.props.changeView('loader')
+      setTimeout(()=>{window.scrollTo(0,0)},60)
       this.props.sendWithLink(amount, (result) => {
         if(result && result.transactionHash){
           this.props.changeView('share-link')

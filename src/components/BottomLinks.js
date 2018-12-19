@@ -10,7 +10,7 @@ export default () => {
           </a>
         </span>
         <span style={{padding:10,whiteSpace:"nowrap"}}>
-          <a href="mailto:austin@concurrence.io?Subject=Burner%20Wallet%20Feedback" target="_top" style={{color:"#FFFFFF"}}>
+          <a href="https://twitter.com/austingriffith" target="_blank" style={{color:"#FFFFFF"}}>
             <i className="fas fa-comment"/> Feedback
           </a>
         </span>
