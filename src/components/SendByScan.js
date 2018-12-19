@@ -7,7 +7,7 @@ class SendByScan extends Component {
   constructor(props){
     super(props)
     this.state = {
-      delay: 100,
+      delay: 500,
       browser: "",
       legacyMode: false,
     };
@@ -85,14 +85,17 @@ class SendByScan extends Component {
     //{readerVersion}
     //for some messed up reason the other scanner always uses the front facing camera even when you set it to rear
     //so for specific phones we'll use the old version that actually uses the rear camera
-    if(!this.state.legacyMode && !window.navigator.standalone && navigator.userAgent.indexOf("iPhone OS 12")>=0){
+    if(!this.state.legacyMode && !window.navigator.standalone && (
+        navigator.userAgent.indexOf("iPhone OS 12")>=0 ||
+        navigator.userAgent.indexOf("iPad; CPU OS 12")>=0
+      )){
       readerVersion = (
         <QrReader
           delay={this.state.delay}
           onError={this.handleError}
           onScan={this.handleScan}
           onImageLoad={this.onImageLoad}
-          style={{ width: "140%",marginLeft:"-20%" }}
+          style={{ width: "100%" }}
         />
       )
     }else{
@@ -104,7 +107,7 @@ class SendByScan extends Component {
           onScan={this.handleScan}
           onImageLoad={this.onImageLoad}
           legacyMode={this.state.legacyMode}
-          style={{ width: "140%",marginLeft:"-20%" }}
+          style={{ width: "100%" }}
         />
       )
     }
@@ -119,7 +122,7 @@ class SendByScan extends Component {
         {legacyOverlay}
         {readerVersion}
         <div style={{position: 'absolute',zIndex:11,bottom:20,fontSize:12,left:20,color:"#FFFFFF"}}>
-          {this.state.browser}
+          {navigator.userAgent}
         </div>
       </div>
     );
