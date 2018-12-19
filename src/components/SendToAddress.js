@@ -8,6 +8,11 @@ export default class SendToAddress extends React.Component {
 
   constructor(props) {
     super(props);
+    let initialState = {
+      amount: props.amount,
+      message: props.message,
+      canSend: false,
+    }
     if(props.balance<=0){
       this.props.goBack();
       window.history.pushState({},"", "/");
@@ -16,29 +21,40 @@ export default class SendToAddress extends React.Component {
     if(props.amount){
       startingAmount = props.amount
     }
-    let toAddress = ""
     if(window.location.pathname){
       if(window.location.pathname.length==43){
-        toAddress = window.location.pathname.substring(1)
+        initialState.toAddress = window.location.pathname.substring(1)
+      }else{
+        let parts = window.location.pathname.split(";")
+        console.log("PARTS",parts)
+        if(parts.length>2){
+          initialState.toAddress = parts[0].replace("/","")
+          initialState.amount = parts[1]
+          initialState.message = parts[2]
+        }
       }
     }
-    this.state = {
-      address: toAddress,
-      amount: props.amount,
-      canSend: false,
-    }
+    this.state = initialState
     console.log("SendToAddress constructor",this.state)
   }
 
   updateState = (key, value) => {
     this.setState({ [key]: value },()=>{
-      this.setState({ canSend: (this.state.address && this.state.address.length === 42 && this.state.amount > 0) })
+      this.setState({ canSend: this.canSend() })
     });
 
   };
 
+  componentDidMount(){
+    this.setState({ canSend: this.canSend() })
+  }
+
+  canSend() {
+    return (this.state.toAddress && this.state.toAddress.length === 42 && this.state.amount > 0)
+  }
+
   send = () => {
-    let { address, amount } = this.state;
+    let { toAddress, amount } = this.state;
     if(this.state.canSend){
       if(this.props.balance<=amount){
         this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor(this.props.balance*100)/100+' (gas costs)'})
@@ -46,7 +62,7 @@ export default class SendToAddress extends React.Component {
         console.log("SWITCH TO LOADER VIEW...")
         this.props.changeView('loader')
         setTimeout(()=>{window.scrollTo(0,0)},60)
-        this.props.send(address, amount, (result) => {
+        this.props.send(toAddress, amount, (result) => {
           if(result && result.transactionHash){
             this.props.goBack();
             window.history.pushState({},"", "/");
@@ -63,7 +79,21 @@ export default class SendToAddress extends React.Component {
   };
 
   render() {
-    let { canSend, address } = this.state;
+    let { canSend, toAddress } = this.state;
+
+    let sendMessage = ""
+    if(this.state.message){
+      sendMessage = (
+        <div className="form-group w-100">
+          <label htmlFor="amount_input">For</label>
+          <div>
+            {decodeURI(this.state.message)}
+          </div>
+        </div>
+      )
+    }
+
+
     return (
       <div>
         <div className="send-to-address card w-100">
@@ -76,16 +106,17 @@ export default class SendToAddress extends React.Component {
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
                 </div>
-                <input type="text" className="form-control" placeholder="0.00"
+                <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
             </div>
             <div className="form-group w-100">
-              { this.state.address && this.state.address.length==42 && <Blockies seed={address} scale={10} /> }
+              { this.state.toAddress && this.state.toAddress.length==42 && <Blockies seed={toAddress} scale={10} /> }
               <label htmlFor="amount_input">To Address</label>
-              <input type="text" className="form-control" placeholder="0x..." value={this.state.address}
-                     onChange={event => this.updateState('address', event.target.value)} />
+              <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
+                     onChange={event => this.updateState('toAddress', event.target.value)} />
             </div>
+            {sendMessage}
             <button className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
                     onClick={this.send}>
               Send
