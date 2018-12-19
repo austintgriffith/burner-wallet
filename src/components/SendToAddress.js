@@ -101,6 +101,12 @@ export default class SendToAddress extends React.Component {
           <Ruler/>
           <div className="content row">
             <div className="form-group w-100">
+              <div className="form-group w-100">
+                <label htmlFor="amount_input">To Address</label>
+                <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
+                       onChange={event => this.updateState('toAddress', event.target.value)} />
+              </div>
+                { this.state.toAddress && this.state.toAddress.length==42 && <Blockies seed={toAddress} scale={10} /> }
               <label htmlFor="amount_input">Send Amount</label>
               <div className="input-group">
                 <div className="input-group-prepend">
@@ -109,12 +115,6 @@ export default class SendToAddress extends React.Component {
                 <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
-            </div>
-            <div className="form-group w-100">
-              { this.state.toAddress && this.state.toAddress.length==42 && <Blockies seed={toAddress} scale={10} /> }
-              <label htmlFor="amount_input">To Address</label>
-              <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
-                     onChange={event => this.updateState('toAddress', event.target.value)} />
             </div>
             {sendMessage}
             <button className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}

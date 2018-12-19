@@ -15,7 +15,9 @@ export default ({balance, privateKey, burnWallet, changeAlert, changeView}) => {
         </a>
         </div>
         <div className="col-6 p-1">
-        <button className="btn btn-large w-100" onClick={()=>{changeView('request_funds')}}>
+        <button className="btn btn-large w-100" onClick={()=>{
+          changeView('request_funds')}
+        }>
           <Scaler config={{startZoomAt:500,origin:"25% 50%",adjustedZoom:1}}>
             <i className="fa fa-money-bill-wave" aria-hidden="true"></i> Request Funds
           </Scaler>

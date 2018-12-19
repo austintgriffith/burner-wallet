@@ -13,6 +13,7 @@ import ShareLink from './components/ShareLink'
 import MainCard from './components/MainCard';
 import BottomLinks from './components/BottomLinks';
 import MoreButtons from './components/MoreButtons';
+import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
 
@@ -181,7 +182,9 @@ class App extends Component {
 
   changeView = (view) => {
     if (view.startsWith('send')) {
+      console.log("This is a send...")
       if (this.state.balance <= 0) {
+        console.log("no funds...")
         this.changeAlert({
           type: 'danger',
           message: 'Insufficient funds',
@@ -190,6 +193,7 @@ class App extends Component {
       }
     }
     this.changeAlert(null);
+    console.log("Setting state",view)
     this.setState({ view });
   };
 
@@ -203,6 +207,7 @@ class App extends Component {
     }
   };
   goBack(){
+    console.log("GO BACK")
     this.changeView('main')
     setTimeout(()=>{window.scrollTo(0,0)},60)
   }
@@ -264,6 +269,7 @@ class App extends Component {
         <div className="container-fluid">
           <Header changeView={this.changeView} />
           {web3 && this.checkNetwork() && (() => {
+            console.log("VIEW:",view)
             switch(view) {
               case 'main':
                 return (
@@ -274,11 +280,22 @@ class App extends Component {
                       changeAlert={this.changeAlert}
                       changeView={this.changeView}
                     />
+                    <RecentTransactions
+                      address={account}
+                      recentTxs={this.state.recentTxs}
+                    />
                     <MoreButtons
                       balance={balance}
                       changeView={this.changeView}
                       privateKey={metaAccount.privateKey}
-                      burnWallet={burnMetaAccount}
+                      burnWallet={()=>{
+                        burnMetaAccount()
+                        if(localStorage&&typeof localStorage.setItem == "function"){
+                          localStorage.setItem("loadedBlocksTop","")
+                          localStorage.setItem("metaPrivateKey","")
+                          localStorage.setItem("recentTxs","")
+                        }
+                      }}
                       changeAlert={this.changeAlert}
                     />
                     <BottomLinks/>
@@ -308,20 +325,20 @@ class App extends Component {
                     />
                   </div>
                 );
-                case 'request_funds':
-                  return (
-                    <div>
-                      <NavCard title={'Request Funds'} goBack={this.goBack.bind(this)}/>
-                      <RequestFunds
-                        balance={balance}
-                        address={account}
-                        send={send}
-                        goBack={this.goBack.bind(this)}
-                        changeView={this.changeView}
-                        changeAlert={this.changeAlert}
-                      />
-                    </div>
-                  );
+              case 'request_funds':
+                return (
+                  <div>
+                    <NavCard title={'Request Funds'} goBack={this.goBack.bind(this)}/>
+                    <RequestFunds
+                      balance={balance}
+                      address={account}
+                      send={send}
+                      goBack={this.goBack.bind(this)}
+                      changeView={this.changeView}
+                      changeAlert={this.changeAlert}
+                    />
+                  </div>
+                );
               case 'share-link':
                 return (
                   <div>
@@ -398,11 +415,95 @@ class App extends Component {
             metatxAccountGenerator: false,
           }}
           fallbackWeb3Provider={WEB3_PROVIDER}
-          onUpdate={(state) => {
+          onUpdate={async (state) => {
             console.log("Dapparatus state update:", state)
             if (state.web3Provider) {
               state.web3 = new Web3(state.web3Provider)
-              this.setState(state)
+
+              //parse through recent transactions and store in local storage
+              if(localStorage&&typeof localStorage.setItem == "function"){
+                let recentTxs = this.state.recentTxs
+                if(!recentTxs){
+                  console.log("no recent tx found, checking storage")
+                  recentTxs = localStorage.getItem("recentTxs")
+                  console.log("recentTxs txt is",recentTxs)
+                  try{
+                    recentTxs=JSON.parse(recentTxs)
+                  }catch(e){
+                    recentTxs=[]
+                  }
+                }
+                if(!recentTxs){
+                  recentTxs=[]
+                }
+                console.log("Starting with recentTxs",recentTxs)
+                console.log("recentTxs length is ",recentTxs.length)
+
+                let loadedBlocksTop = this.state.loadedBlocksTop
+                if(!loadedBlocksTop){
+                  loadedBlocksTop = localStorage.getItem("loadedBlocksTop")
+                }
+
+                /*
+                    Look back through previous blocks since this account
+                    was last online... this could be bad. We might need a
+                    central server keeping track of all these and delivering
+                    a list of recent transactions
+                 */
+
+                let updatedTxs = false
+                let parseBlock=state.block
+                if(!loadedBlocksTop || loadedBlocksTop<state.block){
+                  if(!loadedBlocksTop) loadedBlocksTop = Math.max(2,state.block-25)
+                  while(loadedBlocksTop<parseBlock){
+                    console.log(" ++ Parsing Block "+parseBlock+" for transactions...")
+                    let block = await state.web3.eth.getBlock(parseBlock)
+                    let transactions = block.transactions
+                    //console.log("transactions",transactions)
+                    for(let t in transactions){
+                      //console.log("TX",transactions[t])
+                      let tx = await state.web3.eth.getTransaction(transactions[t])
+                      let smallerTx = {
+                        hash:tx.hash,
+                        to:tx.to.toLowerCase(),
+                        from:tx.from.toLowerCase(),
+                        value:state.web3.utils.fromWei(""+tx.value,"ether"),
+                        blockNumber:tx.blockNumber
+                      }
+                      //console.log(smallerTx)
+                      if(smallerTx.from==state.account || smallerTx.to==state.account){
+                        let found = false
+                        for(let r in recentTxs){
+                          if(recentTxs[r].hash==smallerTx.hash){
+                            found=true
+                            break
+                          }
+                        }
+                        if(!found){
+                          console.log("+TX",smallerTx)
+                          console.log("recentTxs length is ",recentTxs.length)
+                          recentTxs.push(smallerTx)
+                          updatedTxs=true
+                        }
+                      }
+                    }
+                    parseBlock--
+                  }
+                  this.state.loadedBlocksTop=state.block
+                  localStorage.setItem("loadedBlocksTop",this.state.loadedBlocksTop)
+                }
+
+                if(updatedTxs){
+                  localStorage.setItem("recentTxs",JSON.stringify(recentTxs))
+                }
+
+                console.log("ending with recentTxs",recentTxs)
+                state.recentTxs=recentTxs
+              }
+
+              this.setState(state,()=>{
+                console.log("state set:",this.state)
+              })
             }
           }}
         />

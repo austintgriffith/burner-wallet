@@ -9,10 +9,6 @@ export default class RequestFunds extends React.Component {
 
   constructor(props) {
     super(props);
-    if(props.balance<=0){
-      this.props.goBack();
-      window.history.pushState({},"", "/");
-    }
     this.state = {
       message: "",
       amount: "",
