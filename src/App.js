@@ -7,6 +7,7 @@ import Header from './components/Header';
 import NavCard from './components/NavCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
+import WithdrawFromPrivate from './components/WithdrawFromPrivate';
 import RequestFunds from './components/RequestFunds';
 import SendWithLink from './components/SendWithLink';
 import ShareLink from './components/ShareLink'
@@ -55,6 +56,15 @@ class App extends Component {
         let claimKey = parts[1]
         console.log("DO CLAIM",claimId,claimKey)
         this.setState({claimId,claimKey})
+      }else if(window.location.pathname.length>=65&&window.location.pathname.length<=67){
+        console.log("incoming private key")
+        let privateKey = window.location.pathname.replace("/","")
+        if(privateKey.indexOf("0x")!=0){
+          privateKey="0x"+privateKey
+        }
+        console.log("!!! possibleNewPrivateKey",privateKey)
+        this.setState({possibleNewPrivateKey:privateKey})
+        window.history.pushState({},"", "/");
       }else{
         let parts = window.location.pathname.split(";")
         console.log("PARTS",parts)
@@ -65,7 +75,6 @@ class App extends Component {
             this.changeView('send_to_address')
           }
         }
-
       }
     }
   }
@@ -353,6 +362,22 @@ class App extends Component {
                     }}
                   />
                 );
+              case 'withdraw_from_private':
+                return (
+                  <div>
+                    <NavCard title={'Withdraw'} goBack={this.goBack.bind(this)}/>
+                    <WithdrawFromPrivate
+                      balance={balance}
+                      address={account}
+                      web3={web3}
+                      //amount={false}
+                      privateKey={this.state.withdrawFromPrivateKey}
+                      goBack={this.goBack.bind(this)}
+                      changeView={this.changeView}
+                      changeAlert={this.changeAlert}
+                    />
+                  </div>
+                );
               case 'send_to_address':
                 return (
                   <div>
@@ -461,6 +486,8 @@ class App extends Component {
             requiredNetwork: ['Unknown', 'xDai'],
             metatxAccountGenerator: false,
           }}
+          //used to pass a private key into Dapparatus
+          newPrivateKey={this.state.newPrivateKey}
           fallbackWeb3Provider={WEB3_PROVIDER}
           onUpdate={async (state) => {
             console.log("Dapparatus state update:", state)
@@ -468,7 +495,17 @@ class App extends Component {
               state.web3 = new Web3(state.web3Provider)
               this.setState(state,()=>{
                 console.log("state set:",this.state)
-
+                if(this.state.possibleNewPrivateKey){
+                  console.log("possibleNewPrivateKey",this.state.possibleNewPrivateKey,this.state)
+                  if(this.state.balance>=0.10){
+                    console.log("Can't import private key, so ask to withdraw")
+                    this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
+                      this.changeView('withdraw_from_private')
+                    })
+                  }else{
+                    this.setState({possibleNewPrivateKey:false,newPrivateKey:this.state.possibleNewPrivateKey})
+                  }
+                }
                 if(!this.state.parsingTheChain){
                   this.setState({parsingTheChain:true},async ()=>{
                     let upperBoundOfSearch = this.state.block
