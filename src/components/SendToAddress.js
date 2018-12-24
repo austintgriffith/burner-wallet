@@ -57,7 +57,7 @@ export default class SendToAddress extends React.Component {
     let { toAddress, amount } = this.state;
     if(this.state.canSend){
       if(this.props.balance<=amount){
-        this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor(this.props.balance*100)/100+' (gas costs)'})
+        this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((this.props.balance-0.0001)*100)/100+' (gas costs)'})
       }else{
         console.log("SWITCH TO LOADER VIEW...")
         this.props.changeView('loader')

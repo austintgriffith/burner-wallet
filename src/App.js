@@ -17,6 +17,7 @@ import MoreButtons from './components/MoreButtons';
 import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
+import BurnWallet from './components/BurnWallet'
 
 let WEB3_PROVIDER = 'http://0.0.0.0:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
 if (window.location.hostname.indexOf("qreth") >= 0) {
@@ -82,10 +83,10 @@ class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     let { network, web3 } = this.state;
     if (web3 && network !== prevState.network && !this.checkNetwork()) {
-      console.log(web3, network, prevState.network);
+      console.log("WEB3 DETECTED BUT NOT RIGHT NETWORK",web3, network, prevState.network);
       this.changeAlert({
         type: 'danger',
-        message: 'Wrong Network. Please use Custom RPC endpoint: https://dai.poa.network'
+        message: 'Wrong Network. Please use Custom RPC endpoint: https://dai.poa.network or turn off MetaMask.'
       }, false)
     }
   };
@@ -310,7 +311,6 @@ class App extends Component {
     }
     return (
       <div>
-
         {web3_setup}
 
         <div className="container-fluid">
@@ -339,14 +339,6 @@ class App extends Component {
                       balance={balance}
                       changeView={this.changeView}
                       privateKey={metaAccount.privateKey}
-                      burnWallet={()=>{
-                        burnMetaAccount()
-                        if(localStorage&&typeof localStorage.setItem == "function"){
-                          localStorage.setItem("loadedBlocksTop","")
-                          localStorage.setItem("metaPrivateKey","")
-                          localStorage.setItem("recentTxs","")
-                        }
-                      }}
                       changeAlert={this.changeAlert}
                     />
                     <BottomLinks/>
@@ -444,6 +436,25 @@ class App extends Component {
                     />
                   </div>
                 );
+              case 'burn-wallet':
+                return (
+                  <div>
+                    <NavCard title={"Burn Private Key"} goBack={this.goBack.bind(this)}/>
+                    <BurnWallet
+                      address={account}
+                      balance={balance}
+                      goBack={this.goBack.bind(this)}
+                      burnWallet={()=>{
+                        burnMetaAccount()
+                        if(localStorage&&typeof localStorage.setItem == "function"){
+                          localStorage.setItem("loadedBlocksTop","")
+                          localStorage.setItem("metaPrivateKey","")
+                          localStorage.setItem("recentTxs","")
+                        }
+                      }}
+                    />
+                  </div>
+                );
               case 'loader':
                 return (
                   <div>
@@ -497,7 +508,8 @@ class App extends Component {
                 console.log("state set:",this.state)
                 if(this.state.possibleNewPrivateKey){
                   console.log("possibleNewPrivateKey",this.state.possibleNewPrivateKey,this.state)
-                  if(this.state.balance>=0.10){
+                  //only import pks over empty metaaccounts
+                  if(this.state.balance>=0.10 || !this.state.metaAccount){
                     console.log("Can't import private key, so ask to withdraw")
                     this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
                       this.changeView('withdraw_from_private')

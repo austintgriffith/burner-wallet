@@ -3,9 +3,10 @@ import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
 
 export  default ({amount, address}) => {
-  let displayAmount = ""
+  let displayAmount = "0.00"
   if(typeof amount == "number"){
     displayAmount = amount.toFixed(2)
+    console.log("displayAmount",displayAmount,"amount",amount)
   }
   return (
     <div className="balance content row">
