@@ -79,7 +79,7 @@ app.post('/link', async (req, res) => {
   console.log("/link",req.body)
 
 
-  let validClaim = await contracts.Links.methods.isClaimValid(req.body.id,req.body.sig,req.body.dest).call()
+  let validClaim = await contracts.Links.methods.isClaimValid(req.body.id,req.body.sig,req.body.claimHash,req.body.dest).call()
 
   if(!validClaim){
     console.log("INVALID CLAIM!!!!")
@@ -94,7 +94,7 @@ app.post('/link', async (req, res) => {
     }
 
     console.log("PARAMS",txparams)
-    contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.dest).send(
+    contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.claimHash,req.body.dest).send(
       txparams ,(error, transactionHash)=>{
         console.log("TX CALLBACK",error,transactionHash)
         res.set('Content-Type', 'application/json');
