@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity 0.4.25;
 
 contract Links {
 
@@ -171,7 +171,9 @@ contract Links {
         bool claimed = funds[_id].claimed;
         uint256 value = funds[_id].value;
         uint256 nonce = funds[_id].nonce;
-        if((claimed == false) && (nonce < contractNonce)){
+
+        assert(nonce < contractNonce);
+        if(claimed == false){
             // set id control flag to prevent reentrancy
             // temporary fund invalidation
             funds[_id].claimed = true;
