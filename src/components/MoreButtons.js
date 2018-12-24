@@ -8,11 +8,13 @@ export default ({balance, privateKey, changeAlert, changeView}) => {
     <div className="main-card card w-100">
       <div className="content bridge row">
         <div className="col-6 p-1">
-        <a className="btn btn-large w-100" href="https://dai-bridge.poa.network/" target="_blank" rel="noopener noreferrer">
-          <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
-            <i className="fas fa-credit-card"></i> DAI {"<-->"}xDai
-          </Scaler>
-        </a>
+          <button className="btn btn-large w-100" onClick={()=>{
+            changeView('bridge')}
+          }>
+            <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <i className="fas fa-credit-card"></i> DAI {"<-->"}xDai
+            </Scaler>
+          </button>
         </div>
         <div className="col-6 p-1">
         <button className="btn btn-large w-100" onClick={()=>{

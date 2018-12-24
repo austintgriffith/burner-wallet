@@ -18,10 +18,12 @@ import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
 import BurnWallet from './components/BurnWallet'
+import Bridge from './components/Bridge'
+
 
 let WEB3_PROVIDER = 'http://0.0.0.0:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
 if (window.location.hostname.indexOf("qreth") >= 0) {
-  WEB3_PROVIDER = "https://mainnet.infura.io/v3/e59c464c322f47e2963f5f00638be2f8"
+  WEB3_PROVIDER = "https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac"
 }
 else if (window.location.hostname.indexOf("xdai") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
@@ -38,7 +40,7 @@ class App extends Component {
       web3: false,
       account: false,
       gwei: 1.1,
-      view: 'main',
+      view: 'bridge',
       sendLink: "",
       sendKey: "",
       alert: null,
@@ -455,6 +457,17 @@ class App extends Component {
                     />
                   </div>
                 );
+                case 'bridge':
+                  return (
+                    <div>
+                      <NavCard title={"Bridge Funds"} goBack={this.goBack.bind(this)}/>
+                      <Bridge
+                        address={account}
+                        balance={balance}
+                        goBack={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
               case 'loader':
                 return (
                   <div>
