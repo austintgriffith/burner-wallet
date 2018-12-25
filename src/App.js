@@ -40,7 +40,7 @@ class App extends Component {
       web3: false,
       account: false,
       gwei: 1.1,
-      view: 'bridge',
+      view: 'main',
       sendLink: "",
       sendKey: "",
       alert: null,
@@ -462,6 +462,7 @@ class App extends Component {
                     <div>
                       <NavCard title={"Bridge Funds"} goBack={this.goBack.bind(this)}/>
                       <Bridge
+                        send={this.state.send}
                         address={account}
                         balance={balance}
                         goBack={this.goBack.bind(this)}

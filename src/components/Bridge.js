@@ -17,6 +17,11 @@ const colStyle = {
   whiteSpace:"nowrap"
 }
 
+const xdaiToDaiEstimatedTime = 110000
+
+const toXdaiBridgeAccount = "0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016"
+const toDaiBridgeAccount = "0x7301cfa0e1756b71869e93d4e4dca5c7d0eb0aa6"
+
 let interval
 
 export default class Bridge extends React.Component {
@@ -36,7 +41,7 @@ export default class Bridge extends React.Component {
     let daiContract
     try{
       let contractObject = {
-        address:"0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359",
+        address:"0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
         abi:require("../contracts/StableCoin.abi.js"),
         blocknumber:4752008,
       }
@@ -53,6 +58,10 @@ export default class Bridge extends React.Component {
       metaAccount: metaAccount,
       daiContract: daiContract,
       daiToXdaiMode: false,
+      loaderBarStatusText:"Loading...",
+      loaderBarStartTime:0,
+      loaderBarPercent: 1,
+      loaderBarColor: "#FFFFFF"
     }
   }
   updateState = (key, value) => {
@@ -75,6 +84,27 @@ export default class Bridge extends React.Component {
         this.setState({daiBalance})
       }
     }
+    if(this.state.daiToXdaiMode=="withdrawing"){
+      let txAge = Date.now() - this.state.loaderBarStartTime
+      let percentDone = (txAge * 100) / xdaiToDaiEstimatedTime
+
+      console.log("watching for ",this.state.daiBalance,"to be ",this.state.daiBalanceShouldBe-0.0005)
+      if(this.state.daiBalance>=(this.state.daiBalanceShouldBe-0.0005)){
+        this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Bridged!",loaderBarColor:"#62f54a"})
+        setTimeout(()=>{
+          this.setState({
+            daiToXdaiMode: false,
+            loaderBarStatusText:"Loading...",
+            loaderBarStartTime:0,
+            loaderBarPercent: 1,
+            loaderBarColor: "#FFFFFF"
+          })
+        },3500)
+      }else{
+        this.setState({loaderBarPercent:percentDone})
+      }
+
+    }
   }
   render() {
     let {daiToXdaiMode} = this.state
@@ -91,12 +121,24 @@ export default class Bridge extends React.Component {
 
     let daiToXdaiDisplay = "loading..."
     console.log("daiToXdaiMode",daiToXdaiMode)
-    if(daiToXdaiMode=="transfer"){
+    if(daiToXdaiMode=="withdrawing"){
+      daiToXdaiDisplay = (
+        <div className="content ops row">
+          <button style={{width:Math.min(100,this.state.loaderBarPercent)+"%",backgroundColor:this.state.loaderBarColor,color:"#000000"}}
+            className="btn btn-large"
+            onClick={this.state.loaderBarClick
+          }>
+            {this.state.loaderBarStatusText}
+          </button>
+        </div>
+      )
+
+    }else if(daiToXdaiMode=="transfer"){
       daiToXdaiDisplay = (
         <div className="content ops row">
 
           <div className="col-3 p-1"  style={colStyle}>
-            DAI -> xDai
+            <i className="fas fa-arrow-up"  />
           </div>
           <div className="col-3 p-1" style={colStyle}>
             <div className="input-group">
@@ -112,7 +154,33 @@ export default class Bridge extends React.Component {
           </div>
           <div className="col-3 p-1">
             <button className="btn btn-large w-100" onClick={()=>{
-              this.setState({daiToXdaiMode:"transferring"})
+              console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
+              this.setState({
+                daiToXdaiMode:"depositing",
+                xdaiBalanceAtStart:this.state.balance,
+                daiBalanceShouldBe:parseFloat(this.state.daiBalance)+parseFloat(this.state.amount),
+                loaderBarColor:"#f5eb4a",
+                loaderBarStatusText:"Sending funds to bridge...",
+                loaderBarPercent:0,
+                loaderBarStartTime: Date.now(),
+                loaderBarClick:()=>{
+                  alert("go to etherscan?")
+                }
+              })
+              console.log("Withdrawing to ",toDaiBridgeAccount)
+              this.props.send(toDaiBridgeAccount, this.state.amount, 60000, (result) => {
+                console.log("RESUTL!!!!",result)
+                if(result && result.transactionHash){
+                  this.setState({
+                    amount:0,
+                    loaderBarColor:"#4ab3f5",
+                    loaderBarStatusText:"Waiting for bridge...",
+                    loaderBarClick:()=>{
+                      alert("idk where to go from here? something that explains the bridge?")
+                    }
+                  })
+                }
+              })
             }}>
               <i className="fas fa-arrow-right" /> Send
             </button>
@@ -140,7 +208,33 @@ export default class Bridge extends React.Component {
           </div>
           <div className="col-3 p-1">
             <button className="btn btn-large w-100" onClick={()=>{
-              this.setState({daiToXdaiMode:"transferring"})
+              console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
+              this.setState({
+                daiToXdaiMode:"withdrawing",
+                daiBalanceAtStart:this.state.daiBalance,
+                daiBalanceShouldBe:parseFloat(this.state.daiBalance)+parseFloat(this.state.amount),
+                loaderBarColor:"#f5eb4a",
+                loaderBarStatusText:"Sending funds to bridge...",
+                loaderBarPercent:0,
+                loaderBarStartTime: Date.now(),
+                loaderBarClick:()=>{
+                  alert("go to etherscan?")
+                }
+              })
+              console.log("Withdrawing to ",toDaiBridgeAccount)
+              this.props.send(toDaiBridgeAccount, this.state.amount, 60000, (result) => {
+                console.log("RESUTL!!!!",result)
+                if(result && result.transactionHash){
+                  this.setState({
+                    amount:0,
+                    loaderBarColor:"#4ab3f5",
+                    loaderBarStatusText:"Waiting for bridge...",
+                    loaderBarClick:()=>{
+                      alert("idk where to go from here? something that explains the bridge?")
+                    }
+                  })
+                }
+              })
             }}>
               <i className="fas fa-arrow-right" /> Send
             </button>
@@ -152,9 +246,9 @@ export default class Bridge extends React.Component {
         <div className="content ops row">
 
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" onClick={()=>{
-              this.setState({daiToXdaiMode:"transfer"})
-            }} >
+            <button className="btn btn-large w-100"  disabled={true}/*onClick={()=>{
+              this.setState({daiToXdaiMode:"deposit"})
+            }}*/ >
               <i className="fas fa-arrow-up"  />
             </button>
           </div>
@@ -177,8 +271,6 @@ export default class Bridge extends React.Component {
 
         <div className="col-6 p-1">
           <button className="btn btn-large w-100" disabled={true} onClick={()=>{
-            console.log("TRANSFER!")
-            this.setState({daiToXdaiMode:"transfer"})
           }}>
             <i className="fas fa-arrow-up"  />
           </button>
@@ -186,7 +278,6 @@ export default class Bridge extends React.Component {
 
         <div className="col-6 p-1">
           <button className="btn btn-large w-100" disabled={true} onClick={()=>{
-            this.setState({daiToXdaiMode:"withdraw"})
           }}>
             <i className="fas fa-arrow-down" />
           </button>
@@ -259,7 +350,7 @@ export default class Bridge extends React.Component {
               </a>
             </span>
             <span style={{padding:10,whiteSpace:"nowrap"}}>
-              <a href="/" target="_blank" style={{color:"#FFFFFF"}}>
+              <a href="#" onClick={this.props.goBack} style={{color:"#FFFFFF"}}>
                 <i className="fas fa-times"/> done
               </a>
             </span>
