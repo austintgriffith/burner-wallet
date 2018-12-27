@@ -6,6 +6,9 @@ import eth from '../ethereum.png';
 import dai from '../dai.jpg';
 import xdai from '../xdai.jpg';
 import wyre from '../wyre.jpg';
+import coinbase from '../coinbase.jpg';
+import localeth from '../localeth.png';
+
 import Web3 from 'web3';
 import axios from "axios"
 
@@ -33,6 +36,7 @@ const toXdaiBridgeAccount = "0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016"
 const toDaiBridgeAccount = "0x7301cfa0e1756b71869e93d4e4dca5c7d0eb0aa6"
 
 let interval
+let intervalLong
 
 export default class Bridge extends React.Component {
 
@@ -62,11 +66,13 @@ export default class Bridge extends React.Component {
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
     this.state = {
+      ethBalance: 0,
       daiBalance: 0,
       daiAddress: daiAddress,
       xdaiBalance: 0,
       xdaiAddress: xdaiAddress,
       wyreBalance: 0,
+      ethprice: 0,
       mainnetweb3: mainnetweb3,
       mainnetMetaAccount: mainnetMetaAccount,
       xdaiweb3:xdaiweb3,
@@ -87,6 +93,9 @@ export default class Bridge extends React.Component {
   componentDidMount(){
     interval = setInterval(this.poll.bind(this),1500)
     setTimeout(this.poll.bind(this),250)
+    intervalLong = setInterval(this.longPoll.bind(this),45000)
+    setTimeout(this.longPoll.bind(this),150)
+
   }
   componentWillUnmount(){
     clearInterval(interval)
@@ -100,6 +109,7 @@ export default class Bridge extends React.Component {
         this.setState({daiBalance})
       }
     }
+    this.setState({ethBalance:mainnetweb3.utils.fromWei(await mainnetweb3.eth.getBalance(this.state.daiAddress),'ether') })
     if(xdaiweb3 && xdaiAddress){
       //console.log("xdaiweb3:",xdaiweb3,"xdaiAddress",xdaiAddress)
       let xdaiBalance = await xdaiweb3.eth.getBalance(xdaiAddress)
@@ -147,6 +157,13 @@ export default class Bridge extends React.Component {
       }
 
     }
+  }
+  longPoll() {
+    axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
+     .then((response)=>{
+       let ethprice = response.data.data.quotes.USD.price
+       this.setState({ethprice})
+     })
   }
   render() {
     let {daiToXdaiMode} = this.state
@@ -427,10 +444,6 @@ export default class Bridge extends React.Component {
       </div>
     )
 
-
-
-
-
     return (
       <div style={{marginTop:30}}>
         <div className="main-card card w-100">
@@ -442,7 +455,7 @@ export default class Bridge extends React.Component {
               xDai
             </div>
             <div className="col-7 p-1">
-              ${this.state.xdaiBalance}
+              ${parseFloat(this.state.xdaiBalance).toFixed(2)}
             </div>
           </div>
         </div>
@@ -460,7 +473,7 @@ export default class Bridge extends React.Component {
               DAI
             </div>
             <div className="col-7 p-1">
-              ${this.state.daiBalance}
+              ${parseFloat(this.state.daiBalance).toFixed(2)}
             </div>
           </div>
         </div>
@@ -479,16 +492,19 @@ export default class Bridge extends React.Component {
               ETH
             </div>
             <div className="col-7 p-1">
-              ${this.state.ethBalance}
+              ${parseFloat(this.state.ethBalance*this.state.ethprice).toFixed(2)}
             </div>
           </div>
         </div>
 
-        <div className="main-card card w-100">
-          {wyreDisplay}
+
+        <div className="main-card card w-100" style={{opacity:0.333,padding:0}}>
+          <div className="content ops row">
+            <div className="col-12 p-1" style={{textAlign:"center"}}>
+              Bank Account or Credit Card:
+            </div>
+          </div>
         </div>
-
-
 
 
         <div className="main-card card w-100">
@@ -500,12 +516,45 @@ export default class Bridge extends React.Component {
               Wyre
             </div>
             <div className="col-7 p-1">
-              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} >
-                  <i className="fas fa-plug"></i> Connect Account
+              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} disabled={true}>
+                  <i className="fas fa-plug"></i> Create/Connect Account
               </button>
             </div>
           </div>
         </div>
+
+        <div className="main-card card w-100">
+          <div className="content ops row">
+            <div className="col-2 p-1">
+              <img style={logoStyle} src={coinbase} />
+            </div>
+            <div className="col-3 p-1">
+              Coinbase
+            </div>
+            <div className="col-7 p-1">
+              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} disabled={true}>
+                  <i className="fas fa-plug"></i> Create/Connect Account
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="main-card card w-100">
+          <div className="content ops row">
+            <div className="col-2 p-1">
+              <img style={logoStyle} src={localeth} />
+            </div>
+            <div className="col-3 p-1">
+              LocalEthereum
+            </div>
+            <div className="col-7 p-1">
+              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} disabled={true}>
+                  <i className="fas fa-plug"></i> Create/Connect Account
+              </button>
+            </div>
+          </div>
+        </div>
+
 
 
         <div className="text-center bottom-text" style={{marginBottom:30}}>
