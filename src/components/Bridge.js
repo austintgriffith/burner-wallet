@@ -7,6 +7,9 @@ import dai from '../dai.jpg';
 import xdai from '../xdai.jpg';
 import wyre from '../wyre.jpg';
 import Web3 from 'web3';
+import axios from "axios"
+
+const GASBOOSTPRICE = 0.1
 
 const logoStyle = {
   maxWidth:50
@@ -98,9 +101,9 @@ export default class Bridge extends React.Component {
       }
     }
     if(xdaiweb3 && xdaiAddress){
-      console.log("xdaiweb3:",xdaiweb3,"xdaiAddress",xdaiAddress)
+      //console.log("xdaiweb3:",xdaiweb3,"xdaiAddress",xdaiAddress)
       let xdaiBalance = await xdaiweb3.eth.getBalance(xdaiAddress)
-      console.log("!! xdaiBalance:",xdaiBalance)
+      //console.log("!! xdaiBalance:",xdaiBalance)
       this.setState({xdaiBalance:xdaiweb3.utils.fromWei(xdaiBalance,'ether')})
     }
     if(this.state.daiToXdaiMode=="withdrawing"){
@@ -127,7 +130,7 @@ export default class Bridge extends React.Component {
       let txAge = Date.now() - this.state.loaderBarStartTime
       let percentDone = (txAge * 100) / daiToxDaiEstimatedTime
 
-      console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
+      //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
       if(this.state.xdaiBalance>=(this.state.xdaiBalanceShouldBe-0.0005)){
         this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Bridged!",loaderBarColor:"#62f54a"})
         setTimeout(()=>{
@@ -159,7 +162,7 @@ export default class Bridge extends React.Component {
     )
 
     let daiToXdaiDisplay = "loading..."
-    console.log("daiToXdaiMode",daiToXdaiMode)
+    //console.log("daiToXdaiMode",daiToXdaiMode)
     if(daiToXdaiMode=="withdrawing" || daiToXdaiMode=="depositing"){
       daiToXdaiDisplay = (
         <div className="content ops row">
@@ -173,7 +176,7 @@ export default class Bridge extends React.Component {
       )
 
     }else if(daiToXdaiMode=="deposit"){
-      if(!this.state.xdaiMetaAccount && this.props.network!="Mainnet"){
+      if(!this.state.mainnetMetaAccount && this.props.network!="Mainnet"){
         daiToXdaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
@@ -206,12 +209,13 @@ export default class Bridge extends React.Component {
             <div className="col-3 p-1">
               <button className="btn btn-large w-100" onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
+
                 this.setState({
                   daiToXdaiMode:"depositing",
                   xdaiBalanceAtStart:this.state.xdaiBalance,
                   xdaiBalanceShouldBe:parseFloat(this.state.xdaiBalance)+parseFloat(this.state.amount),
-                  loaderBarColor:"#f5eb4a",
-                  loaderBarStatusText:"Sending funds to bridge...",
+                  loaderBarColor:"#3efff8",
+                  loaderBarStatusText:"Calculating best gas price...",
                   loaderBarPercent:0,
                   loaderBarStartTime: Date.now(),
                   loaderBarClick:()=>{
@@ -219,55 +223,91 @@ export default class Bridge extends React.Component {
                   }
                 })
                 //send ERC20 DAI to 0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016 (toXdaiBridgeAccount)
-                console.log("Depositing to ",toDaiBridgeAccount)
-                let mainDaiContract = new this.props.web3.eth.Contract(daiContractObject.abi,daiContractObject.address)
 
-                /*let paramsObject = {
-                  from: this.state.daiAddress,
-                  value: 0,
-                  gas: 120000,
-                  gasPrice: Math.round(this.state.gwei * 1000000000)
+                if(this.state.mainnetMetaAccount){
+                  //send funds using metaaccount on mainnet
+                  let mainDaiContract = new this.state.mainnetweb3.eth.Contract(daiContractObject.abi,daiContractObject.address)
+                  axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
+                  .catch((err)=>{
+                    console.log("Error getting gas price",err)
+                  })
+                  .then((response)=>{
+                    if(response && response.data.average>0&&response.data.average<200){
+
+                      this.setState({
+                        loaderBarColor:"#f5eb4a",
+                        loaderBarStatusText:"Sending funds to bridge...",
+                      })
+
+                      response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
+                      let gwei = Math.round(response.data.average*100)/1000
+                      let paramsObject = {
+                        from: this.state.daiAddress,
+                        value: 0,
+                        gas: 120000,
+                        gasPrice: Math.round(gwei * 1000000000)
+                      }
+                      console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+                      paramsObject.to = mainDaiContract._address
+                      paramsObject.data = mainDaiContract.methods.transfer(
+                        toXdaiBridgeAccount,
+                        this.state.mainnetweb3.utils.toWei(this.state.amount,"ether")
+                      ).encodeABI()
+
+                      console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+                      this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+                        console.log("========= >>> SIGNED",signed)
+                          this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                            console.log("META RECEIPT",receipt)
+                            this.setState({
+                              amount:0,
+                              loaderBarColor:"#4ab3f5",
+                              loaderBarStatusText:"Waiting for bridge...",
+                              loaderBarClick:()=>{
+                                alert("idk where to go from here? something that explains the bridge?")
+                              }
+                            })
+                          }).on('error', (err)=>{
+                            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                          }).then(console.log)
+                      });
+
+                    }else{
+                      console.log("ERRORed RESPONSE FROM ethgasstation",response)
+                    }
+                  })
+
+
+
+
+                }else{
+                  //send funds using metamask (or other injected web3 ... should be checked and on mainnet)
+                  console.log("Depositing to ",toDaiBridgeAccount)
+                  let mainDaiContract = new this.props.web3.eth.Contract(daiContractObject.abi,daiContractObject.address)
+
+
+                  this.props.tx(mainDaiContract.methods.transfer(
+                    toXdaiBridgeAccount,
+                    this.state.mainnetweb3.utils.toWei(this.state.amount,"ether")
+                  ),120000,0,0,(receipt)=>{
+                    if(receipt){
+                      console.log("SESSION WITHDRAWN:",receipt)
+                      this.setState({
+                        amount:0,
+                        loaderBarColor:"#4ab3f5",
+                        loaderBarStatusText:"Waiting for bridge...",
+                        loaderBarClick:()=>{
+                          alert("idk where to go from here? something that explains the bridge?")
+                        }
+                      })
+                      //window.location = "/"+receipt.contractAddress
+                    }
+                  })
                 }
 
-                this.state.daiContract.methods.transfer(
-                  toXdaiBridgeAccount,
-                  this.state.mainnetweb3.utils.toWei(this.state.amount,"ether")
-                ).send(paramsObject,(error, transactionHash)=>{
-                  console.log("TX ERROR:",error)
-                  console.log("TX HASH:",transactionHash)
-                })*/
 
-                this.props.tx(mainDaiContract.methods.transfer(
-                  toXdaiBridgeAccount,
-                  this.state.mainnetweb3.utils.toWei(this.state.amount,"ether")
-                ),120000,0,0,(receipt)=>{
-                  if(receipt){
-                    console.log("SESSION WITHDRAWN:",receipt)
-                    this.setState({
-                      amount:0,
-                      loaderBarColor:"#4ab3f5",
-                      loaderBarStatusText:"Waiting for bridge...",
-                      loaderBarClick:()=>{
-                        alert("idk where to go from here? something that explains the bridge?")
-                      }
-                    })
-                    //window.location = "/"+receipt.contractAddress
-                  }
-                })
-
-                /*this.props.send(toDaiBridgeAccount, this.state.amount, 60000, (result) => {
-                  console.log("RESUTL!!!!",result)
-                  if(result && result.transactionHash){
-                    this.setState({
-                      amount:0,
-                      loaderBarColor:"#4ab3f5",
-                      loaderBarStatusText:"Waiting for bridge...",
-                      loaderBarClick:()=>{
-                        alert("idk where to go from here? something that explains the bridge?")
-                      }
-                    })
-                  }
-                })*/
               }}>
                 <i className="fas fa-arrow-right" /> Send
               </button>
@@ -323,7 +363,7 @@ export default class Bridge extends React.Component {
                   }
                 })
                 console.log("Withdrawing to ",toDaiBridgeAccount)
-                this.props.send(toDaiBridgeAccount, this.state.amount, 60000, (result) => {
+                this.props.send(toDaiBridgeAccount, this.state.amount, 120000, (result) => {
                   console.log("RESUTL!!!!",result)
                   if(result && result.transactionHash){
                     this.setState({
@@ -424,9 +464,33 @@ export default class Bridge extends React.Component {
             </div>
           </div>
         </div>
+
         <div className="main-card card w-100">
           {wyreDisplay}
         </div>
+
+
+        <div className="main-card card w-100">
+          <div className="content ops row">
+            <div className="col-2 p-1">
+              <img style={logoStyle} src={eth} />
+            </div>
+            <div className="col-3 p-1">
+              ETH
+            </div>
+            <div className="col-7 p-1">
+              ${this.state.ethBalance}
+            </div>
+          </div>
+        </div>
+
+        <div className="main-card card w-100">
+          {wyreDisplay}
+        </div>
+
+
+
+
         <div className="main-card card w-100">
           <div className="content ops row">
             <div className="col-2 p-1">
