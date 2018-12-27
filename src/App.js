@@ -120,18 +120,17 @@ class App extends Component {
         this.setState({fund: fund})
         console.log("FUND: ", fund)
 
-        let hashOfDestination = this.state.web3.utils.soliditySha3(
+        let claimHash = this.state.web3.utils.soliditySha3(
           {type: 'bytes32', value: this.state.claimId}, // fund id
-          {type: 'address', value: this.state.account}, // destination address
           {type: 'uint256', value: fund[3]}, // nonce
           {type: 'address', value: contracts.Links._address} // contract address
         )
-        console.log("hashOfDestination", hashOfDestination)
+        console.log("claimHash", claimHash)
         console.log("this.state.claimKey", this.state.claimKey)
-        let sig = this.state.web3.eth.accounts.sign(hashOfDestination, this.state.claimKey);
+        let sig = this.state.web3.eth.accounts.sign(claimHash, this.state.claimKey);
         sig = sig.signature;
-        console.log("CLAIM TX:", this.state.claimId, sig, this.state.account)
-        tx(contracts.Links.claim(this.state.claimId, sig, this.state.account), 150000, false, 0, (result) => {
+        console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
+        tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account), 150000, false, 0, (result) => {
           if (result) {
             console.log("CLAIMED!!!", result)
             this.setState({claimed: true})
@@ -154,22 +153,23 @@ class App extends Component {
         this.setState({fund: fund})
         console.log("FUND: ", fund)
 
-        let hashOfDestination = this.state.web3.utils.soliditySha3(
+        let claimHash = this.state.web3.utils.soliditySha3(
           {type: 'bytes32', value: this.state.claimId}, // fund id
           {type: 'address', value: this.state.account}, // destination address
           {type: 'uint256', value: fund[3]}, // nonce
           {type: 'address', value: this.state.contracts.Links._address} // contract address
         )
-        console.log("hashOfDestination", hashOfDestination)
+        console.log("claimHash", claimHash)
         console.log("this.state.claimKey", this.state.claimKey)
-        let sig = this.state.web3.eth.accounts.sign(hashOfDestination, this.state.claimKey);
+        let sig = this.state.web3.eth.accounts.sign(claimHash, this.state.claimKey);
         sig = sig.signature
-        console.log("CLAIM TX:", this.state.claimId, sig, this.state.account)
+        console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
 
         this.setState({sending: true})
         let postData = {
           id: this.state.claimId,
           sig: sig,
+          claimHash: claimHash,
           dest: this.state.account
         }
         console.log("CLAIM_RELAY:", CLAIM_RELAY)
