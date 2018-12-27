@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ContractLoader, Dapparatus, Transactions } from "dapparatus";
+import { ContractLoader, Dapparatus, Transactions, Gas } from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
 import './App.scss';
@@ -19,6 +19,8 @@ import Footer from './components/Footer';
 import Loader from './components/Loader';
 import BurnWallet from './components/BurnWallet'
 import Bridge from './components/Bridge'
+
+import customRPCHint from './customRPCHint.png';
 
 
 let WEB3_PROVIDER = 'http://0.0.0.0:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
@@ -40,7 +42,7 @@ class App extends Component {
       web3: false,
       account: false,
       gwei: 1.1,
-      view: 'main',
+      view: 'bridge',
       sendLink: "",
       sendKey: "",
       alert: null,
@@ -48,7 +50,6 @@ class App extends Component {
     };
     this.alertTimeout = null;
   }
-
   componentDidMount(){
     if(window.location.pathname){
       if(window.location.pathname.length==43){
@@ -84,12 +85,12 @@ class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     let { network, web3 } = this.state;
-    if (web3 && network !== prevState.network && !this.checkNetwork()) {
+    if (web3 && network !== prevState.network /*&& !this.checkNetwork()*/) {
       console.log("WEB3 DETECTED BUT NOT RIGHT NETWORK",web3, network, prevState.network);
-      this.changeAlert({
-        type: 'danger',
-        message: 'Wrong Network. Please use Custom RPC endpoint: https://dai.poa.network or turn off MetaMask.'
-      }, false)
+      //this.changeAlert({
+      //  type: 'danger',
+      //  message: 'Wrong Network. Please use Custom RPC endpoint: https://dai.poa.network or turn off MetaMask.'
+      //}, false)
     }
   };
 
@@ -227,34 +228,37 @@ class App extends Component {
   }
   async parseBlocks(parseBlock,recentTxs){
     let block = await this.state.web3.eth.getBlock(parseBlock)
-    let transactions = block.transactions
     let updatedTxs = false
-    //console.log("transactions",transactions)
-    for(let t in transactions){
-      //console.log("TX",transactions[t])
-      let tx = await this.state.web3.eth.getTransaction(transactions[t])
-      if(tx.to && tx.from){
-        let smallerTx = {
-          hash:tx.hash,
-          to:tx.to.toLowerCase(),
-          from:tx.from.toLowerCase(),
-          value:this.state.web3.utils.fromWei(""+tx.value,"ether"),
-          blockNumber:tx.blockNumber
-        }
-        //console.log(smallerTx)
-        if(smallerTx.from==this.state.account || smallerTx.to==this.state.account){
-          let found = false
-          for(let r in recentTxs){
-            if(recentTxs[r].hash==smallerTx.hash){
-              found=true
-              break
-            }
+    if(block){
+      let transactions = block.transactions
+
+      //console.log("transactions",transactions)
+      for(let t in transactions){
+        //console.log("TX",transactions[t])
+        let tx = await this.state.web3.eth.getTransaction(transactions[t])
+        if(tx && tx.to && tx.from){
+          let smallerTx = {
+            hash:tx.hash,
+            to:tx.to.toLowerCase(),
+            from:tx.from.toLowerCase(),
+            value:this.state.web3.utils.fromWei(""+tx.value,"ether"),
+            blockNumber:tx.blockNumber
           }
-          if(!found){
-            console.log("+TX",smallerTx)
-            //console.log("recentTxs length is ",recentTxs.length)
-            recentTxs.push(smallerTx)
-            updatedTxs=true
+          //console.log(smallerTx)
+          if(smallerTx.from==this.state.account || smallerTx.to==this.state.account){
+            let found = false
+            for(let r in recentTxs){
+              if(recentTxs[r].hash==smallerTx.hash){
+                found=true
+                break
+              }
+            }
+            if(!found){
+              console.log("+TX",smallerTx)
+              //console.log("recentTxs length is ",recentTxs.length)
+              recentTxs.push(smallerTx)
+              updatedTxs=true
+            }
           }
         }
       }
@@ -266,6 +270,13 @@ class App extends Component {
       web3, account, tx, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert,
       send
     } = this.state;
+
+    let networkOverlay = ""
+    if(web3 && !this.checkNetwork() && view!="bridge"){
+      networkOverlay = (
+        <img style={{zIndex:12,position:'absolute',opacity:0.95,right:0,top:0}} src={customRPCHint} />
+      )
+    }
 
 
     let web3_setup = ""
@@ -313,6 +324,8 @@ class App extends Component {
     }
     return (
       <div>
+        {networkOverlay}
+
         {web3_setup}
 
         <div className="container-fluid">
@@ -320,7 +333,7 @@ class App extends Component {
             changeView={this.changeView}
             balance={balance}
           />
-          {web3 && this.checkNetwork() && (() => {
+          {web3 /*&& this.checkNetwork()*/ && (() => {
             console.log("VIEW:",view)
             switch(view) {
               case 'main':
@@ -462,6 +475,10 @@ class App extends Component {
                     <div>
                       <NavCard title={"Bridge Funds"} goBack={this.goBack.bind(this)}/>
                       <Bridge
+                        setGwei={this.setGwei}
+                        network={this.state.network}
+                        tx={this.state.tx}
+                        web3={this.state.web3}
                         send={this.state.send}
                         address={account}
                         balance={balance}
@@ -496,13 +513,15 @@ class App extends Component {
                 )
             }
           })()}
-          { ( !web3 || !this.checkNetwork() ) &&
+          { ( !web3 /*|| !this.checkNetwork() */) &&
             <div>
               <Loader />
             </div>
           }
           { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
         </div>
+
+
 
         <Dapparatus
           config={{
@@ -628,6 +647,16 @@ class App extends Component {
 
               })
             }
+          }}
+        />
+        <Gas
+          network={this.state.network}
+          onUpdate={(state)=>{
+            console.log("Gas price update:",state)
+            this.setState(state,()=>{
+              this.state.gwei += 0.1
+              console.log("GWEI set:",this.state)
+            })
           }}
         />
       </div>
