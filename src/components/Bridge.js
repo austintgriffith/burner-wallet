@@ -23,7 +23,7 @@ const daiContractObject = {
   blocknumber:4752008,
 }
 
-const xdaiToDaiEstimatedTime = 110000
+const xdaiToDaiEstimatedTime = 160000
 const daiToxDaiEstimatedTime = 330000
 
 const toXdaiBridgeAccount = "0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016"
@@ -98,7 +98,7 @@ export default class Bridge extends React.Component {
       }
     }
     if(xdaiweb3 && xdaiAddress){
-      console.log("xdaiweb3:",xdaiweb3)
+      console.log("xdaiweb3:",xdaiweb3,"xdaiAddress",xdaiAddress)
       let xdaiBalance = await xdaiweb3.eth.getBalance(xdaiAddress)
       console.log("!! xdaiBalance:",xdaiBalance)
       this.setState({xdaiBalance:xdaiweb3.utils.fromWei(xdaiBalance,'ether')})
@@ -173,7 +173,7 @@ export default class Bridge extends React.Component {
       )
 
     }else if(daiToXdaiMode=="deposit"){
-      if(this.props.network!="Mainnet"){
+      if(!this.state.xdaiMetaAccount && this.props.network!="Mainnet"){
         daiToXdaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
@@ -276,7 +276,8 @@ export default class Bridge extends React.Component {
         )
       }
     } else if(daiToXdaiMode=="withdraw"){
-      if(this.props.network!="xDai"){
+      console.log("CHECKING META ACCOUNT ",this.state.xdaiMetaAccount,this.props.network)
+      if(!this.state.xdaiMetaAccount && this.props.network!="xDai"){
         daiToXdaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
