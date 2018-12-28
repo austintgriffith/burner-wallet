@@ -12,7 +12,7 @@ export default ({balance, privateKey, changeAlert, changeView}) => {
             changeView('bridge')}
           }>
             <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
-              <i className="fas fa-credit-card"></i> DAI {"<-->"}xDai
+              <i className="far fa-money-bill-alt"></i> Exchange
             </Scaler>
           </button>
         </div>
@@ -21,7 +21,7 @@ export default ({balance, privateKey, changeAlert, changeView}) => {
           changeView('request_funds')}
         }>
           <Scaler config={{startZoomAt:500,origin:"25% 50%",adjustedZoom:1}}>
-            <i className="fa fa-money-bill-wave" aria-hidden="true"></i> Request Funds
+            <i className="fas fa-hand-holding-usd"></i> Request Funds
           </Scaler>
         </button>
         </div>

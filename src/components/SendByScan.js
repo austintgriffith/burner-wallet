@@ -85,10 +85,10 @@ class SendByScan extends Component {
     //{readerVersion}
     //for some messed up reason the other scanner always uses the front facing camera even when you set it to rear
     //so for specific phones we'll use the old version that actually uses the rear camera
-    if(!this.state.legacyMode && !window.navigator.standalone && (
+  /*  if(!this.state.legacyMode && !window.navigator.standalone && (
         navigator.userAgent.indexOf("iPhone OS 12")>=0 ||
         navigator.userAgent.indexOf("iPad; CPU OS 12")>=0
-      )){
+      )){*/
       readerVersion = (
         <QrReader
           delay={this.state.delay}
@@ -98,7 +98,7 @@ class SendByScan extends Component {
           style={{ width: "100%" }}
         />
       )
-    }else{
+  /*  }else{
       readerVersion = (
         <QrScanner
           ref="qrReader1"
@@ -110,7 +110,7 @@ class SendByScan extends Component {
           style={{ width: "100%" }}
         />
       )
-    }
+    }*/
 
 
 

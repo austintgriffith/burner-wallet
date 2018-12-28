@@ -42,7 +42,7 @@ class App extends Component {
       web3: false,
       account: false,
       gwei: 1.1,
-      view: 'main',
+      view: 'bridge',
       sendLink: "",
       sendKey: "",
       alert: null,
@@ -473,7 +473,7 @@ class App extends Component {
                 case 'bridge':
                   return (
                     <div>
-                      <NavCard title={"Bridge Funds"} goBack={this.goBack.bind(this)}/>
+                      <NavCard title={"Exchange (alpha release)"} goBack={this.goBack.bind(this)}/>
                       <Bridge
                         setGwei={this.setGwei}
                         network={this.state.network}
