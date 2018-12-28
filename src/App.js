@@ -160,6 +160,7 @@ class App extends Component {
 
         let claimHash = this.state.web3.utils.soliditySha3(
           {type: 'bytes32', value: this.state.claimId}, // fund id
+          {type: 'address', value: this.state.account}, // destination address
           {type: 'uint256', value: fund[3]}, // nonce
           {type: 'address', value: contracts.Links._address} // contract address
         )
