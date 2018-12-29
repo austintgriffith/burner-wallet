@@ -21,7 +21,7 @@ export default ({balance, privateKey, changeAlert, changeView}) => {
           changeView('request_funds')}
         }>
           <Scaler config={{startZoomAt:500,origin:"25% 50%",adjustedZoom:1}}>
-            <i className="fas fa-hand-holding-usd"></i> Request Funds
+            <i className="fas fa-hand-holding-usd"></i> Request
           </Scaler>
         </button>
         </div>
