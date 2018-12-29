@@ -24,7 +24,7 @@
     "react-qr-scanner": "0.0.8",
     "react-scripts": "2.0.5",
     "s3": "^4.4.0",
-    "web3": "^1.0.0-beta.37",
+    "web3": "1.0.0-beta.33",
     "webpack": "^4.25.1"
   },
   "scripts": {

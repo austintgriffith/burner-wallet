@@ -51,8 +51,9 @@ export default class Bridge extends React.Component {
 
   constructor(props) {
     super(props);
-    let xdaiweb3 = new Web3("https://dai.poa.network")
-    let mainnetweb3 = new Web3("https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac")
+    let xdaiweb3 = new Web3(new Web3.providers.HttpProvider("https://dai.poa.network"))
+    //let mainnetweb3 = new Web3("https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac")
+    let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
     let pk = localStorage.getItem('metaPrivateKey')
     let mainnetMetaAccount = false
     let xdaiMetaAccount = false
