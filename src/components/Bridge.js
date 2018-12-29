@@ -276,11 +276,11 @@ export default class Bridge extends React.Component {
       }else{
         daiToXdaiDisplay = (
           <div className="content ops row">
-
-            <div className="col-3 p-1"  style={colStyle}>
+            <div className="col-1 p-1"  style={colStyle}>
               <i className="fas fa-arrow-up"  />
             </div>
-            <div className="col-3 p-1" style={colStyle}>
+            <div className="col-4 p-1" style={colStyle}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -288,11 +288,15 @@ export default class Bridge extends React.Component {
                 <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
+              </Scaler>
             </div>
             <div className="col-3 p-1"  style={colStyle}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               {daiCancelButton}
+              </Scaler>
             </div>
-            <div className="col-3 p-1">
+            <div className="col-4 p-1">
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <button className="btn btn-large w-100"  disabled={buttonsDisabled} onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
 
@@ -402,6 +406,7 @@ export default class Bridge extends React.Component {
               }}>
                 <i className="fas fa-arrow-right" /> Send
               </button>
+              </Scaler>
             </div>
           </div>
         )
@@ -423,10 +428,11 @@ export default class Bridge extends React.Component {
         daiToXdaiDisplay = (
           <div className="content ops row">
 
-            <div className="col-3 p-1"  style={colStyle}>
+            <div className="col-1 p-1"  style={colStyle}>
               <i className="fas fa-arrow-down"  />
             </div>
-            <div className="col-3 p-1" style={colStyle}>
+            <div className="col-4 p-1" style={colStyle}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -434,11 +440,15 @@ export default class Bridge extends React.Component {
                 <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
+              </Scaler>
             </div>
             <div className="col-3 p-1"  style={colStyle}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               {daiCancelButton}
+              </Scaler>
             </div>
-            <div className="col-3 p-1">
+            <div className="col-4 p-1">
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <button className="btn btn-large w-100"  disabled={buttonsDisabled} onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
                 this.setState({
@@ -470,6 +480,7 @@ export default class Bridge extends React.Component {
               }}>
                 <i className="fas fa-arrow-right" /> Send
               </button>
+              </Scaler>
             </div>
           </div>
         )
@@ -527,10 +538,11 @@ export default class Bridge extends React.Component {
         ethToDaiDisplay = (
           <div className="content ops row">
 
-            <div className="col-3 p-1"  style={colStyle}>
+            <div className="col-1 p-1"  style={colStyle}>
               <i className="fas fa-arrow-up"  />
             </div>
-            <div className="col-3 p-1" style={colStyle}>
+            <div className="col-4 p-1" style={colStyle}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -538,11 +550,15 @@ export default class Bridge extends React.Component {
                 <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
+              </Scaler>
             </div>
             <div className="col-3 p-1"  style={colStyle}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               {ethCancelButton}
+              </Scaler>
             </div>
-            <div className="col-3 p-1">
+            <div className="col-4 p-1">
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <button className="btn btn-large w-100" disabled={buttonsDisabled} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move ETH to DAI")
@@ -682,6 +698,7 @@ export default class Bridge extends React.Component {
               }}>
                 <i className="fas fa-arrow-right" /> Send
               </button>
+              </Scaler>
             </div>
           </div>
         )
@@ -703,10 +720,11 @@ export default class Bridge extends React.Component {
         ethToDaiDisplay = (
           <div className="content ops row">
 
-            <div className="col-3 p-1"  style={colStyle}>
+            <div className="col-1 p-1"  style={colStyle}>
               <i className="fas fa-arrow-down"  />
             </div>
-            <div className="col-3 p-1" style={colStyle}>
+            <div className="col-4 p-1" style={colStyle}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -714,11 +732,15 @@ export default class Bridge extends React.Component {
                 <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
+              </Scaler>
             </div>
             <div className="col-3 p-1"  style={colStyle}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               {ethCancelButton}
+              </Scaler>
             </div>
-            <div className="col-3 p-1">
+            <div className="col-4 p-1">
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <button className="btn btn-large w-100" disabled={buttonsDisabled} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move DAI to ETH")
@@ -772,6 +794,13 @@ export default class Bridge extends React.Component {
                   }
                 })
 
+
+                //let's check the approval on the DAI contract
+                let daiContract = new webToUse.eth.Contract(daiContractObject.abi,daiContractObject.address)
+
+                let approval = await daiContract.methods.allowance(this.state.daiAddress,uniswapExchangeAccount).call()
+
+
                 if(this.state.mainnetMetaAccount){
                   //send funds using metaaccount on mainnet
 
@@ -781,45 +810,115 @@ export default class Bridge extends React.Component {
                   })
                   .then((response)=>{
                     if(response && response.data.average>0&&response.data.average<200){
-
-                      this.setState({
-                        loaderBarColor:"#f5eb4a",
-                        loaderBarStatusText:"Sending funds to 🦄 exchange...",
-                        ethBalanceAtStart:this.state.ethBalance,
-                        ethBalanceShouldBe:eventualEthBalance,
-                      })
-
                       response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
                       let gwei = Math.round(response.data.average*100)/1000
-                      let paramsObject = {
-                        from: this.state.daiAddress,
-                        value: 0,
-                        gas: 100000,
-                        gasPrice: Math.round(gwei * 1000000000)
-                      }
-                      console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-                      paramsObject.to = uniswapContract._address
-                      paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
+                      if(approval<amountOfDai){
+                        console.log("approval",approval)
+                        this.setState({
+                          loaderBarColor:"#f5eb4a",
+                          loaderBarStatusText:"Approving 🦄 exchange...",
+                        })
 
-                      console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+                        let paramsObject = {
+                          from: this.state.daiAddress,
+                          value: 0,
+                          gas: 100000,
+                          gasPrice: Math.round(gwei * 1000000000)
+                        }
+                        console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-                      this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
-                        console.log("========= >>> SIGNED",signed)
-                          this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                            console.log("META RECEIPT",receipt)
-                            this.setState({
-                              amount:0,
-                              loaderBarColor:"#4ab3f5",
-                              loaderBarStatusText:"Waiting for 🦄 exchange...",
-                              loaderBarClick:()=>{
-                                alert("idk where to go from here? something that explains the bridge?")
+                        paramsObject.to = daiContract._address
+                        paramsObject.data = daiContract.methods.approve(uniswapExchangeAccount,""+(amountOfDai)).encodeABI()
+
+                        console.log("APPROVE TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+                        this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+                          console.log("========= >>> SIGNED",signed)
+                            this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                              console.log("META RECEIPT",receipt)
+                              this.setState({
+                                loaderBarColor:"#4ab3f5",
+                                loaderBarStatusText:"Waiting for 🦄 exchange...",
+                                ethBalanceAtStart:this.state.ethBalance,
+                                ethBalanceShouldBe:eventualEthBalance,
+                              })
+
+
+
+
+                              paramsObject = {
+                                from: this.state.daiAddress,
+                                value: 0,
+                                gas: 240000,
+                                gasPrice: Math.round(gwei * 1000000000)
                               }
-                            })
-                          }).on('error', (err)=>{
-                            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                          }).then(console.log)
-                      });
+                              console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+                              paramsObject.to = uniswapContract._address
+                              paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
+
+                              console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+                              this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+                                console.log("========= >>> SIGNED",signed)
+                                  this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                                    console.log("META RECEIPT",receipt)
+                                    this.setState({
+                                      amount:0,
+
+                                    })
+                                  }).on('error', (err)=>{
+                                    console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                                  }).then(console.log)
+                              });
+
+
+
+                            }).on('error', (err)=>{
+                              console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                            }).then(console.log)
+                        });
+
+                      }else{
+                        this.setState({
+                          loaderBarColor:"#f5eb4a",
+                          loaderBarStatusText:"Waiting for 🦄 exchange...",
+                          ethBalanceAtStart:this.state.ethBalance,
+                          ethBalanceShouldBe:eventualEthBalance,
+                        })
+
+                        let paramsObject = {
+                          from: this.state.daiAddress,
+                          value: 0,
+                          gas: 240000,
+                          gasPrice: Math.round(gwei * 1000000000)
+                        }
+                        console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+                        paramsObject.to = uniswapContract._address
+                        paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
+
+                        console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+                        this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+                          console.log("========= >>> SIGNED",signed)
+                            this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                              console.log("META RECEIPT",receipt)
+                              this.setState({
+                                amount:0,
+                                loaderBarColor:"#4ab3f5",
+
+                              })
+                            }).on('error', (err)=>{
+                              console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                            }).then(console.log)
+                        });
+
+                      }
+
+
+
 
                     }else{
                       console.log("ERRORed RESPONSE FROM ethgasstation",response)
@@ -830,11 +929,6 @@ export default class Bridge extends React.Component {
                   console.log("Using uniswap exchange to move ETH to DAI")
 
 
-
-                  //let's check the approval on the DAI contract
-                  let daiContract = new webToUse.eth.Contract(daiContractObject.abi,daiContractObject.address)
-
-                  let approval = await daiContract.methods.allowance(this.state.daiAddress,uniswapExchangeAccount).call()
 
                   if(approval<amountOfDai){
                     console.log("approval",approval)
@@ -868,7 +962,7 @@ export default class Bridge extends React.Component {
 
                         this.props.tx(
                           uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline)
-                        ,100000,0,0,(receipt)=>{
+                        ,240000,0,0,(receipt)=>{
                           if(receipt){
                             console.log("EXCHANGE COMPLETE?!?",receipt)
                             //window.location = "/"+receipt.contractAddress
@@ -891,7 +985,7 @@ export default class Bridge extends React.Component {
 
                     this.props.tx(
                       uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline)
-                    ,100000,0,0,(receipt)=>{
+                    ,240000,0,0,(receipt)=>{
                       if(receipt){
                         console.log("EXCHANGE COMPLETE?!?",receipt)
                         //window.location = "/"+receipt.contractAddress
@@ -917,6 +1011,7 @@ export default class Bridge extends React.Component {
               }}>
                 <i className="fas fa-arrow-right" /> Send
               </button>
+              </Scaler>
             </div>
           </div>
         )
@@ -1013,48 +1108,66 @@ export default class Bridge extends React.Component {
 
         <div className="main-card card w-100">
           <div className="content ops row">
-            <div className="col-2 p-1">
+            <div className="col-1 p-1">
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <img style={logoStyle} src={wyre} />
+              </Scaler>
             </div>
-            <div className="col-3 p-1">
+            <div className="col-4 p-1">
+              <Scaler config={{startZoomAt:700,origin:"50% 50%",adjustedZoom:1}}>
               Wyre
+              </Scaler>
             </div>
             <div className="col-7 p-1">
+            <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} disabled={true}>
-                  <i className="fas fa-plug"></i> Create/Connect Account
+                  <i className="fas fa-plug"></i> Create/Connect
               </button>
+            </Scaler>
             </div>
           </div>
         </div>
 
         <div className="main-card card w-100">
           <div className="content ops row">
-            <div className="col-2 p-1">
+            <div className="col-1 p-1">
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <img style={logoStyle} src={coinbase} />
+              </Scaler>
             </div>
-            <div className="col-3 p-1">
+            <div className="col-4 p-1">
+              <Scaler config={{startZoomAt:700,origin:"50% 50%",adjustedZoom:1}}>
               Coinbase
+              </Scaler>
             </div>
             <div className="col-7 p-1">
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} disabled={true}>
-                  <i className="fas fa-plug"></i> Create/Connect Account
+                  <i className="fas fa-plug"></i> Create/Connect
               </button>
+              </Scaler>
             </div>
           </div>
         </div>
 
         <div className="main-card card w-100">
           <div className="content ops row">
-            <div className="col-2 p-1">
+            <div className="col-1 p-1">
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <img style={logoStyle} src={localeth} />
+              </Scaler>
             </div>
-            <div className="col-3 p-1">
-              LocalEthereum
+            <div className="col-4 p-1">
+              <Scaler config={{startZoomAt:700,origin:"50% 50%",adjustedZoom:1}}>
+                LocalEth
+              </Scaler>
             </div>
             <div className="col-7 p-1">
+              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
               <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} disabled={true}>
-                  <i className="fas fa-plug"></i> Create/Connect Account
+                  <i className="fas fa-plug"></i> Create/Connect
               </button>
+              </Scaler>
             </div>
           </div>
         </div>
