@@ -59,7 +59,7 @@ export default class Bridge extends React.Component {
     let xdaiMetaAccount = false
     let daiAddress = false
     let xdaiAddress = false
-    if(pk){
+    if(pk&&pk!="0"){
       mainnetMetaAccount =  mainnetweb3.eth.accounts.privateKeyToAccount(pk)
       daiAddress = mainnetMetaAccount.address.toLowerCase();
       xdaiMetaAccount = xdaiweb3.eth.accounts.privateKeyToAccount(pk)
@@ -96,9 +96,9 @@ export default class Bridge extends React.Component {
       daiToXdaiMode: false,
       ethToDaiMode: false,
       loaderBarStatusText:"Loading...",
-      loaderBarStartTime:0,
-      loaderBarPercent: 1,
-      loaderBarColor: "#FFFFFF",
+      loaderBarStartTime:Date.now(),
+      loaderBarPercent: 2,
+      loaderBarColor: "#aaaaaa",
       gwei: 5
     }
   }
@@ -133,7 +133,7 @@ export default class Bridge extends React.Component {
     }
     if(this.state.daiToXdaiMode=="withdrawing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
-      let percentDone = (txAge * 100) / xdaiToDaiEstimatedTime
+      let percentDone = Math.min(100,((txAge * 100) / xdaiToDaiEstimatedTime)+5)
 
       console.log("watching for ",this.state.daiBalance,"to be ",this.state.daiBalanceShouldBe-0.0005)
       if(this.state.daiBalance>=(this.state.daiBalanceShouldBe-0.0005)){
@@ -153,7 +153,7 @@ export default class Bridge extends React.Component {
 
     }else if(this.state.daiToXdaiMode=="depositing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
-      let percentDone = (txAge * 100) / daiToxDaiEstimatedTime
+      let percentDone = Math.min(100,((txAge * 100) / daiToxDaiEstimatedTime)+5)
 
       //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
       if(this.state.xdaiBalance>=(this.state.xdaiBalanceShouldBe-0.0005)){
@@ -175,7 +175,7 @@ export default class Bridge extends React.Component {
 
     if(this.state.ethToDaiMode=="withdrawing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
-      let percentDone = (txAge * 100) / exchangeEstimatedTime
+      let percentDone = Math.min(100,((txAge * 100) / exchangeEstimatedTime) + 5)
       //ethBalanceAtStart:this.state.ethBalance,
       //ethBalanceShouldBe:this.state.ethBalance+amountOfChange,
       console.log("watching for ",this.state.ethBalance,"to be ",this.state.ethBalanceShouldBe-0.001)
@@ -196,7 +196,7 @@ export default class Bridge extends React.Component {
 
     }else if(this.state.ethToDaiMode=="depositing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
-      let percentDone = (txAge * 100) / exchangeEstimatedTime
+      let percentDone = Math.min(100,((txAge * 100) / exchangeEstimatedTime)+5)
 
       //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
       if(this.state.daiBalance>=(this.state.daiBalanceShouldBe-0.0005)){
@@ -252,13 +252,15 @@ export default class Bridge extends React.Component {
     //console.log("daiToXdaiMode",daiToXdaiMode)
     if(daiToXdaiMode=="withdrawing" || daiToXdaiMode=="depositing"){
       daiToXdaiDisplay = (
-        <div className="content ops row">
+        <div className="content ops row" style={{position:"relative"}}>
           <button style={{width:Math.min(100,this.state.loaderBarPercent)+"%",backgroundColor:this.state.loaderBarColor,color:"#000000"}}
             className="btn btn-large"
             onClick={this.state.loaderBarClick
           }>
-            {this.state.loaderBarStatusText}
           </button>
+          <div style={{position:'absolute',left:"50%",width:200,marginLeft:-100,top:-8,opacity:0.777}}>
+            {this.state.loaderBarStatusText}
+          </div>
         </div>
       )
 
@@ -513,13 +515,15 @@ export default class Bridge extends React.Component {
 
     if(ethToDaiMode=="depositing" || ethToDaiMode=="withdrawing"){
       ethToDaiDisplay = (
-        <div className="content ops row">
+        <div className="content ops row" style={{position:"relative"}}>
           <button style={{width:Math.min(100,this.state.loaderBarPercent)+"%",backgroundColor:this.state.loaderBarColor,color:"#000000"}}
             className="btn btn-large"
             onClick={this.state.loaderBarClick
           }>
-            {this.state.loaderBarStatusText}
           </button>
+          <div style={{position:'absolute',left:"50%",width:200,marginLeft:-100,top:-8,opacity:0.777}}>
+            {this.state.loaderBarStatusText}
+          </div>
         </div>
       )
 

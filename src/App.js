@@ -35,14 +35,18 @@ else if (window.location.hostname.indexOf("xdai") >= 0) {
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 15
 
 class App extends Component {
-
   constructor(props) {
+    let view = 'main'
+    let cachedView = localStorage.getItem("view")
+    if(cachedView&&cachedView!=0){
+      view = cachedView
+    }
     super(props);
     this.state = {
       web3: false,
       account: false,
       gwei: 1.1,
-      view: 'main',
+      view: view,
       sendLink: "",
       sendKey: "",
       alert: null,
@@ -50,7 +54,12 @@ class App extends Component {
     };
     this.alertTimeout = null;
   }
+  updateDimensions() {
+      //force it to rerender when the window is resized to make sure qr fits etc
+      this.forceUpdate();
+  }
   componentDidMount(){
+    window.addEventListener("resize", this.updateDimensions.bind(this));
     if(window.location.pathname){
       if(window.location.pathname.length==43){
         this.changeView('send_to_address')
@@ -81,6 +90,9 @@ class App extends Component {
         }
       }
     }
+  }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -196,6 +208,7 @@ class App extends Component {
 
 
   changeView = (view) => {
+    if(view=="bridge"||view=="main") localStorage.setItem("view",view) //some pages should be sticky because of metamask reloads 
     if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
       console.log("This is a send...")
       if (this.state.balance <= 0) {
@@ -330,8 +343,10 @@ class App extends Component {
 
         <div className="container-fluid">
           <Header
+            address={this.state.account}
             changeView={this.changeView}
             balance={balance}
+            view={this.state.view}
           />
           {web3 /*&& this.checkNetwork()*/ && (() => {
             console.log("VIEW:",view)
@@ -473,7 +488,7 @@ class App extends Component {
                 case 'bridge':
                   return (
                     <div>
-                      <NavCard title={"Exchange (alpha release)"} goBack={this.goBack.bind(this)}/>
+                      <NavCard title={"Exchange (beware: alpha)"} goBack={this.goBack.bind(this)}/>
                       <Bridge
                         setGwei={this.setGwei}
                         network={this.state.network}
