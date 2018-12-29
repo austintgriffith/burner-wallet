@@ -6,7 +6,7 @@ import Balance from "./Balance";
 const QRCode = require('qrcode.react');
 
 
-export default ({address, balance, changeAlert, changeView}) => {
+export default ({address, balance, changeAlert, changeView, dollarDisplay}) => {
 
   let url = window.location.protocol+"//"+window.location.hostname
   if(window.location.port&&window.location.port!=80&&window.location.port!=443){
@@ -17,7 +17,7 @@ export default ({address, balance, changeAlert, changeView}) => {
 
   return (
     <div className="main-card card w-100">
-      <Balance amount={balance} address={address}/>
+      <Balance amount={balance} address={address} dollarDisplay={dollarDisplay}/>
       <Ruler/>
       <CopyToClipboard text={address} onCopy={() => {
         changeAlert({type: 'success', message: 'Address copied to clipboard'})
@@ -38,7 +38,7 @@ export default ({address, balance, changeAlert, changeView}) => {
 
           <div className="col-6 p-1" onClick={() => changeView('send_with_link')}>
             <button className="btn btn-large w-100">
-              <Scaler config={{startZoomAt:500,origin:"25% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:600,origin:"25% 50%",adjustedZoom:1}}>
                 <i className="fas fa-link"  /> Send with Link
               </Scaler>
             </button>
@@ -46,7 +46,7 @@ export default ({address, balance, changeAlert, changeView}) => {
 
           <div className="col-6 p-1">
             <button className="btn btn-large w-100" onClick={() => changeView('send_to_address')}>
-              <Scaler config={{startZoomAt:500,origin:"25% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:600,origin:"25% 50%",adjustedZoom:1}}>
                 <i className="fas fa-address-book"/> Send to Address
               </Scaler>
             </button>

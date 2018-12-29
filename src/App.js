@@ -12,6 +12,7 @@ import RequestFunds from './components/RequestFunds';
 import SendWithLink from './components/SendWithLink';
 import ShareLink from './components/ShareLink'
 import MainCard from './components/MainCard';
+import Advanced from './components/Advanced';
 import BottomLinks from './components/BottomLinks';
 import MoreButtons from './components/MoreButtons';
 import RecentTransactions from './components/RecentTransactions';
@@ -33,6 +34,12 @@ else if (window.location.hostname.indexOf("xdai") >= 0) {
 }
 
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 15
+
+let dollarDisplay = (amount)=>{
+    let floatAmount = parseFloat(amount)
+    amount = Math.floor(amount*100)/100
+    return amount.toFixed(2)
+}
 
 class App extends Component {
   constructor(props) {
@@ -89,6 +96,23 @@ class App extends Component {
           }
         }
       }
+    }
+  }
+  setPossibleNewPrivateKey(value){
+    this.setState({possibleNewPrivateKey:value},()=>{
+      this.dealWithPossibleNewPrivateKey()
+    })
+  }
+  dealWithPossibleNewPrivateKey(){
+    console.log("possibleNewPrivateKey",this.state.possibleNewPrivateKey,this.state)
+    //only import pks over empty metaaccounts
+    if(this.state.balance>=0.10 || !this.state.metaAccount){
+      console.log("Can't import private key, so ask to withdraw")
+      this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
+        this.changeView('withdraw_from_private')
+      })
+    }else{
+      this.setState({possibleNewPrivateKey:false,newPrivateKey:this.state.possibleNewPrivateKey})
     }
   }
   componentWillUnmount() {
@@ -208,7 +232,7 @@ class App extends Component {
 
 
   changeView = (view) => {
-    if(view=="bridge"||view=="main") localStorage.setItem("view",view) //some pages should be sticky because of metamask reloads 
+    if(view=="bridge"||view=="main") localStorage.setItem("view",view) //some pages should be sticky because of metamask reloads
     if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
       console.log("This is a send...")
       if (this.state.balance <= 0) {
@@ -359,21 +383,35 @@ class App extends Component {
                       balance={balance}
                       changeAlert={this.changeAlert}
                       changeView={this.changeView}
+                      dollarDisplay={dollarDisplay}
+                    />
+                    <MoreButtons
+                      changeView={this.changeView}
                     />
                     <RecentTransactions
                       address={account}
                       block={this.state.block}
                       recentTxs={this.state.recentTxs}
                     />
-                    <MoreButtons
+                    <BottomLinks
+                      changeView={this.changeView}
+                    />
+                  </div>
+                );
+              case 'advanced':
+                return (
+                  <div>
+                    <NavCard title={'Advanced'} goBack={this.goBack.bind(this)}/>
+                    <Advanced
                       balance={balance}
                       changeView={this.changeView}
                       privateKey={metaAccount.privateKey}
                       changeAlert={this.changeAlert}
+                      goBack={this.goBack.bind(this)}
+                      setPossibleNewPrivateKey={this.setPossibleNewPrivateKey.bind(this)}
                     />
-                    <BottomLinks/>
                   </div>
-                );
+                )
               case 'send_by_scan':
                 return (
                   <SendByScan
@@ -397,6 +435,7 @@ class App extends Component {
                       goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
+                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                 );
@@ -411,6 +450,7 @@ class App extends Component {
                       goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
+                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                 );
@@ -425,6 +465,7 @@ class App extends Component {
                       goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
+                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                 );
@@ -463,6 +504,7 @@ class App extends Component {
                       address={account}
                       changeView={this.changeView}
                       goBack={this.goBack.bind(this)}
+                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                 );
@@ -474,12 +516,14 @@ class App extends Component {
                       address={account}
                       balance={balance}
                       goBack={this.goBack.bind(this)}
+                      dollarDisplay={dollarDisplay}
                       burnWallet={()=>{
                         burnMetaAccount()
                         if(localStorage&&typeof localStorage.setItem == "function"){
-                          localStorage.setItem("loadedBlocksTop","")
-                          localStorage.setItem("metaPrivateKey","")
-                          localStorage.setItem("recentTxs","")
+                          localStorage.setItem(this.state.account+"loadedBlocksTop","")
+                          localStorage.setItem(this.state.account+"metaPrivateKey","")
+                          localStorage.setItem(this.state.account+"recentTxs","")
+                          this.setState({recentTxs:[]})
                         }
                       }}
                     />
@@ -488,7 +532,7 @@ class App extends Component {
                 case 'bridge':
                   return (
                     <div>
-                      <NavCard title={"Exchange (beware: alpha)"} goBack={this.goBack.bind(this)}/>
+                      <NavCard title={"Exchange (beware!)"} goBack={this.goBack.bind(this)}/>
                       <Bridge
                         setGwei={this.setGwei}
                         network={this.state.network}
@@ -498,6 +542,7 @@ class App extends Component {
                         address={account}
                         balance={balance}
                         goBack={this.goBack.bind(this)}
+                        dollarDisplay={dollarDisplay}
                       />
                     </div>
                   );
@@ -555,26 +600,18 @@ class App extends Component {
               this.setState(state,()=>{
                 console.log("state set:",this.state)
                 if(this.state.possibleNewPrivateKey){
-                  console.log("possibleNewPrivateKey",this.state.possibleNewPrivateKey,this.state)
-                  //only import pks over empty metaaccounts
-                  if(this.state.balance>=0.10 || !this.state.metaAccount){
-                    console.log("Can't import private key, so ask to withdraw")
-                    this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
-                      this.changeView('withdraw_from_private')
-                    })
-                  }else{
-                    this.setState({possibleNewPrivateKey:false,newPrivateKey:this.state.possibleNewPrivateKey})
-                  }
+                  this.dealWithPossibleNewPrivateKey()
                 }
                 if(!this.state.parsingTheChain){
                   this.setState({parsingTheChain:true},async ()=>{
                     let upperBoundOfSearch = this.state.block
                     //parse through recent transactions and store in local storage
+
                     if(localStorage&&typeof localStorage.setItem == "function"){
                       let recentTxs = this.state.recentTxs
                       if(!recentTxs){
                         //console.log("no recent tx found, checking storage")
-                        recentTxs = localStorage.getItem("recentTxs")
+                        recentTxs = localStorage.getItem(this.state.account+"recentTxs")
                         //console.log("recentTxs txt is",recentTxs)
                         try{
                           recentTxs=JSON.parse(recentTxs)
@@ -590,15 +627,15 @@ class App extends Component {
 
                       let loadedBlocksTop = this.state.loadedBlocksTop
                       if(!loadedBlocksTop){
-                        loadedBlocksTop = localStorage.getItem("loadedBlocksTop")
+                        loadedBlocksTop = localStorage.getItem(this.state.account+"loadedBlocksTop")
                       }
 
-                      /*
-                          Look back through previous blocks since this account
-                          was last online... this could be bad. We might need a
-                          central server keeping track of all these and delivering
-                          a list of recent transactions
-                       */
+
+                        //  Look back through previous blocks since this account
+                        //  was last online... this could be bad. We might need a
+                        //  central server keeping track of all these and delivering
+                        //  a list of recent transactions
+
 
                       let updatedTxs = false
                       if(!loadedBlocksTop || loadedBlocksTop<this.state.block){
@@ -648,11 +685,11 @@ class App extends Component {
                         recentTxs = recentTxs.slice(0,12)
                         //console.log("ending with recentTxs",recentTxs)
 
-                        localStorage.setItem("recentTxs",JSON.stringify(recentTxs))
+                        localStorage.setItem(this.state.account+"recentTxs",JSON.stringify(recentTxs))
                         this.setState({recentTxs:recentTxs})
                       }
 
-                      localStorage.setItem("loadedBlocksTop",upperBoundOfSearch)
+                      localStorage.setItem(this.state.account+"loadedBlocksTop",upperBoundOfSearch)
                       this.setState({parsingTheChain:false,loadedBlocksTop:upperBoundOfSearch})
                     }
 

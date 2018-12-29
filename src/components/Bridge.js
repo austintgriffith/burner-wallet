@@ -1059,7 +1059,7 @@ export default class Bridge extends React.Component {
               xDai
             </div>
             <div className="col-7 p-1">
-              ${parseFloat(this.state.xdaiBalance).toFixed(2)}
+              ${this.props.dollarDisplay(this.state.xdaiBalance)}
             </div>
           </div>
         </div>
@@ -1077,7 +1077,7 @@ export default class Bridge extends React.Component {
               DAI
             </div>
             <div className="col-7 p-1">
-              ${parseFloat(this.state.daiBalance).toFixed(2)}
+              ${this.props.dollarDisplay(this.state.daiBalance)}
             </div>
           </div>
         </div>
@@ -1096,7 +1096,7 @@ export default class Bridge extends React.Component {
               ETH
             </div>
             <div className="col-7 p-1">
-              ${parseFloat(this.state.ethBalance*this.state.ethprice).toFixed(2)}
+              ${this.props.dollarDisplay(this.state.ethBalance*this.state.ethprice)}
             </div>
           </div>
         </div>

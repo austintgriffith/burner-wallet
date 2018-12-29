@@ -85,7 +85,7 @@ export default class RequestFunds extends React.Component {
       return (
         <div>
           <div className="send-to-address card w-100">
-            <Balance amount={this.props.balance} address={this.props.address}/>
+            <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay} />
             <Ruler/>
             <div className="content row">
               <div className="form-group w-100">

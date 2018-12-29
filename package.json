@@ -4,11 +4,13 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
+    "bip39": "^2.5.0",
     "bootstrap": "^4.1.3",
     "clevis": "0.0.107",
     "cors": "^2.8.4",
     "dapparatus": "^1.0.57",
     "dotenv": "^6.1.0",
+    "ethereum-mnemonic-privatekey-utils": "^1.0.5",
     "express": "^4.16.4",
     "helmet": "^3.14.0",
     "mocha": "^5.2.0",

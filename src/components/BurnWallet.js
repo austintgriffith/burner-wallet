@@ -4,11 +4,11 @@ import Balance from "./Balance";
 
 
 
-export default ({address, balance, burnWallet, goBack}) => {
+export default ({address, balance, burnWallet, goBack, dollarDisplay}) => {
 
   return (
     <div className="main-card card w-100">
-      <Balance amount={balance} address={address}/>
+      <Balance amount={balance} address={address} dollarDisplay={dollarDisplay}/>
       <div style={{textAlign:"center",width:"100%",fontWeight:'bold',fontSize:40}}>
         Are you sure you want to burn this private key?
       </div>
