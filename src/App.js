@@ -42,7 +42,7 @@ class App extends Component {
       web3: false,
       account: false,
       gwei: 1.1,
-      view: 'bridge',
+      view: 'main',
       sendLink: "",
       sendKey: "",
       alert: null,
