@@ -71,7 +71,6 @@ class App extends Component {
     if(window.location.pathname){
       if(window.location.pathname.length==43){
         this.changeView('send_to_address')
-        window.history.pushState({},"", "/");
       }else if(window.location.pathname.length==134){
         let parts = window.location.pathname.split(";")
         let claimId = parts[0].replace("/","")
@@ -96,7 +95,6 @@ class App extends Component {
           let sendToAmount = parts[1]
           if(parseFloat(sendToAmount)>0 && sendToAddress.length==42){
             this.changeView('send_to_address')
-            window.history.pushState({},"", "/");
           }
         }
       }
