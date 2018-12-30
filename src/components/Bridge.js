@@ -283,7 +283,7 @@ export default class Bridge extends React.Component {
               <i className="fas fa-arrow-up"  />
             </div>
             <div className="col-4 p-1" style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -294,12 +294,12 @@ export default class Bridge extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1"  style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               {daiCancelButton}
               </Scaler>
             </div>
             <div className="col-4 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <button className="btn btn-large w-100"  disabled={buttonsDisabled} onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
 
@@ -435,7 +435,7 @@ export default class Bridge extends React.Component {
               <i className="fas fa-arrow-down"  />
             </div>
             <div className="col-4 p-1" style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -446,12 +446,12 @@ export default class Bridge extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1"  style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               {daiCancelButton}
               </Scaler>
             </div>
             <div className="col-4 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <button className="btn btn-large w-100"  disabled={buttonsDisabled} onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
                 this.setState({
@@ -547,7 +547,7 @@ export default class Bridge extends React.Component {
               <i className="fas fa-arrow-up"  />
             </div>
             <div className="col-4 p-1" style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -558,12 +558,12 @@ export default class Bridge extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1"  style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               {ethCancelButton}
               </Scaler>
             </div>
             <div className="col-4 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <button className="btn btn-large w-100" disabled={buttonsDisabled} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move ETH to DAI")
@@ -729,7 +729,7 @@ export default class Bridge extends React.Component {
               <i className="fas fa-arrow-down"  />
             </div>
             <div className="col-4 p-1" style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -740,12 +740,12 @@ export default class Bridge extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1"  style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               {ethCancelButton}
               </Scaler>
             </div>
             <div className="col-4 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <button className="btn btn-large w-100" disabled={buttonsDisabled} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move DAI to ETH")
@@ -1114,17 +1114,17 @@ export default class Bridge extends React.Component {
         <div className="main-card card w-100">
           <div className="content ops row">
             <div className="col-1 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <img style={logoStyle} src={wyre} />
               </Scaler>
             </div>
             <div className="col-4 p-1">
-              <Scaler config={{startZoomAt:700,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:700,origin:"50% 50%"}}>
               Wyre
               </Scaler>
             </div>
             <div className="col-7 p-1">
-            <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+            <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} disabled={true}>
                   <i className="fas fa-plug"></i> Create/Connect
               </button>
@@ -1136,17 +1136,17 @@ export default class Bridge extends React.Component {
         <div className="main-card card w-100">
           <div className="content ops row">
             <div className="col-1 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <img style={logoStyle} src={coinbase} />
               </Scaler>
             </div>
             <div className="col-4 p-1">
-              <Scaler config={{startZoomAt:700,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:700,origin:"50% 50%"}}>
               Coinbase
               </Scaler>
             </div>
             <div className="col-7 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} disabled={true}>
                   <i className="fas fa-plug"></i> Create/Connect
               </button>
@@ -1158,17 +1158,17 @@ export default class Bridge extends React.Component {
         <div className="main-card card w-100">
           <div className="content ops row">
             <div className="col-1 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <img style={logoStyle} src={localeth} />
               </Scaler>
             </div>
             <div className="col-4 p-1">
-              <Scaler config={{startZoomAt:700,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:700,origin:"50% 50%"}}>
                 LocalEth
               </Scaler>
             </div>
             <div className="col-7 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%",adjustedZoom:1}}>
+              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} disabled={true}>
                   <i className="fas fa-plug"></i> Create/Connect
               </button>
@@ -1180,7 +1180,7 @@ export default class Bridge extends React.Component {
 
 
         <div className="text-center bottom-text" style={{marginBottom:30}}>
-          <Scaler config={{startZoomAt:380,origin:"0% 50%",adjustedZoom:1}}>
+          <Scaler config={{startZoomAt:380,origin:"0% 50%"}}>
             <span style={{padding:10,whiteSpace:"nowrap"}}>
               <a href="https://dai-bridge.poa.network" style={{color:"#FFFFFF"}} target="_blank">
                 <i className="fas fa-credit-card"/> traditional bridge

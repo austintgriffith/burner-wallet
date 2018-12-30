@@ -24,7 +24,7 @@ import Bridge from './components/Bridge'
 import customRPCHint from './customRPCHint.png';
 
 
-let WEB3_PROVIDER = 'http://0.0.0.0:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
+let WEB3_PROVIDER = 'http://10.0.0.107:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
 if (window.location.hostname.indexOf("qreth") >= 0) {
   WEB3_PROVIDER = "https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac"
 }
@@ -33,7 +33,8 @@ else if (window.location.hostname.indexOf("xdai") >= 0) {
   CLAIM_RELAY = 'https://x.xdai.io'
 }
 
-const BLOCKS_TO_PARSE_PER_BLOCKTIME = 15
+const BLOCKS_TO_PARSE_PER_BLOCKTIME = 1024
+const MAX_BLOCK_TO_LOOK_BACK = 17280//don't look back more than a day
 
 let dollarDisplay = (amount)=>{
     let floatAmount = parseFloat(amount)
@@ -70,12 +71,14 @@ class App extends Component {
     if(window.location.pathname){
       if(window.location.pathname.length==43){
         this.changeView('send_to_address')
+        window.history.pushState({},"", "/");
       }else if(window.location.pathname.length==134){
         let parts = window.location.pathname.split(";")
         let claimId = parts[0].replace("/","")
         let claimKey = parts[1]
         console.log("DO CLAIM",claimId,claimKey)
         this.setState({claimId,claimKey})
+        window.history.pushState({},"", "/");
       }else if(window.location.pathname.length>=65&&window.location.pathname.length<=67){
         console.log("incoming private key")
         let privateKey = window.location.pathname.replace("/","")
@@ -93,6 +96,7 @@ class App extends Component {
           let sendToAmount = parts[1]
           if(parseFloat(sendToAmount)>0 && sendToAddress.length==42){
             this.changeView('send_to_address')
+            window.history.pushState({},"", "/");
           }
         }
       }
@@ -640,9 +644,17 @@ class App extends Component {
                       let updatedTxs = false
                       if(!loadedBlocksTop || loadedBlocksTop<this.state.block){
                         if(!loadedBlocksTop) loadedBlocksTop = Math.max(2,this.state.block-5)
+
+                        if(this.state.block - loadedBlocksTop > MAX_BLOCK_TO_LOOK_BACK){
+                          loadedBlocksTop = this.state.block-MAX_BLOCK_TO_LOOK_BACK
+                        }
+
                         let paddedLoadedBlocks = parseInt(loadedBlocksTop)+BLOCKS_TO_PARSE_PER_BLOCKTIME
                         //console.log("choosing the min of ",paddedLoadedBlocks,"and",this.state.block)
                         let parseBlock=Math.min(paddedLoadedBlocks,this.state.block)
+
+
+
                         //console.log("MIN:",parseBlock)
                         upperBoundOfSearch = parseBlock
                         //first, if we are still back parsing, we need to look at *this* block too
@@ -692,7 +704,7 @@ class App extends Component {
                       localStorage.setItem(this.state.account+"loadedBlocksTop",upperBoundOfSearch)
                       this.setState({parsingTheChain:false,loadedBlocksTop:upperBoundOfSearch})
                     }
-
+                    console.log("~~ DONE PARSING SET ~~")
                   })
                 }
 

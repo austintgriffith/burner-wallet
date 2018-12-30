@@ -33,7 +33,7 @@ export default class Bridge extends React.Component {
                         }
                         setPossibleNewPrivateKey(possibleNewPrivateKey)
                       }}>
-                <Scaler config={{startZoomAt:500,origin:"25% 50%",adjustedZoom:1}}>
+                <Scaler config={{startZoomAt:500,origin:"25% 50%"}}>
                   <i className="fas fa-plus-square"/> Create Wallet
                 </Scaler>
               </button>
@@ -54,7 +54,7 @@ export default class Bridge extends React.Component {
                         changeView('main')
                         setPossibleNewPrivateKey("0x"+newPrivateKey)
                       }}>
-                <Scaler config={{startZoomAt:500,origin:"25% 50%",adjustedZoom:1}}>
+                <Scaler config={{startZoomAt:500,origin:"25% 50%"}}>
                   <i className="fas fa-plus-square"/> Create Wallet
                 </Scaler>
               </button>
@@ -69,7 +69,7 @@ export default class Bridge extends React.Component {
                 <div className="col-6 p-1"
                      onClick={() => changeAlert({type: 'success', message: 'Private Key copied to clipboard'})}>
                   <button className="btn btn-large w-100">
-                    <Scaler config={{startZoomAt:500,origin:"25% 50%",adjustedZoom:1}}>
+                    <Scaler config={{startZoomAt:500,origin:"25% 50%"}}>
                       <i className="fas fa-save"/> Copy Private Key
                     </Scaler>
                   </button>
@@ -81,7 +81,7 @@ export default class Bridge extends React.Component {
                           console.log("BALANCE",balance)
                           changeView('burn-wallet')
                         }}>
-                  <Scaler config={{startZoomAt:500,origin:"25% 50%",adjustedZoom:1}}>
+                  <Scaler config={{startZoomAt:500,origin:"25% 50%"}}>
                     <i className="fas fa-fire"/> Burn Wallet
                   </Scaler>
                 </button>

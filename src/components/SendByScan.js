@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import QrScanner from "react-qr-scanner";
 import QrReader from "react-qr-reader";
-
+import FileReaderInput from 'react-file-reader-input';
+import QrCode from 'qrcode-reader';
 import qrimage from '../qrcode.png';
+var Jimp = require("jimp");
+
 class SendByScan extends Component {
   constructor(props){
     super(props)
@@ -12,14 +14,10 @@ class SendByScan extends Component {
       legacyMode: false,
     };
     this.handleScan = this.handleScan.bind(this)
-    this.openImageDialog = this.openImageDialog.bind(this)
   }
   stopRecording = () => this.setState({ delay: false });
   onImageLoad = data => {
     console.log(data)
-    setTimeout(()=>{
-      alert("Please Try Again. Maybe farther away? QRCode should be ~20% of the image.")
-    },5500)
   }
   handleScan = data => {
     if (data) {
@@ -41,9 +39,6 @@ class SendByScan extends Component {
   chooseDeviceId = (a,b) => {
     console.log("choose",a,b)
   }
-  openImageDialog() {
-    this.refs.qrReader1.openImageDialog()
-  }
   handleError = error => {
     console.error(error);
     this.setState({legacyMode:true})
@@ -56,12 +51,78 @@ class SendByScan extends Component {
   componentWillUnmount() {
     this.stopRecording();
   }
+  legacyHandleChange(e, results){
+    results.forEach(result => {
+      const [e, file] = result;
+      let reader = new FileReader();
+      reader.onload = (e) => {
+        this.setState({imageData:e.target.result})
+        Jimp.read(Buffer.from(e.target.result.replace(/^data:image\/png;base64,/, ""), 'base64'),(err, image) => {
+            if (err) {
+                console.error(err);
+            }
+            var qr = new QrCode();
+            qr.callback = (err, value) => {
+                if (err) {
+                    console.log("FAILED TO SCAN!!!")
+                    console.error(err);
+                    this.setState({scanFail:err.toString()})
+                    setTimeout(()=>{
+                      this.setState({imageData:false})
+                    },1500)
+                    setTimeout(()=>{
+                      this.setState({scanFail:false})
+                    },3500)
+                }else if(value&&value.result){
+                  this.handleScan(value.result)
+                }
+            };
+            qr.decode(image.bitmap);
+        })
+      };
+      reader.readAsDataURL(file);
+    })
+  }
   render() {
 
-    let legacyOverlay = ""
+    let displayedImage = ""
+    if(this.state.imageData){
+      displayedImage = (
+        <img style={{position:"absolute",left:0,top:0,maxWidth:"100%",opacity:0.7}} src={this.state.imageData} />
+      )
+    }
+
+    let failMessage = ""
+    if(this.state.scanFail){
+      failMessage = (
+        <div style={{position:'absolute',left:0,top:0,zIndex:99,fontSize:24,color:"#FF0000",backgroundColor:"#333333",opacity:0.7,width:"100%",height:"100%",fontWeight:'bold'}}>
+          <div style={{textAlign:"center",paddingTop:"15%"}}>
+            <div style={{marginBottom:20}}><i className="fas fa-ban"></i></div>
+          </div>
+          <div style={{textAlign:"center",paddingTop:"25%"}}>
+            <div>Please Try Again</div>
+
+          </div>
+          <div style={{textAlign:"center",padding:"10%",paddingTop:"15%",fontSize:16}}>
+            <div>{this.state.scanFail}</div>
+          </div>
+        </div>
+      )
+    }
+
+    let displayedReader = (
+      <QrReader
+        delay={this.state.delay}
+        onError={this.handleError}
+        onScan={this.handleScan}
+        onImageLoad={this.onImageLoad}
+        style={{ width: "100%" }}
+      />
+    )
     if(this.state.legacyMode){
-      legacyOverlay = (
-        <div style={{position: 'absolute',zIndex:11,top:0,left:0,width:"100%",height:"100%",color:"#FFFFFF",cursor:"pointer"}} onClick={this.openImageDialog}>
+      displayedReader = (
+        <FileReaderInput as="binary" id="my-file-input" onChange={this.legacyHandleChange.bind(this)}>
+        <div style={{position: 'absolute',zIndex:11,top:0,left:0,width:"100%",height:"100%",color:"#FFFFFF",cursor:"pointer"}}>
           <div style={{textAlign:"center",paddingTop:"15%"}}>
             <div style={{marginBottom:20}}><i className="fas fa-camera"></i></div>
             <img src={qrimage} style={{position:"absolute",left:"36%",top:"25%",padding:4,border:"1px solid #888888",opacity:0.25,maxWidth:"30%",maxHight:"30%"}} />
@@ -77,53 +138,21 @@ class SendByScan extends Component {
               </div>
             </div>
         </div>
+        </FileReaderInput>
       )
     }
-
-    let readerVersion = ""
-
-    //{readerVersion}
-    //for some messed up reason the other scanner always uses the front facing camera even when you set it to rear
-    //so for specific phones we'll use the old version that actually uses the rear camera
-  /*  if(!this.state.legacyMode && !window.navigator.standalone && (
-        navigator.userAgent.indexOf("iPhone OS 12")>=0 ||
-        navigator.userAgent.indexOf("iPad; CPU OS 12")>=0
-      )){*/
-      readerVersion = (
-        <QrReader
-          delay={this.state.delay}
-          onError={this.handleError}
-          onScan={this.handleScan}
-          onImageLoad={this.onImageLoad}
-          style={{ width: "100%" }}
-        />
-      )
-  /*  }else{
-      readerVersion = (
-        <QrScanner
-          ref="qrReader1"
-          delay={this.state.delay}
-          onError={this.handleError}
-          onScan={this.handleScan}
-          onImageLoad={this.onImageLoad}
-          legacyMode={this.state.legacyMode}
-          style={{ width: "100%" }}
-        />
-      )
-    }*/
-
-
 
     return (
       <div style={{  position: "fixed",top:0,left:0,right:0,bottom:0,zIndex:5,margin:'0 auto !important',background:"#000000"}}>
         <div style={{ position: 'absolute',zIndex: 12,top:20,right:20,fontSize:80,paddingRight:20,color:"#FFFFFF",cursor:'pointer'}} onClick={this.onClose} >
           <i className="fa fa-times" aria-hidden="true"></i>
         </div>
-        {legacyOverlay}
-        {readerVersion}
-        <div style={{position: 'absolute',zIndex:11,bottom:20,fontSize:12,left:20,color:"#FFFFFF"}}>
+        {displayedReader}
+        <div style={{position: 'absolute',zIndex:11,bottom:20,fontSize:12,left:20,color:"#FFFFFF",opacity:0.333}}>
           {navigator.userAgent}
         </div>
+        {displayedImage}
+        {failMessage}
       </div>
     );
   }
