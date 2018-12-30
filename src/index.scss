@@ -1,8 +1,8 @@
-@import url('https://rsms.me/inter/inter-ui.css');
-@import url('/fonts/arial_rounded_mt_bold.ttf');
+//@import url('https://rsms.me/inter/inter-ui.css');
+//@import url('/fonts/arial_rounded_mt_bold.ttf');
 
 :not(i) {
-  font-family: "Inter UI", sans-serif;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 body {
@@ -10,6 +10,7 @@ body {
   min-height: 820px;
   background-attachment: fixed;
   background-image: linear-gradient(#F69E4D, #F76B1C);
+  letter-spacing: -1pt;
   margin: 10px;
   margin-top: 25px;
   font-size: 20px;

@@ -8,10 +8,14 @@ var Jimp = require("jimp");
 class SendByScan extends Component {
   constructor(props){
     super(props)
+    let defaultToLegacyMode = false
+    if(!navigator||!navigator.mediaDevices){
+      defaultToLegacyMode = true
+    }
     this.state = {
       delay: 400,
       browser: "",
-      legacyMode: false,
+      legacyMode: defaultToLegacyMode,
     };
     this.handleScan = this.handleScan.bind(this)
   }
@@ -52,6 +56,7 @@ class SendByScan extends Component {
     this.stopRecording();
   }
   legacyHandleChange(e, results){
+    this.props.changeView('reader')
     results.forEach(result => {
       const [e, file] = result;
       let reader = new FileReader();
@@ -63,6 +68,7 @@ class SendByScan extends Component {
             }
             var qr = new QrCode();
             qr.callback = (err, value) => {
+                this.props.changeView('send_by_scan')
                 if (err) {
                     console.log("FAILED TO SCAN!!!")
                     console.error(err);
@@ -147,6 +153,7 @@ class SendByScan extends Component {
       )
     }
 
+
     return (
       <div style={{  position: "fixed",top:0,left:0,right:0,bottom:0,zIndex:5,margin:'0 auto !important',background:"#000000"}}>
         <div style={{ position: 'absolute',zIndex: 12,top:20,right:20,fontSize:80,paddingRight:20,color:"#FFFFFF",cursor:'pointer'}} onClick={this.onClose} >
@@ -154,7 +161,7 @@ class SendByScan extends Component {
         </div>
         {displayedReader}
         <div style={{position: 'absolute',zIndex:11,bottom:20,fontSize:12,left:20,color:"#FFFFFF",opacity:0.333}}>
-          {navigator.userAgent}
+          {navigator.userAgent} - {JSON.stringify(navigator.mediaDevices)}
         </div>
         {displayedImage}
         {failMessage}
