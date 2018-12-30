@@ -9,7 +9,7 @@ class SendByScan extends Component {
   constructor(props){
     super(props)
     this.state = {
-      delay: 500,
+      delay: 400,
       browser: "",
       legacyMode: false,
     };
@@ -57,7 +57,7 @@ class SendByScan extends Component {
       let reader = new FileReader();
       reader.onload = (e) => {
         this.setState({imageData:e.target.result})
-        Jimp.read(Buffer.from(e.target.result.replace(/^data:image\/png;base64,/, ""), 'base64'),(err, image) => {
+        Jimp.read(Buffer.from(e.target.result.replace(/^data:image\/png;base64,/, "").replace(/^data:image\/jpeg;base64,/, ""), 'base64'),(err, image) => {
             if (err) {
                 console.error(err);
             }
@@ -77,7 +77,12 @@ class SendByScan extends Component {
                   this.handleScan(value.result)
                 }
             };
-            qr.decode(image.bitmap);
+            if(!image||!image.bitmap){
+              this.setState({scanFail:JSON.stringify(e.target.result)})
+            }else{
+              qr.decode(image.bitmap);
+            }
+
         })
       };
       reader.readAsDataURL(file);

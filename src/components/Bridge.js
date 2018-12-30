@@ -15,7 +15,7 @@ import axios from "axios"
 const GASBOOSTPRICE = 0.1
 
 const logoStyle = {
-  maxWidth:50
+  maxWidth:50,
 }
 
 const colStyle = {
@@ -75,10 +75,6 @@ export default class Bridge extends React.Component {
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
-
-
-
-
 
     this.state = {
       ethBalance: 0,
@@ -282,7 +278,7 @@ export default class Bridge extends React.Component {
             <div className="col-1 p-1"  style={colStyle}>
               <i className="fas fa-arrow-up"  />
             </div>
-            <div className="col-4 p-1" style={colStyle}>
+            <div className="col-5 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
@@ -293,8 +289,8 @@ export default class Bridge extends React.Component {
               </div>
               </Scaler>
             </div>
-            <div className="col-3 p-1"  style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+            <div className="col-2 p-1"  style={colStyle}>
+              <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {daiCancelButton}
               </Scaler>
             </div>
@@ -407,7 +403,7 @@ export default class Bridge extends React.Component {
 
 
               }}>
-                <i className="fas fa-arrow-right" /> Send
+                <i className="fas fa-arrow-up" /> Send
               </button>
               </Scaler>
             </div>
@@ -434,7 +430,7 @@ export default class Bridge extends React.Component {
             <div className="col-1 p-1"  style={colStyle}>
               <i className="fas fa-arrow-down"  />
             </div>
-            <div className="col-4 p-1" style={colStyle}>
+            <div className="col-5 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
@@ -445,8 +441,8 @@ export default class Bridge extends React.Component {
               </div>
               </Scaler>
             </div>
-            <div className="col-3 p-1"  style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+            <div className="col-2 p-1"  style={colStyle}>
+              <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {daiCancelButton}
               </Scaler>
             </div>
@@ -481,7 +477,7 @@ export default class Bridge extends React.Component {
                   }
                 })
               }}>
-                <i className="fas fa-arrow-right" /> Send
+                <i className="fas fa-arrow-down" /> Send
               </button>
               </Scaler>
             </div>
@@ -546,7 +542,7 @@ export default class Bridge extends React.Component {
             <div className="col-1 p-1"  style={colStyle}>
               <i className="fas fa-arrow-up"  />
             </div>
-            <div className="col-4 p-1" style={colStyle}>
+            <div className="col-5 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
@@ -557,8 +553,8 @@ export default class Bridge extends React.Component {
               </div>
               </Scaler>
             </div>
-            <div className="col-3 p-1"  style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+            <div className="col-2 p-1"  style={colStyle}>
+              <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {ethCancelButton}
               </Scaler>
             </div>
@@ -701,7 +697,7 @@ export default class Bridge extends React.Component {
 
 
               }}>
-                <i className="fas fa-arrow-right" /> Send
+                <i className="fas fa-arrow-up" /> Send
               </button>
               </Scaler>
             </div>
@@ -728,7 +724,7 @@ export default class Bridge extends React.Component {
             <div className="col-1 p-1"  style={colStyle}>
               <i className="fas fa-arrow-down"  />
             </div>
-            <div className="col-4 p-1" style={colStyle}>
+            <div className="col-5 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
@@ -739,8 +735,8 @@ export default class Bridge extends React.Component {
               </div>
               </Scaler>
             </div>
-            <div className="col-3 p-1"  style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+            <div className="col-2 p-1"  style={colStyle}>
+              <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {ethCancelButton}
               </Scaler>
             </div>
@@ -1014,7 +1010,7 @@ export default class Bridge extends React.Component {
 
 
               }}>
-                <i className="fas fa-arrow-right" /> Send
+                <i className="fas fa-arrow-down" /> Send
               </button>
               </Scaler>
             </div>
@@ -1055,10 +1051,10 @@ export default class Bridge extends React.Component {
             <div className="col-2 p-1">
               <img style={logoStyle} src={xdai} />
             </div>
-            <div className="col-3 p-1">
+            <div className="col-3 p-1" style={{marginTop:8}}>
               xDai
             </div>
-            <div className="col-7 p-1">
+            <div className="col-7 p-1" style={{marginTop:8}}>
               ${this.props.dollarDisplay(this.state.xdaiBalance)}
             </div>
           </div>
@@ -1073,10 +1069,10 @@ export default class Bridge extends React.Component {
             <div className="col-2 p-1">
               <img style={logoStyle} src={dai} />
             </div>
-            <div className="col-3 p-1">
+            <div className="col-3 p-1" style={{marginTop:9}}>
               DAI
             </div>
-            <div className="col-7 p-1">
+            <div className="col-7 p-1" style={{marginTop:9}}>
               ${this.props.dollarDisplay(this.state.daiBalance)}
             </div>
           </div>
@@ -1092,10 +1088,10 @@ export default class Bridge extends React.Component {
             <div className="col-2 p-1">
               <img style={logoStyle} src={eth} />
             </div>
-            <div className="col-3 p-1">
+            <div className="col-3 p-1" style={{marginTop:10}}>
               ETH
             </div>
-            <div className="col-7 p-1">
+            <div className="col-7 p-1" style={{marginTop:10}}>
               ${this.props.dollarDisplay(this.state.ethBalance*this.state.ethprice)}
             </div>
           </div>
@@ -1118,17 +1114,17 @@ export default class Bridge extends React.Component {
               <img style={logoStyle} src={wyre} />
               </Scaler>
             </div>
-            <div className="col-4 p-1">
+            <div className="col-5 p-1" style={{marginTop:7}}>
               <Scaler config={{startZoomAt:700,origin:"50% 50%"}}>
               Wyre
               </Scaler>
             </div>
-            <div className="col-7 p-1">
-            <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
-              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} disabled={true}>
+            <div className="col-6 p-1">
+              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} disabled={true}>
+                <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
                   <i className="fas fa-plug"></i> Create/Connect
+                </Scaler>
               </button>
-            </Scaler>
             </div>
           </div>
         </div>
@@ -1140,17 +1136,17 @@ export default class Bridge extends React.Component {
               <img style={logoStyle} src={coinbase} />
               </Scaler>
             </div>
-            <div className="col-4 p-1">
+            <div className="col-5 p-1" style={{marginTop:7}}>
               <Scaler config={{startZoomAt:700,origin:"50% 50%"}}>
               Coinbase
               </Scaler>
             </div>
-            <div className="col-7 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
-              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} disabled={true}>
+            <div className="col-6 p-1">
+              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} disabled={true}>
+                <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
                   <i className="fas fa-plug"></i> Create/Connect
+                </Scaler>
               </button>
-              </Scaler>
             </div>
           </div>
         </div>
@@ -1162,17 +1158,19 @@ export default class Bridge extends React.Component {
               <img style={logoStyle} src={localeth} />
               </Scaler>
             </div>
-            <div className="col-4 p-1">
+            <div className="col-5 p-1" style={{marginTop:7}}>
               <Scaler config={{startZoomAt:700,origin:"50% 50%"}}>
                 LocalEth
               </Scaler>
             </div>
-            <div className="col-7 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
-              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe"}} disabled={true}>
+            <div className="col-6 p-1">
+
+              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} disabled={true}>
+                <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
                   <i className="fas fa-plug"></i> Create/Connect
+                </Scaler>
               </button>
-              </Scaler>
+
             </div>
           </div>
         </div>
