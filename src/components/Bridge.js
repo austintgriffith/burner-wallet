@@ -93,7 +93,7 @@ export default class Bridge extends React.Component {
       daiContract: daiContract,
       daiToXdaiMode: false,
       ethToDaiMode: false,
-      loaderBarStatusText:"Loading...",
+      loaderBarStatusText:"loading...",
       loaderBarStartTime:Date.now(),
       loaderBarPercent: 2,
       loaderBarColor: "#aaaaaa",
@@ -522,6 +522,8 @@ export default class Bridge extends React.Component {
 
     let buttonsDisabled = (daiToXdaiMode=="sending" || daiToXdaiMode=="withdrawing" || daiToXdaiMode=="depositing" || ethToDaiMode=="sending" || ethToDaiMode=="depositing" || ethToDaiMode=="withdrawing")
 
+    let adjustedFontSize = Math.round((Math.min(document.documentElement.clientWidth,600)/600)*24)
+    let adjustedTop = Math.round((Math.min(document.documentElement.clientWidth,600)/600)*-20)+9
 
     let daiToXdaiDisplay = "loading..."
     //console.log("daiToXdaiMode",daiToXdaiMode)
@@ -532,7 +534,7 @@ export default class Bridge extends React.Component {
             className="btn btn-large"
           >
           </button>
-          <div style={{position:'absolute',left:"50%",width:"100%",marginLeft:"-50%",fontSize:24,top:-12,opacity:0.95,textAlign:"center"}}>
+          <div style={{position:'absolute',left:"50%",width:"100%",marginLeft:"-50%",fontSize:adjustedFontSize,top:adjustedTop,opacity:0.95,textAlign:"center"}}>
             {this.state.loaderBarStatusText}
           </div>
         </div>
@@ -717,7 +719,7 @@ export default class Bridge extends React.Component {
             className="btn btn-large"
           >
           </button>
-          <div style={{position:'absolute',left:"50%",width:"100%",marginLeft:"-50%",fontSize:24,top:-12,opacity:0.95,textAlign:"center"}}>
+          <div style={{position:'absolute',left:"50%",width:"100%",marginLeft:"-50%",fontSize:adjustedFontSize,top:adjustedTop,opacity:0.95,textAlign:"center"}}>
             {this.state.loaderBarStatusText}
           </div>
         </div>
