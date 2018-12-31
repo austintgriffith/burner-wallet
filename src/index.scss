@@ -16,3 +16,24 @@ body {
   font-size: 20px;
   color: #4A4A4A;
 }
+
+body {
+  font-family: 'IBM Plex Mono', monospace;
+  height: 100%;
+  min-height: 820px;
+  background-attachment: fixed;
+  background-image: linear-gradient(#F69E4D, #F76B1C);
+  letter-spacing: -1pt;
+  margin: 10px;
+  margin-top: 25px;
+  font-size: 20px;
+  color: #4A4A4A;
+}
+a {
+  color:#777777;
+  text-decoration: none;
+}
+a:visited {
+  color:#444444;
+  text-decoration: none;
+}
