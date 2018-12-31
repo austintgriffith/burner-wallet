@@ -64,7 +64,9 @@ class SendByScan extends Component {
         this.setState({imageData:e.target.result})
         Jimp.read(Buffer.from(e.target.result.replace(/^data:image\/png;base64,/, "").replace(/^data:image\/jpeg;base64,/, ""), 'base64'),(err, image) => {
             if (err) {
+              this.props.changeView('send_by_scan')
                 console.error(err);
+                  this.setState({scanFail:err.toString()})
             }
             var qr = new QrCode();
             qr.callback = (err, value) => {
