@@ -26,7 +26,7 @@ export default class Bridge extends React.Component {
       privateKeyQrDisplay = (
         <div className="main-card card w-100">
           <div className="content qr row">
-                <QRCode value={address} size={qrSize}/>
+                <QRCode value={qrValue} size={qrSize}/>
           </div>
         </div>
       )
@@ -36,7 +36,7 @@ export default class Bridge extends React.Component {
       <div style={{marginTop:20}}>
         <div className="main-card card w-100">
           <div className="content qr row">
-                <QRCode value={qrValue} size={qrSize}/>
+                <QRCode value={address} size={qrSize}/>
           </div>
         </div>
         <div className="main-card card w-100">
