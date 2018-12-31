@@ -107,7 +107,7 @@ export default class SendToAddress extends React.Component {
                 <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
                        onChange={event => this.updateState('toAddress', event.target.value)} />
               </div>
-                { this.state.toAddress && this.state.toAddress.length==42 && <Blockies seed={toAddress} scale={10} /> }
+              <div>  { this.state.toAddress && this.state.toAddress.length==42 && <Blockies seed={toAddress.toLowerCase()} scale={10} /> }</div>
               <label htmlFor="amount_input">Send Amount</label>
               <div className="input-group">
                 <div className="input-group-prepend">

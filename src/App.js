@@ -33,8 +33,8 @@ else if (window.location.hostname.indexOf("xdai") >= 0) {
   CLAIM_RELAY = 'https://x.xdai.io'
 }
 
-const BLOCKS_TO_PARSE_PER_BLOCKTIME = 1024
-const MAX_BLOCK_TO_LOOK_BACK = 17280//don't look back more than a day
+const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
+const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than a day
 
 let dollarDisplay = (amount)=>{
     let floatAmount = parseFloat(amount)
@@ -536,6 +536,7 @@ class App extends Component {
                     <div>
                       <NavCard title={"Exchange (beware!)"} goBack={this.goBack.bind(this)}/>
                       <Bridge
+                        changeAlert={this.changeAlert}
                         setGwei={this.setGwei}
                         network={this.state.network}
                         tx={this.state.tx}

@@ -9,10 +9,29 @@ export default class Bridge extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      privateKeyQr:false
     }
   }
   render(){
     let {balance, privateKey, changeAlert, changeView, goBack, setPossibleNewPrivateKey} = this.props
+
+    let url = window.location.protocol+"//"+window.location.hostname
+    if(window.location.port&&window.location.port!=80&&window.location.port!=443){
+      url = url+":"+window.location.port
+    }
+    let qrSize = Math.min(document.documentElement.clientWidth,512)-90
+    let qrValue = url+"/"+privateKey
+    let privateKeyQrDisplay = ""
+    if(this.state.privateKeyQr){
+      privateKeyQrDisplay = (
+        <div className="main-card card w-100">
+          <div className="content qr row">
+                <QRCode value={qrValue} size={qrSize}/>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div style={{marginTop:20}}>
         <div className="main-card card w-100">
@@ -87,6 +106,25 @@ export default class Bridge extends React.Component {
                   </Scaler>
                 </button>
               </div>
+            </div>
+          </div>
+          }
+        </div>
+        <div className="main-card card w-100">
+          {privateKey &&
+          <div>
+            <div className="content ops row">
+                <div className="col-12 p-1"
+                     onClick={() => {
+                       this.setState({privateKeyQr:!this.state.privateKeyQr})
+                     }}>
+                  <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}>
+                    <Scaler config={{startZoomAt:650,origin:"0% 50%"}}>
+                      <i className="fas fa-qrcode"/> Show Private Key QR Code
+                    </Scaler>
+                  </button>
+                </div>
+                {privateKeyQrDisplay}
             </div>
           </div>
           }
