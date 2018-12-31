@@ -289,14 +289,14 @@ export default class Bridge extends React.Component {
               </div>
               </Scaler>
             </div>
-            <div className="col-2 p-1"  style={colStyle}>
+            <div className="col-3 p-1"  style={colStyle}>
               <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {daiCancelButton}
               </Scaler>
             </div>
-            <div className="col-4 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
-              <button className="btn btn-large w-100"  disabled={buttonsDisabled} onClick={()=>{
+            <div className="col-3 p-1">
+
+              <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap"}} onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
 
                 this.setState({
@@ -403,9 +403,11 @@ export default class Bridge extends React.Component {
 
 
               }}>
-                <i className="fas fa-arrow-up" /> Send
+                <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
+                  <i className="fas fa-arrow-up" /> Send
+                </Scaler>
               </button>
-              </Scaler>
+
             </div>
           </div>
         )
@@ -441,14 +443,13 @@ export default class Bridge extends React.Component {
               </div>
               </Scaler>
             </div>
-            <div className="col-2 p-1"  style={colStyle}>
+            <div className="col-3 p-1"  style={colStyle}>
               <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {daiCancelButton}
               </Scaler>
             </div>
-            <div className="col-4 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
-              <button className="btn btn-large w-100"  disabled={buttonsDisabled} onClick={()=>{
+            <div className="col-3 p-1">
+              <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap"}} onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
                 this.setState({
                   daiToXdaiMode:"withdrawing",
@@ -477,9 +478,11 @@ export default class Bridge extends React.Component {
                   }
                 })
               }}>
-                <i className="fas fa-arrow-down" /> Send
+                <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
+                  <i className="fas fa-arrow-down" /> Send
+                </Scaler>
               </button>
-              </Scaler>
+
             </div>
           </div>
         )
@@ -553,14 +556,13 @@ export default class Bridge extends React.Component {
               </div>
               </Scaler>
             </div>
-            <div className="col-2 p-1"  style={colStyle}>
+            <div className="col-3 p-1"  style={colStyle}>
               <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {ethCancelButton}
               </Scaler>
             </div>
-            <div className="col-4 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} onClick={async ()=>{
+            <div className="col-3 p-1">
+              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{whiteSpace:"nowrap"}} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move ETH to DAI")
 
@@ -697,9 +699,11 @@ export default class Bridge extends React.Component {
 
 
               }}>
-                <i className="fas fa-arrow-up" /> Send
+                <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
+                  <i className="fas fa-arrow-up" /> Send
+                </Scaler>
               </button>
-              </Scaler>
+
             </div>
           </div>
         )
@@ -735,14 +739,13 @@ export default class Bridge extends React.Component {
               </div>
               </Scaler>
             </div>
-            <div className="col-2 p-1"  style={colStyle}>
+            <div className="col-3 p-1"  style={colStyle}>
               <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {ethCancelButton}
               </Scaler>
             </div>
-            <div className="col-4 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} onClick={async ()=>{
+            <div className="col-3 p-1">
+              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{whiteSpace:"nowrap"}} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move DAI to ETH")
 
@@ -1010,9 +1013,10 @@ export default class Bridge extends React.Component {
 
 
               }}>
-                <i className="fas fa-arrow-down" /> Send
+                <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
+                  <i className="fas fa-arrow-down" /> Send
+                </Scaler>
               </button>
-              </Scaler>
             </div>
           </div>
         )

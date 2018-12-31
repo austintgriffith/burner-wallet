@@ -3,7 +3,7 @@ import { Scaler } from "dapparatus";
 export default ({changeView}) => {
   return (
     <div className="text-center bottom-text" style={{marginBottom:30}}>
-      <Scaler config={{startZoomAt:380,origin:"0% 50%",adjustedZoom:1}}>
+      <Scaler config={{startZoomAt:350,origin:"35% 50%",adjustedZoom:1}}>
         <span style={{padding:10,whiteSpace:"nowrap"}}>
           <a href="https://github.com/austintgriffith/burner-wallet" style={{color:"#FFFFFF"}} target="_blank">
             <i className="fas fa-code"/> Code

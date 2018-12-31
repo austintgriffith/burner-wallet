@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import QrReader from "react-qr-reader";
+import ReactLoading from 'react-loading';
 import FileReaderInput from 'react-file-reader-input';
 import QrCode from 'qrcode-reader';
 import qrimage from '../qrcode.png';
@@ -16,6 +17,8 @@ class SendByScan extends Component {
       delay: 400,
       browser: "",
       legacyMode: defaultToLegacyMode,
+      scanFail: false,
+      isLoading: false
     };
     this.handleScan = this.handleScan.bind(this)
   }
@@ -52,46 +55,53 @@ class SendByScan extends Component {
     this.stopRecording();
     this.props.goBack();
   };
+  //componentDidMount(){
+  //  this.setState({scanFail:"TEST"})
+  //}
   componentWillUnmount() {
     this.stopRecording();
   }
   legacyHandleChange(e, results){
-    this.props.changeView('reader')
+    //this.props.changeView('reader')
     results.forEach(result => {
       const [e, file] = result;
       let reader = new FileReader();
       reader.onload = (e) => {
-        this.setState({imageData:e.target.result})
-        Jimp.read(Buffer.from(e.target.result.replace(/^data:image\/png;base64,/, "").replace(/^data:image\/jpeg;base64,/, ""), 'base64'),(err, image) => {
-            if (err) {
-              this.props.changeView('send_by_scan')
-                console.error(err);
+      //  this.props.changeView('send_by_scan',()=>{
+          console.log("")
+          this.setState({imageData:e.target.result})
+          Jimp.read(Buffer.from(e.target.result.replace(/^data:image\/png;base64,/, "").replace(/^data:image\/jpeg;base64,/, ""), 'base64'),(err, image) => {
+              if (err) {
+                  alert("ERR1")
+                  console.error("ERR1",err);
                   this.setState({scanFail:err.toString()})
-            }
-            var qr = new QrCode();
-            qr.callback = (err, value) => {
-                this.props.changeView('send_by_scan')
-                if (err) {
-                    console.log("FAILED TO SCAN!!!")
-                    console.error(err);
-                    this.setState({scanFail:err.toString()})
+              }
+              var qr = new QrCode();
+              qr.callback = (err, value) => {
+                  this.setState({isLoading:false})
+                  if (err) {
                     setTimeout(()=>{
-                      this.setState({imageData:false})
+                      console.log("FAILED TO SCAN!!!")
+                      this.setState({scanFail:err.toString()})
+                      setTimeout(()=>{
+                        this.setState({imageData:false})
+                      },1500)
+                      setTimeout(()=>{
+                        this.setState({scanFail:false})
+                      },3500)
                     },1500)
-                    setTimeout(()=>{
-                      this.setState({scanFail:false})
-                    },3500)
-                }else if(value&&value.result){
-                  this.handleScan(value.result)
-                }
-            };
-            if(!image||!image.bitmap){
-              this.setState({scanFail:JSON.stringify(e.target.result)})
-            }else{
-              qr.decode(image.bitmap);
-            }
+                  }else if(value&&value.result){
+                    this.handleScan(value.result)
+                  }
+              };
+              if(!image||!image.bitmap){
+                //this.setState({extraFail:JSON.stringify(e.target.result)})
+              }else{
+                qr.decode(image.bitmap);
+              }
 
-        })
+          })
+      //  })
       };
       reader.readAsDataURL(file);
     })
@@ -105,10 +115,19 @@ class SendByScan extends Component {
       )
     }
 
+    let loader = ""
+    if(this.state.isLoading){
+      loader = (
+        <div style={{position:'absolute',left:0,top:"-25%",zIndex:98,fontSize:24,color:"#FF0000",backgroundColor:"#333333",opacity:0.9,width:"100%",height:1,fontWeight:'bold'}}>
+          <ReactLoading type="cylon" color={"#FFFFFF"} width={"100%"}  />
+        </div>
+      )
+    }
+
     let failMessage = ""
     if(this.state.scanFail){
       failMessage = (
-        <div style={{position:'absolute',left:0,top:0,zIndex:99,fontSize:24,color:"#FF0000",backgroundColor:"#333333",opacity:0.7,width:"100%",height:"100%",fontWeight:'bold'}}>
+        <div style={{position:'absolute',left:0,top:0,zIndex:99,fontSize:24,color:"#FF0000",backgroundColor:"#333333",opacity:0.9,width:"100%",height:"100%",fontWeight:'bold'}}>
           <div style={{textAlign:"center",paddingTop:"15%"}}>
             <div style={{marginBottom:20}}><i className="fas fa-ban"></i></div>
           </div>
@@ -134,6 +153,10 @@ class SendByScan extends Component {
     )
     if(this.state.legacyMode){
       displayedReader = (
+        <div onClick={()=>{
+          console.log("LOADING...")
+          this.setState({isLoading:true})
+        }}>
         <FileReaderInput as="binary" id="my-file-input" onChange={this.legacyHandleChange.bind(this)}>
         <div style={{position: 'absolute',zIndex:11,top:0,left:0,width:"100%",height:"100%",color:"#FFFFFF",cursor:"pointer"}}>
           <div style={{textAlign:"center",paddingTop:"15%"}}>
@@ -152,13 +175,14 @@ class SendByScan extends Component {
             </div>
         </div>
         </FileReaderInput>
+        </div>
       )
     }
 
 
     return (
       <div style={{  position: "fixed",top:0,left:0,right:0,bottom:0,zIndex:5,margin:'0 auto !important',background:"#000000"}}>
-        <div style={{ position: 'absolute',zIndex: 12,top:20,right:20,fontSize:80,paddingRight:20,color:"#FFFFFF",cursor:'pointer'}} onClick={this.onClose} >
+        <div style={{ position: 'absolute',zIndex: 256,top:20,right:20,fontSize:80,paddingRight:20,color:"#FFFFFF",cursor:'pointer'}} onClick={this.onClose} >
           <i className="fa fa-times" aria-hidden="true"></i>
         </div>
         {displayedReader}
@@ -167,6 +191,7 @@ class SendByScan extends Component {
         </div>
         {displayedImage}
         {failMessage}
+        {loader}
       </div>
     );
   }

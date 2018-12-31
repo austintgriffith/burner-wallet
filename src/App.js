@@ -233,7 +233,7 @@ class App extends Component {
   }
 
 
-  changeView = (view) => {
+  changeView = (view,cb) => {
     if(view=="bridge"||view=="main") localStorage.setItem("view",view) //some pages should be sticky because of metamask reloads
     if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
       console.log("This is a send...")
@@ -248,7 +248,7 @@ class App extends Component {
     }
     this.changeAlert(null);
     console.log("Setting state",view)
-    this.setState({ view });
+    this.setState({ view },cb);
   };
 
   changeAlert = (alert, hide=true) => {

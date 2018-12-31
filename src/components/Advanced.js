@@ -18,11 +18,12 @@ export default class Bridge extends React.Component {
         <div className="main-card card w-100">
           <div className="content ops row">
             <div className="col-6 p-1">
-            <input type="text" className="form-control" placeholder="private key" value={this.state.newPrivateKey}
-                   onChange={event => this.setState({newPrivateKey:event.target.value})} />
+
+                <input type="text" className="form-control" placeholder="private key" value={this.state.newPrivateKey}
+                       onChange={event => this.setState({newPrivateKey:event.target.value})} />
             </div>
             <div className="col-6 p-1">
-              <button className="btn btn-large w-100"
+              <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}
                       onClick={()=>{
                         //let pkutils = require("ethereum-mnemonic-privatekey-utils")
                         //const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(newPrivateKey)
@@ -33,7 +34,7 @@ export default class Bridge extends React.Component {
                         }
                         setPossibleNewPrivateKey(possibleNewPrivateKey)
                       }}>
-                <Scaler config={{startZoomAt:500,origin:"25% 50%"}}>
+                <Scaler config={{startZoomAt:500,origin:"0% 50%"}}>
                   <i className="fas fa-plus-square"/> Create Wallet
                 </Scaler>
               </button>
@@ -47,14 +48,14 @@ export default class Bridge extends React.Component {
                    onChange={event => this.setState({newSeedPhrase:event.target.value})} />
             </div>
             <div className="col-6 p-1">
-              <button className="btn btn-large w-100"
+              <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}
                       onClick={()=>{
                         let pkutils = require("ethereum-mnemonic-privatekey-utils")
                         const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(this.state.newSeedPhrase)
                         changeView('main')
                         setPossibleNewPrivateKey("0x"+newPrivateKey)
                       }}>
-                <Scaler config={{startZoomAt:500,origin:"25% 50%"}}>
+                <Scaler config={{startZoomAt:500,origin:"0% 50%"}}>
                   <i className="fas fa-plus-square"/> Create Wallet
                 </Scaler>
               </button>
@@ -68,20 +69,20 @@ export default class Bridge extends React.Component {
               <CopyToClipboard text={privateKey}>
                 <div className="col-6 p-1"
                      onClick={() => changeAlert({type: 'success', message: 'Private Key copied to clipboard'})}>
-                  <button className="btn btn-large w-100">
-                    <Scaler config={{startZoomAt:500,origin:"25% 50%"}}>
+                  <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}>
+                    <Scaler config={{startZoomAt:650,origin:"0% 50%"}}>
                       <i className="fas fa-save"/> Copy Private Key
                     </Scaler>
                   </button>
                 </div>
               </CopyToClipboard>
               <div className="col-6 p-1">
-                <button className="btn btn-large w-100"
+                <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}
                         onClick={()=>{
                           console.log("BALANCE",balance)
                           changeView('burn-wallet')
                         }}>
-                  <Scaler config={{startZoomAt:500,origin:"25% 50%"}}>
+                  <Scaler config={{startZoomAt:500,origin:"0% 50%"}}>
                     <i className="fas fa-fire"/> Burn Wallet
                   </Scaler>
                 </button>
