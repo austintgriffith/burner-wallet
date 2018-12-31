@@ -405,6 +405,7 @@ class App extends Component {
                   <div>
                     <NavCard title={'Advanced'} goBack={this.goBack.bind(this)}/>
                     <Advanced
+                      address={account}
                       balance={balance}
                       changeView={this.changeView}
                       privateKey={metaAccount.privateKey}

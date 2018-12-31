@@ -13,7 +13,7 @@ export default class Bridge extends React.Component {
     }
   }
   render(){
-    let {balance, privateKey, changeAlert, changeView, goBack, setPossibleNewPrivateKey} = this.props
+    let {balance, address, privateKey, changeAlert, changeView, goBack, setPossibleNewPrivateKey} = this.props
 
     let url = window.location.protocol+"//"+window.location.hostname
     if(window.location.port&&window.location.port!=80&&window.location.port!=443){
@@ -26,7 +26,7 @@ export default class Bridge extends React.Component {
       privateKeyQrDisplay = (
         <div className="main-card card w-100">
           <div className="content qr row">
-                <QRCode value={qrValue} size={qrSize}/>
+                <QRCode value={address} size={qrSize}/>
           </div>
         </div>
       )
@@ -34,6 +34,11 @@ export default class Bridge extends React.Component {
 
     return (
       <div style={{marginTop:20}}>
+        <div className="main-card card w-100">
+          <div className="content qr row">
+                <QRCode value={qrValue} size={qrSize}/>
+          </div>
+        </div>
         <div className="main-card card w-100">
           <div className="content ops row">
             <div className="col-6 p-1">
