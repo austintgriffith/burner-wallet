@@ -1181,7 +1181,7 @@ export default class Bridge extends React.Component {
 
 
     let sendDaiButton = (
-      <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={()=>{
+      <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} disabled={buttonsDisabled} onClick={()=>{
         this.setState({sendDai:true})
       }}>
         <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
@@ -1211,7 +1211,7 @@ export default class Bridge extends React.Component {
               <input type="text" className="form-control" placeholder="0.00" value={this.state.daiSendAmount}
                      onChange={event => this.updateState('daiSendAmount', event.target.value)} />
             </div>
-            <button style={{marginTop:40}} className={`btn btn-success btn-lg w-100 ${this.state.canSendDai ? '' : 'disabled'}`}
+            <button style={{marginTop:40}} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendDai ? '' : 'disabled'}`}
                     onClick={this.sendDai.bind(this)}>
               Send
             </button>
@@ -1235,7 +1235,7 @@ export default class Bridge extends React.Component {
 
 
     let sendEthButton = (
-      <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={()=>{
+      <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={()=>{
         this.setState({sendEth:true})
       }}>
         <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
@@ -1265,7 +1265,7 @@ export default class Bridge extends React.Component {
               <input type="text" className="form-control" placeholder="0.00" value={this.state.ethSendAmount}
                      onChange={event => this.updateState('ethSendAmount', event.target.value)} />
             </div>
-            <button style={{marginTop:40}} className={`btn btn-success btn-lg w-100 ${this.state.canSendEth ? '' : 'disabled'}`}
+            <button style={{marginTop:40}} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendEth ? '' : 'disabled'}`}
                     onClick={this.sendEth.bind(this)}>
               Send
             </button>
@@ -1302,7 +1302,7 @@ export default class Bridge extends React.Component {
                 </Scaler>
             </div>
             <div className="col-2 p-1" style={{marginTop:8}}>
-              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={this.props.goBack}>
+              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={this.props.goBack}>
                 <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-right"></i>
                 </Scaler>
