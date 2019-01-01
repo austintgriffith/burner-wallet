@@ -146,7 +146,7 @@ module.exports = {
         let result = await clevis("sendTo","0.99","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")///<<<-------- change this to your metamask accounts
         printTxResult(result)
         for(let a=1;a<9;a++){
-          result = await clevis("sendTo",""+(0.05*a),"2","0xd36fcfdd0eda7627a7b6d4b27b69ea60954a8621")///<<<-------- change this to your metamask accounts
+          result = await clevis("sendTo",""+(0.05*a),"2","0x0ca60587993c418904728f70bec0b164b55a8fb0")///<<<-------- change this to your metamask accounts
         }
         //result = await clevis("sendTo","5","0","0x34aa3f359a9d614239015126635ce7732c18fdf3")///<<<-------- change this to your metamask accounts
         //printTxResult(result)

@@ -1366,7 +1366,7 @@ export default class Bridge extends React.Component {
 
         <div className="main-card card w-100" style={{opacity:0.333,padding:0}}>
           <div className="content ops row">
-            <div className="col-12 p-1" style={{textAlign:"center"}}>
+            <div className="col-12 p-1" style={{textAlign:"center",fontSize:16}}>
               Bank Account or Credit Card:
             </div>
           </div>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ContractLoader, Dapparatus, Transactions, Gas } from "dapparatus";
+import { ContractLoader, Dapparatus, Transactions, Gas, Address } from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
 import './App.scss';
@@ -12,6 +12,7 @@ import RequestFunds from './components/RequestFunds';
 import SendWithLink from './components/SendWithLink';
 import ShareLink from './components/ShareLink'
 import MainCard from './components/MainCard';
+import History from './components/History';
 import Advanced from './components/Advanced';
 import BottomLinks from './components/BottomLinks';
 import MoreButtons from './components/MoreButtons';
@@ -20,9 +21,9 @@ import Footer from './components/Footer';
 import Loader from './components/Loader';
 import BurnWallet from './components/BurnWallet'
 import Bridge from './components/Bridge'
-
 import customRPCHint from './customRPCHint.png';
 
+const EthCrypto = require('eth-crypto');
 
 let WEB3_PROVIDER = 'http://10.0.0.107:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
 if (window.location.hostname.indexOf("qreth") >= 0) {
@@ -234,7 +235,7 @@ class App extends Component {
 
 
   changeView = (view,cb) => {
-    if(view=="bridge"||view=="main") localStorage.setItem("view",view) //some pages should be sticky because of metamask reloads
+    if(view=="bridge"||view=="main"||view.indexOf("account_")==0) localStorage.setItem("view",view) //some pages should be sticky because of metamask reloads
     if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
       console.log("This is a send...")
       if (this.state.balance <= 0) {
@@ -265,7 +266,7 @@ class App extends Component {
     this.changeView('main')
     setTimeout(()=>{window.scrollTo(0,0)},60)
   }
-  async parseBlocks(parseBlock,recentTxs){
+  async parseBlocks(parseBlock,recentTxs,transactionsByAddress){
     let block = await this.state.web3.eth.getBlock(parseBlock)
     let updatedTxs = false
     if(block){
@@ -276,6 +277,7 @@ class App extends Component {
         //console.log("TX",transactions[t])
         let tx = await this.state.web3.eth.getTransaction(transactions[t])
         if(tx && tx.to && tx.from){
+          //console.log("EEETRTTTTERTETETET",tx)
           let smallerTx = {
             hash:tx.hash,
             to:tx.to.toLowerCase(),
@@ -283,6 +285,38 @@ class App extends Component {
             value:this.state.web3.utils.fromWei(""+tx.value,"ether"),
             blockNumber:tx.blockNumber
           }
+          if(tx.input&&tx.input!="0x"){
+            console.log("DEALING WITH INPUT: ",tx.input)
+            if(this.state.metaAccount){
+              console.log("has meta account, trying to decode...")
+              let cachedEncrypted = localStorage.getItem(smallerTx.hash)
+              if(cachedEncrypted){
+                smallerTx.data = cachedEncrypted
+                smallerTx.encrypted = true
+              }else{
+                try{
+                  let parsedData = EthCrypto.cipher.parse(tx.input.substring(2))
+                  const endMessage = await EthCrypto.decryptWithPrivateKey(
+                      this.state.metaAccount.privateKey, // privateKey
+                      parsedData // encrypted-data
+                  );
+                  smallerTx.data = endMessage
+                  smallerTx.encrypted = true
+                }catch(e){}
+              }
+            }else{
+              //no meta account? maybe try to setup signing keys?
+              //maybe have a contract that tries do decrypt? \
+            }
+            try{
+              smallerTx.data = this.state.web3.utils.hexToUtf8(tx.input)
+            }catch(e){}
+            console.log("smallerTx at this point",smallerTx)
+            if(!smallerTx.data){
+              smallerTx.data = " *** unable to decrypt data *** "
+            }
+          }
+
           //console.log(smallerTx)
           if(smallerTx.from==this.state.account || smallerTx.to==this.state.account){
             let found = false
@@ -294,7 +328,14 @@ class App extends Component {
             }
             if(!found){
               console.log("+TX",smallerTx)
-              //console.log("recentTxs length is ",recentTxs.length)
+              let otherAccount = smallerTx.to
+              if(smallerTx.to==this.state.account){
+                otherAccount = smallerTx.from
+              }
+              if(!transactionsByAddress[otherAccount]){
+                transactionsByAddress[otherAccount] = []
+              }
+              transactionsByAddress[otherAccount].push(smallerTx)
               recentTxs.push(smallerTx)
               updatedTxs=true
             }
@@ -302,7 +343,7 @@ class App extends Component {
         }
       }
     }
-    return {recentTxs,updatedTxs}
+    return {recentTxs,updatedTxs,transactionsByAddress}
   }
   render() {
     let {
@@ -376,205 +417,238 @@ class App extends Component {
           />
           {web3 /*&& this.checkNetwork()*/ && (() => {
             console.log("VIEW:",view)
-            switch(view) {
-              case 'main':
-                return (
-                  <div>
-                    <MainCard
-                      address={account}
-                      balance={balance}
-                      changeAlert={this.changeAlert}
-                      changeView={this.changeView}
-                      dollarDisplay={dollarDisplay}
-                    />
-                    <MoreButtons
-                      changeView={this.changeView}
-                    />
-                    <RecentTransactions
-                      address={account}
-                      block={this.state.block}
-                      recentTxs={this.state.recentTxs}
-                    />
-                    <BottomLinks
-                      changeView={this.changeView}
-                    />
-                  </div>
-                );
-              case 'advanced':
-                return (
-                  <div>
-                    <NavCard title={'Advanced'} goBack={this.goBack.bind(this)}/>
-                    <Advanced
-                      address={account}
-                      balance={balance}
-                      changeView={this.changeView}
-                      privateKey={metaAccount.privateKey}
-                      changeAlert={this.changeAlert}
-                      goBack={this.goBack.bind(this)}
-                      setPossibleNewPrivateKey={this.setPossibleNewPrivateKey.bind(this)}
-                    />
-                  </div>
-                )
-              case 'send_by_scan':
-                return (
-                  <SendByScan
-                    goBack={this.goBack.bind(this)}
+            if(view.indexOf("account_")==0)
+            {
+              let targetAddress = view.replace("account_","")
+              return (
+                <div>
+                  <NavCard title={(
+                    <div>
+                      History
+                    </div>
+                  )} goBack={this.goBack.bind(this)}/>
+                  <History
+                    metaAccount={this.state.metaAccount}
+                    transactionsByAddress={this.state.transactionsByAddress}
+                    address={account}
+                    balance={balance}
+                    changeAlert={this.changeAlert}
                     changeView={this.changeView}
-                    onError={(error) =>{
-                      this.changeAlert("danger",error)
-                    }}
+                    target={targetAddress}
+                    block={this.state.block}
+                    send={this.state.send}
+                    web3={this.state.web3}
+                    goBack={this.goBack.bind(this)}
+                    dollarDisplay={dollarDisplay}
                   />
-                );
-              case 'withdraw_from_private':
-                return (
-                  <div>
-                    <NavCard title={'Withdraw'} goBack={this.goBack.bind(this)}/>
-                    <WithdrawFromPrivate
-                      balance={balance}
-                      address={account}
-                      web3={web3}
-                      //amount={false}
-                      privateKey={this.state.withdrawFromPrivateKey}
-                      goBack={this.goBack.bind(this)}
-                      changeView={this.changeView}
-                      changeAlert={this.changeAlert}
-                      dollarDisplay={dollarDisplay}
-                    />
-                  </div>
-                );
-              case 'send_to_address':
-                return (
-                  <div>
-                    <NavCard title={'Send to Address'} goBack={this.goBack.bind(this)}/>
-                    <SendToAddress
-                      balance={balance}
-                      address={account}
-                      send={send}
-                      goBack={this.goBack.bind(this)}
-                      changeView={this.changeView}
-                      changeAlert={this.changeAlert}
-                      dollarDisplay={dollarDisplay}
-                    />
-                  </div>
-                );
-              case 'request_funds':
-                return (
-                  <div>
-                    <NavCard title={'Request Funds'} goBack={this.goBack.bind(this)}/>
-                    <RequestFunds
-                      balance={balance}
-                      address={account}
-                      send={send}
-                      goBack={this.goBack.bind(this)}
-                      changeView={this.changeView}
-                      changeAlert={this.changeAlert}
-                      dollarDisplay={dollarDisplay}
-                    />
-                  </div>
-                );
-              case 'share-link':
-                return (
-                  <div>
-                    <NavCard title={'Share Link'} goBack={this.goBack.bind(this)} />
-                    <ShareLink
-                      sendKey={this.state.sendKey}
-                      sendLink={this.state.sendLink}
-                      balance={balance}
-                      address={account}
-                      changeAlert={this.changeAlert}
-                      goBack={this.goBack.bind(this)}
-                    />
-                  </div>
-                );
-              case 'send_with_link':
-                return (
-                  <div>
-                    <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
-                    <SendWithLink balance={balance}
-                      changeAlert={this.changeAlert}
-                      sendWithLink={(amount,cb)=>{
-                        let randomHash = this.state.web3.utils.sha3(""+Math.random())
-                        let randomWallet = this.state.web3.eth.accounts.create()
-                        let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
-                        console.log("STATE",this.state,this.state.contracts)
-                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature),140000,false,amount*10**18,async (receipt)=>{
-                          this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
-                            console.log("STATE SAVED",this.state)
-                          })
-                          cb(receipt)
-                        })
-                      }}
-                      address={account}
-                      changeView={this.changeView}
-                      goBack={this.goBack.bind(this)}
-                      dollarDisplay={dollarDisplay}
-                    />
-                  </div>
-                );
-              case 'burn-wallet':
-                return (
-                  <div>
-                    <NavCard title={"Burn Private Key"} goBack={this.goBack.bind(this)}/>
-                    <BurnWallet
-                      address={account}
-                      balance={balance}
-                      goBack={this.goBack.bind(this)}
-                      dollarDisplay={dollarDisplay}
-                      burnWallet={()=>{
-                        burnMetaAccount()
-                        if(localStorage&&typeof localStorage.setItem == "function"){
-                          localStorage.setItem(this.state.account+"loadedBlocksTop","")
-                          localStorage.setItem(this.state.account+"metaPrivateKey","")
-                          localStorage.setItem(this.state.account+"recentTxs","")
-                          this.setState({recentTxs:[]})
-                        }
-                      }}
-                    />
-                  </div>
-                );
-                case 'bridge':
+                </div>
+
+              )
+            }else{
+              switch(view) {
+                case 'main':
                   return (
                     <div>
-                      <NavCard title={"Exchange (beware!)"} goBack={this.goBack.bind(this)}/>
-                      <Bridge
-                        changeAlert={this.changeAlert}
-                        setGwei={this.setGwei}
-                        network={this.state.network}
-                        tx={this.state.tx}
-                        web3={this.state.web3}
-                        send={this.state.send}
+                      <MainCard
                         address={account}
                         balance={balance}
+                        changeAlert={this.changeAlert}
+                        changeView={this.changeView}
+                        dollarDisplay={dollarDisplay}
+                      />
+                      <MoreButtons
+                        changeView={this.changeView}
+                      />
+                      <RecentTransactions
+                        transactionsByAddress={this.state.transactionsByAddress}
+                        changeView={this.changeView}
+                        address={account}
+                        block={this.state.block}
+                        recentTxs={this.state.recentTxs}
+                      />
+                      <BottomLinks
+                        changeView={this.changeView}
+                      />
+                    </div>
+                  );
+                case 'advanced':
+                  return (
+                    <div>
+                      <NavCard title={'Advanced'} goBack={this.goBack.bind(this)}/>
+                      <Advanced
+                        address={account}
+                        balance={balance}
+                        changeView={this.changeView}
+                        privateKey={metaAccount.privateKey}
+                        changeAlert={this.changeAlert}
+                        goBack={this.goBack.bind(this)}
+                        setPossibleNewPrivateKey={this.setPossibleNewPrivateKey.bind(this)}
+                      />
+                    </div>
+                  )
+                case 'send_by_scan':
+                  return (
+                    <SendByScan
+                      goBack={this.goBack.bind(this)}
+                      changeView={this.changeView}
+                      onError={(error) =>{
+                        this.changeAlert("danger",error)
+                      }}
+                    />
+                  );
+                case 'withdraw_from_private':
+                  return (
+                    <div>
+                      <NavCard title={'Withdraw'} goBack={this.goBack.bind(this)}/>
+                      <WithdrawFromPrivate
+                        balance={balance}
+                        address={account}
+                        web3={web3}
+                        //amount={false}
+                        privateKey={this.state.withdrawFromPrivateKey}
+                        goBack={this.goBack.bind(this)}
+                        changeView={this.changeView}
+                        changeAlert={this.changeAlert}
+                        dollarDisplay={dollarDisplay}
+                      />
+                    </div>
+                  );
+                case 'send_to_address':
+                  return (
+                    <div>
+                      <NavCard title={'Send to Address'} goBack={this.goBack.bind(this)}/>
+                      <SendToAddress
+                        balance={balance}
+                        web3={this.state.web3}
+                        address={account}
+                        send={send}
+                        goBack={this.goBack.bind(this)}
+                        changeView={this.changeView}
+                        changeAlert={this.changeAlert}
+                        dollarDisplay={dollarDisplay}
+                      />
+                    </div>
+                  );
+                case 'request_funds':
+                  return (
+                    <div>
+                      <NavCard title={'Request Funds'} goBack={this.goBack.bind(this)}/>
+                      <RequestFunds
+                        balance={balance}
+                        address={account}
+                        send={send}
+                        goBack={this.goBack.bind(this)}
+                        changeView={this.changeView}
+                        changeAlert={this.changeAlert}
+                        dollarDisplay={dollarDisplay}
+                      />
+                    </div>
+                  );
+                case 'share-link':
+                  return (
+                    <div>
+                      <NavCard title={'Share Link'} goBack={this.goBack.bind(this)} />
+                      <ShareLink
+                        sendKey={this.state.sendKey}
+                        sendLink={this.state.sendLink}
+                        balance={balance}
+                        address={account}
+                        changeAlert={this.changeAlert}
+                        goBack={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
+                case 'send_with_link':
+                  return (
+                    <div>
+                      <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
+                      <SendWithLink balance={balance}
+                        changeAlert={this.changeAlert}
+                        sendWithLink={(amount,cb)=>{
+                          let randomHash = this.state.web3.utils.sha3(""+Math.random())
+                          let randomWallet = this.state.web3.eth.accounts.create()
+                          let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
+                          console.log("STATE",this.state,this.state.contracts)
+                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature),140000,false,amount*10**18,async (receipt)=>{
+                            this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
+                              console.log("STATE SAVED",this.state)
+                            })
+                            cb(receipt)
+                          })
+                        }}
+                        address={account}
+                        changeView={this.changeView}
                         goBack={this.goBack.bind(this)}
                         dollarDisplay={dollarDisplay}
                       />
                     </div>
                   );
-              case 'loader':
-                return (
-                  <div>
-                    <NavCard title={"Sending..."} goBack={this.goBack.bind(this)}/>
-                    <Loader />
-                  </div>
-                );
-              case 'reader':
-                return (
-                  <div>
-                    <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)}/>
-                    <Loader />
-                  </div>
-                );
-              case 'claimer':
-                return (
-                  <div>
-                    <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)}/>
-                    <Loader />
-                  </div>
-                );
-              default:
-                return (
-                  <div>unknown view</div>
-                )
+                case 'burn-wallet':
+                  return (
+                    <div>
+                      <NavCard title={"Burn Private Key"} goBack={this.goBack.bind(this)}/>
+                      <BurnWallet
+                        address={account}
+                        balance={balance}
+                        goBack={this.goBack.bind(this)}
+                        dollarDisplay={dollarDisplay}
+                        burnWallet={()=>{
+                          burnMetaAccount()
+                          if(localStorage&&typeof localStorage.setItem == "function"){
+                            localStorage.setItem(this.state.account+"loadedBlocksTop","")
+                            localStorage.setItem(this.state.account+"metaPrivateKey","")
+                            localStorage.setItem(this.state.account+"recentTxs","")
+                            localStorage.setItem(this.state.account+"transactionsByAddress","")
+                            this.setState({recentTxs:[],transactionsByAddress:{}})
+                          }
+                        }}
+                      />
+                    </div>
+                  );
+                  case 'bridge':
+                    return (
+                      <div>
+                        <NavCard title={"Exchange (beware!)"} goBack={this.goBack.bind(this)}/>
+                        <Bridge
+                          changeAlert={this.changeAlert}
+                          setGwei={this.setGwei}
+                          network={this.state.network}
+                          tx={this.state.tx}
+                          web3={this.state.web3}
+                          send={this.state.send}
+                          address={account}
+                          balance={balance}
+                          goBack={this.goBack.bind(this)}
+                          dollarDisplay={dollarDisplay}
+                        />
+                      </div>
+                    );
+                case 'loader':
+                  return (
+                    <div>
+                      <NavCard title={"Sending..."} goBack={this.goBack.bind(this)}/>
+                      <Loader />
+                    </div>
+                  );
+                case 'reader':
+                  return (
+                    <div>
+                      <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)}/>
+                      <Loader />
+                    </div>
+                  );
+                case 'claimer':
+                  return (
+                    <div>
+                      <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)}/>
+                      <Loader />
+                    </div>
+                  );
+                default:
+                  return (
+                    <div>unknown view</div>
+                  )
+              }
             }
           })()}
           { ( !web3 /*|| !this.checkNetwork() */) &&
@@ -612,6 +686,7 @@ class App extends Component {
                     //parse through recent transactions and store in local storage
 
                     if(localStorage&&typeof localStorage.setItem == "function"){
+
                       let recentTxs = this.state.recentTxs
                       if(!recentTxs){
                         //console.log("no recent tx found, checking storage")
@@ -626,8 +701,21 @@ class App extends Component {
                       if(!recentTxs){
                         recentTxs=[]
                       }
-                      //console.log("Starting with recentTxs",recentTxs)
-                      //console.log("recentTxs length is ",recentTxs.length)
+
+
+                      let transactionsByAddress = this.state.transactionsByAddress
+                      if(!transactionsByAddress){
+                        transactionsByAddress = localStorage.getItem(this.state.account+"transactionsByAddress")
+                        try{
+                          transactionsByAddress=JSON.parse(transactionsByAddress)
+                        }catch(e){
+                          transactionsByAddress={}
+                        }
+                      }
+                      if(!transactionsByAddress){
+                        transactionsByAddress={}
+                      }
+
 
                       let loadedBlocksTop = this.state.loadedBlocksTop
                       if(!loadedBlocksTop){
@@ -662,20 +750,22 @@ class App extends Component {
                           console.log(" +++++++======= Parsing recent blocks ~"+this.state.block)
                           for(let b=this.state.block;b>this.state.block-6;b--){
                             //console.log(" ++ Parsing *CURRENT BLOCK* Block "+b+" for transactions...")
-                            let result = await this.parseBlocks(b,recentTxs)
+                            let result = await this.parseBlocks(b,recentTxs,transactionsByAddress)
                             //console.log(" result of parse: ",result)
                             recentTxs =  result.recentTxs
                             updatedTxs = updatedTxs||result.updatedTxs
+                            transactionsByAddress = result.transactionsByAddress
                             //console.log("updatedTxs",updatedTxs)
                           }
                         }
                         console.log(" +++++++======= Parsing from "+loadedBlocksTop+" to "+upperBoundOfSearch+"....")
                         while(loadedBlocksTop<parseBlock){
                           //console.log(" ++ Parsing Block "+parseBlock+" for transactions...")
-                          let result = await this.parseBlocks(parseBlock,recentTxs)
+                          let result = await this.parseBlocks(parseBlock,recentTxs,transactionsByAddress)
                           //console.log(" result of parse: ",result)
                           recentTxs =  result.recentTxs
                           updatedTxs = updatedTxs||result.updatedTxs
+                          transactionsByAddress = result.transactionsByAddress
                           parseBlock--
                         }
 
@@ -693,12 +783,27 @@ class App extends Component {
                           }
                           return 0;
                         })
+
+                        for(let t in transactionsByAddress){
+                          transactionsByAddress[t].sort((a,b)=>{
+                            if(b.blockNumber<a.blockNumber){
+                              return 1;
+                            }
+                            if(b.blockNumber>a.blockNumber){
+                              return -1;
+                            }
+                            return 0;
+                          })
+                        }
+
                         //console.log("AFTER",JSON.stringify(recentTxs))
                         recentTxs = recentTxs.slice(0,12)
                         //console.log("ending with recentTxs",recentTxs)
 
                         localStorage.setItem(this.state.account+"recentTxs",JSON.stringify(recentTxs))
-                        this.setState({recentTxs:recentTxs})
+                        localStorage.setItem(this.state.account+"transactionsByAddress",JSON.stringify(transactionsByAddress))
+
+                        this.setState({recentTxs:recentTxs,transactionsByAddress:transactionsByAddress})
                       }
 
                       localStorage.setItem(this.state.account+"loadedBlocksTop",upperBoundOfSearch)

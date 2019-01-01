@@ -4,7 +4,7 @@ import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 const QRCode = require('qrcode.react');
 
-export default class Bridge extends React.Component {
+export default class Advanced extends React.Component {
 
   constructor(props) {
     super(props);
@@ -26,7 +26,7 @@ export default class Bridge extends React.Component {
       privateKeyQrDisplay = (
         <div className="main-card card w-100">
           <div className="content qr row">
-                <QRCode value={qrValue} size={qrSize}/>
+            <QRCode value={qrValue} size={qrSize}/>
           </div>
         </div>
       )
@@ -36,7 +36,10 @@ export default class Bridge extends React.Component {
       <div style={{marginTop:20}}>
         <div className="main-card card w-100">
           <div className="content qr row">
-                <QRCode value={address} size={qrSize}/>
+            <div style={{width:"100%",textAlign:"center",padding:20}}>
+              {address}
+            </div>
+            <QRCode value={address} size={qrSize}/>
           </div>
         </div>
         <div className="main-card card w-100">

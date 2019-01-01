@@ -18,6 +18,12 @@ export default class SendWithLink extends React.Component {
     }
   }
 
+  componentDidMount(){
+    setTimeout(()=>{
+      this.amountInput.focus();
+    },250)
+  }
+
   updateState = (key, value) => {
     this.setState({ [key]: value },()=>{
       this.setState({ canSend: (this.state.amount > 0) })
@@ -59,6 +65,7 @@ export default class SendWithLink extends React.Component {
                   <div className="input-group-text">$</div>
                 </div>
                 <input type="text" className="form-control" placeholder="0.00"
+                  ref={(input) => { this.amountInput = input; }}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
             </div>
