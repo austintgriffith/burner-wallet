@@ -12,7 +12,6 @@ contract Links {
     uint256 public  contractNonce = 1;
     mapping (bytes32 => Fund) public funds;
 
-
     event Sent(
         bytes32 indexed id,
         address indexed sender,
@@ -97,26 +96,19 @@ contract Links {
     {
         // address(0) destination is valid
         if(isFundValid(_id) && _signature.length == 65){
-            bytes32 hash = bytes32(0);
+            address signer = address(0);
             uint256 nonce = funds[_id].nonce;
             // keccak256(_id,_destination,nonce,address(this)) is a unique key
             // remains unique if the id gets reused after fund deletion
             bytes32 claimHash1 = keccak256(abi.encodePacked(_id,_destination,nonce,address(this)));
-            bytes32 claimHash2 = keccak256(abi.encodePacked(_id,nonce,address(this)));
-            // hash verification releated to claim method (on-chain, xdairelay)
-            // xdairelay should always use destination to prevent receiver manipulation
             if(_claimHash == claimHash1){
-                hash = claimHash1;
-            } else if(_claimHash == claimHash2){
-                hash = claimHash2;
+                signer = recoverSigner(claimHash1,_signature);
             } else{
                 return false;
             } 
-            address signer = recoverSigner(hash,_signature);
             if(signer != address(0)){
                 return(
-                    funds[_id].signer == signer && 
-                    funds[_id].claimed == false
+                    funds[_id].signer == signer && funds[_id].claimed == false 
                 );
             } else{
                 return false;
