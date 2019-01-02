@@ -49,7 +49,7 @@ const uniswapContractObject = {
 let interval
 let intervalLong
 
-export default class Bridge extends React.Component {
+export default class Exchange extends React.Component {
 
   constructor(props) {
     super(props);
@@ -576,7 +576,9 @@ export default class Bridge extends React.Component {
             </div>
             <div className="col-3 p-1">
 
-              <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap"}} onClick={()=>{
+              <button className="btn btn-large w-100"  disabled={buttonsDisabled}
+                style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
+                onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
 
                 this.setState({
@@ -649,7 +651,7 @@ export default class Bridge extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap"}} onClick={()=>{
+              <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
                 this.setState({
                   daiToXdaiMode:"withdrawing",
@@ -692,7 +694,7 @@ export default class Bridge extends React.Component {
         <div className="content ops row">
 
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" disabled={buttonsDisabled} onClick={()=>{
+            <button className="btn btn-large w-100" style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled} onClick={()=>{
               this.setState({daiToXdaiMode:"deposit"})
             }} >
               <i className="fas fa-arrow-up"  />
@@ -700,7 +702,7 @@ export default class Bridge extends React.Component {
           </div>
 
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" disabled={buttonsDisabled}  onClick={()=>{
+            <button className="btn btn-large w-100" style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
               this.setState({daiToXdaiMode:"withdraw"})
             }} >
               <i className="fas fa-arrow-down"  />
@@ -761,7 +763,7 @@ export default class Bridge extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{whiteSpace:"nowrap"}} onClick={async ()=>{
+              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move ETH to DAI")
 
@@ -880,7 +882,7 @@ export default class Bridge extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{whiteSpace:"nowrap"}} onClick={async ()=>{
+              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move DAI to ETH")
 
@@ -1162,7 +1164,7 @@ export default class Bridge extends React.Component {
          <div className="content ops row">
 
            <div className="col-6 p-1">
-             <button className="btn btn-large w-100"  disabled={buttonsDisabled}  onClick={()=>{
+             <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
                this.setState({ethToDaiMode:"deposit"})
              }}>
                <i className="fas fa-arrow-up"  />
@@ -1170,7 +1172,7 @@ export default class Bridge extends React.Component {
            </div>
 
            <div className="col-6 p-1">
-             <button className="btn btn-large w-100"  disabled={buttonsDisabled}  onClick={()=>{
+             <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
                this.setState({ethToDaiMode:"withdraw"})
              }}>
                <i className="fas fa-arrow-down" />
@@ -1213,7 +1215,7 @@ export default class Bridge extends React.Component {
               <input type="text" className="form-control" placeholder="0.00" value={this.state.daiSendAmount}
                      onChange={event => this.updateState('daiSendAmount', event.target.value)} />
             </div>
-            <button style={{marginTop:40}} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendDai ? '' : 'disabled'}`}
+            <button style={{marginTop:40,backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendDai ? '' : 'disabled'}`}
                     onClick={this.sendDai.bind(this)}>
               Send
             </button>
@@ -1267,7 +1269,7 @@ export default class Bridge extends React.Component {
               <input type="text" className="form-control" placeholder="0.00" value={this.state.ethSendAmount}
                      onChange={event => this.updateState('ethSendAmount', event.target.value)} />
             </div>
-            <button style={{marginTop:40}} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendEth ? '' : 'disabled'}`}
+            <button style={{marginTop:40,backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendEth ? '' : 'disabled'}`}
                     onClick={this.sendEth.bind(this)}>
               Send
             </button>

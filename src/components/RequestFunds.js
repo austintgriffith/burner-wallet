@@ -103,7 +103,7 @@ export default class RequestFunds extends React.Component {
                 <input type="text" className="form-control" placeholder="Hot Dogs" value={this.state.message}
                        onChange={event => this.updateState('message', event.target.value)} />
               </div>
-              <button className={`btn btn-success btn-lg w-100 ${canRequest ? '' : 'disabled'}`}
+              <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canRequest ? '' : 'disabled'}`}
                       onClick={this.request}>
                 Request
               </button>

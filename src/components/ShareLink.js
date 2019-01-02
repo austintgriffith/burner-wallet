@@ -61,7 +61,7 @@ export default class ShareLink extends React.Component {
         </div>
         <div className="main-card card w-100">
           <div className="content bridge row" style={{padding:10}}>
-            <button className="btn btn-large w-100" onClick={this.props.goBack}>
+            <button className="btn btn-large w-100" style={{backgroundColor:this.props.mainStyle.mainColor}} onClick={this.props.goBack}>
               <Scaler config={{startZoomAt:500,origin:"25% 50%",adjustedZoom:1}}>
                 <i className="fas fa-thumbs-up"  /> Done
               </Scaler>

@@ -50,7 +50,7 @@ export default class Advanced extends React.Component {
                        onChange={event => this.setState({newPrivateKey:event.target.value})} />
             </div>
             <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}
+              <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
                       onClick={()=>{
                         //let pkutils = require("ethereum-mnemonic-privatekey-utils")
                         //const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(newPrivateKey)
@@ -75,7 +75,7 @@ export default class Advanced extends React.Component {
                    onChange={event => this.setState({newSeedPhrase:event.target.value})} />
             </div>
             <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}
+              <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
                       onClick={()=>{
                         let pkutils = require("ethereum-mnemonic-privatekey-utils")
                         const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(this.state.newSeedPhrase)
@@ -96,7 +96,7 @@ export default class Advanced extends React.Component {
               <CopyToClipboard text={privateKey}>
                 <div className="col-6 p-1"
                      onClick={() => changeAlert({type: 'success', message: 'Private Key copied to clipboard'})}>
-                  <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}>
+                  <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}>
                     <Scaler config={{startZoomAt:650,origin:"0% 50%"}}>
                       <i className="fas fa-save"/> Copy Private Key
                     </Scaler>
@@ -104,7 +104,7 @@ export default class Advanced extends React.Component {
                 </div>
               </CopyToClipboard>
               <div className="col-6 p-1">
-                <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}
+                <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
                         onClick={()=>{
                           console.log("BALANCE",balance)
                           changeView('burn-wallet')
@@ -126,7 +126,7 @@ export default class Advanced extends React.Component {
                      onClick={() => {
                        this.setState({privateKeyQr:!this.state.privateKeyQr})
                      }}>
-                  <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}>
+                  <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}>
                     <Scaler config={{startZoomAt:650,origin:"0% 50%"}}>
                       <i className="fas fa-qrcode"/> Show Private Key QR Code
                     </Scaler>
