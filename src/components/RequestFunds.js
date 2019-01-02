@@ -58,7 +58,7 @@ export default class RequestFunds extends React.Component {
                 {message}
               </div>
 
-              <div className="content qr row" style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
+              <div style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
                 <QRCode value={qrValue} size={qrSize}/>
               </div>
 
