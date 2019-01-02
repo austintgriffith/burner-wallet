@@ -79,7 +79,7 @@ class App extends Component {
         console.log("DO CLAIM",claimId,claimKey)
         this.setState({claimId,claimKey})
         window.history.pushState({},"", "/");
-      }else if(window.location.pathname.length>=65&&window.location.pathname.length<=67){
+      }else if(window.location.pathname.length>=65&&window.location.pathname.length<=67&&window.location.pathname.indexOf(";")<0){
         console.log("incoming private key")
         let privateKey = window.location.pathname.replace("/","")
         if(privateKey.indexOf("0x")!=0){
