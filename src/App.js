@@ -292,12 +292,12 @@ class App extends Component {
             console.log("DEALING WITH INPUT: ",tx.input)
             if(this.state.metaAccount){
               console.log("has meta account, trying to decode...")
-              let cachedEncrypted = localStorage.getItem(smallerTx.hash)
+              let key = tx.input.substring(0,32)
+              console.log("looking in memory for key",key)
+              let cachedEncrypted = this.state[key]
               if(!cachedEncrypted){
-                let key = tx.input.substring(0,32)
-                console.log("looking in memory for key",key)
-                cachedEncrypted = this.state[key]
-                console.log("found message in memory...",cachedEncrypted)
+                console.log("nothing found in memory, checking local storage")
+                cachedEncrypted = localStorage.getItem(smallerTx.hash)
               }
               if(cachedEncrypted){
                 smallerTx.data = cachedEncrypted
