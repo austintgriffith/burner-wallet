@@ -290,19 +290,20 @@ class App extends Component {
           }
           if(tx.input&&tx.input!="0x"){
             console.log("DEALING WITH INPUT: ",tx.input)
-            if(this.state.metaAccount){
-              console.log("has meta account, trying to decode...")
-              let key = tx.input.substring(0,32)
-              console.log("looking in memory for key",key)
-              let cachedEncrypted = this.state[key]
-              if(!cachedEncrypted){
-                console.log("nothing found in memory, checking local storage")
-                cachedEncrypted = localStorage.getItem(smallerTx.hash)
-              }
-              if(cachedEncrypted){
-                smallerTx.data = cachedEncrypted
-                smallerTx.encrypted = true
-              }else{
+
+            console.log("has meta account, trying to decode...")
+            let key = tx.input.substring(0,32)
+            console.log("looking in memory for key",key)
+            let cachedEncrypted = this.state[key]
+            if(!cachedEncrypted){
+              console.log("nothing found in memory, checking local storage")
+              cachedEncrypted = localStorage.getItem(key)
+            }
+            if(cachedEncrypted){
+              smallerTx.data = cachedEncrypted
+              smallerTx.encrypted = true
+            }else{
+              if(this.state.metaAccount){
                 try{
                   let parsedData = EthCrypto.cipher.parse(tx.input.substring(2))
                   const endMessage = await EthCrypto.decryptWithPrivateKey(
@@ -312,19 +313,20 @@ class App extends Component {
                   smallerTx.data = endMessage
                   smallerTx.encrypted = true
                 }catch(e){}
+              }else{
+                //no meta account? maybe try to setup signing keys?
+                //maybe have a contract that tries do decrypt? \
               }
-            }else{
-              //no meta account? maybe try to setup signing keys?
-              //maybe have a contract that tries do decrypt? \
             }
-            try{
-              smallerTx.data = this.state.web3.utils.hexToUtf8(tx.input)
-            }catch(e){}
-            console.log("smallerTx at this point",smallerTx)
-            if(!smallerTx.data){
-              smallerTx.data = " *** unable to decrypt data *** "
-            }
+
+          try{
+            smallerTx.data = this.state.web3.utils.hexToUtf8(tx.input)
+          }catch(e){}
+          console.log("smallerTx at this point",smallerTx)
+          if(!smallerTx.data){
+            smallerTx.data = " *** unable to decrypt data *** "
           }
+        }
 
           //console.log(smallerTx)
           if(smallerTx.from==this.state.account || smallerTx.to==this.state.account){

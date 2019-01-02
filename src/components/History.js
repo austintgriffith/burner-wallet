@@ -1,6 +1,7 @@
 import React from 'react';
 import { Scaler } from "dapparatus";
 import Blockies from 'react-blockies';
+import Balance from "./Balance";
 import { scroller } from 'react-scroll'
 import Linkify from 'react-linkify'
 import {toArray} from 'react-emoji-render';
@@ -140,6 +141,7 @@ export default class History extends React.Component {
       console.log("saving key ",key,"to the state")
       update[key]=this.state.newChat
       this.props.saveKey(update)
+      localStorage.setItem(key,this.state.newChat)
       wasEncrypted=true
     }else{
       //rawdog
@@ -148,9 +150,6 @@ export default class History extends React.Component {
     console.log("message:",message)
     this.props.send(this.props.target, value, 240000, message, (result) => {
       if(result && result.transactionHash){
-        if(wasEncrypted){
-          localStorage.setItem(result.transactionHash,this.state.newChat)
-        }
         this.props.changeAlert({type: 'success', message: 'Sent '+result.transactionHash})
         console.log("Sent tx "+result.transactionHash)
         this.setState({sendingChat:false,newChat:"",newChatAmount:"",sendingFunds:false})
@@ -444,6 +443,8 @@ export default class History extends React.Component {
     return (
       <div style={{marginTop:20}}>
         <div className="main-card card w-100">
+          <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay}/>
+          <Ruler/>
           <div className="content ops row">
             <div className="col-4 p-1">
               <a href={"https://blockscout.com/poa/dai/address/"+target+"/transactions"} target="_blank">
