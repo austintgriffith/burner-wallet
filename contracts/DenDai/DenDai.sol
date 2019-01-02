@@ -73,6 +73,24 @@ contract DenDai is ERC20Mintable {
 
 
 
+  //wrapped ETH functions borrowed from
+  //https://etherscan.io/address/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2#code
+  function() public payable {
+      deposit();
+  }
+  function deposit() public payable {
+      _balances[msg.sender] += msg.value;
+      Deposit(msg.sender, msg.value);
+  }
+  event  Deposit(address indexed dst, uint wad);
+
+  function withdraw(uint wad) public {
+      require(_balances[msg.sender] >= wad);
+      _balances[msg.sender] -= wad;
+      msg.sender.transfer(wad);
+      Withdrawal(msg.sender, wad);
+  }
+  event  Withdrawal(address indexed src, uint wad);
 
 
   /*
