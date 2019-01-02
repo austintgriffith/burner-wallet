@@ -135,13 +135,18 @@ export default class History extends React.Component {
       const encryptedString = EthCrypto.cipher.stringify(encrypted)
       console.log("encryptedString",encryptedString)
       message = "0x"+encryptedString
+      let update = {}
+      let key = message.substring(0,32)
+      console.log("saving key ",key,"to the state")
+      update[key]=this.state.newChat
+      this.props.saveKey(update)
       wasEncrypted=true
     }else{
       //rawdog
       message = this.props.web3.utils.utf8ToHex(this.state.newChat)
     }
     console.log("message:",message)
-    this.props.send(this.props.target, value, 120000, message, (result) => {
+    this.props.send(this.props.target, value, 240000, message, (result) => {
       if(result && result.transactionHash){
         if(wasEncrypted){
           localStorage.setItem(result.transactionHash,this.state.newChat)

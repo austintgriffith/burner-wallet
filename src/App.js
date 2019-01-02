@@ -67,6 +67,9 @@ class App extends Component {
       //force it to rerender when the window is resized to make sure qr fits etc
       this.forceUpdate();
   }
+  saveKey(update){
+      this.setState(update)
+  }
   componentDidMount(){
     window.addEventListener("resize", this.updateDimensions.bind(this));
     if(window.location.pathname){
@@ -235,7 +238,7 @@ class App extends Component {
 
 
   changeView = (view,cb) => {
-    if(view=="bridge"||view=="main"||view.indexOf("account_")==0) localStorage.setItem("view",view) //some pages should be sticky because of metamask reloads
+    if(view=="bridge"||view=="main"/*||view.indexOf("account_")==0*/) localStorage.setItem("view",view) //some pages should be sticky because of metamask reloads
     if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
       console.log("This is a send...")
       if (this.state.balance <= 0) {
@@ -289,7 +292,13 @@ class App extends Component {
             console.log("DEALING WITH INPUT: ",tx.input)
             if(this.state.metaAccount){
               console.log("has meta account, trying to decode...")
-              let cachedEncrypted = localStorage.getItem(smallerTx.hash)
+              let cachedEncrypted// = localStorage.getItem(smallerTx.hash)
+              if(!cachedEncrypted){
+                let key = tx.input.substring(0,32)
+                console.log("looking in memory for key",key)
+                cachedEncrypted = this.state[key]
+                console.log("found message in memory...",cachedEncrypted)
+              }
               if(cachedEncrypted){
                 smallerTx.data = cachedEncrypted
                 smallerTx.encrypted = true
@@ -428,6 +437,7 @@ class App extends Component {
                     </div>
                   )} goBack={this.goBack.bind(this)}/>
                   <History
+                    saveKey={this.saveKey.bind(this)}
                     metaAccount={this.state.metaAccount}
                     transactionsByAddress={this.state.transactionsByAddress}
                     address={account}
