@@ -32,6 +32,17 @@ export default class Advanced extends React.Component {
       )
     }
 
+    let showingQr = ""
+    if(this.state.showingQr){
+      showingQr = (
+        <div className="main-card card w-100">
+          <div className="content qr row">
+            <QRCode value={this.state.showingQr} size={qrSize}/>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div style={{marginTop:20}}>
         <div className="main-card card w-100">
@@ -136,6 +147,26 @@ export default class Advanced extends React.Component {
             </div>
           </div>
           }
+        </div>
+        <div className="main-card card w-100">
+          <div className="content ops row">
+            <div className="col-6 p-1">
+
+                <input type="text" className="form-control" placeholder="any text" value={this.state.newQr}
+                       onChange={event => this.setState({newQr:event.target.value})} />
+            </div>
+            <div className="col-6 p-1">
+              <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
+                      onClick={()=>{
+                        this.setState({showingQr:this.state.newQr})
+                      }}>
+                <Scaler config={{startZoomAt:500,origin:"0% 50%"}}>
+                  <i className="fas fa-qrcode"/> To QR Code
+                </Scaler>
+              </button>
+            </div>
+          </div>
+          {showingQr}
         </div>
         <div className="text-center bottom-text">
           <span style={{padding:10}}>
