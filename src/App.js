@@ -25,13 +25,13 @@ import customRPCHint from './customRPCHint.png';
 
 const EthCrypto = require('eth-crypto');
 
-let WEB3_PROVIDER = 'http://10.0.0.107:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
+let WEB3_PROVIDER = 'http://0.0.0.0:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
 if (window.location.hostname.indexOf("qreth") >= 0) {
   WEB3_PROVIDER = "https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac"
 }
 else if (window.location.hostname.indexOf("xdai") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
-  CLAIM_RELAY = 'https://x.xdai.io'
+//  WEB3_PROVIDER = "https://dai.poa.network";
+//  CLAIM_RELAY = 'https://x.xdai.io'
 }
 
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
@@ -106,7 +106,7 @@ class App extends Component {
     bindEvent(window, 'message', async (e)=>{
       console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @ @ @@ MESSAGE IN BURNER:",e)
       try{
-        let message = JSON.parse(e.data)
+        let message = e.data
         console.log(message)
         if(message.function=="eth.getAccounts"){
           //let result = await this.state.web3.eth.getAccounts()
@@ -116,18 +116,34 @@ class App extends Component {
             accountArray = [this.state.account]
           }
           let result = [false,accountArray]
-          window.parent.postMessage(JSON.stringify({id:message.id,result:result}), '*');
+          window.parent.postMessage({id:message.id,result:result}, '*');
         }else if(message.function=="version.getNetwork"){
           //let result = await this.state.web3.eth.getAccounts()
           //console.log("GOT ACCOUNTS BAC:",result)
           let result = [false,9999]
-          window.parent.postMessage(JSON.stringify({id:message.id,result:result}), '*');
+          window.parent.postMessage({id:message.id,result:result}, '*');
+        }else if(message.function=="eth.sendTransaction"){
+          //let result = await this.state.web3.eth.getAccounts()
+          console.log("SSSSSEEEEEENNNNNDDDD TTTTXXXX",message.args[0])
+          //let result = [false,9999]
+          //window.parent.postMessage({id:message.id,result:result}, '*')
+          console.log(this.state.account,await this.state.web3.eth.getBalance(this.state.account))
+
+          this.state.web3.eth.accounts.signTransaction(message.args[0], this.state.metaAccount.privateKey).then(signed => {
+            console.log("========= >>> SIGNED",signed)
+              this.state.web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                console.log("META RECEIPT",receipt)
+                window.parent.postMessage({id:message.id,result:receipt}, '*');
+              }).on('error', (err)=>{
+                console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+              }).then(console.log)
+          });
         }else{
           console.log("@@@ UNSURE HOW TO HANDLE MESSAGEL",message)
         }
       }catch(e){console.log(e)}
     });
-    window.parent.postMessage("HELLO FROM THE BURNER :/", '*');
+    window.parent.postMessage({str:'HELLO FROM THE BURNER'}, '*');
   }
   setPossibleNewPrivateKey(value){
     this.setState({possibleNewPrivateKey:value},()=>{
