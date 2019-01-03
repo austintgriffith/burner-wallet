@@ -30,7 +30,7 @@ const EthCrypto = require('eth-crypto');
 
 let WEB3_PROVIDER = 'http://10.0.0.107:8545'
 let CLAIM_RELAY = 'http://0.0.0.0:18462'
-let ERC20TOKEN = 'DenDai'
+let ERC20TOKEN = false
 
 let mainStyle = {
     width:"100%",
