@@ -817,8 +817,6 @@ class App extends Component {
           newPrivateKey={this.state.newPrivateKey}
           fallbackWeb3Provider={WEB3_PROVIDER}
           onUpdate={async (state) => {
-            //console.log("Dapparatus state update:", state)
-            console.log("update",state,ERC20TOKEN)
             if(ERC20TOKEN){
               delete state.balance
             }
