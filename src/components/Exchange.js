@@ -5,6 +5,7 @@ import { Scaler } from "dapparatus";
 import eth from '../ethereum.png';
 import dai from '../dai.jpg';
 import xdai from '../xdai.jpg';
+import dendai from '../bufficorn.png';
 import wyre from '../wyre.jpg';
 import coinbase from '../coinbase.jpg';
 import localeth from '../localeth.png';
@@ -29,6 +30,7 @@ const daiContractObject = {
   blocknumber:4752008,
 }
 
+const dendaiToxDaiEstimatedTime = 12000
 const xdaiToDaiEstimatedTime = 160000
 const daiToxDaiEstimatedTime = 330000
 
@@ -49,11 +51,20 @@ const uniswapContractObject = {
 let interval
 let intervalLong
 
-export default class Bridge extends React.Component {
+export default class Exchange extends React.Component {
 
   constructor(props) {
     super(props);
-    let xdaiweb3 = new Web3(new Web3.providers.HttpProvider("https://dai.poa.network"))
+
+    let xdaiweb3
+    //make it easier for local debugging...
+    if(window.location.hostname.indexOf("localhost")>=0){
+      console.log("WARNING, USING LOCAL RPC")
+      xdaiweb3 = new Web3(new Web3.providers.HttpProvider("http://0.0.0.0:8545"))
+    } else {
+      xdaiweb3 = new Web3(new Web3.providers.HttpProvider("https://dai.poa.network"))
+    }
+
     //let mainnetweb3 = new Web3("https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac")
     let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
     let pk = localStorage.getItem('metaPrivateKey')
@@ -78,6 +89,16 @@ export default class Bridge extends React.Component {
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
 
+    let dendaiContract
+    if(props.ERC20TOKEN){
+      try{
+        console.log("Loading DenDai Contract...")
+        dendaiContract = new xdaiweb3.eth.Contract(require("../contracts/DenDai.abi.js"),require("../contracts/DenDai.address.js"))
+      }catch(e){
+        console.log("ERROR LOADING dendaiContract Contract",e)
+      }
+    }
+
     this.state = {
       ethBalance: 0,
       daiBalance: 0,
@@ -86,11 +107,13 @@ export default class Bridge extends React.Component {
       xdaiAddress: xdaiAddress,
       wyreBalance: 0,
       ethprice: 0,
+      denDaiBalance:0,
       mainnetweb3: mainnetweb3,
       mainnetMetaAccount: mainnetMetaAccount,
       xdaiweb3:xdaiweb3,
       xdaiMetaAccount: xdaiMetaAccount,
       daiContract: daiContract,
+      dendaiContract: dendaiContract,
       daiToXdaiMode: false,
       ethToDaiMode: false,
       loaderBarStatusText:"loading...",
@@ -116,7 +139,7 @@ export default class Bridge extends React.Component {
     clearInterval(interval)
   }
   async poll(){
-    let {daiContract, mainnetweb3, xdaiweb3, xdaiAddress} = this.state
+    let { daiContract, dendaiContract, mainnetweb3, xdaiweb3, xdaiAddress} = this.state
     if(daiContract){
       let daiBalance = await daiContract.methods.balanceOf(this.state.daiAddress).call()
       daiBalance = mainnetweb3.utils.fromWei(daiBalance,"ether")
@@ -124,10 +147,61 @@ export default class Bridge extends React.Component {
         this.setState({daiBalance})
       }
     }
+    if(this.props.ERC20TOKEN){
+      let denDaiBalance = await dendaiContract.methods.balanceOf(this.state.daiAddress).call()
+      denDaiBalance = mainnetweb3.utils.fromWei(denDaiBalance,"ether")
+      if(denDaiBalance!=this.state.denDaiBalance){
+        this.setState({denDaiBalance})
+      }
+
+      //dendaiToxDaiEstimatedTime
+      if(this.state.xdaiToDendaiMode=="withdrawing"){
+        let txAge = Date.now() - this.state.loaderBarStartTime
+        let percentDone = Math.min(100,((txAge * 100) / dendaiToxDaiEstimatedTime)+5)
+
+        let xdaiBalanceShouldBe = parseFloat(this.state.xdaiBalanceShouldBe)-0.0005
+        console.log("watching for ",this.state.xdaiBalance,"to be ",xdaiBalanceShouldBe)
+        if(this.state.xdaiBalance>=(xdaiBalanceShouldBe)){
+          this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Transferred!",loaderBarColor:"#62f54a"})
+          setTimeout(()=>{
+            this.setState({
+              xdaiToDendaiMode: false,
+              loaderBarStatusText:"Loading...",
+              loaderBarStartTime:0,
+              loaderBarPercent: 1,
+              loaderBarColor: "#FFFFFF"
+            })
+          },3500)
+        }else{
+          this.setState({loaderBarPercent:percentDone})
+        }
+
+      }else if(this.state.xdaiToDendaiMode=="depositing"){
+        let txAge = Date.now() - this.state.loaderBarStartTime
+        let percentDone = Math.min(100,((txAge * 100) / daiToxDaiEstimatedTime)+5)
+
+        //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
+        if(this.state.xdaiBalance<=(this.state.xdaiBalanceShouldBe+0.00005)){
+          this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Bridged!",loaderBarColor:"#62f54a"})
+          setTimeout(()=>{
+            this.setState({
+              xdaiToDendaiMode: false,
+              loaderBarStatusText:"Loading...",
+              loaderBarStartTime:0,
+              loaderBarPercent: 1,
+              loaderBarColor: "#FFFFFF"
+            })
+          },3500)
+        }else{
+          this.setState({loaderBarPercent:percentDone})
+        }
+      }
+
+    }
     this.setState({ethBalance:mainnetweb3.utils.fromWei(await mainnetweb3.eth.getBalance(this.state.daiAddress),'ether') })
-    if(xdaiweb3 && xdaiAddress){
+    if(xdaiweb3){
       //console.log("xdaiweb3:",xdaiweb3,"xdaiAddress",xdaiAddress)
-      let xdaiBalance = await xdaiweb3.eth.getBalance(xdaiAddress)
+      let xdaiBalance = await xdaiweb3.eth.getBalance(this.state.daiAddress)
       //console.log("!! xdaiBalance:",xdaiBalance)
       this.setState({xdaiBalance:xdaiweb3.utils.fromWei(xdaiBalance,'ether')})
     }
@@ -499,7 +573,7 @@ export default class Bridge extends React.Component {
     }
   }
   render() {
-    let {daiToXdaiMode,ethToDaiMode} = this.state
+    let {xdaiToDendaiMode,daiToXdaiMode,ethToDaiMode} = this.state
 
     let ethCancelButton = (
       <span style={{padding:10,whiteSpace:"nowrap"}}>
@@ -519,11 +593,308 @@ export default class Bridge extends React.Component {
         </a>
       </span>
     )
+    let xdaiCancelButton = (
+      <span style={{padding:10,whiteSpace:"nowrap"}}>
+        <a href="#" style={{color:"#000000"}} onClick={()=>{
+          this.setState({xdaiToDendaiMode:false})
+        }}>
+          <i className="fas fa-times"/> cancel
+        </a>
+      </span>
+    )
 
-    let buttonsDisabled = (daiToXdaiMode=="sending" || daiToXdaiMode=="withdrawing" || daiToXdaiMode=="depositing" || ethToDaiMode=="sending" || ethToDaiMode=="depositing" || ethToDaiMode=="withdrawing")
+    let buttonsDisabled = (
+      xdaiToDendaiMode=="sending" || xdaiToDendaiMode=="withdrawing" || xdaiToDendaiMode=="depositing" ||
+      daiToXdaiMode=="sending" || daiToXdaiMode=="withdrawing" || daiToXdaiMode=="depositing" ||
+      ethToDaiMode=="sending" || ethToDaiMode=="depositing" || ethToDaiMode=="withdrawing"
+    )
 
     let adjustedFontSize = Math.round((Math.min(document.documentElement.clientWidth,600)/600)*24)
     let adjustedTop = Math.round((Math.min(document.documentElement.clientWidth,600)/600)*-20)+9
+
+    let xdaiToDendaiDisplay = "loading..."
+
+    let tokenDisplay = ""
+    if(this.props.ERC20TOKEN){
+      if(xdaiToDendaiMode=="sending" || xdaiToDendaiMode=="withdrawing" || xdaiToDendaiMode=="depositing"){
+        xdaiToDendaiDisplay = (
+          <div className="content ops row" style={{position:"relative"}}>
+            <button style={{width:Math.min(100,this.state.loaderBarPercent)+"%",backgroundColor:this.state.loaderBarColor,color:"#000000"}}
+              className="btn btn-large"
+            >
+            </button>
+            <div style={{position:'absolute',left:"50%",width:"100%",marginLeft:"-50%",fontSize:adjustedFontSize,top:adjustedTop,opacity:0.95,textAlign:"center"}}>
+              {this.state.loaderBarStatusText}
+            </div>
+          </div>
+        )
+
+      }else if(xdaiToDendaiMode=="deposit"){
+        console.log("CHECKING META ACCOUNT ",this.state.xdaiMetaAccount,this.props.network)
+        if(!this.state.xdaiMetaAccount && (this.props.network!="xDai"&&this.props.network!="Unknown")){
+          xdaiToDendaiDisplay = (
+            <div className="content ops row" style={{textAlign:'center'}}>
+              <div className="col-12 p-1">
+                Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>dai.poa.network</span>
+                <a href="#" onClick={()=>{this.setState({daiToXdaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
+                  <i className="fas fa-times"/> dismiss
+                </a>
+              </div>
+            </div>
+          )
+        }else{
+          xdaiToDendaiDisplay = (
+            <div className="content ops row">
+
+              <div className="col-1 p-1"  style={colStyle}>
+                <i className="fas fa-arrow-up"  />
+              </div>
+              <div className="col-5 p-1" style={colStyle}>
+                <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+                <div className="input-group">
+                  <div className="input-group-prepend">
+                    <div className="input-group-text">$</div>
+                  </div>
+                  <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
+                         onChange={event => this.updateState('amount', event.target.value)} />
+                </div>
+                </Scaler>
+              </div>
+              <div className="col-3 p-1"  style={colStyle}>
+                <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
+                {xdaiCancelButton}
+                </Scaler>
+              </div>
+              <div className="col-3 p-1">
+                <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={async ()=>{
+
+                  let amountOfxDaiToDeposit = this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether')
+                  console.log("Using DenDai contract to deposit "+amountOfxDaiToDeposit+" xDai")
+
+                  this.setState({
+                    xdaiToDendaiMode:"depositing",
+                    xdaiBalanceAtStart:this.state.xdaiBalance,
+                    xdaiBalanceShouldBe:parseFloat(this.state.xdaiBalance)-parseFloat(this.state.amount),
+                    loaderBarColor:"#3efff8",
+                    loaderBarStatusText:"Depositing xDai into DenDai...",
+                    loaderBarPercent:0,
+                    loaderBarStartTime: Date.now(),
+                    loaderBarClick:()=>{
+                      alert("go to etherscan?")
+                    }
+                  })
+
+                  if(this.state.xdaiMetaAccount){
+                    //send funds using metaaccount on mainnet
+
+                    let paramsObject = {
+                      from: this.state.daiAddress,
+                      value: amountOfxDaiToDeposit,
+                      gas: 120000,
+                      gasPrice: Math.round(1.1 * 1000000000)
+                    }
+                    console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+                    paramsObject.to = this.state.dendaiContract._address
+                    paramsObject.data = this.state.dendaiContract.methods.deposit().encodeABI()
+
+                    console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+                    this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
+                      console.log("========= >>> SIGNED",signed)
+                        this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                          console.log("META RECEIPT",receipt)
+                          this.setState({
+                            amount:"",
+
+                          })
+                        }).on('error', (err)=>{
+                          console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                        }).then(console.log)
+                    });
+
+                  }else{
+                    console.log("Use MetaMask to withdraw DenDai to xDai")
+                    this.props.tx(
+                      this.props.contracts.DenDai.deposit()
+                    ,120000,0,amountOfxDaiToDeposit,(receipt)=>{
+                      if(receipt){
+                        console.log("EXCHANGE COMPLETE?!?",receipt)
+                        //window.location = "/"+receipt.contractAddress
+                      }
+                    })
+                  }
+
+                }}>
+                  <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
+                    <i className="fas fa-arrow-up" /> Send
+                  </Scaler>
+                </button>
+
+              </div>
+            </div>
+          )
+        }
+      }else if(xdaiToDendaiMode=="withdraw"){
+        console.log("CHECKING META ACCOUNT ",this.state.xdaiMetaAccount,this.props.network)
+        if(!this.state.xdaiMetaAccount && (this.props.network!="xDai"&&this.props.network!="Unknown")){
+          xdaiToDendaiDisplay = (
+            <div className="content ops row" style={{textAlign:'center'}}>
+              <div className="col-12 p-1">
+                Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>dai.poa.network</span>
+                <a href="#" onClick={()=>{this.setState({daiToXdaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
+                  <i className="fas fa-times"/> dismiss
+                </a>
+              </div>
+            </div>
+          )
+        }else{
+          xdaiToDendaiDisplay = (
+            <div className="content ops row">
+
+              <div className="col-1 p-1"  style={colStyle}>
+                <i className="fas fa-arrow-down"  />
+              </div>
+              <div className="col-5 p-1" style={colStyle}>
+                <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+                <div className="input-group">
+                  <div className="input-group-prepend">
+                    <div className="input-group-text">$</div>
+                  </div>
+                  <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
+                         onChange={event => this.updateState('amount', event.target.value)} />
+                </div>
+                </Scaler>
+              </div>
+              <div className="col-3 p-1"  style={colStyle}>
+                <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
+                {xdaiCancelButton}
+                </Scaler>
+              </div>
+              <div className="col-3 p-1">
+                <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={async ()=>{
+
+                  let amountOfxDaiToWithdraw = this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether')
+                  console.log("Using DenDai contract to withdraw "+amountOfxDaiToWithdraw+" xDai")
+
+                  this.setState({
+                    xdaiToDendaiMode:"withdrawing",
+                    xdaiBalanceAtStart:this.state.xdaiBalance,
+                    xdaiBalanceShouldBe:parseFloat(this.state.xdaiBalance)+parseFloat(this.state.amount),
+                    loaderBarColor:"#3efff8",
+                    loaderBarStatusText:"Withdrawing DenDai to xDai...",
+                    loaderBarPercent:0,
+                    loaderBarStartTime: Date.now(),
+                    loaderBarClick:()=>{
+                      alert("go to etherscan?")
+                    }
+                  })
+
+                  if(this.state.xdaiMetaAccount){
+                    //send funds using metaaccount on mainnet
+
+                    let paramsObject = {
+                      from: this.state.daiAddress,
+                      value: 0,
+                      gas: 120000,
+                      gasPrice: Math.round(1.1 * 1000000000)
+                    }
+                    console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+                    paramsObject.to = this.state.dendaiContract._address
+                    paramsObject.data = this.state.dendaiContract.methods.withdraw(""+amountOfxDaiToWithdraw).encodeABI()
+
+                    console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+                    this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
+                      console.log("========= >>> SIGNED",signed)
+                        this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                          console.log("META RECEIPT",receipt)
+                          this.setState({
+                            amount:"",
+
+                          })
+                        }).on('error', (err)=>{
+                          console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                        }).then(console.log)
+                    });
+
+                  }else{
+                    console.log("Use MetaMask to withdraw DenDai to xDai")
+                    this.props.tx(
+                      this.props.contracts.DenDai.withdraw(""+amountOfxDaiToWithdraw)
+                    ,120000,0,0,(receipt)=>{
+                      if(receipt){
+                        console.log("EXCHANGE COMPLETE?!?",receipt)
+                        //window.location = "/"+receipt.contractAddress
+                      }
+                    })
+                  }
+
+                }}>
+                  <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
+                    <i className="fas fa-arrow-down" /> Send
+                  </Scaler>
+                </button>
+
+              </div>
+            </div>
+          )
+        }
+      }else{
+        xdaiToDendaiDisplay = (
+           <div className="content ops row">
+
+             <div className="col-6 p-1">
+               <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
+                 this.setState({xdaiToDendaiMode:"deposit"})
+               }}>
+                 <i className="fas fa-arrow-up"  />
+               </button>
+             </div>
+
+             <div className="col-6 p-1">
+               <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
+                 this.setState({xdaiToDendaiMode:"withdraw"})
+               }}>
+                 <i className="fas fa-arrow-down" />
+               </button>
+             </div>
+           </div>
+        )
+      }
+
+      tokenDisplay = (
+        <div>
+          <div className="main-card card w-100">
+            <div className="content ops row">
+              <div className="col-2 p-1">
+                <img style={logoStyle} src={dendai} />
+              </div>
+              <div className="col-3 p-1" style={{marginTop:8}}>
+                DenDai
+              </div>
+              <div className="col-5 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
+                  <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+                    ${this.props.dollarDisplay(this.state.denDaiBalance)}
+                  </Scaler>
+              </div>
+              <div className="col-2 p-1" style={{marginTop:8}}>
+                <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={this.props.goBack}>
+                  <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+                    <i className="fas fa-arrow-right"></i>
+                  </Scaler>
+                </button>
+              </div>
+
+            </div>
+          </div>
+          <div className="main-card card w-100">
+            {xdaiToDendaiDisplay}
+          </div>
+        </div>
+      )
+    }
 
     let daiToXdaiDisplay = "loading..."
     //console.log("daiToXdaiMode",daiToXdaiMode)
@@ -576,7 +947,9 @@ export default class Bridge extends React.Component {
             </div>
             <div className="col-3 p-1">
 
-              <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap"}} onClick={()=>{
+              <button className="btn btn-large w-100"  disabled={buttonsDisabled}
+                style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
+                onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
 
                 this.setState({
@@ -649,7 +1022,7 @@ export default class Bridge extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap"}} onClick={()=>{
+              <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
                 this.setState({
                   daiToXdaiMode:"withdrawing",
@@ -692,7 +1065,7 @@ export default class Bridge extends React.Component {
         <div className="content ops row">
 
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" disabled={buttonsDisabled} onClick={()=>{
+            <button className="btn btn-large w-100" style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled} onClick={()=>{
               this.setState({daiToXdaiMode:"deposit"})
             }} >
               <i className="fas fa-arrow-up"  />
@@ -700,7 +1073,7 @@ export default class Bridge extends React.Component {
           </div>
 
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" disabled={buttonsDisabled}  onClick={()=>{
+            <button className="btn btn-large w-100" style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
               this.setState({daiToXdaiMode:"withdraw"})
             }} >
               <i className="fas fa-arrow-down"  />
@@ -761,7 +1134,7 @@ export default class Bridge extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{whiteSpace:"nowrap"}} onClick={async ()=>{
+              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move ETH to DAI")
 
@@ -880,7 +1253,7 @@ export default class Bridge extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{whiteSpace:"nowrap"}} onClick={async ()=>{
+              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move DAI to ETH")
 
@@ -1162,7 +1535,7 @@ export default class Bridge extends React.Component {
          <div className="content ops row">
 
            <div className="col-6 p-1">
-             <button className="btn btn-large w-100"  disabled={buttonsDisabled}  onClick={()=>{
+             <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
                this.setState({ethToDaiMode:"deposit"})
              }}>
                <i className="fas fa-arrow-up"  />
@@ -1170,7 +1543,7 @@ export default class Bridge extends React.Component {
            </div>
 
            <div className="col-6 p-1">
-             <button className="btn btn-large w-100"  disabled={buttonsDisabled}  onClick={()=>{
+             <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
                this.setState({ethToDaiMode:"withdraw"})
              }}>
                <i className="fas fa-arrow-down" />
@@ -1213,7 +1586,7 @@ export default class Bridge extends React.Component {
               <input type="text" className="form-control" placeholder="0.00" value={this.state.daiSendAmount}
                      onChange={event => this.updateState('daiSendAmount', event.target.value)} />
             </div>
-            <button style={{marginTop:40}} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendDai ? '' : 'disabled'}`}
+            <button style={{marginTop:40,backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendDai ? '' : 'disabled'}`}
                     onClick={this.sendDai.bind(this)}>
               Send
             </button>
@@ -1267,7 +1640,7 @@ export default class Bridge extends React.Component {
               <input type="text" className="form-control" placeholder="0.00" value={this.state.ethSendAmount}
                      onChange={event => this.updateState('ethSendAmount', event.target.value)} />
             </div>
-            <button style={{marginTop:40}} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendEth ? '' : 'disabled'}`}
+            <button style={{marginTop:40,backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendEth ? '' : 'disabled'}`}
                     onClick={this.sendEth.bind(this)}>
               Send
             </button>
@@ -1287,9 +1660,11 @@ export default class Bridge extends React.Component {
     }
 
 
-
     return (
       <div style={{marginTop:30}}>
+
+        {tokenDisplay}
+
         <div className="main-card card w-100">
           <div className="content ops row">
             <div className="col-2 p-1">

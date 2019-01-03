@@ -3,12 +3,12 @@ import { Scaler } from "dapparatus";
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 
-export default ({changeView}) => {
+export default ({mainStyle,changeView}) => {
   return (
     <div className="main-card card w-100">
       <div className="content bridge row">
         <div className="col-6 p-1">
-          <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}} onClick={()=>{
+          <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
             changeView('bridge')}
           }>
             <Scaler config={{startZoomAt:500,origin:"40% 50%"}}>
@@ -17,7 +17,7 @@ export default ({changeView}) => {
           </button>
         </div>
         <div className="col-6 p-1">
-        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}} onClick={()=>{
+        <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
           changeView('request_funds')}
         }>
           <Scaler config={{startZoomAt:500,origin:"40% 50%"}}>

@@ -16,22 +16,63 @@ import History from './components/History';
 import Advanced from './components/Advanced';
 import BottomLinks from './components/BottomLinks';
 import MoreButtons from './components/MoreButtons';
+import Admin from './components/Admin';
+import Vendor from './components/Vendor';
 import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
 import BurnWallet from './components/BurnWallet'
-import Bridge from './components/Bridge'
+import Exchange from './components/Exchange'
 import customRPCHint from './customRPCHint.png';
+import bufficorn from './bufficorn.png';
 
 const EthCrypto = require('eth-crypto');
 
-let WEB3_PROVIDER = 'http://10.0.0.107:8545', CLAIM_RELAY = 'http://0.0.0.0:18462';
+let WEB3_PROVIDER = 'http://10.0.0.107:8545'
+let CLAIM_RELAY = 'http://0.0.0.0:18462'
+let ERC20TOKEN = false
+
+let mainStyle = {
+    width:"100%",
+    height:"100%",
+    backgroundImage:"linear-gradient(#F69E4D, #F76B1C)",
+    backgroundColor:"#F76B1C",
+    mainColor:"#8762A6"
+}
+
+let title = "Burner Wallet"
+let titleImage = (
+  <i className="fas fa-fire" />
+)
+
 if (window.location.hostname.indexOf("qreth") >= 0) {
   WEB3_PROVIDER = "https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac"
+  CLAIM_RELAY = false
+  ERC20TOKEN = false
 }
 else if (window.location.hostname.indexOf("xdai") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
+  ERC20TOKEN = false
+}
+else if (window.location.hostname.indexOf("dendai") >= 0) {
+  WEB3_PROVIDER = "https://dai.poa.network";
+  CLAIM_RELAY = 'https://x.xdai.io'
+  ERC20TOKEN = 'DenDai'
+}
+
+if(ERC20TOKEN=="DenDai"){
+  mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
+  mainStyle.backgroundColor = "#20012d"
+  mainStyle.mainColor = "#b6299e"
+  title = "DenDai.io"
+  titleImage = (
+    <img src={bufficorn} style={{
+      maxWidth:50,
+      maxHeight:50,
+      marginTop:-24
+    }}/>
+  )
 }
 
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
@@ -42,6 +83,8 @@ let dollarDisplay = (amount)=>{
     amount = Math.floor(amount*100)/100
     return amount.toFixed(2)
 }
+
+let interval
 
 class App extends Component {
   constructor(props) {
@@ -59,7 +102,8 @@ class App extends Component {
       sendLink: "",
       sendKey: "",
       alert: null,
-      loadingTitle:'loading...'
+      loadingTitle:'loading...',
+      balance: 0.00
     };
     this.alertTimeout = null;
   }
@@ -71,6 +115,8 @@ class App extends Component {
       this.setState(update)
   }
   componentDidMount(){
+    document.body.style.backgroundColor = mainStyle.backgroundColor
+    console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
     if(window.location.pathname){
       if(window.location.pathname.length==43){
@@ -103,6 +149,26 @@ class App extends Component {
         }
       }
     }
+    setTimeout(this.poll.bind(this),150)
+    setTimeout(this.poll.bind(this),650)
+    interval = setInterval(this.poll.bind(this),1500)
+  }
+  componentWillUnmount() {
+    clearInterval(interval)
+    window.removeEventListener("resize", this.updateDimensions.bind(this));
+  }
+  async poll() {
+    if(ERC20TOKEN&&this.state.contracts){
+      let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
+      gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
+      let denDaiBalance = await this.state.contracts.DenDai.balanceOf(this.state.account).call()
+      denDaiBalance = this.state.web3.utils.fromWei(""+denDaiBalance,'ether')
+      let isAdmin = await this.state.contracts.DenDai.admin(this.state.account).call()
+      console.log("ISADMIN",isAdmin)
+      let isVendor = await this.state.contracts.DenDai.vendors(this.state.account).call()
+      console.log("isVendor",isVendor)
+      this.setState({gasBalance:gasBalance,balance:denDaiBalance,isAdmin:isAdmin,isVendor:isVendor})
+    }
   }
   setPossibleNewPrivateKey(value){
     this.setState({possibleNewPrivateKey:value},()=>{
@@ -121,10 +187,6 @@ class App extends Component {
       this.setState({possibleNewPrivateKey:false,newPrivateKey:this.state.possibleNewPrivateKey})
     }
   }
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateDimensions.bind(this));
-  }
-
   componentDidUpdate(prevProps, prevState) {
     let { network, web3 } = this.state;
     if (web3 && network !== prevState.network /*&& !this.checkNetwork()*/) {
@@ -135,12 +197,10 @@ class App extends Component {
       //}, false)
     }
   };
-
   checkNetwork() {
     let { network } = this.state;
     return network === "xDai" || network === "Unknown";
   }
-
   checkClaim(tx, contracts) {
     //check if we are trying to claim
     if (this.state.claimId && this.state.claimKey) {
@@ -152,7 +212,6 @@ class App extends Component {
       }
     }
   }
-
   chainClaim(tx, contracts) {
     console.log("DOING CLAIM ONCHAIN", this.state.claimId, this.state.claimKey, this.state.account);
     this.setState({sending: true})
@@ -188,7 +247,6 @@ class App extends Component {
       }
     })
   }
-
   relayClaim() {
     console.log("DOING CLAIM THROUGH RELAY")
     this.state.contracts.Links.funds(this.state.claimId).call().then((fund) => {
@@ -236,8 +294,6 @@ class App extends Component {
       }
     })
   }
-
-
   changeView = (view,cb) => {
     if(view=="bridge"||view=="main"/*||view.indexOf("account_")==0*/) localStorage.setItem("view",view) //some pages should be sticky because of metamask reloads
     if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
@@ -255,7 +311,6 @@ class App extends Component {
     console.log("Setting state",view)
     this.setState({ view },cb);
   };
-
   changeAlert = (alert, hide=true) => {
     clearTimeout(this.alertTimeout);
     this.setState({ alert });
@@ -402,6 +457,11 @@ class App extends Component {
             metaAccount={metaAccount}
             onReady={(state) => {
               console.log("Transactions component is ready:", state);
+              if(ERC20TOKEN){
+                delete state.send
+                state.send = tokenSend.bind(this)
+              }
+              console.log(state)
               this.setState(state)
 
             }}
@@ -415,20 +475,22 @@ class App extends Component {
       )
     }
     return (
-      <div>
+      <div style={mainStyle}>
         {networkOverlay}
-
         {web3_setup}
 
         <div className="container-fluid">
           <Header
+            title={title}
+            titleImage={titleImage}
+            mainStyle={mainStyle}
             address={this.state.account}
             changeView={this.changeView}
             balance={balance}
             view={this.state.view}
           />
           {web3 /*&& this.checkNetwork()*/ && (() => {
-            console.log("VIEW:",view)
+            //console.log("VIEW:",view)
             if(view.indexOf("account_")==0)
             {
               let targetAddress = view.replace("account_","")
@@ -440,6 +502,7 @@ class App extends Component {
                     </div>
                   )} goBack={this.goBack.bind(this)}/>
                   <History
+                    mainStyle={mainStyle}
                     saveKey={this.saveKey.bind(this)}
                     metaAccount={this.state.metaAccount}
                     transactionsByAddress={this.state.transactionsByAddress}
@@ -460,18 +523,78 @@ class App extends Component {
             }else{
               switch(view) {
                 case 'main':
+
+                  let moreButtons = (
+                    <MoreButtons
+                      mainStyle={mainStyle}
+                      changeView={this.changeView}
+                    />
+                  )
+
+                  let subBalanceDisplay = ""
+
+                  if(ERC20TOKEN){
+
+                    subBalanceDisplay = (
+                      <div style={{opacity:0.4,fontSize:12,position:'absolute',right:0,marginTop:5}}>
+                        {this.state.gasBalance}
+                      </div>
+                    )
+
+                    if(this.state.isAdmin){
+                      moreButtons = (
+                        <div>
+                          <Admin
+                            mainStyle={mainStyle}
+                            changeView={this.changeView}
+                            contracts={this.state.contracts}
+                            tx={this.state.tx}
+                            web3={this.state.web3}
+                          />
+                          <MoreButtons
+                            mainStyle={mainStyle}
+                            changeView={this.changeView}
+                          />
+                        </div>
+                      )
+                    }else if(this.state.isVendor&&this.state.isVendor.isAllowed){
+                      moreButtons = (
+                        <div>
+                          <Vendor
+                            address={account}
+                            mainStyle={mainStyle}
+                            changeView={this.changeView}
+                            contracts={this.state.contracts}
+                            vendor={this.state.isVendor}
+                            tx={this.state.tx}
+                            web3={this.state.web3}
+                          />
+                          <MoreButtons
+                            mainStyle={mainStyle}
+                            changeView={this.changeView}
+                          />
+                        </div>
+                      )
+                    }else{
+                      moreButtons = ""
+                    }
+                  }
+
+
+
                   return (
                     <div>
                       <MainCard
+                        subBalanceDisplay={subBalanceDisplay}
+                        mainStyle={mainStyle}
                         address={account}
                         balance={balance}
                         changeAlert={this.changeAlert}
                         changeView={this.changeView}
                         dollarDisplay={dollarDisplay}
+                        ERC20TOKEN={ERC20TOKEN}
                       />
-                      <MoreButtons
-                        changeView={this.changeView}
-                      />
+                      {moreButtons}
                       <RecentTransactions
                         transactionsByAddress={this.state.transactionsByAddress}
                         changeView={this.changeView}
@@ -489,6 +612,7 @@ class App extends Component {
                     <div>
                       <NavCard title={'Advanced'} goBack={this.goBack.bind(this)}/>
                       <Advanced
+                        mainStyle={mainStyle}
                         address={account}
                         balance={balance}
                         changeView={this.changeView}
@@ -531,6 +655,7 @@ class App extends Component {
                     <div>
                       <NavCard title={'Send to Address'} goBack={this.goBack.bind(this)}/>
                       <SendToAddress
+                        mainStyle={mainStyle}
                         balance={balance}
                         web3={this.state.web3}
                         address={account}
@@ -547,6 +672,7 @@ class App extends Component {
                     <div>
                       <NavCard title={'Request Funds'} goBack={this.goBack.bind(this)}/>
                       <RequestFunds
+                        mainStyle={mainStyle}
                         balance={balance}
                         address={account}
                         send={send}
@@ -562,6 +688,7 @@ class App extends Component {
                     <div>
                       <NavCard title={'Share Link'} goBack={this.goBack.bind(this)} />
                       <ShareLink
+                        mainStyle={mainStyle}
                         sendKey={this.state.sendKey}
                         sendLink={this.state.sendLink}
                         balance={balance}
@@ -576,6 +703,7 @@ class App extends Component {
                     <div>
                       <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
                       <SendWithLink balance={balance}
+                        mainStyle={mainStyle}
                         changeAlert={this.changeAlert}
                         sendWithLink={(amount,cb)=>{
                           let randomHash = this.state.web3.utils.sha3(""+Math.random())
@@ -601,6 +729,7 @@ class App extends Component {
                     <div>
                       <NavCard title={"Burn Private Key"} goBack={this.goBack.bind(this)}/>
                       <BurnWallet
+                        mainStyle={mainStyle}
                         address={account}
                         balance={balance}
                         goBack={this.goBack.bind(this)}
@@ -621,8 +750,11 @@ class App extends Component {
                   case 'bridge':
                     return (
                       <div>
-                        <NavCard title={"Exchange (beware!)"} goBack={this.goBack.bind(this)}/>
-                        <Bridge
+                        <NavCard title={"Exchange"} goBack={this.goBack.bind(this)}/>
+                        <Exchange
+                          ERC20TOKEN={ERC20TOKEN}
+                          contracts={this.state.contracts}
+                          mainStyle={mainStyle}
                           changeAlert={this.changeAlert}
                           setGwei={this.setGwei}
                           network={this.state.network}
@@ -685,11 +817,14 @@ class App extends Component {
           newPrivateKey={this.state.newPrivateKey}
           fallbackWeb3Provider={WEB3_PROVIDER}
           onUpdate={async (state) => {
-            console.log("Dapparatus state update:", state)
+            //console.log("Dapparatus state update:", state)
+            if(ERC20TOKEN){
+              delete state.balance
+            }
             if (state.web3Provider) {
               state.web3 = new Web3(state.web3Provider)
               this.setState(state,()=>{
-                console.log("state set:",this.state)
+                //console.log("state set:",this.state)
                 if(this.state.possibleNewPrivateKey){
                   this.dealWithPossibleNewPrivateKey()
                 }
@@ -844,6 +979,74 @@ class App extends Component {
       </div>
     )
   }
+}
+
+async function tokenSend(to,value,gasLimit,txData,cb){
+  let {account,web3} = this.state
+
+  console.log("tokenSend")
+
+  let weiValue =  this.state.web3.utils.toWei(""+value, 'ether')
+
+  let setGasLimit = 60000
+  if(typeof gasLimit == "function"){
+    cb=gasLimit
+  }else if(gasLimit){
+    setGasLimit=gasLimit
+  }
+
+  let data = false
+  if(typeof txData == "function"){
+    cb = txData
+  }else{
+    data = txData
+  }
+
+  console.log("DAPPARATUS TOKEN SENDING WITH GAS LIMIT",setGasLimit)
+
+  let result
+  if(this.state.metaAccount){
+    console.log("sending with meta account:",this.state.metaAccount.address)
+
+    let tx={
+      to:this.state.contracts.DenDai._address,
+      value: 0,
+      gas: setGasLimit,
+      gasPrice: Math.round(this.state.gwei * 1000000000)
+    }
+    tx.data = this.state.contracts.DenDai.transfer(to,weiValue).encodeABI()
+    console.log("TX SIGNED TO METAMASK:",tx)
+    this.state.web3.eth.accounts.signTransaction(tx, this.state.metaAccount.privateKey).then(signed => {
+        console.log("SIGNED:",signed)
+        this.state.web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+          console.log("META RECEIPT",receipt)
+          cb(receipt)
+        })
+    });
+  }else{
+    let data = false
+    if(typeof txData == "function"){
+      cb = txData
+    }else{
+      data = txData
+    }
+    let txObject = {
+      from:this.state.account,
+      to:this.state.contracts.DenDai._address,
+      value: 0,
+      gas: setGasLimit,
+      gasPrice: Math.round(this.state.gwei * 1000000000)
+    }
+
+    txObject.data = this.state.contracts.DenDai.transfer(to,weiValue).encodeABI()
+
+    console.log("sending with injected web3 account",txObject)
+    result = await this.state.web3.eth.sendTransaction(txObject)
+
+    console.log("RES",result)
+    cb(result)
+  }
+
 }
 
 export default App;

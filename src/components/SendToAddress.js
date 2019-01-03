@@ -146,7 +146,7 @@ export default class SendToAddress extends React.Component {
                        onChange={event => this.updateState('message', event.target.value)} />
               </div>
             </div>
-            <button className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
+            <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
                     onClick={this.send}>
               Send
             </button>

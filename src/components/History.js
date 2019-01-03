@@ -295,7 +295,7 @@ export default class History extends React.Component {
       )
     }else{
       sendChatButton = (
-        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}
+        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
                 onClick={this.sendChat.bind(this)}>
           <Scaler config={{startZoomAt:700,origin:"-10px 50%"}}>
             <i className="fas fa-comment"/>
@@ -303,7 +303,7 @@ export default class History extends React.Component {
         </button>
       )
       sendFundsButton = (
-        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}
+        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
                 onClick={this.sendChat.bind(this)}>
           <Scaler config={{startZoomAt:700,origin:"-10px 50%"}}>
             <i className="fas fa-comment"/>
@@ -324,7 +324,7 @@ export default class History extends React.Component {
       )
     }else if(this.props.metaAccount){
       waveButton = (
-        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}
+        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
                 onClick={()=>{
                   this.setState({waving:true})
                   this.props.send(this.props.target, 0, 120000, this.props.web3.utils.utf8ToHex(":wave:"), (result) => {
@@ -410,7 +410,7 @@ export default class History extends React.Component {
       sendForm = (
         <div className="content ops row">
           <div className="col-1 p-1">
-            <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",marginLeft:-10}}
+            <button className="btn btn-large w-100" style={{backgroundColor:this.props.mainStyle.mainColor,whiteSpace:"nowrap",marginLeft:-10}}
               onClick={()=>{
                 this.setState({sendingFunds:true},()=>{
                   setTimeout(()=>{
@@ -454,7 +454,7 @@ export default class History extends React.Component {
 
             <div className="col-4 p-1">
               <CopyToClipboard text={target}>
-                <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}
+                <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
                   onClick={() => this.props.changeAlert({type: 'success', message: target+' copied to clipboard'})}>
                   <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
                     <i className="fas fa-save"/> Copy

@@ -9,7 +9,7 @@
     "clevis": "0.0.107",
     "cors": "^2.8.4",
     "crypto": "^1.0.1",
-    "dapparatus": "^1.0.59",
+    "dapparatus": "^1.0.61",
     "eccrypto": "^1.1.0",
     "eth-crypto": "^1.3.2",
     "eth-ecies": "^1.0.3",

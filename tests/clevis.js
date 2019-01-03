@@ -143,11 +143,32 @@ module.exports = {
     describe('#transfer() ', function() {
       it('should give metamask account some ether or tokens to test', async function() {
         this.timeout(600000)
-        let result = await clevis("sendTo","0.99","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")///<<<-------- change this to your metamask accounts
+        let result = await clevis("sendTo","0.10","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")///<<<-------- change this to your metamask accounts
         printTxResult(result)
+
+
+        //make my metamask user an admin
+        result = await clevis("contract","updateAdmin","DenDai","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb","true")
+        printTxResult(result)
+
+        /*printTxResult(result)
         for(let a=1;a<9;a++){
           result = await clevis("sendTo",""+(0.05*a),"2","0x0ca60587993c418904728f70bec0b164b55a8fb0")///<<<-------- change this to your metamask accounts
-        }
+        }*/
+
+        result = await clevis("sendTo","1.99","0","0x548395928fee26be5ccc6de0c3a3411b416570a8")
+        printTxResult(result)
+        result = await clevis("sendTo","0.10","0","0x5fe7b1415f205e04330271ab87eefffe59718473")
+        printTxResult(result)
+        result = await clevis("sendTo","0.10","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")
+        printTxResult(result)
+
+        let dendaiContractAddress = fs.readFileSync(clevisConfig.CONTRACTS_FOLDER + "/DenDai/DenDai.address").toString().trim()
+        result = await clevis("sendTo","5","0",dendaiContractAddress)
+        printTxResult(result)
+
+        result = await clevis("contract","mint","DenDai","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb","1000000000000000000")
+        printTxResult(result)
         //result = await clevis("sendTo","5","0","0x34aa3f359a9d614239015126635ce7732c18fdf3")///<<<-------- change this to your metamask accounts
         //printTxResult(result)
         //here is an example of running a funtion from within this object:

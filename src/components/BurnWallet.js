@@ -4,7 +4,7 @@ import Balance from "./Balance";
 
 
 
-export default ({address, balance, burnWallet, goBack, dollarDisplay}) => {
+export default ({mainStyle, address, balance, burnWallet, goBack, dollarDisplay}) => {
 
   return (
     <div className="main-card card w-100">
@@ -20,7 +20,7 @@ export default ({address, balance, burnWallet, goBack, dollarDisplay}) => {
         <div className="content ops row">
 
             <div className="col-6 p-1">
-              <button className="btn btn-large w-100" onClick={goBack} >
+              <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor}} onClick={goBack} >
                   <i className="fas fa-arrow-left"  /> No, Cancel!
               </button>
             </div>
