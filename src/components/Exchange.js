@@ -58,7 +58,7 @@ export default class Exchange extends React.Component {
 
     let xdaiweb3
     //make it easier for local debugging...
-    if(window.location.hostname.indexOf("localhost")>=0){
+    if(false && window.location.hostname.indexOf("localhost")>=0){
       console.log("WARNING, USING LOCAL RPC")
       xdaiweb3 = new Web3(new Web3.providers.HttpProvider("http://0.0.0.0:8545"))
     } else {
@@ -1155,7 +1155,7 @@ export default class Exchange extends React.Component {
                 let output = await uniswapContract.methods.getTokenToEthOutputPrice(amountOfEth).call()
                 output = parseFloat(output)
                 output = output - (output*0.0333)
-                console.log("Expected amount of DAI: ",webToUse.utils.fromWei(""+output,'ether'))
+                console.log("Expected amount of DAI: ",webToUse.utils.fromWei(""+Math.round(output),'ether'))
 
                 let currentBlockNumber = await webToUse.eth.getBlockNumber()
                 let currentBlock = await webToUse.eth.getBlock(currentBlockNumber)
@@ -1275,7 +1275,7 @@ export default class Exchange extends React.Component {
                 let output = await uniswapContract.methods.getEthToTokenOutputPrice(amountOfDai).call()
                 output = parseFloat(output)
                 output = output - (output*0.0333)
-                console.log("Expected amount of ETH: ",output,webToUse.utils.fromWei(""+output,'ether'))
+                console.log("Expected amount of ETH: ",output,webToUse.utils.fromWei(""+Math.round(output),'ether'))
 
                 let currentBlockNumber = await webToUse.eth.getBlockNumber()
                 let currentBlock = await webToUse.eth.getBlock(currentBlockNumber)
@@ -1347,7 +1347,7 @@ export default class Exchange extends React.Component {
 
                         this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
                           console.log("========= >>> SIGNED",signed)
-                            this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                            this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', async (receipt)=>{
                               console.log("META RECEIPT",receipt)
                               this.setState({
                                 loaderBarColor:"#4ab3f5",
@@ -1358,8 +1358,10 @@ export default class Exchange extends React.Component {
 
 
 
-
+                              let manualNonce = await this.state.mainnetweb3.eth.getTransactionCount(this.state.daiAddress)
+                              console.log("manually grabbed nonce as ",manualNonce)
                               paramsObject = {
+                                nonce: manualNonce,
                                 from: this.state.daiAddress,
                                 value: 0,
                                 gas: 240000,
@@ -1377,7 +1379,7 @@ export default class Exchange extends React.Component {
                                   this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                                     console.log("META RECEIPT",receipt)
                                     this.setState({
-                                      amount:0,
+                                      amount:"",
 
                                     })
                                   }).on('error', (err)=>{
