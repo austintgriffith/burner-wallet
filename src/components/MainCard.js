@@ -6,7 +6,7 @@ import Balance from "./Balance";
 const QRCode = require('qrcode.react');
 
 
-export default ({mainStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay}) => {
+export default ({mainStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
 
   let url = window.location.protocol+"//"+window.location.hostname
   if(window.location.port&&window.location.port!=80&&window.location.port!=443){
@@ -58,7 +58,7 @@ export default ({mainStyle,ERC20TOKEN,address, balance, changeAlert, changeView,
 
   return (
     <div className="main-card card w-100">
-      <Balance amount={balance} address={address} dollarDisplay={dollarDisplay}/>
+      <Balance amount={balance} address={address} dollarDisplay={dollarDisplay} subDisplay={subBalanceDisplay}/>
       <Ruler/>
       <CopyToClipboard text={address} onCopy={() => {
         changeAlert({type: 'success', message: 'Address copied to clipboard'})

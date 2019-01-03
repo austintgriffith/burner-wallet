@@ -2,7 +2,7 @@ import React from 'react';
 import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
 
-export  default ({amount, address, dollarDisplay}) => {
+export  default ({amount, address, dollarDisplay, subDisplay}) => {
   return (
     <div className="balance content row">
       <div className="avatar col p-0">
@@ -15,6 +15,7 @@ export  default ({amount, address, dollarDisplay}) => {
           <div style={{fontSize:64,letterSpacing:-2,fontWeight:750}}>
             ${dollarDisplay(amount)}
           </div>
+          {subDisplay}
         </Scaler>
       </div>
     </div>

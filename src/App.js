@@ -159,13 +159,15 @@ class App extends Component {
   }
   async poll() {
     if(ERC20TOKEN&&this.state.contracts){
+      let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
+      gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
       let denDaiBalance = await this.state.contracts.DenDai.balanceOf(this.state.account).call()
       denDaiBalance = this.state.web3.utils.fromWei(""+denDaiBalance,'ether')
       let isAdmin = await this.state.contracts.DenDai.admin(this.state.account).call()
       console.log("ISADMIN",isAdmin)
       let isVendor = await this.state.contracts.DenDai.vendors(this.state.account).call()
       console.log("isVendor",isVendor)
-      this.setState({balance:denDaiBalance,isAdmin:isAdmin,isVendor:isVendor})
+      this.setState({gasBalance:gasBalance,balance:denDaiBalance,isAdmin:isAdmin,isVendor:isVendor})
     }
   }
   setPossibleNewPrivateKey(value){
@@ -527,38 +529,62 @@ class App extends Component {
                       changeView={this.changeView}
                     />
                   )
+
+                  let subBalanceDisplay = ""
+
                   if(ERC20TOKEN){
+
+                    subBalanceDisplay = (
+                      <div style={{opacity:0.4,fontSize:12,position:'absolute',right:0,marginTop:5}}>
+                        {this.state.gasBalance}
+                      </div>
+                    )
 
                     if(this.state.isAdmin){
                       moreButtons = (
-                        <Admin
-                          mainStyle={mainStyle}
-                          changeView={this.changeView}
-                          contracts={this.state.contracts}
-                          tx={this.state.tx}
-                          web3={this.state.web3}
-                        />
+                        <div>
+                          <Admin
+                            mainStyle={mainStyle}
+                            changeView={this.changeView}
+                            contracts={this.state.contracts}
+                            tx={this.state.tx}
+                            web3={this.state.web3}
+                          />
+                          <MoreButtons
+                            mainStyle={mainStyle}
+                            changeView={this.changeView}
+                          />
+                        </div>
                       )
                     }else if(this.state.isVendor&&this.state.isVendor.isAllowed){
                       moreButtons = (
-                        <Vendor
-                          address={account}
-                          mainStyle={mainStyle}
-                          changeView={this.changeView}
-                          contracts={this.state.contracts}
-                          vendor={this.state.isVendor}
-                          tx={this.state.tx}
-                          web3={this.state.web3}
-                        />
+                        <div>
+                          <Vendor
+                            address={account}
+                            mainStyle={mainStyle}
+                            changeView={this.changeView}
+                            contracts={this.state.contracts}
+                            vendor={this.state.isVendor}
+                            tx={this.state.tx}
+                            web3={this.state.web3}
+                          />
+                          <MoreButtons
+                            mainStyle={mainStyle}
+                            changeView={this.changeView}
+                          />
+                        </div>
                       )
                     }else{
                       moreButtons = ""
                     }
                   }
 
+
+
                   return (
                     <div>
                       <MainCard
+                        subBalanceDisplay={subBalanceDisplay}
                         mainStyle={mainStyle}
                         address={account}
                         balance={balance}
@@ -723,8 +749,10 @@ class App extends Component {
                   case 'bridge':
                     return (
                       <div>
-                        <NavCard title={"Exchange (beware!)"} goBack={this.goBack.bind(this)}/>
+                        <NavCard title={"Exchange"} goBack={this.goBack.bind(this)}/>
                         <Exchange
+                          ERC20TOKEN={ERC20TOKEN}
+                          contracts={this.state.contracts}
                           mainStyle={mainStyle}
                           changeAlert={this.changeAlert}
                           setGwei={this.setGwei}

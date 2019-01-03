@@ -79,16 +79,17 @@ contract DenDai is ERC20Mintable {
       deposit();
   }
   function deposit() public payable {
-      _balances[msg.sender] += msg.value;
-      Deposit(msg.sender, msg.value);
+    _balances[msg.sender] += msg.value;
+    Deposit(msg.sender, msg.value);
   }
   event  Deposit(address indexed dst, uint wad);
 
   function withdraw(uint wad) public {
-      require(_balances[msg.sender] >= wad);
-      _balances[msg.sender] -= wad;
-      msg.sender.transfer(wad);
-      Withdrawal(msg.sender, wad);
+    require(vendors[msg.sender].isAllowed || admin[msg.sender], "DenDai::withdraw - vendor is not allowed by admin to withdraw");
+    require(_balances[msg.sender] >= wad);
+    _balances[msg.sender] -= wad;
+    msg.sender.transfer(wad);
+    Withdrawal(msg.sender, wad);
   }
   event  Withdrawal(address indexed src, uint wad);
 
