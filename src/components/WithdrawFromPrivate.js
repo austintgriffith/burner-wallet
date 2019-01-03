@@ -11,7 +11,7 @@ export default class SendToAddress extends React.Component {
   constructor(props) {
     super(props);
     let initialState = {
-      amount: props.amount,
+      amount: "",//props.amount-0.01 ?
       privateKey: props.privateKey,
       canWithdraw: false,
     }
@@ -28,7 +28,6 @@ export default class SendToAddress extends React.Component {
     this.setState({ [key]: value },()=>{
       this.setState({ canWithdraw: this.canWithdraw() })
     });
-
   };
 
   componentDidMount(){
