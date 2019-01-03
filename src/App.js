@@ -103,6 +103,31 @@ class App extends Component {
         }
       }
     }
+    bindEvent(window, 'message', async (e)=>{
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @ @ @@ MESSAGE IN BURNER:",e)
+      try{
+        let message = JSON.parse(e.data)
+        console.log(message)
+        if(message.function=="eth.getAccounts"){
+          //let result = await this.state.web3.eth.getAccounts()
+          //console.log("GOT ACCOUNTS BAC:",result)
+          let accountArray = false
+          if(this.state.account){
+            accountArray = [this.state.account]
+          }
+          let result = [false,accountArray]
+          window.parent.postMessage(JSON.stringify({id:message.id,result:result}), '*');
+        }else if(message.function=="version.getNetwork"){
+          //let result = await this.state.web3.eth.getAccounts()
+          //console.log("GOT ACCOUNTS BAC:",result)
+          let result = [false,9999]
+          window.parent.postMessage(JSON.stringify({id:message.id,result:result}), '*');
+        }else{
+          console.log("@@@ UNSURE HOW TO HANDLE MESSAGEL",message)
+        }
+      }catch(e){console.log(e)}
+    });
+    window.parent.postMessage("HELLO FROM THE BURNER :/", '*');
   }
   setPossibleNewPrivateKey(value){
     this.setState({possibleNewPrivateKey:value},()=>{
@@ -847,3 +872,11 @@ class App extends Component {
 }
 
 export default App;
+
+function bindEvent(element, eventName, eventHandler) {
+    if (element.addEventListener) {
+        element.addEventListener(eventName, eventHandler, false);
+    } else if (element.attachEvent) {
+        element.attachEvent('on' + eventName, eventHandler);
+    }
+}
