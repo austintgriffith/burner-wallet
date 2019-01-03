@@ -93,6 +93,7 @@ class App extends Component {
     if(cachedView&&cachedView!=0){
       view = cachedView
     }
+    console.log("CACHED VIEW",view)
     super(props);
     this.state = {
       web3: false,
@@ -119,8 +120,10 @@ class App extends Component {
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
     if(window.location.pathname){
+      console.log("PATH",window.location.pathname,window.location.pathname.length)
       if(window.location.pathname.length==43){
         this.changeView('send_to_address')
+        console.log("CHANGE VIEW")
       }else if(window.location.pathname.length==134){
         let parts = window.location.pathname.split(";")
         let claimId = parts[0].replace("/","")
@@ -296,8 +299,9 @@ class App extends Component {
   }
   changeView = (view,cb) => {
     if(view=="bridge"||view=="main"/*||view.indexOf("account_")==0*/) localStorage.setItem("view",view) //some pages should be sticky because of metamask reloads
-    if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
+    /*if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
       console.log("This is a send...")
+      console.log("BALANCE",this.state.balance)
       if (this.state.balance <= 0) {
         console.log("no funds...")
         this.changeAlert({
@@ -307,6 +311,7 @@ class App extends Component {
         return;
       }
     }
+    */
     this.changeAlert(null);
     console.log("Setting state",view)
     this.setState({ view },cb);

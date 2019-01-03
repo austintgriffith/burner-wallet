@@ -57,6 +57,15 @@ export default class SendToAddress extends React.Component {
         this.messageInput.focus();
       }
     },350)
+    if(this.props.balance<=0){
+      console.log("No Funds, redirect back home...")
+      this.props.goBack();
+      window.history.pushState({},"", "/");
+      this.props.changeAlert({
+        type: 'warning',
+        message: 'No funds to send.',
+      });
+    }
   }
 
   canSend() {
