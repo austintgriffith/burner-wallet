@@ -18,6 +18,12 @@ export default class SendWithLink extends React.Component {
     }
   }
 
+  componentDidMount(){
+    setTimeout(()=>{
+      this.amountInput.focus();
+    },250)
+  }
+
   updateState = (key, value) => {
     this.setState({ [key]: value },()=>{
       this.setState({ canSend: (this.state.amount > 0) })
@@ -28,17 +34,21 @@ export default class SendWithLink extends React.Component {
   send = () => {
     let { amount } = this.state;
     if(this.state.canSend){
-      this.props.changeView('loader')
-      setTimeout(()=>{window.scrollTo(0,0)},60)
-      this.props.sendWithLink(amount, (result) => {
-        if(result && result.transactionHash){
-          this.props.changeView('share-link')
-          this.props.changeAlert({
-            type: 'success',
-            message: 'Sent! '+result.transactionHash,
-          });
-        }
-      })
+      //if(this.props.balance-0.0001<=amount){
+      //  this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((this.props.balance-0.0001)*100)/100+' (gas costs)'})
+      //}else{
+        this.props.changeView('loader')
+        setTimeout(()=>{window.scrollTo(0,0)},60)
+        this.props.sendWithLink(amount, (result) => {
+          if(result && result.transactionHash){
+            this.props.changeView('share-link')
+            this.props.changeAlert({
+              type: 'success',
+              message: 'Sent! '+result.transactionHash,
+            });
+          }
+        })
+      //}
     }else{
       this.props.changeAlert({type: 'warning', message: 'Please enter a valid amount'})
     }
@@ -49,7 +59,7 @@ export default class SendWithLink extends React.Component {
     return (
       <div>
         <div className="send-to-address card w-100">
-          <Balance amount={this.props.balance} address={this.props.address}/>
+          <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay}/>
           <Ruler/>
           <div className="content row">
             <div className="form-group w-100">
@@ -59,10 +69,11 @@ export default class SendWithLink extends React.Component {
                   <div className="input-group-text">$</div>
                 </div>
                 <input type="text" className="form-control" placeholder="0.00"
+                  ref={(input) => { this.amountInput = input; }}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
             </div>
-            <button className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
+            <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
                     onClick={this.send}>
               Send
             </button>

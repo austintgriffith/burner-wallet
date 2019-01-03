@@ -8,17 +8,17 @@ i.fas {
 }
 
 .header {
+  padding: 10px;
   position: relative;
   color: white;
   i {
-    font-size: 28px;
+    font-size: 32px;
   }
   span {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 600;
-    font-family: "Arial Rounded MT Bold", sans-serif;
   }
-  margin-bottom: 25px;
+  margin-bottom: 0px;
 }
 
 .card {
@@ -67,7 +67,7 @@ i.fas {
 
   .bridge, .ops {
     .btn {
-      background-color: #8762A6;
+      background-color: #FF0000;
       color: white;
       font-weight: 500;
     }

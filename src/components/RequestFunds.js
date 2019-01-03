@@ -58,7 +58,7 @@ export default class RequestFunds extends React.Component {
                 {message}
               </div>
 
-              <div className="content qr row" style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
+              <div style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
                 <QRCode value={qrValue} size={qrSize}/>
               </div>
 
@@ -85,7 +85,7 @@ export default class RequestFunds extends React.Component {
       return (
         <div>
           <div className="send-to-address card w-100">
-            <Balance amount={this.props.balance} address={this.props.address}/>
+            <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay} />
             <Ruler/>
             <div className="content row">
               <div className="form-group w-100">
@@ -103,7 +103,7 @@ export default class RequestFunds extends React.Component {
                 <input type="text" className="form-control" placeholder="Hot Dogs" value={this.state.message}
                        onChange={event => this.updateState('message', event.target.value)} />
               </div>
-              <button className={`btn btn-success btn-lg w-100 ${canRequest ? '' : 'disabled'}`}
+              <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canRequest ? '' : 'disabled'}`}
                       onClick={this.request}>
                 Request
               </button>

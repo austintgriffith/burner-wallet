@@ -30,12 +30,13 @@ export default class SendToAddress extends React.Component {
         if(parts.length>2){
           initialState.toAddress = parts[0].replace("/","")
           initialState.amount = parts[1]
-          initialState.message = parts[2]
+          initialState.message = decodeURI(parts[2])
         }
       }
     }
     this.state = initialState
     console.log("SendToAddress constructor",this.state)
+    window.history.pushState({},"", "/");
   }
 
   updateState = (key, value) => {
@@ -47,22 +48,53 @@ export default class SendToAddress extends React.Component {
 
   componentDidMount(){
     this.setState({ canSend: this.canSend() })
+    setTimeout(()=>{
+      if(!this.state.toAddress && this.addressInput){
+        this.addressInput.focus();
+      }else if(!this.state.amount && this.amountInput){
+        this.amountInput.focus();
+      }else if(this.messageInput){
+        this.messageInput.focus();
+      }
+    },350)
+    if(this.props.balance<=0){
+      console.log("No Funds, redirect back home...")
+      this.props.goBack();
+      window.history.pushState({},"", "/");
+      this.props.changeAlert({
+        type: 'warning',
+        message: 'No funds to send.',
+      });
+    }
   }
 
   canSend() {
-    return (this.state.toAddress && this.state.toAddress.length === 42 && this.state.amount > 0)
+    return (this.state.toAddress && this.state.toAddress.length === 42)
   }
 
   send = () => {
     let { toAddress, amount } = this.state;
     if(this.state.canSend){
-      if(this.props.balance<=amount){
-        this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor(this.props.balance*100)/100+' (gas costs)'})
+      if(this.props.balance-0.0001<=amount){
+        this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((this.props.balance-0.0001)*100)/100+' (gas costs)'})
       }else{
-        console.log("SWITCH TO LOADER VIEW...")
+        console.log("SWITCH TO LOADER VIEW...",amount)
         this.props.changeView('loader')
         setTimeout(()=>{window.scrollTo(0,0)},60)
-        this.props.send(toAddress, amount, (result) => {
+
+        console.log("web3",this.props.web3)
+        let txData
+        if(this.state.message){
+          txData = this.props.web3.utils.utf8ToHex(this.state.message)
+        }
+        console.log("txData",txData)
+        let value = 0
+        console.log("amount",amount)
+        if(amount){
+          value=amount
+        }
+
+        this.props.send(toAddress, value, 120000, txData, (result) => {
           if(result && result.transactionHash){
             this.props.goBack();
             window.history.pushState({},"", "/");
@@ -74,14 +106,14 @@ export default class SendToAddress extends React.Component {
         })
       }
     }else{
-      this.props.changeAlert({type: 'warning', message: 'Please enter a valid address and amount'})
+      this.props.changeAlert({type: 'warning', message: 'Please enter a valid address'})
     }
   };
 
   render() {
     let { canSend, toAddress } = this.state;
 
-    let sendMessage = ""
+    /*let sendMessage = ""
     if(this.state.message){
       sendMessage = (
         <div className="form-group w-100">
@@ -91,33 +123,39 @@ export default class SendToAddress extends React.Component {
           </div>
         </div>
       )
-    }
-
+    }*/
 
     return (
       <div>
         <div className="send-to-address card w-100">
-          <Balance amount={this.props.balance} address={this.props.address}/>
+          <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay}/>
           <Ruler/>
           <div className="content row">
             <div className="form-group w-100">
               <div className="form-group w-100">
                 <label htmlFor="amount_input">To Address</label>
                 <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
+                  ref={(input) => { this.addressInput = input; }}
                        onChange={event => this.updateState('toAddress', event.target.value)} />
               </div>
-                { this.state.toAddress && this.state.toAddress.length==42 && <Blockies seed={toAddress} scale={10} /> }
+              <div>  { this.state.toAddress && this.state.toAddress.length==42 && <Blockies seed={toAddress.toLowerCase()} scale={10} /> }</div>
               <label htmlFor="amount_input">Send Amount</label>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
                 </div>
                 <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
+                    ref={(input) => { this.amountInput = input; }}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
+              <div className="form-group w-100" style={{marginTop:20}}>
+                <label htmlFor="amount_input">Message</label>
+                <input type="text" className="form-control" placeholder="optional unencrypted message" value={this.state.message}
+                  ref={(input) => { this.messageInput = input; }}
+                       onChange={event => this.updateState('message', event.target.value)} />
+              </div>
             </div>
-            {sendMessage}
-            <button className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
+            <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
                     onClick={this.send}>
               Send
             </button>

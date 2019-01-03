@@ -1,17 +1,31 @@
-@import url('https://rsms.me/inter/inter-ui.css');
-@import url('/fonts/arial_rounded_mt_bold.ttf');
+//@import url('https://rsms.me/inter/inter-ui.css');
+//@import url('/fonts/arial_rounded_mt_bold.ttf');
 
 :not(i) {
-  font-family: "Inter UI", sans-serif;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 body {
+  font-family: 'IBM Plex Mono', monospace;
   height: 100%;
-  min-height: 820px;
   background-attachment: fixed;
-  background-image: linear-gradient(#F69E4D, #F76B1C);
-  margin: 10px;
-  margin-top: 25px;
-  font-size: 20px;
+  background-color: #000000;
+  letter-spacing: -1pt;
   color: #4A4A4A;
+}
+a {
+  color:#777777;
+  text-decoration: none;
+}
+a:visited {
+  color:#444444;
+  text-decoration: none;
+}
+
+.Linkify {
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+}
+.chat {
+  line-height: 1;
+  letter-spacing: -0.8px;
 }
