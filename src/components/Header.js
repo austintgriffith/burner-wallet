@@ -26,7 +26,7 @@ export  default ({title, titleImage, mainStyle, balance, address, changeView, vi
         <div style={{position:"absolute",right:70,top:20}}>
           {address}
         </div>
-        <div>
+        <div style={{marginTop:17,marginRight:10}}>
           <Blockie
             address={address}
             config={{size:7}}

@@ -54,7 +54,7 @@
     }
   ],
   "start_url": "./index.html",
-  "display": "standalone",
+  "display": "minimal-ui",
   "orientation": "portrait",
   "theme_color": "#fd7e14",
   "background_color": "#fd7e14"
