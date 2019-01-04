@@ -362,7 +362,7 @@ export default class Exchange extends React.Component {
         this.props.changeAlert({type: 'success',message: "Sent "+this.state.daiSendAmount+" DAI to "+this.state.daiSendToAddress});
         this.setState({
           daiToXdaiMode:false,
-          daiSendAmount:0,
+          daiSendAmount:"",
           daiSendToAddress:"",
           loaderBarColor:"#FFFFFF",
           loaderBarStatusText:"",
@@ -472,7 +472,7 @@ export default class Exchange extends React.Component {
         this.props.changeAlert({type: 'success',message: "Sent $"+this.state.ethSendAmount+" of ETH to "+this.state.ethSendToAddress});
         this.setState({
           ethToDaiMode:false,
-          ethSendAmount:0,
+          ethSendAmount:"",
           ethSendToAddress:"",
           loaderBarColor:"#FFFFFF",
           loaderBarStatusText:"",
@@ -541,7 +541,7 @@ export default class Exchange extends React.Component {
 
       //send funds using metamask (or other injected web3 ... should be checked and on mainnet)
       this.setState({
-        amount:0,
+        amount:"",
         loaderBarColor:"#4ab3f5",
         loaderBarStatusText:message,
         loaderBarClick:()=>{
@@ -967,7 +967,7 @@ export default class Exchange extends React.Component {
                 //send ERC20 DAI to 0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016 (toXdaiBridgeAccount)
                 this.transferDai(toXdaiBridgeAccount,this.state.amount,"Sending funds to bridge...",()=>{
                   this.setState({
-                    amount:0,
+                    amount:"",
                     loaderBarColor:"#4ab3f5",
                     loaderBarStatusText:"Waiting for bridge...",
                     loaderBarClick:()=>{
@@ -1041,7 +1041,7 @@ export default class Exchange extends React.Component {
                   console.log("RESUTL!!!!",result)
                   if(result && result.transactionHash){
                     this.setState({
-                      amount:0,
+                      amount:"",
                       loaderBarColor:"#4ab3f5",
                       loaderBarStatusText:"Waiting for bridge...",
                       loaderBarClick:()=>{
@@ -1195,7 +1195,7 @@ export default class Exchange extends React.Component {
                   "Sending funds to 🦄 exchange...",
                   (receipt)=>{
                     this.setState({
-                      amount:0,
+                      amount:"",
                       loaderBarColor:"#4ab3f5",
                       loaderBarStatusText:"Waiting for 🦄 exchange...",
                       loaderBarClick:()=>{
@@ -1420,7 +1420,7 @@ export default class Exchange extends React.Component {
                             this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                               console.log("META RECEIPT",receipt)
                               this.setState({
-                                amount:0,
+                                amount:"",
                                 loaderBarColor:"#4ab3f5",
 
                               })
@@ -1449,7 +1449,7 @@ export default class Exchange extends React.Component {
 
                     //send funds using metamask (or other injected web3 ... should be checked and on mainnet)
                     this.setState({
-                      amount:0,
+                      amount:"",
                       loaderBarColor:"#42ceb2",
                       loaderBarStatusText:"Approving 🦄 exchange...",
                       loaderBarClick:()=>{
@@ -1464,7 +1464,7 @@ export default class Exchange extends React.Component {
                       if(receipt){
                         console.log("APPROVE COMPLETE?!?",receipt)
                         this.setState({
-                          amount:0,
+                          amount:"",
                           ethBalanceAtStart:this.state.ethBalance,
                           ethBalanceShouldBe:eventualEthBalance,
                           loaderBarColor:"#4ab3f5",
@@ -1487,7 +1487,7 @@ export default class Exchange extends React.Component {
                     })
                   }else{
                     this.setState({
-                      amount:0,
+                      amount:"",
                       ethBalanceAtStart:this.state.ethBalance,
                       ethBalanceShouldBe:eventualEthBalance,
                       loaderBarColor:"#4ab3f5",
