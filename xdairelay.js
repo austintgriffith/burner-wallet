@@ -36,7 +36,7 @@ const HDWalletProvider = require("truffle-hdwallet-provider")
 let DESKTOPMINERACCOUNT = 0
 
 let web3
-if(relayHttpProvider.indexOf("localhost")>=0){
+if(relayHttpProvider.indexOf("localhost")>=0||relayHttpProvider.indexOf("dai.poa.network")>=0){
   web3 = new Web3(
      new HDWalletProvider(
        process.env.mnemonic,
