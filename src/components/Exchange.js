@@ -846,18 +846,22 @@ export default class Exchange extends React.Component {
            <div className="content ops row">
 
              <div className="col-6 p-1">
-               <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
+               <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor,whiteSpace:"nowrap"}} disabled={buttonsDisabled}  onClick={()=>{
                  this.setState({xdaiToDendaiMode:"deposit"})
                }}>
-                 <i className="fas fa-arrow-up"  />
+                  <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+                    <i className="fas fa-arrow-up"  /> xDai to DenDai
+                  </Scaler>
                </button>
              </div>
 
              <div className="col-6 p-1">
-               <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
+               <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor,whiteSpace:"nowrap"}} disabled={buttonsDisabled}  onClick={()=>{
                  this.setState({xdaiToDendaiMode:"withdraw"})
                }}>
-                 <i className="fas fa-arrow-down" />
+                 <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+                  <i className="fas fa-arrow-down" /> DenDai to xDai
+                 </Scaler>
                </button>
              </div>
            </div>
@@ -1065,18 +1069,22 @@ export default class Exchange extends React.Component {
         <div className="content ops row">
 
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled} onClick={()=>{
+            <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled} onClick={()=>{
               this.setState({daiToXdaiMode:"deposit"})
             }} >
-              <i className="fas fa-arrow-up"  />
+              <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+              <i className="fas fa-arrow-up"  /> DAI to xDai
+              </Scaler>
             </button>
           </div>
 
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
+            <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
               this.setState({daiToXdaiMode:"withdraw"})
             }} >
-              <i className="fas fa-arrow-down"  />
+              <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+              <i className="fas fa-arrow-down"  /> xDai to DAI
+              </Scaler>
             </button>
           </div>
         </div>
@@ -1537,18 +1545,22 @@ export default class Exchange extends React.Component {
          <div className="content ops row">
 
            <div className="col-6 p-1">
-             <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
+             <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor,whiteSpace:"nowrap"}} disabled={buttonsDisabled}  onClick={()=>{
                this.setState({ethToDaiMode:"deposit"})
              }}>
-               <i className="fas fa-arrow-up"  />
+               <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+                <i className="fas fa-arrow-up"  /> ETH to DAI
+               </Scaler>
              </button>
            </div>
 
            <div className="col-6 p-1">
-             <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
+             <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor,whiteSpace:"nowrap"}} disabled={buttonsDisabled}  onClick={()=>{
                this.setState({ethToDaiMode:"withdraw"})
              }}>
-               <i className="fas fa-arrow-down" />
+              <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+               <i className="fas fa-arrow-down" /> DAI to ETH
+              </Scaler>
              </button>
            </div>
          </div>
