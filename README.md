@@ -4,13 +4,19 @@ Read the full article here:
 [Ethereum in Emerging Economies - Mass adoption will start where decentralization is necessary](https://medium.com/@austin_48503/ethereum-in-emerging-economies-b235f8dac2f2)
 
 
-[![burnerwalletscreencast](https://user-images.githubusercontent.com/2653167/48286964-83715b80-e424-11e8-9fc3-a1260bfb4a00.png)](https://youtu.be/KkOyrEvYqO8)
-
 There are places in the world today where it's hard to find important goods with the traditional currency or the currency may fluctuate immensely in value due to inflation. Luckily, exchange of value is one of our most powerful assets in the Ethereum space. 
 
 Unfortunately, it is especially difficult to onboard new users because our ecosystem has such a steep learning curve. Traditional wallets put a huge burden on the user to understand a new currency and deal with seed phrases.
 
 What we need is a way to exchange an intuitive currency like DAI using a simple and ubiquitous platform like the mobile web browser.
+
+[![burnerwalletvideosplash](https://user-images.githubusercontent.com/2653167/50697319-23033280-0fff-11e9-8891-77965ecf1fcf.jpg)](https://youtu.be/k1Ssz1dvcpk)
+
+
+# Original Video
+
+[![burnerwalletscreencast](https://user-images.githubusercontent.com/2653167/48286964-83715b80-e424-11e8-9fc3-a1260bfb4a00.png)](https://youtu.be/KkOyrEvYqO8)
+
 Here are two phones exchanging value in a matter of seconds using burners:
 
 ![burnerwalletdemo](https://user-images.githubusercontent.com/2653167/48271785-5dcf5c80-e3fa-11e8-98fb-143de75df7aa.gif)
