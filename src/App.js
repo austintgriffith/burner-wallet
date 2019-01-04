@@ -486,6 +486,7 @@ class App extends Component {
 
         <div className="container-fluid">
           <Header
+            ens={this.state.ens}
             title={title}
             titleImage={titleImage}
             mainStyle={mainStyle}
