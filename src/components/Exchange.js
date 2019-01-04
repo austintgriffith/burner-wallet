@@ -1149,7 +1149,7 @@ export default class Exchange extends React.Component {
                 console.log(uniswapContract)
 
                 let amountOfEth = this.state.amount / this.state.ethprice
-                amountOfEth = webToUse.utils.toWei(""+amountOfEth,'ether')
+                amountOfEth = webToUse.utils.toWei(""+Math.round(amountOfEth*10000)/10000,'ether')
                 console.log("amountOfEth",amountOfEth)
 
                 let output = await uniswapContract.methods.getTokenToEthOutputPrice(amountOfEth).call()
