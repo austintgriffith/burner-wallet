@@ -137,7 +137,7 @@ class App extends Component {
         if(privateKey.indexOf("0x")!=0){
           privateKey="0x"+privateKey
         }
-        console.log("!!! possibleNewPrivateKey",privateKey)
+        //console.log("!!! possibleNewPrivateKey",privateKey)
         this.setState({possibleNewPrivateKey:privateKey})
         window.history.pushState({},"", "/");
       }else{
@@ -179,7 +179,7 @@ class App extends Component {
     })
   }
   dealWithPossibleNewPrivateKey(){
-    console.log("possibleNewPrivateKey",this.state.possibleNewPrivateKey,this.state)
+    //console.log("possibleNewPrivateKey",this.state.possibleNewPrivateKey,this.state)
     //only import pks over empty metaaccounts
     if(this.state.balance>=0.10 || !this.state.metaAccount){
       console.log("Can't import private key, so ask to withdraw")
