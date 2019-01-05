@@ -1,6 +1,6 @@
 import React from 'react';
 import { Scaler, Blockie } from "dapparatus";
-export  default ({title, titleImage, mainStyle, balance, address, changeView, view}) => {
+export  default ({ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
   let actionWord = "Send"
   if(balance<=0){
     actionWord = "Scan"
@@ -19,14 +19,20 @@ export  default ({title, titleImage, mainStyle, balance, address, changeView, vi
     </div>
   )
   if(view=="bridge"){
+
+    let display = address
+    if(ens){
+      display = ens
+    }
+
     topRight = (
       <div style={{position:"absolute",right:0,top:-10,zIndex:1,cursor:"pointer"}}  >
         <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank" style={{color:"#FFFFFF"}}>
         <Scaler config={{startZoomAt:1000,origin:"100% 100%",adjustedZoom:1}}>
         <div style={{position:"absolute",right:70,top:20}}>
-          {address}
+          {display}
         </div>
-        <div>
+        <div style={{marginTop:17,marginRight:10}}>
           <Blockie
             address={address}
             config={{size:7}}

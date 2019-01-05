@@ -34,17 +34,21 @@ export default class SendWithLink extends React.Component {
   send = () => {
     let { amount } = this.state;
     if(this.state.canSend){
-      this.props.changeView('loader')
-      setTimeout(()=>{window.scrollTo(0,0)},60)
-      this.props.sendWithLink(amount, (result) => {
-        if(result && result.transactionHash){
-          this.props.changeView('share-link')
-          this.props.changeAlert({
-            type: 'success',
-            message: 'Sent! '+result.transactionHash,
-          });
-        }
-      })
+      //if(this.props.balance-0.0001<=amount){
+      //  this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((this.props.balance-0.0001)*100)/100+' (gas costs)'})
+      //}else{
+        this.props.changeView('loader')
+        setTimeout(()=>{window.scrollTo(0,0)},60)
+        this.props.sendWithLink(amount, (result) => {
+          if(result && result.transactionHash){
+            this.props.changeView('share-link')
+            this.props.changeAlert({
+              type: 'success',
+              message: 'Sent! '+result.transactionHash,
+            });
+          }
+        })
+      //}
     }else{
       this.props.changeAlert({type: 'warning', message: 'Please enter a valid amount'})
     }

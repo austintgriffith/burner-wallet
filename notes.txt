@@ -1,0 +1,13 @@
+# Notes
+
+Deployment means doing a git pull on mediumohio first, then an npm run build
+(this pushes it to stage)
+to deploy to production run ./deploy.sh from the mediumohio box
+
+to deploy the contract, make sure clevis.json is pointed at dai.poa.network on mediumohio
+clevis test publish looks like it fails but I think the address publishes for Links contract
+then deploy to prod (which does a build)
+
+the relay lives on cryptogs
+that means you need to sftp the abi and address over to the src/contracts folder on cryptogs for the relayer to work
+then pm2 restart xdairelay.js

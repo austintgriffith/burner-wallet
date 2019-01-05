@@ -57,6 +57,15 @@ export default class SendToAddress extends React.Component {
         this.messageInput.focus();
       }
     },350)
+    if(this.props.balance<=0){
+      console.log("No Funds, redirect back home...")
+      this.props.goBack();
+      window.history.pushState({},"", "/");
+      this.props.changeAlert({
+        type: 'warning',
+        message: 'No funds to send.',
+      });
+    }
   }
 
   canSend() {
@@ -66,7 +75,7 @@ export default class SendToAddress extends React.Component {
   send = () => {
     let { toAddress, amount } = this.state;
     if(this.state.canSend){
-      if(this.props.balance<=amount){
+      if(this.props.balance-0.0001<=amount){
         this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((this.props.balance-0.0001)*100)/100+' (gas costs)'})
       }else{
         console.log("SWITCH TO LOADER VIEW...",amount)

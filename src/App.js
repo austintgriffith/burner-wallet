@@ -93,6 +93,7 @@ class App extends Component {
     if(cachedView&&cachedView!=0){
       view = cachedView
     }
+    console.log("CACHED VIEW",view)
     super(props);
     this.state = {
       web3: false,
@@ -119,8 +120,10 @@ class App extends Component {
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
     if(window.location.pathname){
+      console.log("PATH",window.location.pathname,window.location.pathname.length)
       if(window.location.pathname.length==43){
         this.changeView('send_to_address')
+        console.log("CHANGE VIEW")
       }else if(window.location.pathname.length==134){
         let parts = window.location.pathname.split(";")
         let claimId = parts[0].replace("/","")
@@ -134,7 +137,7 @@ class App extends Component {
         if(privateKey.indexOf("0x")!=0){
           privateKey="0x"+privateKey
         }
-        console.log("!!! possibleNewPrivateKey",privateKey)
+        //console.log("!!! possibleNewPrivateKey",privateKey)
         this.setState({possibleNewPrivateKey:privateKey})
         window.history.pushState({},"", "/");
       }else{
@@ -176,7 +179,7 @@ class App extends Component {
     })
   }
   dealWithPossibleNewPrivateKey(){
-    console.log("possibleNewPrivateKey",this.state.possibleNewPrivateKey,this.state)
+    //console.log("possibleNewPrivateKey",this.state.possibleNewPrivateKey,this.state)
     //only import pks over empty metaaccounts
     if(this.state.balance>=0.10 || !this.state.metaAccount){
       console.log("Can't import private key, so ask to withdraw")
@@ -223,6 +226,7 @@ class App extends Component {
 
         let claimHash = this.state.web3.utils.soliditySha3(
           {type: 'bytes32', value: this.state.claimId}, // fund id
+          {type: 'address', value: this.state.account}, // destination address
           {type: 'uint256', value: fund[3]}, // nonce
           {type: 'address', value: contracts.Links._address} // contract address
         )
@@ -295,8 +299,9 @@ class App extends Component {
   }
   changeView = (view,cb) => {
     if(view=="bridge"||view=="main"/*||view.indexOf("account_")==0*/) localStorage.setItem("view",view) //some pages should be sticky because of metamask reloads
-    if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
+    /*if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
       console.log("This is a send...")
+      console.log("BALANCE",this.state.balance)
       if (this.state.balance <= 0) {
         console.log("no funds...")
         this.changeAlert({
@@ -306,6 +311,7 @@ class App extends Component {
         return;
       }
     }
+    */
     this.changeAlert(null);
     console.log("Setting state",view)
     this.setState({ view },cb);
@@ -344,14 +350,14 @@ class App extends Component {
             blockNumber:tx.blockNumber
           }
           if(tx.input&&tx.input!="0x"){
-            console.log("DEALING WITH INPUT: ",tx.input)
+            //console.log("DEALING WITH INPUT: ",tx.input)
 
-            console.log("has meta account, trying to decode...")
+            //console.log("has meta account, trying to decode...")
             let key = tx.input.substring(0,32)
-            console.log("looking in memory for key",key)
+            //console.log("looking in memory for key",key)
             let cachedEncrypted = this.state[key]
             if(!cachedEncrypted){
-              console.log("nothing found in memory, checking local storage")
+              //console.log("nothing found in memory, checking local storage")
               cachedEncrypted = localStorage.getItem(key)
             }
             if(cachedEncrypted){
@@ -377,7 +383,7 @@ class App extends Component {
           try{
             smallerTx.data = this.state.web3.utils.hexToUtf8(tx.input)
           }catch(e){}
-          console.log("smallerTx at this point",smallerTx)
+          //console.log("smallerTx at this point",smallerTx)
           if(!smallerTx.data){
             smallerTx.data = " *** unable to decrypt data *** "
           }
@@ -480,6 +486,7 @@ class App extends Component {
 
         <div className="container-fluid">
           <Header
+            ens={this.state.ens}
             title={title}
             titleImage={titleImage}
             mainStyle={mainStyle}
@@ -816,7 +823,6 @@ class App extends Component {
           newPrivateKey={this.state.newPrivateKey}
           fallbackWeb3Provider={WEB3_PROVIDER}
           onUpdate={async (state) => {
-            //console.log("Dapparatus state update:", state)
             if(ERC20TOKEN){
               delete state.balance
             }
