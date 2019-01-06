@@ -13,10 +13,10 @@ export default class SendToAddress extends React.Component {
       message: props.message,
       canSend: false,
     }
-    if(props.balance<=0){
+    /*if(props.balance<=0){
       this.props.goBack();
       window.history.pushState({},"", "/");
-    }
+    }*/
     let startingAmount = 0.15
     if(props.amount){
       startingAmount = props.amount
@@ -56,16 +56,20 @@ export default class SendToAddress extends React.Component {
       }else if(this.messageInput){
         this.messageInput.focus();
       }
+
     },350)
-    if(this.props.balance<=0){
-      console.log("No Funds, redirect back home...")
-      this.props.goBack();
-      window.history.pushState({},"", "/");
-      this.props.changeAlert({
-        type: 'warning',
-        message: 'No funds to send.',
-      });
-    }
+    setTimeout(()=>{
+      if(this.props.balance<=0){
+        alert(this.props.balance)
+        console.log("No Funds, redirect back home...")
+        this.props.goBack();
+        window.history.pushState({},"", "/");
+        this.props.changeAlert({
+          type: 'warning',
+          message: 'No funds to send.',
+        });
+      }
+    },1500)
   }
 
   canSend() {

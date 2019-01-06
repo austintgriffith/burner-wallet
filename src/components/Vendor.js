@@ -42,7 +42,7 @@ export default class Advanced extends React.Component {
     this.setState({products})
   }
   render(){
-    let {mainStyle,contracts,vendor,tx,web3} = this.props
+    let {dollarDisplay,mainStyle,contracts,vendor,tx,web3} = this.props
 
     let products = []
     for(let p in this.state.products){
@@ -63,8 +63,8 @@ export default class Advanced extends React.Component {
             <div className="col-6 p-1">
               {web3.utils.hexToUtf8(prod.name)}
             </div>
-            <div className="col-5 p-1">
-              ${web3.utils.fromWei(prod.cost,'ether')}
+            <div className="col-6 p-1">
+              ${dollarDisplay(web3.utils.fromWei(prod.cost,'ether'))}
             </div>
           </div>
         )
@@ -72,7 +72,13 @@ export default class Advanced extends React.Component {
     }
 
     let venderButtonText = ""
-    if(vendor.isActive){
+    if(this.state.changingActive){
+      venderButtonText = (
+          <div>
+            <i className="fas fa-cog fa-spin"></i> Updating
+          </div>
+      )
+    }else if(vendor.isActive){
       venderButtonText = (
           <div>
             <i className="fas fa-thumbs-up"></i> Open
@@ -89,13 +95,18 @@ export default class Advanced extends React.Component {
     return (
       <div className="main-card card w-100">
         <div className="content bridge row">
-          <div className="col-6 p-1" style={{textAlign:'center'}}>
+          <div className="col-8 p-1" style={{textAlign:'center'}}>
             <h2>{web3.utils.hexToUtf8(vendor.name)}</h2>
           </div>
-          <div className="col-6 p-1">
+          <div className="col-4 p-1">
           <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
-            tx(contracts.DenDai.activateVendor(!vendor.isActive),120000,0,0,(result)=>{
+            this.setState({changingActive:true})
+            let setActiveTo = !vendor.isActive
+            tx(contracts.DenDai.activateVendor(setActiveTo),120000,0,0,(result)=>{
               console.log("ACTIVE:",result)
+              setTimeout(()=>{
+                this.setState({changingActive:false})
+              },1500)
             })
           }}>
             <Scaler config={{startZoomAt:500,origin:"40% 50%"}}>
@@ -129,7 +140,7 @@ export default class Advanced extends React.Component {
               setTimeout(this.poll.bind(this),100)
             })
           }}>
-            <Scaler config={{startZoomAt:500,origin:"40% 50%"}}>
+            <Scaler config={{startZoomAt:650,origin:"20% 50%"}}>
               <i className="fas fa-plus-square"></i> Add Product
             </Scaler>
           </button>

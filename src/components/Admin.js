@@ -32,7 +32,12 @@ export default class Advanced extends React.Component {
     let vendorDisplay = []
     for(let v in vendors){
       let vendorButton = (
-        <button disabled={!vendors[v].isActive||!vendors[v].isAllowed} className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}}>
+        <button disabled={!vendors[v].isActive||!vendors[v].isAllowed} className="btn btn-large w-100"
+          onClick={()=>{
+            window.location = "/vendors;"+vendors[v].wallet
+          }}
+          style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"
+        }}>
           <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
             {vendors[v].name}
           </Scaler>
@@ -91,7 +96,7 @@ export default class Advanced extends React.Component {
               this.setState({newVendor:"",newVendorName:""})
             })
           }}>
-            <Scaler config={{startZoomAt:500,origin:"40% 50%"}}>
+            <Scaler config={{startZoomAt:600,origin:"20% 50%"}}>
               <i className="fas fa-user"></i> Add Vendor
             </Scaler>
           </button>
@@ -113,7 +118,7 @@ export default class Advanced extends React.Component {
               this.setState({newAdmin:""})
             })
           }}>
-            <Scaler config={{startZoomAt:500,origin:"40% 50%"}}>
+            <Scaler config={{startZoomAt:600,origin:"20% 50%"}}>
               <i className="fas fa-user-astronaut"></i> Add Admin
             </Scaler>
           </button>

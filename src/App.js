@@ -38,6 +38,7 @@ let mainStyle = {
     height:"100%",
     backgroundImage:"linear-gradient(#F69E4D, #F76B1C)",
     backgroundColor:"#F76B1C",
+    hotColor:"#F69E4D",
     mainColor:"#8762A6"
 }
 
@@ -142,13 +143,19 @@ class App extends Component {
         //console.log("!!! possibleNewPrivateKey",privateKey)
         this.setState({possibleNewPrivateKey:privateKey})
         window.history.pushState({},"", "/");
+      }else if(window.location.pathname.indexOf("/vendors;")==0){
+        this.changeView('vendors')
       }else{
         let parts = window.location.pathname.split(";")
         console.log("PARTS",parts)
         if(parts.length>=2){
           let sendToAddress = parts[0].replace("/","")
           let sendToAmount = parts[1]
-          if(parseFloat(sendToAmount)>0 && sendToAddress.length==42){
+          let extraData = ""
+          if(parts.length>=3){
+            extraData = parts[2]
+          }
+          if((parseFloat(sendToAmount)>0 || extraData) && sendToAddress.length==42){
             this.changeView('send_to_address')
           }
         }
@@ -251,6 +258,7 @@ class App extends Component {
         })
       }
     })
+    this.forceUpdate();
   }
   relayClaim() {
     console.log("DOING CLAIM THROUGH RELAY")
@@ -435,7 +443,7 @@ class App extends Component {
 
     let found = false
     for(let r in recentTxs){
-      if(recentTxs[r].hash==smallerTx.hash){
+      if(recentTxs[r].hash==smallerTx.hash && (!smallerTx.data || recentTxs[r].data == smallerTx.data)){
         found=true
         break
       }
@@ -643,6 +651,7 @@ class App extends Component {
                         vendor={this.state.isVendor}
                         tx={this.state.tx}
                         web3={this.state.web3}
+                        dollarDisplay={dollarDisplay}
                       />
                       <MoreButtons
                         mainStyle={mainStyle}
@@ -664,6 +673,7 @@ class App extends Component {
                     eventData.to = eventData.to.toLowerCase()
                     eventData.from = eventData.from.toLowerCase()
                     eventData.token = ERC20TOKEN
+                    eventData.data = this.state.web3.utils.hexToUtf8(eventData.data)
                     if(!this.state.recentTxs || this.addTxIfAccountMatches(recentTxs,transactionsByAddress,eventData)){
                       this.sortAndSaveTransactions(recentTxs,transactionsByAddress)
                     }
@@ -682,6 +692,22 @@ class App extends Component {
                         config={{hide:true}}
                         contract={this.state.contracts.DenDai}
                         eventName={"Transfer"}
+                        block={this.state.block}
+                        filter={{to:this.state.account}}
+                        onUpdate={handler}
+                      />
+                      <Events
+                        config={{hide:true}}
+                        contract={this.state.contracts.DenDai}
+                        eventName={"TransferWithData"}
+                        block={this.state.block}
+                        filter={{from:this.state.account}}
+                        onUpdate={handler}
+                      />
+                      <Events
+                        config={{hide:true}}
+                        contract={this.state.contracts.DenDai}
+                        eventName={"TransferWithData"}
                         block={this.state.block}
                         filter={{to:this.state.account}}
                         onUpdate={handler}
@@ -915,6 +941,8 @@ class App extends Component {
                           tx={this.state.tx}
                           web3={this.state.web3}
                           block={this.state.block}
+                          goBack={this.goBack.bind(this)}
+                          dollarDisplay={dollarDisplay}
                         />
                       </div>
                     );
@@ -1095,7 +1123,11 @@ async function tokenSend(to,value,gasLimit,txData,cb){
       gas: setGasLimit,
       gasPrice: Math.round(this.state.gwei * 1000000000)
     }
-    tx.data = this.state.contracts.DenDai.transfer(to,weiValue).encodeABI()
+    if(data){
+      tx.data = this.state.contracts.DenDai.transferWithData(to,weiValue,data).encodeABI()
+    }else{
+      tx.data = this.state.contracts.DenDai.transfer(to,weiValue).encodeABI()
+    }
     console.log("TX SIGNED TO METAMASK:",tx)
     this.state.web3.eth.accounts.signTransaction(tx, this.state.metaAccount.privateKey).then(signed => {
         console.log("SIGNED:",signed)
@@ -1104,6 +1136,7 @@ async function tokenSend(to,value,gasLimit,txData,cb){
           cb(receipt)
         })
     });
+
   }else{
     let data = false
     if(typeof txData == "function"){
@@ -1119,7 +1152,13 @@ async function tokenSend(to,value,gasLimit,txData,cb){
       gasPrice: Math.round(this.state.gwei * 1000000000)
     }
 
-    txObject.data = this.state.contracts.DenDai.transfer(to,weiValue).encodeABI()
+    if(data){
+      txObject.data = this.state.contracts.DenDai.transferWithData(to,weiValue,data).encodeABI()
+    }else{
+      txObject.data = this.state.contracts.DenDai.transfer(to,weiValue).encodeABI()
+    }
+
+
 
     console.log("sending with injected web3 account",txObject)
     result = await this.state.web3.eth.sendTransaction(txObject)

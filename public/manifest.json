@@ -54,7 +54,6 @@
     }
   ],
   "start_url": "./index.html",
-  "display": "minimal-ui",
   "orientation": "portrait",
   "theme_color": "#fd7e14",
   "background_color": "#fd7e14"

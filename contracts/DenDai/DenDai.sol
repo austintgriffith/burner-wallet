@@ -12,6 +12,14 @@ contract DenDai is ERC20Mintable {
     admin[msg.sender] = true;
   }
 
+  function transferWithData(address to, uint256 value, bytes data) public returns (bool) {
+    emit TransferWithData(msg.sender,to,value,data);
+    return transfer(to, value);
+  }
+  event TransferWithData(address indexed from, address indexed to, uint256 value, bytes data);
+
+
+
   mapping (address => bool) public admin;
 
   function updateAdmin(address newAdmin,bool active) public {

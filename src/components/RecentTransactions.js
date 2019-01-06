@@ -5,7 +5,7 @@ import { Scaler } from "dapparatus";
 
 const BockieSize = 4
 
-export default ({ERC20TOKEN, address, recentTxs, block, changeView}) => {
+export default ({ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
   let txns = []
   for(let r in recentTxs){
     let thisValue = parseFloat(recentTxs[r].value)
@@ -35,8 +35,8 @@ export default ({ERC20TOKEN, address, recentTxs, block, changeView}) => {
           )
         }else{
           dollarView = (
-            <span style={{opacity:0.33,fontSize:14}}>
-              -{parseFloat(recentTxs[r].value).toFixed(2)}->
+            <span style={{opacity:0.5,fontSize:14}}>
+              {parseFloat(recentTxs[r].value).toFixed(2)}
             </span>
           )
         }
@@ -45,6 +45,20 @@ export default ({ERC20TOKEN, address, recentTxs, block, changeView}) => {
         dollarView = (
           <span>
             <span style={{opacity:0.33}}>-</span>${parseFloat(recentTxs[r].value).toFixed(2)}<span style={{opacity:0.33}}>-></span>
+          </span>
+        )
+      }
+
+      let toBlockie = (
+        <Blockie
+          address={recentTxs[r].to}
+          config={{size:BockieSize}}
+        />
+      )
+      if(recentTxs[r].to==address && recentTxs[r].data) {
+        toBlockie = (
+          <span>
+            {recentTxs[r].data.substring()}
           </span>
         )
       }
@@ -70,10 +84,7 @@ export default ({ERC20TOKEN, address, recentTxs, block, changeView}) => {
             </Scaler>
           </div>
           <div className="col-3 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
-            <Blockie
-              address={recentTxs[r].to}
-              config={{size:BockieSize}}
-            />
+            {toBlockie}
           </div>
           <div className="col-3 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
             <Scaler config={{startZoomAt:600,origin:"25% 50%",adjustedZoom:1}}>
