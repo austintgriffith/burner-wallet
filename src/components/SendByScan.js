@@ -167,7 +167,7 @@ class SendByScan extends Component {
             <div>Capture QR Code:</div>
               <div className="main-card card w-100" style={{backgroundColor:"#000000"}}>
                 <div className="content ops row">
-                    <button className="btn btn-large w-100">
+                    <button className="btn btn-large w-100" style={{backgroundColor:this.props.mainStyle.mainColor}}>
                         <i className="fas fa-camera"  /> Take Picture
                     </button>
                 </div>

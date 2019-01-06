@@ -37,10 +37,10 @@ export default ({mainStyle,ERC20TOKEN,address, balance, changeAlert, changeView,
   if(ERC20TOKEN){
     sendButtons = (
       <div className="content ops row">
-        <div className="col-6 p-1" onClick={() => {alert("list active vendors and products")}}>
+        <div className="col-6 p-1" onClick={() => changeView('vendors')}>
           <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}}>
             <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
-              <i class="fas fa-truck"></i> Vendors
+              <i className="fas fa-truck"></i> Vendors
             </Scaler>
           </button>
         </div>

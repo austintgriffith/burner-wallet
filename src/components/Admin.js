@@ -13,14 +13,68 @@ export default class Advanced extends React.Component {
     }
   }
   render(){
-    let {mainStyle,contracts,tx,web3} = this.props
+    let {mainStyle,contracts,tx,web3,vendors} = this.props
+
+    let vendorBlockie = ""
+    if(this.state.newVendor){
+      vendorBlockie = (
+        <Blockies seed={this.state.newVendor} scale={5}/>
+      )
+    }
+
+    let adminBlockie = ""
+    if(this.state.newAdmin){
+      adminBlockie = (
+        <Blockies seed={this.state.newAdmin} scale={5}/>
+      )
+    }
+
+    let vendorDisplay = []
+    for(let v in vendors){
+      let vendorButton = (
+        <button disabled={!vendors[v].isActive||!vendors[v].isAllowed} className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}}>
+          <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
+            {vendors[v].name}
+          </Scaler>
+        </button>
+      )
+      vendorDisplay.push(
+        <div key={v} className="content bridge row">
+          <div className="col-2 p-1" style={{textAlign:'center'}}>
+            <Blockies seed={vendors[v].wallet.toLowerCase()} scale={5}/>
+          </div>
+          <div className="col-8 p-1" style={{textAlign:'center'}}>
+            {vendorButton}
+          </div>
+          <div className="col-1 p-1" style={{textAlign:'center'}}>
+          <input
+           name="isAllowed"
+           type="checkbox"
+           checked={vendors[v].isAllowed}
+           onChange={this.handleInputChange}
+           />
+          </div>
+          <div className="col-1 p-1" style={{textAlign:'center'}}>
+          <input
+           name="isActive"
+           type="checkbox"
+           checked={vendors[v].isActive}
+           onChange={this.handleInputChange}
+           />
+          </div>
+        </div>
+      )
+    }
+
 
     return (
       <div className="main-card card w-100">
 
+        {vendorDisplay}
+
         <div className="content bridge row">
           <div className="col-1 p-1">
-            <Blockies seed={this.state.newVendor} scale={5}/>
+            {vendorBlockie}
           </div>
           <div className="col-3 p-1">
             <input type="text" className="form-control" placeholder="0x..." value={this.state.newVendor}
@@ -46,7 +100,7 @@ export default class Advanced extends React.Component {
 
         <div className="content bridge row">
           <div className="col-1 p-1">
-            <Blockies seed={this.state.newAdmin} scale={5}/>
+            {adminBlockie}
           </div>
           <div className="col-7 p-1">
             <input type="text" className="form-control" placeholder="0x..." value={this.state.newAdmin}

@@ -12,6 +12,7 @@ export default class Advanced extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      vendors: {}
     }
   }
   componentDidMount(){
@@ -49,35 +50,58 @@ export default class Advanced extends React.Component {
       if(prod.exists){
 
         let available = (
-          <i class="far fa-eye"></i>
+          <i className="far fa-eye"></i>
         )
         if(!prod.isAvailable){
           available = (
-            <i class="far fa-eye" style={{opacity:0.3}}></i>
+            <i className="far fa-eye" style={{opacity:0.3}}></i>
           )
         }
 
         products.push(
           <div className="content bridge row">
-          <div className="col-1 p-1">
-            {available}
-          </div>
             <div className="col-6 p-1">
               {web3.utils.hexToUtf8(prod.name)}
             </div>
             <div className="col-5 p-1">
-              {web3.utils.fromWei(prod.cost,'ether')}
+              ${web3.utils.fromWei(prod.cost,'ether')}
             </div>
           </div>
         )
       }
     }
 
+    let venderButtonText = ""
+    if(vendor.isActive){
+      venderButtonText = (
+          <div>
+            <i className="fas fa-thumbs-up"></i> Open
+          </div>
+      )
+    }else{
+      venderButtonText = (
+        <div>
+          <i className="fas fa-window-close"></i> Closed
+        </div>
+      )
+    }
+
     return (
       <div className="main-card card w-100">
         <div className="content bridge row">
-          <div className="col-12 p-1" style={{textAlign:'center'}}>
+          <div className="col-6 p-1" style={{textAlign:'center'}}>
             <h2>{web3.utils.hexToUtf8(vendor.name)}</h2>
+          </div>
+          <div className="col-6 p-1">
+          <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
+            tx(contracts.DenDai.activateVendor(!vendor.isActive),120000,0,0,(result)=>{
+              console.log("ACTIVE:",result)
+            })
+          }}>
+            <Scaler config={{startZoomAt:500,origin:"40% 50%"}}>
+              {venderButtonText}
+            </Scaler>
+          </button>
           </div>
         </div>
         {products}

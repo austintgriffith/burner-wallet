@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ContractLoader, Dapparatus, Transactions, Gas, Address } from "dapparatus";
+import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
 import './App.scss';
@@ -18,6 +18,7 @@ import BottomLinks from './components/BottomLinks';
 import MoreButtons from './components/MoreButtons';
 import Admin from './components/Admin';
 import Vendor from './components/Vendor';
+import Vendors from './components/Vendors';
 import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
@@ -104,7 +105,8 @@ class App extends Component {
       sendKey: "",
       alert: null,
       loadingTitle:'loading...',
-      balance: 0.00
+      balance: 0.00,
+      vendors: {}
     };
     this.alertTimeout = null;
   }
@@ -167,9 +169,9 @@ class App extends Component {
       let denDaiBalance = await this.state.contracts.DenDai.balanceOf(this.state.account).call()
       denDaiBalance = this.state.web3.utils.fromWei(""+denDaiBalance,'ether')
       let isAdmin = await this.state.contracts.DenDai.admin(this.state.account).call()
-      console.log("ISADMIN",isAdmin)
+      //console.log("ISADMIN",isAdmin)
       let isVendor = await this.state.contracts.DenDai.vendors(this.state.account).call()
-      console.log("isVendor",isVendor)
+      //console.log("isVendor",isVendor)
       this.setState({gasBalance:gasBalance,balance:denDaiBalance,isAdmin:isAdmin,isVendor:isVendor})
     }
   }
@@ -340,7 +342,7 @@ class App extends Component {
       for(let t in transactions){
         //console.log("TX",transactions[t])
         let tx = await this.state.web3.eth.getTransaction(transactions[t])
-        if(tx && tx.to && tx.from){
+        if(tx && tx.to && tx.from ){
           //console.log("EEETRTTTTERTETETET",tx)
           let smallerTx = {
             hash:tx.hash,
@@ -349,6 +351,7 @@ class App extends Component {
             value:this.state.web3.utils.fromWei(""+tx.value,"ether"),
             blockNumber:tx.blockNumber
           }
+
           if(tx.input&&tx.input!="0x"){
             //console.log("DEALING WITH INPUT: ",tx.input)
 
@@ -380,42 +383,106 @@ class App extends Component {
               }
             }
 
-          try{
-            smallerTx.data = this.state.web3.utils.hexToUtf8(tx.input)
-          }catch(e){}
-          //console.log("smallerTx at this point",smallerTx)
-          if(!smallerTx.data){
-            smallerTx.data = " *** unable to decrypt data *** "
+            try{
+              smallerTx.data = this.state.web3.utils.hexToUtf8(tx.input)
+            }catch(e){}
+            //console.log("smallerTx at this point",smallerTx)
+            if(!smallerTx.data){
+              smallerTx.data = " *** unable to decrypt data *** "
+            }
           }
-        }
 
-          //console.log(smallerTx)
-          if(smallerTx.from==this.state.account || smallerTx.to==this.state.account){
-            let found = false
-            for(let r in recentTxs){
-              if(recentTxs[r].hash==smallerTx.hash){
-                found=true
-                break
-              }
-            }
-            if(!found){
-              console.log("+TX",smallerTx)
-              let otherAccount = smallerTx.to
-              if(smallerTx.to==this.state.account){
-                otherAccount = smallerTx.from
-              }
-              if(!transactionsByAddress[otherAccount]){
-                transactionsByAddress[otherAccount] = []
-              }
-              transactionsByAddress[otherAccount].push(smallerTx)
-              recentTxs.push(smallerTx)
-              updatedTxs=true
-            }
+          if(parseFloat(smallerTx.value)>0.005 && (smallerTx.from==this.state.account || smallerTx.to==this.state.account)){
+            updatedTxs = updatedTxs || this.addTxIfAccountMatches(recentTxs,transactionsByAddress,smallerTx)
           }
+
         }
       }
     }
-    return {recentTxs,updatedTxs,transactionsByAddress}
+    return updatedTxs
+  }
+  initRecentTxs(){
+    let recentTxs = this.state.recentTxs
+    let transactionsByAddress = this.state.transactionsByAddress
+    if(!recentTxs){
+      //console.log("no recent tx found, checking storage")
+      recentTxs = localStorage.getItem(this.state.account+"recentTxs")
+      //console.log("recentTxs txt is",recentTxs)
+      try{
+        recentTxs=JSON.parse(recentTxs)
+      }catch(e){
+        recentTxs=[]
+      }
+    }
+    if(!recentTxs){
+      recentTxs=[]
+    }
+    if(!transactionsByAddress){
+      transactionsByAddress = localStorage.getItem(this.state.account+"transactionsByAddress")
+      try{
+        transactionsByAddress=JSON.parse(transactionsByAddress)
+      }catch(e){
+        transactionsByAddress={}
+      }
+    }
+    if(!transactionsByAddress){
+      transactionsByAddress={}
+    }
+    return [recentTxs,transactionsByAddress]
+  }
+  addTxIfAccountMatches(recentTxs,transactionsByAddress,smallerTx){
+    let updatedTxs = false
+
+    let found = false
+    for(let r in recentTxs){
+      if(recentTxs[r].hash==smallerTx.hash){
+        found=true
+        break
+      }
+    }
+    if(!found){
+      //console.log("+TX",smallerTx)
+      let otherAccount = smallerTx.to
+      if(smallerTx.to==this.state.account){
+        otherAccount = smallerTx.from
+      }
+      if(!transactionsByAddress[otherAccount]){
+        transactionsByAddress[otherAccount] = []
+      }
+      transactionsByAddress[otherAccount].push(smallerTx)
+      recentTxs.push(smallerTx)
+      //console.log("recentTxs after push",recentTxs)
+      updatedTxs=true
+    }
+
+    return updatedTxs
+  }
+  sortAndSaveTransactions(recentTxs,transactionsByAddress){
+    recentTxs.sort((a,b)=>{
+      if(b.blockNumber<a.blockNumber){
+        return -1
+      }
+      if(b.blockNumber>a.blockNumber){
+        return 1
+      }
+      return 0
+    })
+
+    for(let t in transactionsByAddress){
+      transactionsByAddress[t].sort((a,b)=>{
+        if(b.blockNumber<a.blockNumber){
+          return 1
+        }
+        if(b.blockNumber>a.blockNumber){
+          return -1
+        }
+        return 0
+      })
+    }
+    recentTxs = recentTxs.slice(0,12)
+    localStorage.setItem(this.state.account+"recentTxs",JSON.stringify(recentTxs))
+    localStorage.setItem(this.state.account+"transactionsByAddress",JSON.stringify(transactionsByAddress))
+    this.setState({recentTxs:recentTxs,transactionsByAddress:transactionsByAddress})
   }
   render() {
     let {
@@ -479,6 +546,9 @@ class App extends Component {
         </div>
       )
     }
+
+    let eventParser = ""
+
     return (
       <div style={mainStyle}>
         {networkOverlay}
@@ -527,67 +597,122 @@ class App extends Component {
 
               )
             }else{
-              switch(view) {
-                case 'main':
 
-                  let moreButtons = (
-                    <MoreButtons
-                      mainStyle={mainStyle}
-                      changeView={this.changeView}
-                    />
+              let moreButtons = (
+                <MoreButtons
+                  mainStyle={mainStyle}
+                  changeView={this.changeView}
+                />
+              )
+
+              let subBalanceDisplay = ""
+
+              if(ERC20TOKEN){
+
+                subBalanceDisplay = (
+                  <div style={{opacity:0.4,fontSize:12,position:'absolute',right:0,marginTop:5}}>
+                    {this.state.gasBalance}
+                  </div>
+                )
+
+                if(this.state.isAdmin){
+                  moreButtons = (
+                    <div>
+                      <Admin
+                        vendors={this.state.vendors}
+                        mainStyle={mainStyle}
+                        changeView={this.changeView}
+                        contracts={this.state.contracts}
+                        tx={this.state.tx}
+                        web3={this.state.web3}
+                      />
+                      <MoreButtons
+                        mainStyle={mainStyle}
+                        changeView={this.changeView}
+                      />
+                    </div>
                   )
+                }else if(this.state.isVendor&&this.state.isVendor.isAllowed){
+                  moreButtons = (
+                    <div>
+                      <Vendor
+                        address={account}
+                        mainStyle={mainStyle}
+                        changeView={this.changeView}
+                        contracts={this.state.contracts}
+                        vendor={this.state.isVendor}
+                        tx={this.state.tx}
+                        web3={this.state.web3}
+                      />
+                      <MoreButtons
+                        mainStyle={mainStyle}
+                        changeView={this.changeView}
+                      />
+                    </div>
+                  )
+                }else{
+                  moreButtons = ""
+                }
 
-                  let subBalanceDisplay = ""
-
-                  if(ERC20TOKEN){
-
-                    subBalanceDisplay = (
-                      <div style={{opacity:0.4,fontSize:12,position:'absolute',right:0,marginTop:5}}>
-                        {this.state.gasBalance}
-                      </div>
-                    )
-
-                    if(this.state.isAdmin){
-                      moreButtons = (
-                        <div>
-                          <Admin
-                            mainStyle={mainStyle}
-                            changeView={this.changeView}
-                            contracts={this.state.contracts}
-                            tx={this.state.tx}
-                            web3={this.state.web3}
-                          />
-                          <MoreButtons
-                            mainStyle={mainStyle}
-                            changeView={this.changeView}
-                          />
-                        </div>
-                      )
-                    }else if(this.state.isVendor&&this.state.isVendor.isAllowed){
-                      moreButtons = (
-                        <div>
-                          <Vendor
-                            address={account}
-                            mainStyle={mainStyle}
-                            changeView={this.changeView}
-                            contracts={this.state.contracts}
-                            vendor={this.state.isVendor}
-                            tx={this.state.tx}
-                            web3={this.state.web3}
-                          />
-                          <MoreButtons
-                            mainStyle={mainStyle}
-                            changeView={this.changeView}
-                          />
-                        </div>
-                      )
-                    }else{
-                      moreButtons = ""
+                if(this.state.contracts){
+                  let handler = (eventData,allEvents)=>{
+                    //console.log("EVENT",eventData)
+                    let initResult = this.initRecentTxs(recentTxs,transactionsByAddress)
+                    let recentTxs = initResult[0]
+                    let transactionsByAddress = initResult[1]
+                    eventData.value = this.state.web3.utils.fromWei(""+eventData.value,'ether')
+                    eventData.to = eventData.to.toLowerCase()
+                    eventData.from = eventData.from.toLowerCase()
+                    eventData.token = ERC20TOKEN
+                    if(!this.state.recentTxs || this.addTxIfAccountMatches(recentTxs,transactionsByAddress,eventData)){
+                      this.sortAndSaveTransactions(recentTxs,transactionsByAddress)
                     }
                   }
+                  eventParser = (
+                    <div>
+                      <Events
+                        config={{hide:true}}
+                        contract={this.state.contracts.DenDai}
+                        eventName={"Transfer"}
+                        block={this.state.block}
+                        filter={{from:this.state.account}}
+                        onUpdate={handler}
+                      />
+                      <Events
+                        config={{hide:true}}
+                        contract={this.state.contracts.DenDai}
+                        eventName={"Transfer"}
+                        block={this.state.block}
+                        filter={{to:this.state.account}}
+                        onUpdate={handler}
+                      />
+                      <Events
+                        config={{hide:true}}
+                        contract={this.state.contracts.DenDai}
+                        eventName={"UpdateVendor"}
+                        block={this.state.block}
+                        onUpdate={(vendor, all)=>{
+                          let {vendors} = this.state
+                          console.log("VENDOR",vendor)
+                          if(!vendors[vendor.wallet] || vendors[vendor.wallet].blockNumber<vendor.blockNumber){
+                            vendors[vendor.wallet] = {
+                              name: this.state.web3.utils.hexToUtf8(vendor.name),
+                              isAllowed: vendor.isAllowed,
+                              isActive: vendor.isActive,
+                              wallet: vendor.wallet,
+                              blockNumber: vendor.blockNumber
+                            }
+                          }
+                          this.setState({vendors})
+                        }}
+                      />
+                    </div>
+                  )
+                }
+              }
 
-
-
+              switch(view) {
+                case 'main':
                   return (
                     <div>
                       <MainCard
@@ -602,6 +727,7 @@ class App extends Component {
                       />
                       {moreButtons}
                       <RecentTransactions
+                        ERC20TOKEN={ERC20TOKEN}
                         transactionsByAddress={this.state.transactionsByAddress}
                         changeView={this.changeView}
                         address={account}
@@ -632,6 +758,7 @@ class App extends Component {
                 case 'send_by_scan':
                   return (
                     <SendByScan
+                      mainStyle={mainStyle}
                       goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       onError={(error) =>{
@@ -774,6 +901,23 @@ class App extends Component {
                         />
                       </div>
                     );
+                case 'vendors':
+                    return (
+                      <div>
+                        <NavCard title={'Vendors'} goBack={this.goBack.bind(this)}/>
+                        <Vendors
+                          vendors={this.state.vendors}
+                          address={account}
+                          mainStyle={mainStyle}
+                          changeView={this.changeView}
+                          contracts={this.state.contracts}
+                          vendor={this.state.isVendor}
+                          tx={this.state.tx}
+                          web3={this.state.web3}
+                          block={this.state.block}
+                        />
+                      </div>
+                    );
                 case 'loader':
                   return (
                     <div>
@@ -823,13 +967,14 @@ class App extends Component {
           newPrivateKey={this.state.newPrivateKey}
           fallbackWeb3Provider={WEB3_PROVIDER}
           onUpdate={async (state) => {
+            console.log("DAPPARATUS UPDATE",state)
             if(ERC20TOKEN){
               delete state.balance
             }
             if (state.web3Provider) {
               state.web3 = new Web3(state.web3Provider)
               this.setState(state,()=>{
-                //console.log("state set:",this.state)
+                console.log("state set:",this.state)
                 if(this.state.possibleNewPrivateKey){
                   this.dealWithPossibleNewPrivateKey()
                 }
@@ -840,46 +985,19 @@ class App extends Component {
 
                     if(localStorage&&typeof localStorage.setItem == "function"){
 
-                      let recentTxs = this.state.recentTxs
-                      if(!recentTxs){
-                        //console.log("no recent tx found, checking storage")
-                        recentTxs = localStorage.getItem(this.state.account+"recentTxs")
-                        //console.log("recentTxs txt is",recentTxs)
-                        try{
-                          recentTxs=JSON.parse(recentTxs)
-                        }catch(e){
-                          recentTxs=[]
-                        }
-                      }
-                      if(!recentTxs){
-                        recentTxs=[]
-                      }
-
-
-                      let transactionsByAddress = this.state.transactionsByAddress
-                      if(!transactionsByAddress){
-                        transactionsByAddress = localStorage.getItem(this.state.account+"transactionsByAddress")
-                        try{
-                          transactionsByAddress=JSON.parse(transactionsByAddress)
-                        }catch(e){
-                          transactionsByAddress={}
-                        }
-                      }
-                      if(!transactionsByAddress){
-                        transactionsByAddress={}
-                      }
-
+                      let initResult = this.initRecentTxs(recentTxs,transactionsByAddress)
+                      let recentTxs = initResult[0]
+                      let transactionsByAddress = initResult[1]
 
                       let loadedBlocksTop = this.state.loadedBlocksTop
                       if(!loadedBlocksTop){
                         loadedBlocksTop = localStorage.getItem(this.state.account+"loadedBlocksTop")
                       }
 
-
-                        //  Look back through previous blocks since this account
-                        //  was last online... this could be bad. We might need a
-                        //  central server keeping track of all these and delivering
-                        //  a list of recent transactions
+                      //  Look back through previous blocks since this account
+                      //  was last online... this could be bad. We might need a
+                      //  central server keeping track of all these and delivering
+                      //  a list of recent transactions
 
 
                       let updatedTxs = false
@@ -894,8 +1012,6 @@ class App extends Component {
                         //console.log("choosing the min of ",paddedLoadedBlocks,"and",this.state.block)
                         let parseBlock=Math.min(paddedLoadedBlocks,this.state.block)
 
-
-
                         //console.log("MIN:",parseBlock)
                         upperBoundOfSearch = parseBlock
                         //first, if we are still back parsing, we need to look at *this* block too
@@ -903,60 +1019,20 @@ class App extends Component {
                           console.log(" +++++++======= Parsing recent blocks ~"+this.state.block)
                           for(let b=this.state.block;b>this.state.block-6;b--){
                             //console.log(" ++ Parsing *CURRENT BLOCK* Block "+b+" for transactions...")
-                            let result = await this.parseBlocks(b,recentTxs,transactionsByAddress)
-                            //console.log(" result of parse: ",result)
-                            recentTxs =  result.recentTxs
-                            updatedTxs = updatedTxs||result.updatedTxs
-                            transactionsByAddress = result.transactionsByAddress
-                            //console.log("updatedTxs",updatedTxs)
+                            updatedTxs = updatedTxs|| (await this.parseBlocks(b,recentTxs,transactionsByAddress))
                           }
                         }
                         console.log(" +++++++======= Parsing from "+loadedBlocksTop+" to "+upperBoundOfSearch+"....")
                         while(loadedBlocksTop<parseBlock){
                           //console.log(" ++ Parsing Block "+parseBlock+" for transactions...")
-                          let result = await this.parseBlocks(parseBlock,recentTxs,transactionsByAddress)
-                          //console.log(" result of parse: ",result)
-                          recentTxs =  result.recentTxs
-                          updatedTxs = updatedTxs||result.updatedTxs
-                          transactionsByAddress = result.transactionsByAddress
+                          updatedTxs = updatedTxs || (await this.parseBlocks(parseBlock,recentTxs,transactionsByAddress))
                           parseBlock--
                         }
 
                       }
 
                       if(updatedTxs||!this.state.recentTxs){
-                        //console.log("!!!! TX UPDATE, SORT AND SLICE")
-                        //console.log("BEFORE",JSON.stringify(recentTxs))
-                        recentTxs.sort((a,b)=>{
-                          if(b.blockNumber<a.blockNumber){
-                            return -1;
-                          }
-                          if(b.blockNumber>a.blockNumber){
-                            return 1;
-                          }
-                          return 0;
-                        })
-
-                        for(let t in transactionsByAddress){
-                          transactionsByAddress[t].sort((a,b)=>{
-                            if(b.blockNumber<a.blockNumber){
-                              return 1;
-                            }
-                            if(b.blockNumber>a.blockNumber){
-                              return -1;
-                            }
-                            return 0;
-                          })
-                        }
-
-                        //console.log("AFTER",JSON.stringify(recentTxs))
-                        recentTxs = recentTxs.slice(0,12)
-                        //console.log("ending with recentTxs",recentTxs)
-
-                        localStorage.setItem(this.state.account+"recentTxs",JSON.stringify(recentTxs))
-                        localStorage.setItem(this.state.account+"transactionsByAddress",JSON.stringify(transactionsByAddress))
-
-                        this.setState({recentTxs:recentTxs,transactionsByAddress:transactionsByAddress})
+                        this.sortAndSaveTransactions(recentTxs,transactionsByAddress)
                       }
 
                       localStorage.setItem(this.state.account+"loadedBlocksTop",upperBoundOfSearch)
@@ -981,11 +1057,11 @@ class App extends Component {
             })
           }}
         />
+        {eventParser}
       </div>
     )
   }
 }
-
 async function tokenSend(to,value,gasLimit,txData,cb){
   let {account,web3} = this.state
 
