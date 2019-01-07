@@ -193,7 +193,7 @@ export default class Advanced extends React.Component {
           <div className="col-4 p-1">
           <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
             this.setState({addingVendor:true})
-            tx(contracts.DenDai.addVendor(this.state.newVendor,web3.utils.utf8ToHex(this.state.newVendorName)),(result)=>{
+            tx(contracts.DenDai.addVendor(this.state.newVendor,web3.utils.utf8ToHex(this.state.newVendorName)),480000,0,0,(result)=>{
               console.log("VENDOR ADDED",result)
               this.setState({newVendor:"",newVendorName:""})
               setTimeout(()=>{
