@@ -10,6 +10,7 @@ export default class Advanced extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      changingAllowed: {},
     }
   }
   render(){
@@ -43,29 +44,103 @@ export default class Advanced extends React.Component {
           </Scaler>
         </button>
       )
+
+
+      let vendorAllowedDisplay = ""
+      if(this.state.changingAllowed[v]){
+        vendorAllowedDisplay = (
+          <i className="fas fa-cog fa-spin"></i>
+        )
+      }else if(vendors[v].isAllowed){
+        vendorAllowedDisplay = (
+          <i className="fas fa-lock-open"></i>
+        )
+      }else{
+        vendorAllowedDisplay = (
+          <i className="fas fa-lock"></i>
+        )
+      }
+
+      let vendorIsAllowed = (
+        <button className="btn btn-large w-100"
+          onClick={()=>{
+            let {changingAllowed} = this.state
+            changingAllowed[v] = true
+            this.setState({changingAllowed})
+            //updateVendor(address wallet, bytes32 name, bool newAllowed)
+            tx(contracts.DenDai.updateVendor(vendors[v].wallet,web3.utils.utf8ToHex(vendors[v].name),vendors[v].isActive,!vendors[v].isAllowed),120000,0,0,(result)=>{
+              console.log("ACTIVE:",result)
+              setTimeout(()=>{
+                let {changingAllowed} = this.state
+                changingAllowed[v] = false
+                this.setState({changingAllowed})
+              },1500)
+            })
+          }}
+          style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"
+        }}>
+          <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+            {vendorAllowedDisplay}
+          </Scaler>
+        </button>
+      )
+
+
+      let vendorActiveDisplay = ""
+      if(this.state.changingAllowed[v]){
+        vendorActiveDisplay = (
+          <i className="fas fa-cog fa-spin"></i>
+        )
+      }else if(vendors[v].isActive){
+        vendorActiveDisplay = (
+          <i className="fas fa-thumbs-up"></i>
+        )
+      }else{
+        vendorActiveDisplay = (
+          <i className="fas fa-window-close"></i>
+        )
+      }
+
+      let vendorIsActive = (
+        <button className="btn btn-large w-100"
+          onClick={()=>{
+            let {changingAllowed} = this.state
+            changingAllowed[v] = true
+            this.setState({changingAllowed})
+            //updateVendor(address wallet, bytes32 name, bool newAllowed)
+            tx(contracts.DenDai.updateVendor(vendors[v].wallet,web3.utils.utf8ToHex(vendors[v].name),!vendors[v].isActive,vendors[v].isAllowed),120000,0,0,(result)=>{
+              console.log("ACTIVE:",result)
+              setTimeout(()=>{
+                let {changingAllowed} = this.state
+                changingAllowed[v] = false
+                this.setState({changingAllowed})
+              },1500)
+            })
+          }}
+          style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"
+        }}>
+          <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+            {vendorActiveDisplay}
+          </Scaler>
+        </button>
+      )
+
+
+
+
       vendorDisplay.push(
         <div key={v} className="content bridge row">
           <div className="col-2 p-1" style={{textAlign:'center'}}>
             <Blockies seed={vendors[v].wallet.toLowerCase()} scale={5}/>
           </div>
-          <div className="col-8 p-1" style={{textAlign:'center'}}>
+          <div className="col-6 p-1" style={{textAlign:'center'}}>
             {vendorButton}
           </div>
-          <div className="col-1 p-1" style={{textAlign:'center'}}>
-          <input
-           name="isAllowed"
-           type="checkbox"
-           checked={vendors[v].isAllowed}
-           onChange={this.handleInputChange}
-           />
+          <div className="col-2 p-1" style={{textAlign:'center'}}>
+            {vendorIsActive}
           </div>
-          <div className="col-1 p-1" style={{textAlign:'center'}}>
-          <input
-           name="isActive"
-           type="checkbox"
-           checked={vendors[v].isActive}
-           onChange={this.handleInputChange}
-           />
+          <div className="col-2 p-1" style={{textAlign:'center'}}>
+            {vendorIsAllowed}
           </div>
         </div>
       )

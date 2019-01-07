@@ -12,11 +12,14 @@ contract DenDai is ERC20Mintable {
     admin[msg.sender] = true;
   }
 
+
+
   function transferWithData(address to, uint256 value, bytes data) public returns (bool) {
     emit TransferWithData(msg.sender,to,value,data);
     return transfer(to, value);
   }
   event TransferWithData(address indexed from, address indexed to, uint256 value, bytes data);
+
 
 
 
@@ -28,6 +31,9 @@ contract DenDai is ERC20Mintable {
     UpdateAdmin(newAdmin,active,msg.sender);
   }
   event UpdateAdmin(address wallet,bool active,address sender);
+
+
+
 
   mapping (address => Vendor) public vendors;
 
@@ -47,10 +53,11 @@ contract DenDai is ERC20Mintable {
     });
     emit UpdateVendor(wallet,vendors[wallet].name,vendors[wallet].isAllowed,vendors[wallet].isActive,msg.sender);
   }
-  function updateVendor(address wallet, bytes32 name, bool newAllowed) public {
+  function updateVendor(address wallet, bytes32 name, bool newActive, bool newAllowed) public {
     require(admin[msg.sender], "DenDai::addVendor - sender is not admin");
     vendors[wallet].name = name;
     vendors[wallet].isAllowed = newAllowed;
+    vendors[wallet].isActive = newActive;
     emit UpdateVendor(wallet,vendors[wallet].name,vendors[wallet].isAllowed,vendors[wallet].isActive,msg.sender);
   }
   function activateVendor(bool isActive) public {
@@ -60,7 +67,11 @@ contract DenDai is ERC20Mintable {
   }
   event UpdateVendor(address indexed wallet,bytes32 name,bool isAllowed,bool isActive,address sender);
 
+
+
+
   struct Product {
+    uint256 id;
     bool exists;
     bytes32 name;
     uint256 cost;
@@ -70,6 +81,7 @@ contract DenDai is ERC20Mintable {
   function addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable) public {
     require(vendors[msg.sender].isAllowed, "DenDai::addProduct - vendor is not allowed by admin");
     products[msg.sender][id] = Product({
+      id: id,
       exists:true,
       name:name,
       cost:cost,
@@ -78,6 +90,7 @@ contract DenDai is ERC20Mintable {
     emit AddProduct(msg.sender,id,name,cost,isAvailable);
   }
   event AddProduct(address indexed vendor, uint256 id, bytes32 name, uint256 cost, bool isAvailable);
+
 
 
 

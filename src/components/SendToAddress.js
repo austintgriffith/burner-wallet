@@ -32,6 +32,9 @@ export default class SendToAddress extends React.Component {
           initialState.amount = parts[1]
           initialState.message = decodeURI(parts[2])
         }
+        if(parts.length>3){
+          initialState.extraMessage = decodeURI(parts[3])
+        }
       }
     }
     this.state = initialState
@@ -78,9 +81,16 @@ export default class SendToAddress extends React.Component {
 
   send = () => {
     let { toAddress, amount } = this.state;
+
+
     if(this.state.canSend){
       if(this.props.balance-0.0001<=amount){
-        this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((this.props.balance-0.0001)*100)/100+' (gas costs)'})
+        let extraHint = ""
+        if(amount-this.props.balance<=.01){
+          extraHint = "(gas costs)"
+        }
+
+        this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((this.props.balance-0.0001)*100)/100+' '+extraHint})
       }else{
         console.log("SWITCH TO LOADER VIEW...",amount)
         this.props.changeView('loader')
@@ -129,6 +139,11 @@ export default class SendToAddress extends React.Component {
       )
     }*/
 
+    let messageText = "Message"
+    if(this.state.extraMessage){
+      messageText = this.state.extraMessage
+    }
+
     return (
       <div>
         <div className="send-to-address card w-100">
@@ -153,7 +168,7 @@ export default class SendToAddress extends React.Component {
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               <div className="form-group w-100" style={{marginTop:20}}>
-                <label htmlFor="amount_input">Message</label>
+                <label htmlFor="amount_input">{messageText}</label>
                 <input type="text" className="form-control" placeholder="optional unencrypted message" value={this.state.message}
                   ref={(input) => { this.messageInput = input; }}
                        onChange={event => this.updateState('message', event.target.value)} />

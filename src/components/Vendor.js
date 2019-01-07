@@ -12,7 +12,7 @@ export default class Advanced extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      vendors: {}
+      changingAvailable: {}
     }
   }
   componentDidMount(){
@@ -49,6 +49,49 @@ export default class Advanced extends React.Component {
       let prod = this.state.products[p]
       if(prod.exists){
 
+        //console.log(prod)
+
+        let productAvailableDisplay = ""
+        if(this.state.changingAvailable[p]){
+          productAvailableDisplay = (
+            <i className="fas fa-cog fa-spin"></i>
+          )
+        }else if(prod.isAvailable){
+          productAvailableDisplay = (
+            <i className="fas fa-eye"></i>
+          )
+        }else{
+          productAvailableDisplay = (
+            <i className="fas fa-eye-slash"></i>
+          )
+        }
+
+        let productIsActive = (
+          <button className="btn btn-large w-100"
+            onClick={()=>{
+              let {changingAvailable} = this.state
+              changingAvailable[p] = true
+              this.setState({changingAvailable})
+              //addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable)
+              console.log(prod.id,prod.name,prod.cost,prod.isAvailable)
+              tx(contracts.DenDai.addProduct(prod.id,prod.name,prod.cost,!prod.isAvailable),120000,0,0,(result)=>{
+                console.log("PRODUCT:",result)
+                setTimeout(this.poll.bind(this),444)
+                setTimeout(()=>{
+                  let {changingAvailable} = this.state
+                  changingAvailable[p] = false
+                  this.setState({changingAvailable})
+                },1500)
+              })
+            }}
+            style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"
+          }}>
+            <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+              {productAvailableDisplay}
+            </Scaler>
+          </button>
+        )
+
         let available = (
           <i className="far fa-eye"></i>
         )
@@ -58,13 +101,21 @@ export default class Advanced extends React.Component {
           )
         }
 
+        let opacity  =  1.0
+        if(!prod.isAvailable){
+          opacity = 0.5
+        }
+
         products.push(
-          <div className="content bridge row">
+          <div className="content bridge row" style={{opacity}}>
             <div className="col-6 p-1">
               {web3.utils.hexToUtf8(prod.name)}
             </div>
-            <div className="col-6 p-1">
+            <div className="col-4 p-1">
               ${dollarDisplay(web3.utils.fromWei(prod.cost,'ether'))}
+            </div>
+            <div className="col-2 p-1">
+              {productIsActive}
             </div>
           </div>
         )

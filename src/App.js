@@ -67,7 +67,7 @@ if(ERC20TOKEN=="DenDai"){
   mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
   mainStyle.backgroundColor = "#20012d"
   mainStyle.mainColor = "#b6299e"
-  title = "DenDai.io"
+  title = "ETHDenverDAI"
   titleImage = (
     <img src={bufficorn} style={{
       maxWidth:50,
@@ -614,12 +614,10 @@ class App extends Component {
               )
 
               let subBalanceDisplay = ""
-
               if(ERC20TOKEN){
-
                 subBalanceDisplay = (
                   <div style={{opacity:0.4,fontSize:12,position:'absolute',right:0,marginTop:5}}>
-                    {this.state.gasBalance}
+                    {Math.round(this.state.gasBalance*10000)/10000}
                   </div>
                 )
 

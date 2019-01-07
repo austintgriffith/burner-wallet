@@ -115,7 +115,7 @@ export default class Advanced extends React.Component {
               <div className="col-4 p-1">
               <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap",marginTop:-8}} onClick={()=>{
                 this.setState({loading:true,products:false,vendor:false},()=>{
-                  window.location = "/"+vendor+";"+theAmount+";"+vendorObject.name+": "+theName
+                  window.location = "/"+vendor+";"+theAmount+";"+theName+";"+vendorObject.name+":"
                 })
 
               }}>
@@ -146,12 +146,7 @@ export default class Advanced extends React.Component {
       )
     }else{
       for(let v in vendors){
-        if(vendors[v].isAllowed){
-
-          let vendorName = vendors[v].name
-          if(!vendors[v].isActive){
-            vendorName += " (closed)"
-          }
+        if(vendors[v].isAllowed&&vendors[v].isActive){
 
           let vendorButton = (
             <button disabled={!vendors[v].isActive} className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
@@ -160,7 +155,7 @@ export default class Advanced extends React.Component {
                 })
             }}>
               <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
-                {vendorName}
+                {vendors[v].name}
               </Scaler>
             </button>
           )

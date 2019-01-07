@@ -7,7 +7,7 @@ export  default ({ens, title, titleImage, mainStyle, balance, address, changeVie
   }
 
   let topRight = (
-    <div style={{position:"fixed",right:20,top:8,zIndex:1,cursor:"pointer"}} onClick={() => changeView('send_by_scan')} >
+    <div style={{position:"fixed",right:20,top:6,zIndex:1,cursor:"pointer"}} onClick={() => changeView('send_by_scan')} >
       <button className="btn btn-large w-100" style={{paddingTop:8,backgroundColor:"#FFFFFF",border:"3px solid "+mainStyle.mainColor}}>
         <a href="#" style={{color:mainStyle.mainColor}}>
           <span style={{paddingRight:10,fontSize:22}}>

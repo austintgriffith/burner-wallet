@@ -56,9 +56,14 @@ export default ({ERC20TOKEN, vendorName, address, recentTxs, block, changeView})
         />
       )
       if(recentTxs[r].to==address && recentTxs[r].data) {
+        let message = recentTxs[r].data
+        let limit = 14
+        if(message.length>limit){
+          message = message.substring(0,limit-3)+"..."
+        }
         toBlockie = (
-          <span>
-            {recentTxs[r].data.substring()}
+          <span style={{fontSize:14}}>
+            {message}
           </span>
         )
       }
