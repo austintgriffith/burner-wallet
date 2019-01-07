@@ -90,7 +90,7 @@ export default class Advanced extends React.Component {
 
       for(let p in this.state.products){
         let prod = this.state.products[p]
-        if(prod.exists){
+        if(prod.exists&&prod.isAvailable){
 
           let available = (
             <i className="far fa-eye"></i>
