@@ -146,6 +146,32 @@ export default class Advanced extends React.Component {
       )
     }
 
+    let addAdminText = (
+      <span>
+        <i className="fas fa-user-astronaut"></i> Add Admin
+      </span>
+    )
+    if(this.state.addingAdmin){
+      addAdminText = (
+        <span>
+          <i className="fas fa-cog fa-spin"></i> Adding
+        </span>
+      )
+    }
+
+    let addVendorText = (
+      <span>
+        <i className="fas fa-user"></i> Add Vendor
+      </span>
+    )
+    if(this.state.addingVendor){
+      addVendorText = (
+        <span>
+          <i className="fas fa-cog fa-spin"></i> Adding
+        </span>
+      )
+    }
+
 
     return (
       <div className="main-card card w-100">
@@ -166,13 +192,17 @@ export default class Advanced extends React.Component {
           </div>
           <div className="col-4 p-1">
           <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
+            this.setState({addingVendor:true})
             tx(contracts.DenDai.addVendor(this.state.newVendor,web3.utils.utf8ToHex(this.state.newVendorName)),(result)=>{
               console.log("VENDOR ADDED",result)
               this.setState({newVendor:"",newVendorName:""})
+              setTimeout(()=>{
+                this.setState({addingVendor:false})
+              },1500)
             })
           }}>
             <Scaler config={{startZoomAt:600,origin:"20% 50%"}}>
-              <i className="fas fa-user"></i> Add Vendor
+              {addVendorText}
             </Scaler>
           </button>
           </div>
@@ -188,13 +218,17 @@ export default class Advanced extends React.Component {
           </div>
           <div className="col-4 p-1">
           <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
+            this.setState({addingAdmin:true})
             tx(contracts.DenDai.updateAdmin(this.state.newAdmin,true),(result)=>{
               console.log("ADMIN ADDED",result)
               this.setState({newAdmin:""})
+              setTimeout(()=>{
+                this.setState({addingAdmin:false})
+              },1500)
             })
           }}>
             <Scaler config={{startZoomAt:600,origin:"20% 50%"}}>
-              <i className="fas fa-user-astronaut"></i> Add Admin
+              {addAdminText}
             </Scaler>
           </button>
           </div>

@@ -31,7 +31,7 @@ const EthCrypto = require('eth-crypto');
 
 let WEB3_PROVIDER = 'http://10.0.0.107:8545'
 let CLAIM_RELAY = 'http://0.0.0.0:18462'
-/// CHANGE THIS TO TEST A TOKEN ON LOCALHOST ('dendai')
+/// CHANGE THIS TO TEST A TOKEN ON LOCALHOST ('DenDai')
 let ERC20TOKEN = false
 
 let mainStyle = {
@@ -59,6 +59,11 @@ else if (window.location.hostname.indexOf("xdai") >= 0) {
   ERC20TOKEN = false
 }
 else if (window.location.hostname.indexOf("dendai") >= 0) {
+  WEB3_PROVIDER = "https://dai.poa.network";
+  CLAIM_RELAY = 'https://x.xdai.io'
+  ERC20TOKEN = 'DenDai'
+}
+else if (window.location.hostname.indexOf("localhost") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = 'DenDai'
@@ -672,7 +677,7 @@ class App extends Component {
                     eventData.to = eventData.to.toLowerCase()
                     eventData.from = eventData.from.toLowerCase()
                     eventData.token = ERC20TOKEN
-                    eventData.data = this.state.web3.utils.hexToUtf8(eventData.data)
+                    if(eventData.data) eventData.data = this.state.web3.utils.hexToUtf8(eventData.data)
                     if(!this.state.recentTxs || this.addTxIfAccountMatches(recentTxs,transactionsByAddress,eventData)){
                       this.sortAndSaveTransactions(recentTxs,transactionsByAddress)
                     }
