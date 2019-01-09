@@ -933,6 +933,7 @@ class App extends Component {
                       <div>
                         <NavCard title={"Exchange"} goBack={this.goBack.bind(this)}/>
                         <Exchange
+                          ERC20IMAGE={cypherpunk}
                           ERC20TOKEN={ERC20TOKEN}
                           contracts={this.state.contracts}
                           mainStyle={mainStyle}
