@@ -682,6 +682,15 @@ class App extends Component {
                       />
                     </div>
                   )
+                }else if(ERC20TOKEN=="Burner"){
+                  moreButtons = (
+                    <div>
+                      <MoreButtons
+                        mainStyle={mainStyle}
+                        changeView={this.changeView}
+                      />
+                    </div>
+                  )
                 }else{
                   moreButtons = ""
                 }
