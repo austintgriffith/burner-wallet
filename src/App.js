@@ -26,6 +26,7 @@ import BurnWallet from './components/BurnWallet'
 import Exchange from './components/Exchange'
 import customRPCHint from './customRPCHint.png';
 import bufficorn from './bufficorn.png';
+import cypherpunk from './cypherpunk.png';
 
 const EthCrypto = require('eth-crypto');
 
@@ -63,10 +64,15 @@ else if (window.location.hostname.indexOf("dendai") >= 0) {
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = 'DenDai'
 }
+else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
+  WEB3_PROVIDER = "https://dai.poa.network";
+  CLAIM_RELAY = 'https://x.xdai.io'
+  ERC20TOKEN = 'Burner'
+}
 else if (window.location.hostname.indexOf("localhost") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = 'DenDai'
+  ERC20TOKEN = 'Burner'
 }
 
 if(ERC20TOKEN=="DenDai"){
@@ -76,6 +82,18 @@ if(ERC20TOKEN=="DenDai"){
   title = "ETHDenverDAI"
   titleImage = (
     <img src={bufficorn} style={{
+      maxWidth:50,
+      maxHeight:50,
+      marginTop:-24
+    }}/>
+  )
+} else if(ERC20TOKEN=="Burner"){
+  mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
+  mainStyle.backgroundColor = "#6c0664"
+  mainStyle.mainColor = "#e72da3"
+  title = "Speakeasy"
+  titleImage = (
+    <img src={cypherpunk} style={{
       maxWidth:50,
       maxHeight:50,
       marginTop:-24
@@ -179,11 +197,11 @@ class App extends Component {
     if(ERC20TOKEN&&this.state.contracts){
       let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
       gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
-      let denDaiBalance = await this.state.contracts.DenDai.balanceOf(this.state.account).call()
+      let denDaiBalance = await this.state.contracts[ERC20TOKEN].balanceOf(this.state.account).call()
       denDaiBalance = this.state.web3.utils.fromWei(""+denDaiBalance,'ether')
-      let isAdmin = await this.state.contracts.DenDai.admin(this.state.account).call()
+      let isAdmin = await this.state.contracts[ERC20TOKEN].admin(this.state.account).call()
       //console.log("ISADMIN",isAdmin)
-      let isVendor = await this.state.contracts.DenDai.vendors(this.state.account).call()
+      let isVendor = await this.state.contracts[ERC20TOKEN].vendors(this.state.account).call()
       //console.log("isVendor",isVendor)
       this.setState({gasBalance:gasBalance,balance:denDaiBalance,isAdmin:isAdmin,isVendor:isVendor})
     }
