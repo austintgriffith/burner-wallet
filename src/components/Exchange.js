@@ -849,7 +849,7 @@ export default class Exchange extends React.Component {
                  this.setState({xdaiToDendaiMode:"deposit"})
                }}>
                   <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
-                    <i className="fas fa-arrow-up"  /> xDai to DenDai
+                    <i className="fas fa-arrow-up"  /> xDai to {this.props.ERC20TOKEN}
                   </Scaler>
                </button>
              </div>
@@ -859,7 +859,7 @@ export default class Exchange extends React.Component {
                  this.setState({xdaiToDendaiMode:"withdraw"})
                }}>
                  <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
-                  <i className="fas fa-arrow-down" /> DenDai to xDai
+                  <i className="fas fa-arrow-down" /> {this.props.ERC20TOKEN} to xDai
                  </Scaler>
                </button>
              </div>
@@ -875,7 +875,7 @@ export default class Exchange extends React.Component {
                 <img style={logoStyle} src={this.props.ERC20IMAGE} />
               </div>
               <div className="col-3 p-1" style={{marginTop:8}}>
-                DenDai
+                {this.props.ERC20TOKEN}
               </div>
               <div className="col-5 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
                   <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
