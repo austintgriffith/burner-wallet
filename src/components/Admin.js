@@ -68,7 +68,7 @@ export default class Advanced extends React.Component {
             changingAllowed[v] = true
             this.setState({changingAllowed})
             //updateVendor(address wallet, bytes32 name, bool newAllowed)
-            tx(contracts.DenDai.updateVendor(vendors[v].wallet,web3.utils.utf8ToHex(vendors[v].name),vendors[v].isActive,!vendors[v].isAllowed),120000,0,0,(result)=>{
+            tx(contracts[this.props.ERC20TOKEN].updateVendor(vendors[v].wallet,web3.utils.utf8ToHex(vendors[v].name),vendors[v].isActive,!vendors[v].isAllowed),120000,0,0,(result)=>{
               console.log("ACTIVE:",result)
               setTimeout(()=>{
                 let {changingAllowed} = this.state
@@ -108,7 +108,7 @@ export default class Advanced extends React.Component {
             changingAllowed[v] = true
             this.setState({changingAllowed})
             //updateVendor(address wallet, bytes32 name, bool newAllowed)
-            tx(contracts.DenDai.updateVendor(vendors[v].wallet,web3.utils.utf8ToHex(vendors[v].name),!vendors[v].isActive,vendors[v].isAllowed),120000,0,0,(result)=>{
+            tx(contracts[this.props.ERC20TOKEN].updateVendor(vendors[v].wallet,web3.utils.utf8ToHex(vendors[v].name),!vendors[v].isActive,vendors[v].isAllowed),120000,0,0,(result)=>{
               console.log("ACTIVE:",result)
               setTimeout(()=>{
                 let {changingAllowed} = this.state
@@ -193,7 +193,7 @@ export default class Advanced extends React.Component {
           <div className="col-4 p-1">
           <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
             this.setState({addingVendor:true})
-            tx(contracts.DenDai.addVendor(this.state.newVendor,web3.utils.utf8ToHex(this.state.newVendorName)),480000,0,0,(result)=>{
+            tx(contracts[this.props.ERC20TOKEN].addVendor(this.state.newVendor,web3.utils.utf8ToHex(this.state.newVendorName)),480000,0,0,(result)=>{
               console.log("VENDOR ADDED",result)
               this.setState({newVendor:"",newVendorName:""})
               setTimeout(()=>{
@@ -219,7 +219,7 @@ export default class Advanced extends React.Component {
           <div className="col-4 p-1">
           <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
             this.setState({addingAdmin:true})
-            tx(contracts.DenDai.updateAdmin(this.state.newAdmin,true),(result)=>{
+            tx(contracts[this.props.ERC20TOKEN].updateAdmin(this.state.newAdmin,true),(result)=>{
               console.log("ADMIN ADDED",result)
               this.setState({newAdmin:""})
               setTimeout(()=>{

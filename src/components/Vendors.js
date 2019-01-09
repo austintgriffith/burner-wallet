@@ -34,7 +34,7 @@ export default class Advanced extends React.Component {
     let id = 0
     if(this.state.vendor){
       if(!this.state.vendorObject){
-        let vendorData = await this.props.contracts.DenDai.vendors(this.state.vendor).call()
+        let vendorData = await this.props.contracts[this.props.ERC20TOKEN].vendors(this.state.vendor).call()
         console.log("vendorData",vendorData)
         vendorData.name = this.props.web3.utils.hexToUtf8(vendorData.name)
         this.setState({vendorObject:vendorData})
@@ -46,7 +46,7 @@ export default class Advanced extends React.Component {
       }
       let found = true
       while(found){
-        let nextProduct = await this.props.contracts.DenDai.products(this.state.vendor,id).call()
+        let nextProduct = await this.props.contracts[this.props.ERC20TOKEN].products(this.state.vendor,id).call()
         if(nextProduct.exists){
           products[id++] = nextProduct
         }else{

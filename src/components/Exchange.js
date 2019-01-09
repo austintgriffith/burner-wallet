@@ -16,6 +16,7 @@ const GASBOOSTPRICE = 0.1
 
 const logoStyle = {
   maxWidth:50,
+  maxHeight:50,
 }
 
 const colStyle = {
@@ -715,7 +716,7 @@ export default class Exchange extends React.Component {
                   }else{
                     console.log("Use MetaMask to withdraw DenDai to xDai")
                     this.props.tx(
-                      this.props.contracts[ERC20TOKEN].deposit()
+                      this.props.contracts[this.props.ERC20TOKEN].deposit()
                     ,120000,0,amountOfxDaiToDeposit,(receipt)=>{
                       if(receipt){
                         console.log("EXCHANGE COMPLETE?!?",receipt)
@@ -821,7 +822,7 @@ export default class Exchange extends React.Component {
                   }else{
                     console.log("Use MetaMask to withdraw DenDai to xDai")
                     this.props.tx(
-                      this.props.contracts[ERC20TOKEN].withdraw(""+amountOfxDaiToWithdraw)
+                      this.props.contracts[this.props.ERC20TOKEN].withdraw(""+amountOfxDaiToWithdraw)
                     ,120000,0,0,(receipt)=>{
                       if(receipt){
                         console.log("EXCHANGE COMPLETE?!?",receipt)

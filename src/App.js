@@ -666,6 +666,7 @@ class App extends Component {
                   moreButtons = (
                     <div>
                       <Vendor
+                        ERC20TOKEN={ERC20TOKEN}
                         address={account}
                         mainStyle={mainStyle}
                         changeView={this.changeView}
@@ -704,7 +705,7 @@ class App extends Component {
                     <div>
                       <Events
                         config={{hide:true}}
-                        contract={this.state.contracts.DenDai}
+                        contract={this.state.contracts[ERC20TOKEN]}
                         eventName={"Transfer"}
                         block={this.state.block}
                         filter={{from:this.state.account}}
@@ -712,7 +713,7 @@ class App extends Component {
                       />
                       <Events
                         config={{hide:true}}
-                        contract={this.state.contracts.DenDai}
+                        contract={this.state.contracts[ERC20TOKEN]}
                         eventName={"Transfer"}
                         block={this.state.block}
                         filter={{to:this.state.account}}
@@ -720,7 +721,7 @@ class App extends Component {
                       />
                       <Events
                         config={{hide:true}}
-                        contract={this.state.contracts.DenDai}
+                        contract={this.state.contracts[ERC20TOKEN]}
                         eventName={"TransferWithData"}
                         block={this.state.block}
                         filter={{from:this.state.account}}
@@ -728,7 +729,7 @@ class App extends Component {
                       />
                       <Events
                         config={{hide:true}}
-                        contract={this.state.contracts.DenDai}
+                        contract={this.state.contracts[ERC20TOKEN]}
                         eventName={"TransferWithData"}
                         block={this.state.block}
                         filter={{to:this.state.account}}
@@ -736,7 +737,7 @@ class App extends Component {
                       />
                       <Events
                         config={{hide:true}}
-                        contract={this.state.contracts.DenDai}
+                        contract={this.state.contracts[ERC20TOKEN]}
                         eventName={"UpdateVendor"}
                         block={this.state.block}
                         onUpdate={(vendor, all)=>{
@@ -955,6 +956,7 @@ class App extends Component {
                       <div>
                         <NavCard title={'Vendors'} goBack={this.goBack.bind(this)}/>
                         <Vendors
+                          ERC20TOKEN={ERC20TOKEN}
                           vendors={this.state.vendors}
                           address={account}
                           mainStyle={mainStyle}
@@ -1141,15 +1143,15 @@ async function tokenSend(to,value,gasLimit,txData,cb){
     console.log("sending with meta account:",this.state.metaAccount.address)
 
     let tx={
-      to:this.state.contracts.DenDai._address,
+      to:this.state.contracts[ERC20TOKEN]._address,
       value: 0,
       gas: setGasLimit,
       gasPrice: Math.round(this.state.gwei * 1000000000)
     }
     if(data){
-      tx.data = this.state.contracts.DenDai.transferWithData(to,weiValue,data).encodeABI()
+      tx.data = this.state.contracts[ERC20TOKEN].transferWithData(to,weiValue,data).encodeABI()
     }else{
-      tx.data = this.state.contracts.DenDai.transfer(to,weiValue).encodeABI()
+      tx.data = this.state.contracts[ERC20TOKEN].transfer(to,weiValue).encodeABI()
     }
     console.log("TX SIGNED TO METAMASK:",tx)
     this.state.web3.eth.accounts.signTransaction(tx, this.state.metaAccount.privateKey).then(signed => {
@@ -1169,16 +1171,16 @@ async function tokenSend(to,value,gasLimit,txData,cb){
     }
     let txObject = {
       from:this.state.account,
-      to:this.state.contracts.DenDai._address,
+      to:this.state.contracts[ERC20TOKEN]._address,
       value: 0,
       gas: setGasLimit,
       gasPrice: Math.round(this.state.gwei * 1000000000)
     }
 
     if(data){
-      txObject.data = this.state.contracts.DenDai.transferWithData(to,weiValue,data).encodeABI()
+      txObject.data = this.state.contracts[ERC20TOKEN].transferWithData(to,weiValue,data).encodeABI()
     }else{
-      txObject.data = this.state.contracts.DenDai.transfer(to,weiValue).encodeABI()
+      txObject.data = this.state.contracts[ERC20TOKEN].transfer(to,weiValue).encodeABI()
     }
 
 
