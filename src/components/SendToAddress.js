@@ -63,7 +63,6 @@ export default class SendToAddress extends React.Component {
     },350)
     setTimeout(()=>{
       if(this.props.balance<=0){
-        alert(this.props.balance)
         console.log("No Funds, redirect back home...")
         this.props.goBack();
         window.history.pushState({},"", "/");
