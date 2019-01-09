@@ -158,9 +158,10 @@ class App extends Component {
         console.log("DO CLAIM",claimId,claimKey)
         this.setState({claimId,claimKey})
         window.history.pushState({},"", "/");
-      }else if(window.location.pathname.length>=65&&window.location.pathname.length<=67&&window.location.pathname.indexOf(";")<0){
+      }else if(window.location.pathname.length>=65&&window.location.pathname.length<=68&&window.location.pathname.indexOf(";")<0){
         console.log("incoming private key")
         let privateKey = window.location.pathname.replace("/","")
+        privateKey = privateKey.replace("#","")
         if(privateKey.indexOf("0x")!=0){
           privateKey="0x"+privateKey
         }
@@ -1155,7 +1156,7 @@ async function tokenSend(to,value,gasLimit,txData,cb){
       to:this.state.contracts[ERC20TOKEN]._address,
       value: 0,
       gas: setGasLimit,
-      gasPrice: Math.round(this.state.gwei * 1000000000)
+      gasPrice: Math.round(this.state.gwei * 1010101010)
     }
     if(data){
       tx.data = this.state.contracts[ERC20TOKEN].transferWithData(to,weiValue,data).encodeABI()
