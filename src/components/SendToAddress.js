@@ -2,6 +2,7 @@ import React from 'react';
 import Ruler from "./Ruler";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
+import { ethers } from 'ethers';
 
 
 export default class SendToAddress extends React.Component {
@@ -40,6 +41,7 @@ export default class SendToAddress extends React.Component {
     this.state = initialState
     console.log("SendToAddress constructor",this.state)
     window.history.pushState({},"", "/");
+    this.ensProvider = ethers.getDefaultProvider('homestead');
   }
 
   updateState = (key, value) => {
@@ -75,15 +77,21 @@ export default class SendToAddress extends React.Component {
     },1500)
   }
 
-  canSend() {
+  async canSend() {
+    const resolvedAddress = await this.ensProvider.resolveName(this.state.toAddress)
+    console.log(`RESOLVED ADDRESS ${resolvedAddress}`)
+    if(resolvedAddress != null){
+      this.setState({
+        toAddress: resolvedAddress
+      })
+    }
     return (this.state.toAddress && this.state.toAddress.length === 42)
   }
 
-  send = () => {
+  send = async () => {
     let { toAddress, amount } = this.state;
 
-
-    if(this.state.canSend){
+    if(await this.state.canSend){
       if(this.props.balance-0.0001<=amount){
         let extraHint = ""
         if(amount-this.props.balance<=.01){
@@ -120,7 +128,7 @@ export default class SendToAddress extends React.Component {
         })
       }
     }else{
-      this.props.changeAlert({type: 'warning', message: 'Please enter a valid address'})
+      this.props.changeAlert({type: 'warning', message: 'Please enter a valid address or ENS domain'})
     }
   };
 
