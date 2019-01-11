@@ -48,8 +48,12 @@ let title = "Burner Wallet"
 let titleImage = (
   <i className="fas fa-fire" />
 )
-
-if (window.location.hostname.indexOf("qreth") >= 0) {
+if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
+  WEB3_PROVIDER = "https://dai.poa.network";
+  CLAIM_RELAY = 'https://x.xdai.io'
+  ERC20TOKEN = 'Burner'
+}
+else if (window.location.hostname.indexOf("qreth") >= 0) {
   WEB3_PROVIDER = "https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac"
   CLAIM_RELAY = false
   ERC20TOKEN = false
@@ -69,11 +73,7 @@ else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = 'Burner'
 }
-else if (window.location.hostname.indexOf("localhost") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = 'Burner'
-}
+
 
 if(ERC20TOKEN=="DenDai"){
   mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
@@ -698,21 +698,26 @@ class App extends Component {
 
                 if(this.state.contracts){
                   let handler = (eventData,allEvents)=>{
-                    //console.log("EVENT",eventData)
-                    let initResult = this.initRecentTxs(recentTxs,transactionsByAddress)
-                    let recentTxs = initResult[0]
-                    let transactionsByAddress = initResult[1]
-                    eventData.value = this.state.web3.utils.fromWei(""+eventData.value,'ether')
-                    eventData.to = eventData.to.toLowerCase()
-                    eventData.from = eventData.from.toLowerCase()
-                    eventData.token = ERC20TOKEN
-                    if(eventData.data) eventData.data = this.state.web3.utils.hexToUtf8(eventData.data)
-                    if(!this.state.recentTxs || this.addTxIfAccountMatches(recentTxs,transactionsByAddress,eventData)){
-                      this.sortAndSaveTransactions(recentTxs,transactionsByAddress)
+                    console.log("HANDLE!",eventData,allEvents)
+                    for(let e in allEvents){
+                      let thisEvent = allEvents[e]
+                      console.log("EVENT",eventData)
+                      let initResult = this.initRecentTxs(recentTxs,transactionsByAddress)
+                      let recentTxs = initResult[0]
+                      let transactionsByAddress = initResult[1]
+                      thisEvent.value = this.state.web3.utils.fromWei(""+thisEvent.value,'ether')
+                      thisEvent.to = thisEvent.to.toLowerCase()
+                      thisEvent.from = thisEvent.from.toLowerCase()
+                      thisEvent.token = ERC20TOKEN
+                      if(thisEvent.data) thisEvent.data = this.state.web3.utils.hexToUtf8(thisEvent.data)
+                      if(!this.state.recentTxs || this.addTxIfAccountMatches(recentTxs,transactionsByAddress,thisEvent)){
+                        this.sortAndSaveTransactions(recentTxs,transactionsByAddress)
+                      }
                     }
+
                   }
                   eventParser = (
-                    <div>
+                    <div style={{color:"#000000"}}>
                     <div>Transfer from</div>
                       <Events
                         config={{hide:false}}
@@ -1035,14 +1040,14 @@ class App extends Component {
           newPrivateKey={this.state.newPrivateKey}
           fallbackWeb3Provider={WEB3_PROVIDER}
           onUpdate={async (state) => {
-            console.log("DAPPARATUS UPDATE",state)
+            //console.log("DAPPARATUS UPDATE",state)
             if(ERC20TOKEN){
               delete state.balance
             }
             if (state.web3Provider) {
               state.web3 = new Web3(state.web3Provider)
               this.setState(state,()=>{
-                console.log("state set:",this.state)
+                //console.log("state set:",this.state)
                 if(this.state.possibleNewPrivateKey){
                   this.dealWithPossibleNewPrivateKey()
                 }
@@ -1106,7 +1111,7 @@ class App extends Component {
                       localStorage.setItem(this.state.account+"loadedBlocksTop",upperBoundOfSearch)
                       this.setState({parsingTheChain:false,loadedBlocksTop:upperBoundOfSearch})
                     }
-                    console.log("~~ DONE PARSING SET ~~")
+                    //console.log("~~ DONE PARSING SET ~~")
                   })
                 }
 
