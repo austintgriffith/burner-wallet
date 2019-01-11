@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+<import React, { Component } from 'react';
 import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
@@ -91,7 +91,7 @@ if(ERC20TOKEN=="DenDai"){
   mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
   mainStyle.backgroundColor = "#6c0664"
   mainStyle.mainColor = "#e72da3"
-  title = "Speakeasy"
+  title = "Burner Wallet"
   titleImage = (
     <img src={cypherpunk} style={{
       maxWidth:50,
@@ -713,40 +713,45 @@ class App extends Component {
                   }
                   eventParser = (
                     <div>
+                    <div>Transfer from</div>
                       <Events
-                        config={{hide:true}}
+                        config={{hide:false}}
                         contract={this.state.contracts[ERC20TOKEN]}
                         eventName={"Transfer"}
                         block={this.state.block}
                         filter={{from:this.state.account}}
                         onUpdate={handler}
                       />
+                      <div>Transfer to</div>
                       <Events
-                        config={{hide:true}}
+                        config={{hide:false}}
                         contract={this.state.contracts[ERC20TOKEN]}
                         eventName={"Transfer"}
                         block={this.state.block}
                         filter={{to:this.state.account}}
                         onUpdate={handler}
                       />
+                      <div>TransferWithData from</div>
                       <Events
-                        config={{hide:true}}
+                        config={{hide:false}}
                         contract={this.state.contracts[ERC20TOKEN]}
                         eventName={"TransferWithData"}
                         block={this.state.block}
                         filter={{from:this.state.account}}
                         onUpdate={handler}
                       />
+                      <div>TransferWithData to</div>
                       <Events
-                        config={{hide:true}}
+                        config={{hide:false}}
                         contract={this.state.contracts[ERC20TOKEN]}
                         eventName={"TransferWithData"}
                         block={this.state.block}
                         filter={{to:this.state.account}}
                         onUpdate={handler}
                       />
+                      <div>UpdateVendor</div>
                       <Events
-                        config={{hide:true}}
+                        config={{hide:false}}
                         contract={this.state.contracts[ERC20TOKEN]}
                         eventName={"UpdateVendor"}
                         block={this.state.block}

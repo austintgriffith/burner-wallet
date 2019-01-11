@@ -2,6 +2,7 @@ import React from 'react';
 import Ruler from "./Ruler";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
+import { scroller } from 'react-scroll'
 
 
 export default class SendToAddress extends React.Component {
@@ -60,6 +61,9 @@ export default class SendToAddress extends React.Component {
         this.messageInput.focus();
       }
 
+      setTimeout(()=>{
+        this.scrollToBottom()
+      },30)
     },350)
     setTimeout(()=>{
       if(this.props.balance<=0){
@@ -74,6 +78,14 @@ export default class SendToAddress extends React.Component {
     },1500)
   }
 
+
+  scrollToBottom(){
+    scroller.scrollTo('theVeryBottom', {
+      duration: 500,
+      delay: 30,
+      smooth: "easeInOutCubic",
+    })
+  }
   canSend() {
     return (this.state.toAddress && this.state.toAddress.length === 42)
   }
