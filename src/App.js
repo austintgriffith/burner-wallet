@@ -297,69 +297,96 @@ class App extends Component {
         console.log("this.state.claimKey", this.state.claimKey)
         let sig = this.state.web3.eth.accounts.sign(claimHash, this.state.claimKey);
         sig = sig.signature;
-        console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
-        tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account), 150000, false, 0, (result) => {
-          if (result) {
-            console.log("CLAIMED!!!", result)
-            this.setState({claimed: true})
-            setTimeout(() => {
-              this.setState({sending: false}, () => {
-                //alert("DONE")
-                window.location = "/"
-              })
-            }, 2000)
-          }
-        })
-      }
-    })
-    this.forceUpdate();
-  }
-  relayClaim() {
-    console.log("DOING CLAIM THROUGH RELAY")
-    this.state.contracts.Links.funds(this.state.claimId).call().then((fund) => {
-      if (fund) {
-        this.setState({fund: fund})
-        console.log("FUND: ", fund)
-
-        let claimHash = this.state.web3.utils.soliditySha3(
-          {type: 'bytes32', value: this.state.claimId}, // fund id
-          {type: 'address', value: this.state.account}, // destination address
-          {type: 'uint256', value: fund[3]}, // nonce
-          {type: 'address', value: this.state.contracts.Links._address} // contract address
-        )
-        console.log("claimHash", claimHash)
-        console.log("this.state.claimKey", this.state.claimKey)
-        let sig = this.state.web3.eth.accounts.sign(claimHash, this.state.claimKey);
-        sig = sig.signature
-        console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
-
-        this.setState({sending: true})
-        let postData = {
-          id: this.state.claimId,
-          sig: sig,
-          claimHash: claimHash,
-          dest: this.state.account
-        }
-        console.log("CLAIM_RELAY:", CLAIM_RELAY)
-        axios.post(CLAIM_RELAY + "/link", postData, {
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }).then((response) => {
-          console.log("TX RESULT", response.data.transactionHash)
-          this.setState({claimed: true})
-          setTimeout(() => {
-            this.setState({sending: false}, () => {
-              //alert("DONE")
-              window.location = "/"
-            })
-          }, 2000)
+        contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0).estimateGas()
+        .then((gasAmount) => {
+          console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account, gasAmount)
+          tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account, 0), gasAmount + 5000, false, 0, (result) => {
+            if (result) {
+              console.log("CLAIMED!!!", result)
+              this.setState({claimed: true})
+              setTimeout(() => {
+                this.setState({sending: false}, () => {
+                  //alert("DONE")
+                  window.location = "/"
+                })
+              }, 2000)
+            }
+          })
         })
         .catch((error) => {
-          console.log(error);
+          console.log(error); //Estimate Gas promise
         });
       }
     })
+    .catch((error) => {
+      console.log(error); //FUNDS promise
+    });
+    this.forceUpdate();
+  }
+  relayClaim() {
+      console.log("DOING CLAIM THROUGH RELAY")
+      this.state.contracts.Links.funds(this.state.claimId).call().then((fund) => {
+        if (fund) {
+          this.setState({fund: fund})
+          console.log("FUND: ", fund)
+
+          let claimHash = this.state.web3.utils.soliditySha3(
+            {type: 'bytes32', value: this.state.claimId}, // fund id
+            {type: 'address', value: this.state.account}, // destination address
+            {type: 'uint256', value: fund[3]}, // nonce
+            {type: 'address', value: this.state.contracts.Links._address} // contract address
+          )
+          console.log("claimHash", claimHash)
+          console.log("this.state.claimKey", this.state.claimKey)
+          let sig = this.state.web3.eth.accounts.sign(claimHash, this.state.claimKey);
+          sig = sig.signature
+          /* getGasPrice() is not implemented on Metamask, leaving the code as reference. */
+          //this.state.web3.eth.getGasPrice()
+          //.then((gasPrice) => {
+            let gasPrice = 1500000000  // Hardcoded to 1.5 Gwei. Real value is calculated on the relay.
+            this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,150000*gasPrice).estimateGas()
+            .then((gasAmount) => {
+              console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account, gasAmount, (gasAmount * gasPrice))
+
+              this.setState({sending: true})
+              let postData = {
+                id: this.state.claimId,
+                sig: sig,
+                claimHash: claimHash,
+                dest: this.state.account,
+                reward: (gasAmount * gasPrice)
+              }
+              console.log("CLAIM_RELAY:", CLAIM_RELAY)
+              axios.post(CLAIM_RELAY + "/link", postData, {
+                headers: {
+                  'Content-Type': 'application/json',
+                }
+              }).then((response) => {
+                console.log("TX RESULT", response.data.transactionHash)
+                this.setState({claimed: true})
+                setTimeout(() => {
+                  this.setState({sending: false}, () => {
+                    //alert("DONE")
+                    window.location = "/"
+                  })
+                }, 2000)
+              })
+              .catch((error) => {
+                console.log(error); //axios promise
+              });
+            })
+          .catch((error) => {
+            console.log(error); //Estimate Gas promise
+          });
+        //})
+        //.catch((error) => {
+        //  console.log(error); //Get Gas price promise
+        //});
+      }  
+    })
+    .catch((error) => {
+      console.log(error); //FUNDS promise
+    });
   }
   changeView = (view,cb) => {
     if(view=="bridge"||view=="main"/*||view.indexOf("account_")==0*/){
