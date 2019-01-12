@@ -48,9 +48,9 @@ let titleImage = (
   <i className="fas fa-fire" />
 )
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
+  WEB3_PROVIDER = "http://0.0.0.0:8545";
   CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = 'Burner'
+  ERC20TOKEN = false//'Burner'
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
@@ -399,31 +399,11 @@ async parseBlocks(parseBlock,recentTxs,transactionsByAddress){
           //console.log("DEALING WITH INPUT: ",tx.input)
 
           //console.log("has meta account, trying to decode...")
-          let key = tx.input.substring(0,32)
-          //console.log("looking in memory for key",key)
-          let cachedEncrypted = this.state[key]
-          if(!cachedEncrypted){
-            //console.log("nothing found in memory, checking local storage")
-            cachedEncrypted = localStorage.getItem(key)
-          }
-          if(cachedEncrypted){
-            smallerTx.data = cachedEncrypted
+          let decrypted = await this.decryptInput(tx.input)
+
+          if(decrypted){
+            smallerTx.data = decrypted
             smallerTx.encrypted = true
-          }else{
-            if(this.state.metaAccount){
-              try{
-                let parsedData = EthCrypto.cipher.parse(tx.input.substring(2))
-                const endMessage = await EthCrypto.decryptWithPrivateKey(
-                  this.state.metaAccount.privateKey, // privateKey
-                  parsedData // encrypted-data
-                );
-                smallerTx.data = endMessage
-                smallerTx.encrypted = true
-              }catch(e){}
-            }else{
-              //no meta account? maybe try to setup signing keys?
-              //maybe have a contract that tries do decrypt? \
-            }
           }
 
           try{
@@ -443,6 +423,36 @@ async parseBlocks(parseBlock,recentTxs,transactionsByAddress){
     }
   }
   return updatedTxs
+}
+async decryptInput(input){
+  console.log("trying to decrypt...")
+  let key = input.substring(0,32)
+  //console.log("looking in memory for key",key)
+  let cachedEncrypted = this.state[key]
+  if(!cachedEncrypted){
+    //console.log("nothing found in memory, checking local storage")
+    cachedEncrypted = localStorage.getItem(key)
+  }
+  if(cachedEncrypted){
+    return cachedEncrypted
+  }else{
+    if(this.state.metaAccount){
+      try{
+        let parsedData = EthCrypto.cipher.parse(input.substring(2))
+        console.log("parsedData",parsedData,"  this.state.metaAccount.privateKey",  this.state.metaAccount.privateKey)
+        const endMessage = await EthCrypto.decryptWithPrivateKey(
+          this.state.metaAccount.privateKey, // privateKey
+          parsedData // encrypted-data
+        );
+        console.log("endMessage",endMessage)
+        return  endMessage
+      }catch(e){console.log(e)}
+    }else{
+      //no meta account? maybe try to setup signing keys?
+      //maybe have a contract that tries do decrypt? \
+    }
+  }
+  return false
 }
 initRecentTxs(){
   let recentTxs = []
@@ -538,7 +548,7 @@ sortAndSaveTransactions(recentTxs,transactionsByAddress){
     }
   })
 }
-addAllTransactionsFromList(recentTxs,transactionsByAddress,theList){
+async addAllTransactionsFromList(recentTxs,transactionsByAddress,theList){
   let updatedTxs = false
 
   for(let e in theList){
@@ -548,8 +558,16 @@ addAllTransactionsFromList(recentTxs,transactionsByAddress,theList){
     cleanEvent.from = cleanEvent.from.toLowerCase()
     cleanEvent.value = this.state.web3.utils.fromWei(""+cleanEvent.value,'ether')
     cleanEvent.token = ERC20TOKEN
-    if(cleanEvent.data) cleanEvent.data = this.state.web3.utils.hexToUtf8(cleanEvent.data)
-
+    if(cleanEvent.data) {
+      let decrypted = await this.decryptInput(cleanEvent.data)
+      if(decrypted){
+        cleanEvent.data = decrypted
+        cleanEvent.encrypted = true
+      }
+      try{
+        cleanEvent.data = this.state.web3.utils.hexToUtf8(cleanEvent.data)
+      }catch(e){}
+    }
     //console.log("addTxIfAccountMatches",cleanEvent)
     updatedTxs = this.addTxIfAccountMatches(recentTxs,transactionsByAddress,cleanEvent) || updatedTxs
   }
