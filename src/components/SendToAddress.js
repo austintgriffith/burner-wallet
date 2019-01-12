@@ -48,9 +48,11 @@ export default class SendToAddress extends React.Component {
     this.setState({ [key]: value },()=>{
       this.setState({ canSend: this.canSend() })
     });
-    setTimeout(()=>{
-      this.scrollToBottom()
-    },30)
+    if(key=="toAddress"){
+      setTimeout(()=>{
+        this.scrollToBottom()
+      },30)
+    }
   };
 
   componentDidMount(){
