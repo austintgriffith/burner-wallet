@@ -80,7 +80,7 @@ export default class SendToAddress extends React.Component {
           message: 'No funds to send.',
         });
       }
-    },1500)
+    },2500)
   }
 
 

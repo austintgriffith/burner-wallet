@@ -47,10 +47,10 @@ let title = "Burner Wallet"
 let titleImage = (
   <i className="fas fa-fire" />
 )
-if (window.location.hostname.indexOf("localhost") >= 0) {
-  WEB3_PROVIDER = "http://0.0.0.0:8545"
-  CLAIM_RELAY = 'http://0.0.0.0:18462'
-  ERC20TOKEN = false //'Burner'
+if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
+  WEB3_PROVIDER = "https://dai.poa.network";
+  CLAIM_RELAY = 'https://x.xdai.io'
+  ERC20TOKEN = 'Burner'
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";

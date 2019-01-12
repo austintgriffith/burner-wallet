@@ -9,7 +9,8 @@ export default class Advanced extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      privateKeyQr:false
+      privateKeyQr:false,
+      seedPhraseHidden:true
     }
   }
   render(){
@@ -81,8 +82,11 @@ export default class Advanced extends React.Component {
         </div>
         <div className="main-card card w-100">
           <div className="content ops row">
-            <div className="col-6 p-1">
-            <input type="text" className="form-control" placeholder="seed phrase" value={this.state.newSeedPhrase}
+            <div className="col-1 p-1" onClick={()=>{this.setState({seedPhraseHidden:!this.state.seedPhraseHidden})}}>
+              <i className="fas fa-eye"></i>
+            </div>
+            <div className="col-5 p-1">
+            <input type={this.state.seedPhraseHidden?"password":"text"} className="form-control" placeholder="seed phrase" value={this.state.newSeedPhrase}
                    onChange={event => this.setState({newSeedPhrase:event.target.value})} />
             </div>
             <div className="col-6 p-1">
