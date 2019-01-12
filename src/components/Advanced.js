@@ -20,7 +20,7 @@ export default class Advanced extends React.Component {
       url = url+":"+window.location.port
     }
     let qrSize = Math.min(document.documentElement.clientWidth,512)-90
-    let qrValue = url+"/"+privateKey
+    let qrValue = url+"/#"+privateKey
     let privateKeyQrDisplay = ""
     if(this.state.privateKeyQr){
       privateKeyQrDisplay = (

@@ -1,6 +1,7 @@
 import React from 'react';
 import Ruler from "./Ruler";
 import Balance from "./Balance";
+import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
 
@@ -47,7 +48,9 @@ export default class SendToAddress extends React.Component {
     this.setState({ [key]: value },()=>{
       this.setState({ canSend: this.canSend() })
     });
-
+    setTimeout(()=>{
+      this.scrollToBottom()
+    },30)
   };
 
   componentDidMount(){
@@ -80,6 +83,7 @@ export default class SendToAddress extends React.Component {
 
 
   scrollToBottom(){
+    console.log("scrolling to bottom")
     scroller.scrollTo('theVeryBottom', {
       duration: 500,
       delay: 30,
@@ -87,7 +91,7 @@ export default class SendToAddress extends React.Component {
     })
   }
   canSend() {
-    return (this.state.toAddress && this.state.toAddress.length === 42)
+    return (this.state.toAddress && this.state.toAddress.length === 42 && (this.state.amount>0 || this.state.message))
   }
 
   send = () => {
@@ -168,7 +172,14 @@ export default class SendToAddress extends React.Component {
                   ref={(input) => { this.addressInput = input; }}
                        onChange={event => this.updateState('toAddress', event.target.value)} />
               </div>
-              <div>  { this.state.toAddress && this.state.toAddress.length==42 && <Blockies seed={toAddress.toLowerCase()} scale={10} /> }</div>
+              <div>  { this.state.toAddress && this.state.toAddress.length==42 &&
+
+                <CopyToClipboard text={toAddress.toLowerCase()}>
+                  <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
+                    <Blockies seed={toAddress.toLowerCase()} scale={10}/>
+                  </div>
+                </CopyToClipboard>
+              }</div>
               <label htmlFor="amount_input">Send Amount</label>
               <div className="input-group">
                 <div className="input-group-prepend">
@@ -191,7 +202,7 @@ export default class SendToAddress extends React.Component {
             </button>
           </div>
         </div>
-        <div className="text-center bottom-text">
+        <div name="theVeryBottom" className="text-center bottom-text">
           <span style={{padding:10}}>
             <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{this.props.goBack()}}>
               <i className="fas fa-times"/> cancel

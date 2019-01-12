@@ -204,9 +204,9 @@ module.exports = {
         printTxResult(result)
 
 
-        result = await clevis("sendTo","0.10","0","0xb2fdf690e10643a129e3f2e95d8687500f9008e5")
+        result = await clevis("sendTo","0.10","0","0xfb7caee63771e2bf253c6f33e067acf720f63ee8")
         printTxResult(result)
-        result = await clevis("contract","mint","Burner","0","0xb2fdf690e10643a129e3f2e95d8687500f9008e5","1000000000000000000")
+        result = await clevis("contract","mint","Burner","0","0xfb7caee63771e2bf253c6f33e067acf720f63ee8","1000000000000000000")
         printTxResult(result)
 
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import Web3 from 'web3';
 import Ruler from "./Ruler";
+import { Scaler } from "dapparatus";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
 
@@ -40,7 +41,13 @@ export default class SendToAddress extends React.Component {
   }
 
   async poll(){
-    let fromBalance = await this.props.web3.eth.getBalance('' + this.state.fromAddress)
+    let fromBalance
+    if(this.props.ERC20TOKEN){
+      fromBalance = await this.props.contracts[this.props.ERC20TOKEN].balanceOf('' + this.state.fromAddress).call()
+    }else{
+      fromBalance = await this.props.web3.eth.getBalance('' + this.state.fromAddress)
+    }
+
     fromBalance = parseFloat(this.props.web3.utils.fromWei(fromBalance,'ether'))
     fromBalance = fromBalance.toFixed(2)
     console.log("from balance:",fromBalance,"of from address",this.state.fromAddress)
@@ -65,13 +72,25 @@ export default class SendToAddress extends React.Component {
         console.log("SWITCH TO LOADER VIEW...")
         this.props.changeView('loader')
         setTimeout(()=>{window.scrollTo(0,0)},60)
-        console.log("metaAccount",this.state.metaAccount,"amount",this.props.web3.utils.toWei(amount,'ether'))
-        let tx={
-          to:this.props.address,
-          value: this.props.web3.utils.toWei(amount,'ether'),
-          gas: 30000,
-          gasPrice: Math.round(1100000000)//1.1gwei
+        //console.log("metaAccount",this.state.metaAccount,"amount",this.props.web3.utils.toWei(amount,'ether'))
+        let tx
+
+        if(this.props.ERC20TOKEN){
+          tx={
+            to:this.props.contracts[this.props.ERC20TOKEN]._address,
+            data: this.props.contracts[this.props.ERC20TOKEN].transfer(this.props.address,this.props.web3.utils.toWei(amount,'ether')).encodeABI(),
+            gas: 60000,
+            gasPrice: Math.round(1100000000)//1.1gwei
+          }
+        }else{
+          tx={
+            to:this.props.address,
+            value: this.props.web3.utils.toWei(amount,'ether'),
+            gas: 30000,
+            gasPrice: Math.round(1100000000)//1.1gwei
+          }
         }
+
         this.props.web3.eth.accounts.signTransaction(tx, metaAccount.privateKey).then(signed => {
             this.props.web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
               console.log("META RECEIPT",receipt)
@@ -83,7 +102,6 @@ export default class SendToAddress extends React.Component {
               });
             })
         });
-
 
     }else{
       this.props.changeAlert({type: 'warning', message: 'Please enter a valid amount to withdraw'})
@@ -110,13 +128,15 @@ export default class SendToAddress extends React.Component {
                     { <Blockies seed={fromAddress} scale={10} /> }
                   </div>
                   <div className="col-6 p-1 w-100">
-                    <div style={{fontSize:64,letterSpacing:-2,fontWeight:500}}>
-                      ${this.state.fromBalance}
+                    <div style={{fontSize:64,letterSpacing:-2,fontWeight:500,whiteSpace:"nowrap"}}>
+                      <Scaler config={{startZoomAt:1000,origin:"0% 50%"}}>
+                        ${this.state.fromBalance}
+                      </Scaler>
                     </div>
                   </div>
               </div>
 
-              <label htmlFor="amount_input">Send Amount</label>
+              <label htmlFor="amount_input">Withdraw Amount</label>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
