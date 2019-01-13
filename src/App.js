@@ -395,27 +395,25 @@ async parseBlocks(parseBlock,recentTxs,transactionsByAddress){
           blockNumber:tx.blockNumber
         }
 
-        if(tx.input&&tx.input!="0x"){
-          //console.log("DEALING WITH INPUT: ",tx.input)
-
-          //console.log("has meta account, trying to decode...")
-          let decrypted = await this.decryptInput(tx.input)
-
-          if(decrypted){
-            smallerTx.data = decrypted
-            smallerTx.encrypted = true
-          }
-
-          try{
-            smallerTx.data = this.state.web3.utils.hexToUtf8(tx.input)
-          }catch(e){}
-          //console.log("smallerTx at this point",smallerTx)
-          if(!smallerTx.data){
-            smallerTx.data = " *** unable to decrypt data *** "
-          }
-        }
 
         if(smallerTx.from==this.state.account || smallerTx.to==this.state.account){
+          if(tx.input&&tx.input!="0x"){
+
+            let decrypted = await this.decryptInput(tx.input)
+
+            if(decrypted){
+              smallerTx.data = decrypted
+              smallerTx.encrypted = true
+            }
+
+            try{
+              smallerTx.data = this.state.web3.utils.hexToUtf8(tx.input)
+            }catch(e){}
+            //console.log("smallerTx at this point",smallerTx)
+            if(!smallerTx.data){
+              smallerTx.data = " *** unable to decrypt data *** "
+            }
+          }
           updatedTxs = this.addTxIfAccountMatches(recentTxs,transactionsByAddress,smallerTx) || updatedTxs
         }
 
@@ -425,7 +423,6 @@ async parseBlocks(parseBlock,recentTxs,transactionsByAddress){
   return updatedTxs
 }
 async decryptInput(input){
-  console.log("trying to decrypt...")
   let key = input.substring(0,32)
   //console.log("looking in memory for key",key)
   let cachedEncrypted = this.state[key]
@@ -439,14 +436,12 @@ async decryptInput(input){
     if(this.state.metaAccount){
       try{
         let parsedData = EthCrypto.cipher.parse(input.substring(2))
-        console.log("parsedData",parsedData,"  this.state.metaAccount.privateKey",  this.state.metaAccount.privateKey)
         const endMessage = await EthCrypto.decryptWithPrivateKey(
           this.state.metaAccount.privateKey, // privateKey
           parsedData // encrypted-data
         );
-        console.log("endMessage",endMessage)
         return  endMessage
-      }catch(e){console.log(e)}
+      }catch(e){}
     }else{
       //no meta account? maybe try to setup signing keys?
       //maybe have a contract that tries do decrypt? \
@@ -521,6 +516,7 @@ addTxIfAccountMatches(recentTxs,transactionsByAddress,smallerTx){
         // do nothing, it exists
       }else{
         transactionsByAddress[otherAccount][t].data = smallerTx.data
+        if(smallerTx.encrypted) transactionsByAddress[otherAccount][t].encrypted = true
         updatedTxs=true
       }
     }
@@ -563,12 +559,12 @@ async addAllTransactionsFromList(recentTxs,transactionsByAddress,theList){
       if(decrypted){
         cleanEvent.data = decrypted
         cleanEvent.encrypted = true
+      }else{
+        try{
+          cleanEvent.data = this.state.web3.utils.hexToUtf8(cleanEvent.data)
+        }catch(e){}
       }
-      try{
-        cleanEvent.data = this.state.web3.utils.hexToUtf8(cleanEvent.data)
-      }catch(e){}
     }
-    //console.log("addTxIfAccountMatches",cleanEvent)
     updatedTxs = this.addTxIfAccountMatches(recentTxs,transactionsByAddress,cleanEvent) || updatedTxs
   }
   return updatedTxs

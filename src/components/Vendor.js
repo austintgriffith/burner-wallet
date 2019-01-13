@@ -38,7 +38,7 @@ export default class Advanced extends React.Component {
         found=false
       }
     }
-    console.log("========PPPPPP",products)
+    ///console.log("========PPPPPP",products)
     this.setState({products})
   }
   render(){
