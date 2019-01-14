@@ -923,6 +923,7 @@ render() {
           <div>
           <NavCard title={'Send to Address'} goBack={this.goBack.bind(this)}/>
           <SendToAddress
+          ERC20TOKEN={ERC20TOKEN}
           mainStyle={mainStyle}
           balance={balance}
           web3={this.state.web3}

@@ -98,12 +98,12 @@ export default class SendToAddress extends React.Component {
 
   send = () => {
     let { toAddress, amount } = this.state;
-
+    let {ERC20TOKEN} = this.props
 
     if(this.state.canSend){
-      if(this.props.balance-0.0001<=amount){
+      if((ERC20TOKEN && this.props.balance<=amount) || (this.props.balance-0.0001<=amount)){
         let extraHint = ""
-        if(amount-this.props.balance<=.01){
+        if(!ERC20TOKEN && amount-this.props.balance<=.01){
           extraHint = "(gas costs)"
         }
 
