@@ -91,6 +91,7 @@ app.post('/link', async (req, res) => {
     console.log("dApp reward estimation: ",req.body.reward)
     web3.eth.getGasPrice()
     .then((gasPrice) => {
+      gasPrice = gasPrice < 500000000 ? 1000000000 : gasPrice; // Fix for xDai 0 Txs avg
       contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.claimHash,req.body.dest,150000*gasPrice).estimateGas()
       .then((gasAmount) => {
         console.log("Relay gas estimation: ",gasAmount)
