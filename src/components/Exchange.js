@@ -1775,7 +1775,7 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} disabled={true}>
+              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={()=>{alert("Coming soon!")}}>
                 <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
                   <i className="fas fa-plug"></i> Create/Connect
                 </Scaler>
@@ -1797,7 +1797,7 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} disabled={true}>
+              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={()=>{alert("Coming soon!")}}>
                 <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
                   <i className="fas fa-plug"></i> Create/Connect
                 </Scaler>
@@ -1820,7 +1820,7 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-6 p-1">
 
-              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} disabled={true}>
+              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={()=>{alert("Coming soon!")}}>
                 <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
                   <i className="fas fa-plug"></i> Create/Connect
                 </Scaler>
