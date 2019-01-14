@@ -52,8 +52,8 @@ let titleImage = (
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
   WEB3_PROVIDER = "http://0.0.0.0:8545";
   CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = 'BuffiDai'//false//'Burner'
-  ERC20IMAGE = bufficorn
+  ERC20TOKEN = false//'BuffiDai'//false//'Burner'
+  ERC20IMAGE = false//bufficorn
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";

@@ -19,14 +19,14 @@ export default ({mainStyle,ERC20TOKEN,address, balance, changeAlert, changeView,
     <div className="content ops row">
       <div className="col-6 p-1" onClick={() => changeView('send_with_link')}>
         <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}}>
-          <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
+          <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
             <i className="fas fa-link"  /> Send with Link
           </Scaler>
         </button>
       </div>
       <div className="col-6 p-1">
         <button className="btn btn-large w-100" onClick={() => changeView('send_to_address')} style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}}>
-          <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
+          <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
             <i className="fas fa-address-book"/> Send to Address
           </Scaler>
         </button>
