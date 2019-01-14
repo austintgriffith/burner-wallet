@@ -21,6 +21,7 @@ export default class Advanced extends React.Component {
       vendor: vendor,
       vendorObject: false,
       loading: true,
+      showQR: {}
     }
   }
   componentDidMount(){
@@ -64,6 +65,11 @@ export default class Advanced extends React.Component {
 
     let {vendor,vendorObject} = this.state
 
+    let url = window.location.protocol+"//"+window.location.hostname
+    if(window.location.port&&window.location.port!=80&&window.location.port!=443){
+      url = url+":"+window.location.port
+    }
+
     let products = []
     let vendorDisplay = []
     if(vendor){
@@ -87,10 +93,39 @@ export default class Advanced extends React.Component {
         )
       }
 
+      let qrSize = Math.min(document.documentElement.clientWidth,512)-90
 
       for(let p in this.state.products){
         let prod = this.state.products[p]
         if(prod.exists&&prod.isAvailable){
+
+          let extraQR = ""
+
+
+          let theName = web3.utils.hexToUtf8(prod.name)
+          let theAmount = web3.utils.fromWei(prod.cost,'ether')
+
+          let productLocation = "/"+vendor+";"+theAmount+";"+theName+";"+vendorObject.name+":"
+
+          let qrValue = url+productLocation
+
+          let toggleQR = () =>{
+            let {showQR} = this.state
+            showQR[p] = !showQR[p]
+            this.setState({showQR})
+          }
+
+          if(this.state.showQR[p]){
+            extraQR = (
+              <div className="main-card card w-100" style={{paddingTop:40}} onClick={toggleQR}>
+                <div className="content qr row">
+                    <QRCode value={qrValue} size={qrSize}/>
+                    <div style={{width:'100%',textAlign:'center'}}><div>{vendorObject.name}</div>  {theName}:   ${dollarDisplay(theAmount)}</div>
+                </div>
+              </div>
+            )
+          }
+
 
           let available = (
             <i className="far fa-eye"></i>
@@ -101,21 +136,21 @@ export default class Advanced extends React.Component {
             )
           }
 
-          let theName = web3.utils.hexToUtf8(prod.name)
-          let theAmount = web3.utils.fromWei(prod.cost,'ether')
           products.push(
             <div className="content bridge row" style={{borderBottom:"1px solid #dddddd",paddingTop:15,paddingBottom:10}}>
-
+              <div className="col-1 p-1" onClick={toggleQR}>
+                <i className="fas fa-qrcode"></i>
+              </div>
               <div className="col-4 p-1">
                 {theName}
               </div>
-              <div className="col-4 p-1">
+              <div className="col-3 p-1">
                 ${dollarDisplay(theAmount)}
               </div>
               <div className="col-4 p-1">
               <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap",marginTop:-8}} onClick={()=>{
                 this.setState({loading:true,products:false,vendor:false},()=>{
-                  window.location = "/"+vendor+";"+theAmount+";"+theName+";"+vendorObject.name+":"
+                  window.location = productLocation
                 })
 
               }}>
@@ -124,16 +159,13 @@ export default class Advanced extends React.Component {
                 </Scaler>
               </button>
               </div>
+              {extraQR}
             </div>
           )
         }
       }
 
-      let url = window.location.protocol+"//"+window.location.hostname
-      if(window.location.port&&window.location.port!=80&&window.location.port!=443){
-        url = url+":"+window.location.port
-      }
-      let qrSize = Math.min(document.documentElement.clientWidth,512)-90
+
       let qrValue = url+"/vendors;"+this.state.vendor
 
       products.push(

@@ -2,9 +2,9 @@ pragma solidity ^0.4.25;
 
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20Mintable.sol";
 
-contract DenDai is ERC20Mintable {
+contract BuffiDai is ERC20Mintable {
 
-  string public name = "DenDai";
+  string public name = "BuffiDai";
   string public symbol = "DEN";
   uint8 public decimals = 18;
 
@@ -26,7 +26,7 @@ contract DenDai is ERC20Mintable {
   mapping (address => bool) public admin;
 
   function updateAdmin(address newAdmin,bool active) public {
-    require(admin[msg.sender], "DenDai::addAdmin - sender is not admin");
+    require(admin[msg.sender], "BuffiDai::addAdmin - sender is not admin");
     admin[newAdmin] = active;
     UpdateAdmin(newAdmin,active,msg.sender);
   }
@@ -45,7 +45,7 @@ contract DenDai is ERC20Mintable {
   mapping (address => mapping (uint256 => Product)) public products;
 
   function addVendor(address wallet,bytes32 name) public {
-    require(admin[msg.sender], "DenDai::addVendor - sender is not admin");
+    require(admin[msg.sender], "BuffiDai::addVendor - sender is not admin");
     vendors[wallet] = Vendor({
         isAllowed: true,
         name: name,
@@ -54,14 +54,14 @@ contract DenDai is ERC20Mintable {
     emit UpdateVendor(wallet,vendors[wallet].name,vendors[wallet].isAllowed,vendors[wallet].isActive,msg.sender);
   }
   function updateVendor(address wallet, bytes32 name, bool newActive, bool newAllowed) public {
-    require(admin[msg.sender], "DenDai::addVendor - sender is not admin");
+    require(admin[msg.sender], "BuffiDai::addVendor - sender is not admin");
     vendors[wallet].name = name;
     vendors[wallet].isAllowed = newAllowed;
     vendors[wallet].isActive = newActive;
     emit UpdateVendor(wallet,vendors[wallet].name,vendors[wallet].isAllowed,vendors[wallet].isActive,msg.sender);
   }
   function activateVendor(bool isActive) public {
-    require(vendors[msg.sender].isAllowed, "DenDai::activateVendor - vendor is not allowed by admin");
+    require(vendors[msg.sender].isAllowed, "BuffiDai::activateVendor - vendor is not allowed by admin");
     vendors[msg.sender].isActive = isActive;
     emit UpdateVendor(msg.sender,vendors[msg.sender].name,vendors[msg.sender].isAllowed,vendors[msg.sender].isActive,msg.sender);
   }
@@ -79,7 +79,7 @@ contract DenDai is ERC20Mintable {
   }
 
   function addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable) public {
-    require(vendors[msg.sender].isAllowed, "DenDai::addProduct - vendor is not allowed by admin");
+    require(vendors[msg.sender].isAllowed, "BuffiDai::addProduct - vendor is not allowed by admin");
     products[msg.sender][id] = Product({
       id: id,
       exists:true,
@@ -106,7 +106,7 @@ contract DenDai is ERC20Mintable {
   event  Deposit(address indexed dst, uint wad);
 
   function withdraw(uint wad) public {
-    require(vendors[msg.sender].isAllowed || admin[msg.sender], "DenDai::withdraw - vendor is not allowed by admin to withdraw");
+    require(vendors[msg.sender].isAllowed || admin[msg.sender], "BuffiDai::withdraw - vendor is not allowed by admin to withdraw");
     require(_balances[msg.sender] >= wad);
     _balances[msg.sender] -= wad;
     msg.sender.transfer(wad);

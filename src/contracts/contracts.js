@@ -1,1 +1,1 @@
-module.exports = ["Links","Burner"]
+module.exports = ["Links","Burner","BuffiDai"]

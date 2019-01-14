@@ -33,6 +33,8 @@ const EthCrypto = require('eth-crypto');
 let WEB3_PROVIDER
 let CLAIM_RELAY
 let ERC20TOKEN
+let ERC20IMAGE
+
 
 let mainStyle = {
   width:"100%",
@@ -50,7 +52,8 @@ let titleImage = (
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
   WEB3_PROVIDER = "http://0.0.0.0:8545";
   CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false//'Burner'
+  ERC20TOKEN = 'BuffiDai'//false//'Burner'
+  ERC20IMAGE = bufficorn
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
@@ -67,23 +70,25 @@ else if (window.location.hostname.indexOf("xdai") >= 0) {
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = false
 }
-else if (window.location.hostname.indexOf("dendai") >= 0) {
+else if (window.location.hostname.indexOf("buffidai") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = 'DenDai'
+  ERC20TOKEN = 'BuffiDai'
+  ERC20IMAGE = bufficorn
 }
 else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = 'Burner'
+  ERC20IMAGE = cypherpunk
 }
 
 
-if(ERC20TOKEN=="DenDai"){
+if(ERC20TOKEN=="BuffiDai"){
   mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
   mainStyle.backgroundColor = "#20012d"
   mainStyle.mainColor = "#b6299e"
-  title = "ETHDenverDAI"
+  title = "BuffiDai.io"
   titleImage = (
     <img src={bufficorn} style={{
       maxWidth:50,
@@ -208,13 +213,13 @@ class App extends Component {
     if(ERC20TOKEN&&this.state.contracts){
       let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
       gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
-      let denDaiBalance = await this.state.contracts[ERC20TOKEN].balanceOf(this.state.account).call()
-      denDaiBalance = this.state.web3.utils.fromWei(""+denDaiBalance,'ether')
+      let tokenBalance = await this.state.contracts[ERC20TOKEN].balanceOf(this.state.account).call()
+      tokenBalance = this.state.web3.utils.fromWei(""+tokenBalance,'ether')
       let isAdmin = await this.state.contracts[ERC20TOKEN].admin(this.state.account).call()
       //console.log("ISADMIN",isAdmin)
       let isVendor = await this.state.contracts[ERC20TOKEN].vendors(this.state.account).call()
       //console.log("isVendor",isVendor)
-      this.setState({gasBalance:gasBalance,balance:denDaiBalance,isAdmin:isAdmin,isVendor:isVendor})
+      this.setState({gasBalance:gasBalance,balance:tokenBalance,isAdmin:isAdmin,isVendor:isVendor})
     }
   }
   setPossibleNewPrivateKey(value){
@@ -683,16 +688,22 @@ render() {
 
       let subBalanceDisplay = ""
       if(ERC20TOKEN){
-        subBalanceDisplay = (
-          <div style={{opacity:0.4,fontSize:12,position:'absolute',right:0,marginTop:5}}>
-          {Math.round(this.state.gasBalance*10000)/10000}
-          </div>
-        )
+        if(!this.state.gasBalance){
+          subBalanceDisplay = ""
+        }else{
+          subBalanceDisplay = (
+            <div style={{opacity:0.4,fontSize:12,position:'absolute',right:0,marginTop:5}}>
+            {Math.round(this.state.gasBalance*10000)/10000}
+            </div>
+          )
+        }
+
 
         if(this.state.isAdmin){
           moreButtons = (
             <div>
             <Admin
+            ERC20TOKEN={ERC20TOKEN}
             vendors={this.state.vendors}
             mainStyle={mainStyle}
             changeView={this.changeView}
@@ -1009,7 +1020,7 @@ render() {
           <div>
           <NavCard title={"Exchange"} goBack={this.goBack.bind(this)}/>
           <Exchange
-          ERC20IMAGE={cypherpunk}
+          ERC20IMAGE={ERC20IMAGE}
           ERC20TOKEN={ERC20TOKEN}
           contracts={this.state.contracts}
           mainStyle={mainStyle}

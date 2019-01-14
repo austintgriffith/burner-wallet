@@ -219,7 +219,8 @@ export default class Advanced extends React.Component {
           <div className="col-4 p-1">
           <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
             this.setState({addingAdmin:true})
-            tx(contracts[this.props.ERC20TOKEN].updateAdmin(this.state.newAdmin,true),(result)=>{
+            console.log("CONTRACTSSSSSSS",this.props.ERC20TOKEN,this.props.contracts)
+            tx(this.props.contracts[this.props.ERC20TOKEN].updateAdmin(this.state.newAdmin,true),(result)=>{
               console.log("ADMIN ADDED",result)
               this.setState({newAdmin:""})
               setTimeout(()=>{
