@@ -13,7 +13,10 @@ import "../../math/SafeMath.sol";
 contract ERC20 is IERC20 {
   using SafeMath for uint256;
 
-  mapping (address => uint256) private _balances;
+  //TODO: BAD BAD BAD. We need to undo this asap, but I'm checking this change in
+  //To get things working as they are. In the future, we need to move this OpenZeppelin
+  //to an npm dev-dependency and then extend them properly without changing the private var
+  mapping (address => uint256) internal _balances;
 
   mapping (address => mapping (address => uint256)) private _allowed;
 
