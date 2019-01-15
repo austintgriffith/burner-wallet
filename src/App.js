@@ -27,7 +27,7 @@ import Exchange from './components/Exchange'
 import customRPCHint from './customRPCHint.png';
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
-
+let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
 
 let WEB3_PROVIDER
@@ -157,7 +157,13 @@ class App extends Component {
     window.addEventListener("resize", this.updateDimensions.bind(this));
     if(window.location.pathname){
       console.log("PATH",window.location.pathname,window.location.pathname.length,window.location.hash)
-      if(window.location.pathname.length==43){
+      if(window.location.pathname.indexOf("/pk")>=0){
+        let tempweb3 = new Web3();
+        let base64encodedPK = window.location.hash.replace("#","")
+        let rawPK = tempweb3.utils.bytesToHex(base64url.toBuffer(base64encodedPK))
+        this.setState({possibleNewPrivateKey:rawPK})
+        window.history.pushState({},"", "/");
+      }else if(window.location.pathname.length==43){
         this.changeView('send_to_address')
         console.log("CHANGE VIEW")
       }else if(window.location.pathname.length==134){
