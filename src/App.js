@@ -243,6 +243,10 @@ class App extends Component {
       })
     }else{
       this.setState({possibleNewPrivateKey:false,newPrivateKey:this.state.possibleNewPrivateKey})
+      localStorage.setItem(this.state.account+"loadedBlocksTop","")
+      localStorage.setItem(this.state.account+"recentTxs","")
+      localStorage.setItem(this.state.account+"transactionsByAddress","")
+      this.setState({recentTxs:[],transactionsByAddress:{}})
     }
   }
   componentDidUpdate(prevProps, prevState) {
