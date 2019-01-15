@@ -54,6 +54,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "clevis": "github:austintgriffith/clevis#0.1.0",
     "mocha": "^5.2.0",
     "webpack": "^4.28.4"
   }
