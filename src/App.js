@@ -246,7 +246,7 @@ class App extends Component {
       localStorage.setItem(this.state.account+"loadedBlocksTop","")
       localStorage.setItem(this.state.account+"recentTxs","")
       localStorage.setItem(this.state.account+"transactionsByAddress","")
-      this.setState({recentTxs:[],transactionsByAddress:{}})
+      this.setState({recentTxs:[],transactionsByAddress:{},fullRecentTxs:[],fullTransactionsByAddress:{}})
     }
   }
   componentDidUpdate(prevProps, prevState) {
