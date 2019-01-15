@@ -1,5 +1,7 @@
 const clevis = require("clevis")
 const chai = require("chai")
+const colors = require('colors')
+
 const assert = chai.assert
 const fs = require('fs')
 
