@@ -108,7 +108,9 @@ contract Burner is ERC20Mintable {
     require(vendors[msg.sender].isAllowed || admin[msg.sender] || offrampAllowance[msg.sender] >= wad, "DenDai::withdraw - vendor is not allowed by admin to withdraw");
     require(_balances[msg.sender] >= wad);
     _balances[msg.sender] -= wad;
-    offrampAllowance[msg.sender] -= wad;
+    if(!vendors[msg.sender].isAllowed&&!admin[msg.sender]){
+      offrampAllowance[msg.sender] -= wad;
+    }
     msg.sender.transfer(wad);
     Withdrawal(msg.sender, wad);
   }
