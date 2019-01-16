@@ -27,14 +27,14 @@ import Exchange from './components/Exchange'
 import customRPCHint from './customRPCHint.png';
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
-
+let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
 
 let WEB3_PROVIDER
 let CLAIM_RELAY
 let ERC20TOKEN
 let ERC20IMAGE
-
+let ERC20NAME
 
 let mainStyle = {
   width:"100%",
@@ -52,8 +52,9 @@ let titleImage = (
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
   WEB3_PROVIDER = "http://0.0.0.0:8545";
   CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false//'BuffiDai'//false//'Burner'
-  ERC20IMAGE = false//bufficorn
+  ERC20NAME = 'BURN'
+  ERC20TOKEN = 'Burner'//false//'Burner'
+  ERC20IMAGE = cypherpunk
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
@@ -73,6 +74,7 @@ else if (window.location.hostname.indexOf("xdai") >= 0) {
 else if (window.location.hostname.indexOf("buffidai") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
+  ERC20NAME = 'DEN'
   ERC20TOKEN = 'BuffiDai'
   ERC20IMAGE = bufficorn
 }
@@ -80,6 +82,7 @@ else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = 'Burner'
+  ERC20NAME = 'BURN'
   ERC20IMAGE = cypherpunk
 }
 
@@ -125,7 +128,8 @@ class App extends Component {
   constructor(props) {
     let view = 'main'
     let cachedView = localStorage.getItem("view")
-    if(cachedView&&cachedView!=0){
+    let cachedViewSetAge = Date.now() - localStorage.getItem("viewSetTime")
+    if(cachedViewSetAge < 300000 && cachedView&&cachedView!=0){
       view = cachedView
     }
     console.log("CACHED VIEW",view)
@@ -157,7 +161,13 @@ class App extends Component {
     window.addEventListener("resize", this.updateDimensions.bind(this));
     if(window.location.pathname){
       console.log("PATH",window.location.pathname,window.location.pathname.length,window.location.hash)
-      if(window.location.pathname.length==43){
+      if(window.location.pathname.indexOf("/pk")>=0){
+        let tempweb3 = new Web3();
+        let base64encodedPK = window.location.hash.replace("#","")
+        let rawPK = tempweb3.utils.bytesToHex(base64url.toBuffer(base64encodedPK))
+        this.setState({possibleNewPrivateKey:rawPK})
+        window.history.pushState({},"", "/");
+      }else if(window.location.pathname.length==43){
         this.changeView('send_to_address')
         console.log("CHANGE VIEW")
       }else if(window.location.pathname.length==134){
@@ -237,6 +247,10 @@ class App extends Component {
       })
     }else{
       this.setState({possibleNewPrivateKey:false,newPrivateKey:this.state.possibleNewPrivateKey})
+      localStorage.setItem(this.state.account+"loadedBlocksTop","")
+      localStorage.setItem(this.state.account+"recentTxs","")
+      localStorage.setItem(this.state.account+"transactionsByAddress","")
+      this.setState({recentTxs:[],transactionsByAddress:{},fullRecentTxs:[],fullTransactionsByAddress:{}})
     }
   }
   componentDidUpdate(prevProps, prevState) {
@@ -348,7 +362,10 @@ class App extends Component {
     })
   }
   changeView = (view,cb) => {
-    if(view=="bridge"||view=="main"/*||view.indexOf("account_")==0*/) localStorage.setItem("view",view) //some pages should be sticky because of metamask reloads
+    if(view=="bridge"||view=="main"/*||view.indexOf("account_")==0*/){
+      localStorage.setItem("view",view)//some pages should be sticky because of metamask reloads
+      localStorage.setItem("viewSetTime",Date.now())
+    }
     /*if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
     console.log("This is a send...")
     console.log("BALANCE",this.state.balance)
@@ -1021,8 +1038,11 @@ render() {
           <div>
           <NavCard title={"Exchange"} goBack={this.goBack.bind(this)}/>
           <Exchange
+          ERC20NAME={ERC20NAME}
           ERC20IMAGE={ERC20IMAGE}
           ERC20TOKEN={ERC20TOKEN}
+          isVendor={this.state.isVendor}
+          isAdmin={this.state.isAdmin}
           contracts={this.state.contracts}
           mainStyle={mainStyle}
           changeAlert={this.changeAlert}
