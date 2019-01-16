@@ -90,7 +90,7 @@ contract Burner is ERC20Mintable {
   event AddProduct(address indexed vendor, uint256 id, bytes32 name, uint256 cost, bool isAvailable);
 
 
-
+  mapping (address => uint256) public offrampAllowance;
 
   //wrapped ETH functions borrowed from
   //https://etherscan.io/address/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2#code
@@ -99,14 +99,18 @@ contract Burner is ERC20Mintable {
   }
   function deposit() public payable {
     _balances[msg.sender] += msg.value;
+    offrampAllowance[msg.sender] += msg.value;
     Deposit(msg.sender, msg.value);
   }
   event  Deposit(address indexed dst, uint wad);
 
   function withdraw(uint wad) public {
-    require(vendors[msg.sender].isAllowed || admin[msg.sender], "DenDai::withdraw - vendor is not allowed by admin to withdraw");
+    require(vendors[msg.sender].isAllowed || admin[msg.sender] || offrampAllowance[msg.sender] >= wad, "DenDai::withdraw - vendor is not allowed by admin to withdraw");
     require(_balances[msg.sender] >= wad);
     _balances[msg.sender] -= wad;
+    if(!vendors[msg.sender].isAllowed&&!admin[msg.sender]){
+      offrampAllowance[msg.sender] -= wad;
+    }
     msg.sender.transfer(wad);
     Withdrawal(msg.sender, wad);
   }
