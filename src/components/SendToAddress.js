@@ -100,14 +100,24 @@ export default class SendToAddress extends React.Component {
     let { toAddress, amount } = this.state;
     let {ERC20TOKEN} = this.props
 
+
     if(this.state.canSend){
-      if((ERC20TOKEN && this.props.balance<=amount) || (this.props.balance-0.0001<=amount)){
+      if(ERC20TOKEN){
+        console.log("this is a token")
+      }else{
+        console.log("this is not a token")
+      }
+      console.log("ERC20TOKEN",ERC20TOKEN,"this.props.balance",parseFloat(this.props.balance),"amount",parseFloat(amount))
+
+      if(!ERC20TOKEN && parseFloat(this.props.balance)-0.0001<=parseFloat(amount)){
         let extraHint = ""
-        if(!ERC20TOKEN && amount-this.props.balance<=.01){
+        if(!ERC20TOKEN && parseFloat(amount)-parseFloat(this.props.balance)<=.01){
           extraHint = "(gas costs)"
         }
-
-        this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((this.props.balance-0.0001)*100)/100+' '+extraHint})
+        this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100+' '+extraHint})
+      }else if((ERC20TOKEN && (parseFloat(this.props.balance)<parseFloat(amount)))){
+        console.log("SO THE BALANCE IS LESS!")
+        this.props.changeAlert({type: 'warning', message: 'You can only send $'+parseFloat(this.props.balance)})
       }else{
         console.log("SWITCH TO LOADER VIEW...",amount)
         this.props.changeView('loader')
