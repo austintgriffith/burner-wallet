@@ -52,7 +52,7 @@ contract Burner is ERC20Mintable {
     emit UpdateVendor(wallet,vendors[wallet].name,vendors[wallet].isAllowed,vendors[wallet].isActive,msg.sender);
   }
   function updateVendor(address wallet, bytes32 name, bool newActive, bool newAllowed) public {
-    require(admin[msg.sender], "DenDai::addVendor - sender is not admin");
+    require(admin[msg.sender], "DenDai::updateVendor - sender is not admin");
     vendors[wallet].name = name;
     vendors[wallet].isAllowed = newAllowed;
     vendors[wallet].isActive = newActive;
