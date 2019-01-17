@@ -52,9 +52,9 @@ let titleImage = (
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
   WEB3_PROVIDER = "http://0.0.0.0:8545";
   CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20NAME = 'BURN'
-  ERC20TOKEN = 'Burner'//false//'Burner'
-  ERC20IMAGE = cypherpunk
+  ERC20NAME = false//'BURN'
+  ERC20TOKEN = false//'Burner'//false//'Burner'
+  //ERC20IMAGE = cypherpunk
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
