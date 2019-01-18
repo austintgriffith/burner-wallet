@@ -1,8 +1,9 @@
 import React from 'react';
 import Ruler from "./Ruler";
 import Balance from "./Balance";
+import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
-import { ethers } from 'ethers';
+import { scroller } from 'react-scroll'
 
 
 export default class SendToAddress extends React.Component {
@@ -12,6 +13,8 @@ export default class SendToAddress extends React.Component {
     let initialState = {
       amount: props.amount,
       message: props.message,
+      toAddress: "",
+      fromEns: "",
       canSend: false,
     }
     /*if(props.balance<=0){
@@ -41,16 +44,37 @@ export default class SendToAddress extends React.Component {
     this.state = initialState
     console.log("SendToAddress constructor",this.state)
     window.history.pushState({},"", "/");
-    this.ensProvider = ethers.getDefaultProvider('homestead');
   }
 
-  updateState = (key, value) => {
+  updateState = async (key, value) => {
+
     this.setState({ [key]: value },()=>{
-      this.setState({ canSend: this.canSend() })
+      this.setState({ canSend: this.canSend() },()=>{
+        this.bounceToAmountIfReady()
+      })
     });
-
+    if(key=="toAddress"){
+      this.setState({fromEns:""})
+      setTimeout(()=>{
+        this.scrollToBottom()
+      },30)
+    }
+    if(key=="toAddress"&&value.indexOf(".eth")>=0){
+      console.log("Attempting to look up ",value)
+      let addr = await this.props.ensLookup(value)
+      console.log("Resolved:",addr)
+      if(addr!="0x0000000000000000000000000000000000000000"){
+        this.setState({toAddress:addr,fromEns:value},()=>{
+          this.bounceToAmountIfReady()
+        })
+      }
+    }
   };
-
+  bounceToAmountIfReady(){
+    if(this.state.toAddress && this.state.toAddress.length === 42){
+      this.amountInput.focus();
+    }
+  }
   componentDidMount(){
     this.setState({ canSend: this.canSend() })
     setTimeout(()=>{
@@ -61,11 +85,12 @@ export default class SendToAddress extends React.Component {
       }else if(this.messageInput){
         this.messageInput.focus();
       }
-
+      setTimeout(()=>{
+        this.scrollToBottom()
+      },30)
     },350)
     setTimeout(()=>{
       if(this.props.balance<=0){
-        alert(this.props.balance)
         console.log("No Funds, redirect back home...")
         this.props.goBack();
         window.history.pushState({},"", "/");
@@ -74,31 +99,51 @@ export default class SendToAddress extends React.Component {
           message: 'No funds to send.',
         });
       }
-    },1500)
+    },2500)
   }
 
-  async canSend() {
-    const resolvedAddress = await this.ensProvider.resolveName(this.state.toAddress)
+  canSend() {
+    /*const resolvedAddress = await this.ensProvider.resolveName(this.state.toAddress)
     console.log(`RESOLVED ADDRESS ${resolvedAddress}`)
     if(resolvedAddress != null){
       this.setState({
         toAddress: resolvedAddress
       })
-    }
-    return (this.state.toAddress && this.state.toAddress.length === 42)
+    }*/
+    return (this.state.toAddress && this.state.toAddress.length === 42 && (this.state.amount>0 || this.state.message))
+  }
+
+  scrollToBottom(){
+    console.log("scrolling to bottom")
+    scroller.scrollTo('theVeryBottom', {
+      duration: 500,
+      delay: 30,
+      smooth: "easeInOutCubic",
+    })
   }
 
   send = async () => {
     let { toAddress, amount } = this.state;
+    let {ERC20TOKEN} = this.props
 
-    if(await this.state.canSend){
-      if(this.props.balance-0.0001<=amount){
+
+    if(this.state.canSend){
+      if(ERC20TOKEN){
+        console.log("this is a token")
+      }else{
+        console.log("this is not a token")
+      }
+      console.log("ERC20TOKEN",ERC20TOKEN,"this.props.balance",parseFloat(this.props.balance),"amount",parseFloat(amount))
+
+      if(!ERC20TOKEN && parseFloat(this.props.balance)-0.0001<=parseFloat(amount)){
         let extraHint = ""
-        if(amount-this.props.balance<=.01){
+        if(!ERC20TOKEN && parseFloat(amount)-parseFloat(this.props.balance)<=.01){
           extraHint = "(gas costs)"
         }
-
-        this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((this.props.balance-0.0001)*100)/100+' '+extraHint})
+        this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100+' '+extraHint})
+      }else if((ERC20TOKEN && (parseFloat(this.props.balance)<parseFloat(amount)))){
+        console.log("SO THE BALANCE IS LESS!")
+        this.props.changeAlert({type: 'warning', message: 'You can only send $'+parseFloat(this.props.balance)})
       }else{
         console.log("SWITCH TO LOADER VIEW...",amount)
         this.props.changeView('loader')
@@ -128,7 +173,7 @@ export default class SendToAddress extends React.Component {
         })
       }
     }else{
-      this.props.changeAlert({type: 'warning', message: 'Please enter a valid address or ENS domain'})
+      this.props.changeAlert({type: 'warning', message: 'Please enter a valid address or ENS.'})
     }
   };
 
@@ -165,7 +210,14 @@ export default class SendToAddress extends React.Component {
                   ref={(input) => { this.addressInput = input; }}
                        onChange={event => this.updateState('toAddress', event.target.value)} />
               </div>
-              <div>  { this.state.toAddress && this.state.toAddress.length==42 && <Blockies seed={toAddress.toLowerCase()} scale={10} /> }</div>
+              <div>  { this.state.toAddress && this.state.toAddress.length==42 &&
+                <CopyToClipboard text={toAddress.toLowerCase()}>
+                  <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
+                    <div style={{opacity:0.33}}>{this.state.fromEns}</div>
+                    <Blockies seed={toAddress.toLowerCase()} scale={10}/>
+                  </div>
+                </CopyToClipboard>
+              }</div>
               <label htmlFor="amount_input">Send Amount</label>
               <div className="input-group">
                 <div className="input-group-prepend">
@@ -188,7 +240,7 @@ export default class SendToAddress extends React.Component {
             </button>
           </div>
         </div>
-        <div className="text-center bottom-text">
+        <div name="theVeryBottom" className="text-center bottom-text">
           <span style={{padding:10}}>
             <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{this.props.goBack()}}>
               <i className="fas fa-times"/> cancel

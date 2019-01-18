@@ -153,6 +153,9 @@ export default class History extends React.Component {
         this.props.changeAlert({type: 'success', message: 'Sent '+result.transactionHash})
         console.log("Sent tx "+result.transactionHash)
         this.setState({sendingChat:false,newChat:"",newChatAmount:"",sendingFunds:false})
+        setTimeout(()=>{
+          this.nameInput.focus();
+        },250)
       }
     })
   }
@@ -371,7 +374,7 @@ export default class History extends React.Component {
     }
 
     let chatInput = (
-      <input type="text" className="form-control" placeholder={placeholder} value={this.state.newChat}
+      <input disabled={this.state.sendingChat} type="text" className="form-control" placeholder={placeholder} value={this.state.newChat}
         ref={(input) => { this.nameInput = input; }}
         onKeyDown={this.onKeyDown}
         onChange={event => this.setState({newChat:event.target.value})}

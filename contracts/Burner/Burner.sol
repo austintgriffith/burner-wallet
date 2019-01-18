@@ -2,17 +2,15 @@ pragma solidity ^0.4.25;
 
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20Mintable.sol";
 
-contract DenDai is ERC20Mintable {
+contract Burner is ERC20Mintable {
 
-  string public name = "DenDai";
-  string public symbol = "DEN";
+  string public name = "Burner";
+  string public symbol = "BURN";
   uint8 public decimals = 18;
 
   constructor() public {
     admin[msg.sender] = true;
   }
-
-
 
   function transferWithData(address to, uint256 value, bytes data) public returns (bool) {
     emit TransferWithData(msg.sender,to,value,data);
@@ -54,7 +52,7 @@ contract DenDai is ERC20Mintable {
     emit UpdateVendor(wallet,vendors[wallet].name,vendors[wallet].isAllowed,vendors[wallet].isActive,msg.sender);
   }
   function updateVendor(address wallet, bytes32 name, bool newActive, bool newAllowed) public {
-    require(admin[msg.sender], "DenDai::addVendor - sender is not admin");
+    require(admin[msg.sender], "DenDai::updateVendor - sender is not admin");
     vendors[wallet].name = name;
     vendors[wallet].isAllowed = newAllowed;
     vendors[wallet].isActive = newActive;
@@ -92,7 +90,7 @@ contract DenDai is ERC20Mintable {
   event AddProduct(address indexed vendor, uint256 id, bytes32 name, uint256 cost, bool isAvailable);
 
 
-
+  mapping (address => uint256) public offrampAllowance;
 
   //wrapped ETH functions borrowed from
   //https://etherscan.io/address/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2#code
@@ -101,14 +99,18 @@ contract DenDai is ERC20Mintable {
   }
   function deposit() public payable {
     _balances[msg.sender] += msg.value;
+    offrampAllowance[msg.sender] += msg.value;
     Deposit(msg.sender, msg.value);
   }
   event  Deposit(address indexed dst, uint wad);
 
   function withdraw(uint wad) public {
-    require(vendors[msg.sender].isAllowed || admin[msg.sender], "DenDai::withdraw - vendor is not allowed by admin to withdraw");
+    require(vendors[msg.sender].isAllowed || admin[msg.sender] || offrampAllowance[msg.sender] >= wad, "DenDai::withdraw - vendor is not allowed by admin to withdraw");
     require(_balances[msg.sender] >= wad);
     _balances[msg.sender] -= wad;
+    if(!vendors[msg.sender].isAllowed&&!admin[msg.sender]){
+      offrampAllowance[msg.sender] -= wad;
+    }
     msg.sender.transfer(wad);
     Withdrawal(msg.sender, wad);
   }

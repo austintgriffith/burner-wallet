@@ -31,14 +31,14 @@ export default class Advanced extends React.Component {
 
     let found = true
     while(found){
-      let nextProduct = await this.props.contracts.DenDai.products(this.props.address,id).call()
+      let nextProduct = await this.props.contracts[this.props.ERC20TOKEN].products(this.props.address,id).call()
       if(nextProduct.exists){
         products[id++] = nextProduct
       }else{
         found=false
       }
     }
-    console.log("========PPPPPP",products)
+    ///console.log("========PPPPPP",products)
     this.setState({products})
   }
   render(){
@@ -74,7 +74,7 @@ export default class Advanced extends React.Component {
               this.setState({changingAvailable})
               //addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable)
               console.log(prod.id,prod.name,prod.cost,prod.isAvailable)
-              tx(contracts.DenDai.addProduct(prod.id,prod.name,prod.cost,!prod.isAvailable),120000,0,0,(result)=>{
+              tx(contracts[this.props.ERC20TOKEN].addProduct(prod.id,prod.name,prod.cost,!prod.isAvailable),240000,0,0,(result)=>{
                 console.log("PRODUCT:",result)
                 setTimeout(this.poll.bind(this),444)
                 setTimeout(()=>{
@@ -143,6 +143,21 @@ export default class Advanced extends React.Component {
       )
     }
 
+    let addProductText = (
+      <span>
+        <i className="fas fa-plus-square"></i> Add Product
+      </span>
+    )
+
+    if(this.state.addingProduct){
+      addProductText = (
+        <span>
+          <i className="fas fa-cog fa-spin"></i> Adding
+        </span>
+      )
+    }
+
+
     return (
       <div className="main-card card w-100">
         <div className="content bridge row">
@@ -153,7 +168,7 @@ export default class Advanced extends React.Component {
           <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
             this.setState({changingActive:true})
             let setActiveTo = !vendor.isActive
-            tx(contracts.DenDai.activateVendor(setActiveTo),120000,0,0,(result)=>{
+            tx(contracts[this.props.ERC20TOKEN].activateVendor(setActiveTo),120000,0,0,(result)=>{
               console.log("ACTIVE:",result)
               setTimeout(()=>{
                 this.setState({changingActive:false})
@@ -185,14 +200,18 @@ export default class Advanced extends React.Component {
           <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
             //addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable)
             let nextId = this.state.products.length
-            tx(contracts.DenDai.addProduct(nextId,web3.utils.utf8ToHex(this.state.newProductName),web3.utils.toWei(""+this.state.newProductAmount, 'ether'),true),120000,0,0,(result)=>{
+            this.setState({addingProduct:true})
+            tx(contracts[this.props.ERC20TOKEN].addProduct(nextId,web3.utils.utf8ToHex(this.state.newProductName),web3.utils.toWei(""+this.state.newProductAmount, 'ether'),true),240000,0,0,(result)=>{
               console.log("PRODUCT ADDED",result)
               this.setState({newProductAmount:"",newProductName:""})
               setTimeout(this.poll.bind(this),100)
+              setTimeout(()=>{
+                this.setState({addingProduct:false})
+              },1500)
             })
           }}>
             <Scaler config={{startZoomAt:650,origin:"20% 50%"}}>
-              <i className="fas fa-plus-square"></i> Add Product
+              {addProductText}
             </Scaler>
           </button>
           </div>
