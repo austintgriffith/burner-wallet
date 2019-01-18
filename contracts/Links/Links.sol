@@ -39,7 +39,7 @@ contract Links {
         payable 
         returns (bool)
     {
-        require(msg.value > 0,"Links::send, some value needs to be allocated");
+        require(msg.value >= 1500000000000000,"Links::send, needs to be at least 0.0015 xDai to pay relay reward");
         require(_signature.length == 65,"Links::send, invalid signature lenght");
         //make sure there is not already a fund here
         require(!isFundValid(_id),"Links::send, id already exists");
@@ -57,6 +57,7 @@ contract Links {
             nonce: nonce,
             claimed: false
         });
+        require(isFundValid(_id) && funds[_id].value == msg.value,"Links::send, invalid fund");
         //send out events for frontend parsing
         emit Sent(_id,msg.sender,msg.value,nonce,true);
         return true;
@@ -70,14 +71,16 @@ contract Links {
         bytes32 _id, 
         bytes memory _signature, 
         bytes32 _claimHash, 
-        address _destination
+        address _destination,
+        uint256 _gasReward
     ) 
         public 
         returns (bool)
     {
-        //makes sure signature is correct and fund is valid.
-        require(isClaimValid(_id,_signature,_claimHash,_destination),"Links::claim, claim is not valid");
-        return executeClaim(_id,_destination);
+        require(isFundValid(_id),"Links::claim, invalid fund");
+        require(_gasReward <= 1500000000000000, "Links::claim, cannot reward more than 0.0015 xDai");
+        require(_gasReward <= funds[_id].value,"Links::claim, gas reward is greater than the fund value");
+        return executeClaim(_id,_signature,_claimHash,_destination,_gasReward);
     }
   
     /// @dev Off chain relayer can validate the claim before submitting.
@@ -107,9 +110,7 @@ contract Links {
                 return false;
             } 
             if(signer != address(0)){
-                return(
-                    funds[_id].signer == signer && funds[_id].claimed == false 
-                );
+                return(funds[_id].signer == signer);
             } else{
                 return false;
             }
@@ -152,36 +153,86 @@ contract Links {
     /// @param _id Claim lookup key value.
     /// @param _destination Destination address.
     function executeClaim(
-        bytes32 _id,
-        address _destination
+        bytes32 _id, 
+        bytes memory _signature, 
+        bytes32 _claimHash, 
+        address _destination,
+        uint256 _gasReward
     ) 
         private 
         returns (bool)
     {
-        require(isFundValid(_id),"Links::executeClaim, fund is not valid");
+        //makes sure signature is correct and fund is valid.
+        require(isClaimValid(_id,_signature,_claimHash,_destination),"Links::executeClaim, claim is not valid");
         bool status = false;
+        uint256 residual = funds[_id].value;
         bool claimed = funds[_id].claimed;
         uint256 value = funds[_id].value;
         uint256 nonce = funds[_id].nonce;
-
+ 
         assert(nonce < contractNonce);
         if(claimed == false){
-            // set id control flag to prevent reentrancy
-            // temporary fund invalidation
-            funds[_id].claimed = true;
-            // send funds to the destination (receiver)
-            /* solium-disable-next-line security/no-send */
-            status = _destination.send(value);
-            // update fund with correct status
-            funds[_id].claimed = status;
-        } 
-        if(status == true || claimed == true){
+            // gasReward > 0, relayer is paying to claim and taking its reward
+            if(_gasReward > 0){
+                // !isContract - Preventive measure against deployed contracts. 
+                require(!isContract(msg.sender),"Links::executeClaim, relay sender should not be a contract");
+                // temporary fund invalidation
+                funds[_id].claimed = true;
+                residual = safeSub(value, _gasReward);
+                // address.send() restricts to 2300 gas units
+                /* solium-disable-next-line security/no-send */
+                status = _destination.send(residual);
+                // update fund with correct status
+                funds[_id].claimed = status;
+                // update fund
+                if(status == true){
+                    // DESTROY object so it can't be claimed again and free storage space.
+                    delete funds[_id];
+                } else{
+                    funds[_id].value = residual;
+                }
+                /* solium-disable-next-line security/no-send */
+                require(msg.sender.send(_gasReward),"Links::executeClaim, could not pay relayer");
+
+            // Gas Reward == 0, msg.sender is paying to claim
+            } else if(_gasReward == 0){
+                // temporary fund invalidation
+                funds[_id].claimed = true;
+                /* solium-disable-next-line security/no-send */
+                status = _destination.send(value);
+                // update fund with correct status
+                funds[_id].claimed = status;
+                if(status == true){
+                    // DESTROY object so it can't be claimed again and free storage space.
+                    delete funds[_id];
+                } 
+            }
+
+        } else{
+            status = claimed;
             // DESTROY object so it can't be claimed again and free storage space.
             delete funds[_id];
         }
         // send out events for frontend parsing
         emit Claimed(_id,msg.sender,value,_destination,nonce,status);
         return status;
+    }
+
+    ///@dev Returns whether the target address is a contract
+    ///@param account address of the account to check
+    ///@return whether the target address is a contract
+    function isContract(
+        address account
+    ) 
+        private 
+        view 
+        returns (bool) 
+    {
+        uint256 size;
+        // TODO Check this again before the Serenity release, because all addresses will be contracts then.
+        // solium-disable-next-line security/no-inline-assembly
+        assembly { size := extcodesize(account) }
+        return size > 0;
     }
 
     /// @dev Recover signer from bytes32 data.
@@ -238,5 +289,18 @@ contract Links {
         c = _a + _b;
         assert(c >= _a);
         return c;
+    }
+
+    /// @dev Substracts two numbers, throws on underflow.
+    function safeSub(
+        uint256 _a, 
+        uint256 _b
+    ) 
+        private 
+        pure 
+        returns (uint256) 
+    {
+        assert(_b <= _a);
+        return _a - _b;
     }
 }
