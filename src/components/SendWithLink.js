@@ -58,33 +58,24 @@ export default class SendWithLink extends React.Component {
     let { canSend } = this.state;
     return (
       <div>
-        <div className="send-to-address card w-100">
-          <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay}/>
-          <Ruler/>
-          <div className="content row">
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">Amount</label>
-              <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="text" className="form-control" placeholder="0.00"
-                  ref={(input) => { this.amountInput = input; }}
-                       onChange={event => this.updateState('amount', event.target.value)} />
+        <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay}/>
+        <Ruler/>
+        <div className="content row">
+          <div className="form-group w-100">
+            <label htmlFor="amount_input">Amount</label>
+            <div className="input-group">
+              <div className="input-group-prepend">
+                <div className="input-group-text">$</div>
               </div>
+              <input type="text" className="form-control" placeholder="0.00"
+                ref={(input) => { this.amountInput = input; }}
+                     onChange={event => this.updateState('amount', event.target.value)} />
             </div>
-            <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
-                    onClick={this.send}>
-              Send
-            </button>
           </div>
-        </div>
-        <div className="text-center bottom-text">
-          <span style={{padding:10}}>
-            <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{this.props.goBack()}}>
-              <i className="fas fa-times"/> cancel
-            </a>
-          </span>
+          <button style={this.props.buttonStyle.primary} className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
+                  onClick={this.send}>
+            Send
+          </button>
         </div>
       </div>
     )

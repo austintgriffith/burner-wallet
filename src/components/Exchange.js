@@ -2,9 +2,7 @@ import React from 'react';
 import Ruler from "./Ruler";
 import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
-import eth from '../ethereum.png';
-import dai from '../dai.jpg';
-import xdai from '../xdai.jpg';
+
 import wyre from '../wyre.jpg';
 import coinbase from '../coinbase.jpg';
 import localeth from '../localeth.png';
@@ -134,11 +132,6 @@ export default class Exchange extends React.Component {
     this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth() })
     interval = setInterval(this.poll.bind(this),1500)
     setTimeout(this.poll.bind(this),250)
-    intervalLong = setInterval(this.longPoll.bind(this),45000)
-    setTimeout(this.longPoll.bind(this),150)
-  }
-  componentWillUnmount(){
-    clearInterval(interval)
   }
   async poll(){
     let { daiContract, dendaiContract, mainnetweb3, xdaiweb3, xdaiAddress} = this.state
@@ -337,13 +330,6 @@ export default class Exchange extends React.Component {
 
     }
 
-  }
-  longPoll() {
-    axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
-     .then((response)=>{
-       let ethprice = response.data.data.quotes.USD.price
-       this.setState({ethprice})
-     })
   }
   sendDai(){
     if(parseFloat(this.state.daiBalance)<parseFloat(this.state.daiSendAmount)){
@@ -1714,7 +1700,7 @@ export default class Exchange extends React.Component {
         <div className="main-card card w-100">
           <div className="content ops row">
             <div className="col-2 p-1">
-              <img style={logoStyle} src={xdai} />
+              <img style={logoStyle} src={this.props.xdai} />
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
               xDai
@@ -1742,7 +1728,7 @@ export default class Exchange extends React.Component {
         <div className="main-card card w-100">
           <div className="content ops row">
             <div className="col-2 p-1">
-              <img style={logoStyle} src={dai} />
+              <img style={logoStyle} src={this.props.dai} />
             </div>
             <div className="col-3 p-1" style={{marginTop:9}}>
               DAI
@@ -1767,7 +1753,7 @@ export default class Exchange extends React.Component {
         <div className="main-card card w-100">
           <div className="content ops row">
             <div className="col-2 p-1">
-              <img style={logoStyle} src={eth} />
+              <img style={logoStyle} src={this.props.eth} />
             </div>
             <div className="col-3 p-1" style={{marginTop:10}}>
               ETH

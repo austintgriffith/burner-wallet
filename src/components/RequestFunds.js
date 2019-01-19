@@ -45,76 +45,58 @@ export default class RequestFunds extends React.Component {
 
       return (
         <div>
-          <div className="main-card card w-100">
-            <CopyToClipboard text={qrValue} onCopy={() => {
-              this.props.changeAlert({type: 'success', message: 'Request link copied to clipboard'})
-            }}>
-            <div style={{width:"100%",textAlign:'center'}}>
-              <div style={{fontSize:30,cursor:"pointer",textAlign:"center",width:"100%"}}>
-                ${parseFloat(amount).toFixed(2)}
-              </div>
+          <CopyToClipboard text={qrValue} onCopy={() => {
+            this.props.changeAlert({type: 'success', message: 'Request link copied to clipboard'})
+          }}>
+          <div style={{width:"100%",textAlign:'center'}}>
+            <div style={{fontSize:30,cursor:"pointer",textAlign:"center",width:"100%"}}>
+              ${parseFloat(amount).toFixed(2)}
+            </div>
 
-              <div style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
-                {message}
-              </div>
+            <div style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
+              {message}
+            </div>
 
-              <div style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
-                <QRCode value={qrValue} size={qrSize}/>
-              </div>
+            <div style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
+              <QRCode value={qrValue} size={qrSize}/>
+            </div>
 
-              <div className="input-group">
-                <input type="text" className="form-control" value={qrValue} disabled/>
-                <div className="input-group-append">
-                  <span className="input-group-text"><i className="fas fa-copy"/></span>
-                </div>
+            <div className="input-group">
+              <input type="text" className="form-control" value={qrValue} disabled/>
+              <div className="input-group-append">
+                <span className="input-group-text"><i className="fas fa-copy"/></span>
               </div>
+            </div>
 
-              </div>
-            </CopyToClipboard>
-          </div>
-          <div className="text-center bottom-text">
-            <span style={{padding:10}}>
-              <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{this.props.goBack()}}>
-                <i className="fas fa-thumbs-up"/> done
-              </a>
-            </span>
-          </div>
+            </div>
+          </CopyToClipboard>
         </div>
       )
     }else{
       return (
         <div>
-          <div className="send-to-address card w-100">
-            <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay} />
-            <Ruler/>
-            <div className="content row">
-              <div className="form-group w-100">
-                <label htmlFor="amount_input">Request Amount</label>
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <div className="input-group-text">$</div>
-                  </div>
-                  <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
-                         onChange={event => this.updateState('amount', event.target.value)} />
+          <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay} />
+          <Ruler/>
+          <div className="content row">
+            <div className="form-group w-100">
+              <label htmlFor="amount_input">Request Amount</label>
+              <div className="input-group">
+                <div className="input-group-prepend">
+                  <div className="input-group-text">$</div>
                 </div>
+                <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
+                       onChange={event => this.updateState('amount', event.target.value)} />
               </div>
-              <div className="form-group w-100">
-                <label htmlFor="amount_input">Item or Message</label>
-                <input type="text" className="form-control" placeholder="Hot Dogs" value={this.state.message}
-                       onChange={event => this.updateState('message', event.target.value)} />
-              </div>
-              <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canRequest ? '' : 'disabled'}`}
-                      onClick={this.request}>
-                Request
-              </button>
             </div>
-          </div>
-          <div className="text-center bottom-text">
-            <span style={{padding:10}}>
-              <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{this.props.goBack()}}>
-                <i className="fas fa-times"/> cancel
-              </a>
-            </span>
+            <div className="form-group w-100">
+              <label htmlFor="amount_input">Item or Message</label>
+              <input type="text" className="form-control" placeholder="Hot Dogs" value={this.state.message}
+                     onChange={event => this.updateState('message', event.target.value)} />
+            </div>
+            <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canRequest ? '' : 'disabled'}`}
+                    onClick={this.request}>
+              Request
+            </button>
           </div>
         </div>
       )

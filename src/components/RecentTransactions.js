@@ -10,11 +10,11 @@ export default ({ERC20TOKEN, vendorName, address, recentTxs, block, changeView})
   for(let r in recentTxs){
     let thisValue = parseFloat(recentTxs[r].value)
     if(thisValue>0.0){
-      if(txns.length>0){
+      //if(txns.length>0){
         txns.push(
           <hr key={"ruler"+recentTxs[r].hash} style={{ "color": "#DFDFDF",marginTop:0,marginBottom:7 }}/>
         )
-      }
+      //}
 
       let extraIcon = ""
       if(recentTxs[r].data){
@@ -103,7 +103,7 @@ export default ({ERC20TOKEN, vendorName, address, recentTxs, block, changeView})
   }
   if(txns.length>0){
     return (
-      <div className="main-card card w-100">
+      <div style={{marginTop:30}}>
         {txns}
       </div>
     )
