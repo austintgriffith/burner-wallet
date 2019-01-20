@@ -12,6 +12,7 @@ import RequestFunds from './components/RequestFunds';
 import SendWithLink from './components/SendWithLink';
 import Receive from './components/Receive'
 import Share from './components/Share'
+import ShareLink from './components/ShareLink'
 import Balance from "./components/Balance";
 import Ruler from "./components/Ruler";
 import MainCard from './components/MainCard';
@@ -1239,6 +1240,25 @@ render() {
                   />
                 </div>
               );
+            case 'share-link':
+              return (
+                <div>
+                  <div className="main-card card w-100">
+                    <NavCard title={'Share Link'} goBack={this.goBack.bind(this)} />
+                      <ShareLink
+                        sendKey={this.state.sendKey}
+                        sendLink={this.state.sendLink}
+                        balance={balance}
+                        address={account}
+                        changeAlert={this.changeAlert}
+                        goBack={this.goBack.bind(this)}
+                      />
+                  </div>
+                  <Bottom
+                    action={this.goBack.bind(this)}
+                  />
+                </div>
+              );
             case 'send_with_link':
             return (
               <div>
@@ -1364,21 +1384,27 @@ render() {
             case 'loader':
             return (
               <div>
-              <NavCard title={"Sending..."} goBack={this.goBack.bind(this)}/>
+                <div className="main-card card w-100">
+                  <NavCard title={"Sending..."} goBack={this.goBack.bind(this)}/>
+                </div>
               <Loader />
               </div>
             );
             case 'reader':
             return (
               <div>
-              <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)}/>
-              <Loader />
+                <div className="main-card card w-100">
+                  <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)}/>
+                </div>
+                <Loader />
               </div>
             );
             case 'claimer':
             return (
               <div>
-              <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)}/>
+                <div className="main-card card w-100">
+                  <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)}/>
+                </div>
               <Loader />
               </div>
             );
