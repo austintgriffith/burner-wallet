@@ -336,7 +336,7 @@ class App extends Component {
   dealWithPossibleNewPrivateKey(){
     //console.log("possibleNewPrivateKey",this.state.possibleNewPrivateKey,this.state)
     //only import pks over empty metaaccounts
-    if(this.state.balance>=0.10 || !this.state.metaAccount){
+    if(this.state.balance>=0.10 || this.state.ethBalance>=0.001 || this.state.daiBalance>=0.1 || !this.state.metaAccount){
       console.log("Can't import private key, so ask to withdraw")
       this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
         this.changeView('withdraw_from_private')
@@ -405,8 +405,15 @@ class App extends Component {
         sig = sig.signature;
         contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0).estimateGas()
         .then((gasAmount) => {
-          console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account, gasAmount)
-          tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account, 0), gasAmount + 5000, false, 0, (result) => {
+          console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account, gasAmount,"1500000000000000")
+          /*
+          bytes32 _id,
+          bytes memory _signature,
+          bytes32 _claimHash,
+          address _destination,
+          uint256 _gasReward
+           */
+          tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,"1500000000000000"), gasAmount + 5000, false, 0, (result) => {
             if (result) {
               console.log("CLAIMED!!!", result)
               this.setState({claimed: true})
@@ -450,7 +457,7 @@ class App extends Component {
           //this.state.web3.eth.getGasPrice()
           //.then((gasPrice) => {
             let gasPrice = 1500000000  // Hardcoded to 1.5 Gwei. Real value is calculated on the relay.
-            this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,150000*gasPrice).estimateGas()
+            this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,"1500000000000000").estimateGas()
             .then((gasAmount) => {
               console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account, gasAmount, (gasAmount * gasPrice))
 
