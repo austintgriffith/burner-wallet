@@ -9,7 +9,7 @@ export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
     opacity=1.0
   }
 
-  if(!amount){
+  if(isNaN(amount) || typeof amount == "undefined"){
     amount=0.00
     opacity=0.19
   }

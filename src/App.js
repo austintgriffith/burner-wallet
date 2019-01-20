@@ -295,11 +295,14 @@ class App extends Component {
       //console.log("isVendor",isVendor)
       this.setState({gasBalance:gasBalance,balance:tokenBalance,isAdmin:isAdmin,isVendor:isVendor})
     }
+
     if(this.state.account){
       let ethBalance = 0.00
       let daiBalance = 0.00
       let xdaiBalance = 0.00
+
       if(this.state.mainnetweb3){
+
         ethBalance = await this.state.mainnetweb3.eth.getBalance(this.state.account)
         ethBalance = this.state.mainnetweb3.utils.fromWei(""+ethBalance,'ether')
 
@@ -1028,8 +1031,6 @@ render() {
             )
             defaultBalanceDisplay = extraTokens
           }
-
-
 
           switch(view) {
             case 'main':
