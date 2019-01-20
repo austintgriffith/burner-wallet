@@ -41,6 +41,8 @@ import xdai from './xdai.jpg';
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
 
+let XDAI_PROVIDER = "https://dai.poa.network"
+
 let WEB3_PROVIDER
 let CLAIM_RELAY
 let ERC20TOKEN
@@ -65,8 +67,9 @@ let titleImage = (
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
+  XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://0.0.0.0:8545";
-  CLAIM_RELAY = 'https://x.xdai.io'
+  CLAIM_RELAY = 'http://localhost:18462'
   ERC20NAME = false//'DEN'
   ERC20TOKEN = false//'BuffiDai'//false//'Burner'
   ERC20IMAGE = false//bufficorn
@@ -276,7 +279,7 @@ class App extends Component {
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
-    let xdaiweb3 = new Web3(new Web3.providers.HttpProvider('https://dai.poa.network'))
+    let xdaiweb3 = new Web3(new Web3.providers.HttpProvider(XDAI_PROVIDER))
     this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract})
   }
   componentWillUnmount() {
@@ -403,9 +406,9 @@ class App extends Component {
         console.log("this.state.claimKey", this.state.claimKey)
         let sig = this.state.web3.eth.accounts.sign(claimHash, this.state.claimKey);
         sig = sig.signature;
-        contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0).estimateGas()
-        .then((gasAmount) => {
-          console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account, gasAmount,"1500000000000000")
+        //contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0).estimateGas()
+        //.then((gasAmount) => {
+          console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account,0)
           /*
           bytes32 _id,
           bytes memory _signature,
@@ -413,7 +416,7 @@ class App extends Component {
           address _destination,
           uint256 _gasReward
            */
-          tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,"1500000000000000"), gasAmount + 5000, false, 0, (result) => {
+          tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0), 220000, false, 0, (result) => {
             if (result) {
               console.log("CLAIMED!!!", result)
               this.setState({claimed: true})
@@ -425,7 +428,7 @@ class App extends Component {
               }, 2000)
             }
           })
-        })
+        //})
         .catch((error) => {
           console.log(error); //Estimate Gas promise
         });
@@ -457,7 +460,7 @@ class App extends Component {
           //this.state.web3.eth.getGasPrice()
           //.then((gasPrice) => {
             let gasPrice = 1500000000  // Hardcoded to 1.5 Gwei. Real value is calculated on the relay.
-            this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,"1500000000000000").estimateGas()
+            this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0).estimateGas()
             .then((gasAmount) => {
               console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account, gasAmount, (gasAmount * gasPrice))
 
