@@ -11,7 +11,7 @@ export default class Receive extends React.Component {
 
     return (
       <div name="theVeryBottom" className="text-center bottom-text" style={{marginBottom:20}}>
-        <span style={{padding:10}}>
+        <span style={{padding:59}}>
           <button className={"btn btn-large w-50"} style={{backgroundColor:"#666666",color:"#FFFFFF",padding:10,whiteSpace:"nowrap"}} onClick={()=>{action()}}>
             <i className={icon}/> {text}
           </button>

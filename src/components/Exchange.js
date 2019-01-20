@@ -22,12 +22,6 @@ const colStyle = {
   whiteSpace:"nowrap"
 }
 
-const daiContractObject = {
-  address:"0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
-  abi:require("../contracts/StableCoin.abi.js"),
-  blocknumber:4752008,
-}
-
 const dendaiToxDaiEstimatedTime = 12000
 const xdaiToDaiEstimatedTime = 160000
 const daiToxDaiEstimatedTime = 330000
@@ -54,17 +48,14 @@ export default class Exchange extends React.Component {
   constructor(props) {
     super(props);
 
-    let xdaiweb3
+    let xdaiweb3 = this.props.xdaiweb3
     //make it easier for local debugging...
     if(false && window.location.hostname.indexOf("localhost")>=0){
       console.log("WARNING, USING LOCAL RPC")
       xdaiweb3 = new Web3(new Web3.providers.HttpProvider("http://0.0.0.0:8545"))
-    } else {
-      xdaiweb3 = new Web3(new Web3.providers.HttpProvider("https://dai.poa.network"))
     }
-
     //let mainnetweb3 = new Web3("https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac")
-    let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
+    let mainnetweb3 = props.mainnetweb3
     let pk = localStorage.getItem('metaPrivateKey')
     let mainnetMetaAccount = false
     let xdaiMetaAccount = false
@@ -79,13 +70,6 @@ export default class Exchange extends React.Component {
       daiAddress = this.props.address
       xdaiAddress = this.props.address
     }
-    let daiContract
-    try{
-      console.log("Loading DAI Stablecoin Contract...")
-      daiContract = new mainnetweb3.eth.Contract(daiContractObject.abi,daiContractObject.address)
-    }catch(e){
-      console.log("ERROR LOADING DAI Stablecoin Contract",e)
-    }
 
     let dendaiContract
     if(props.ERC20TOKEN){
@@ -98,19 +82,14 @@ export default class Exchange extends React.Component {
     }
 
     this.state = {
-      ethBalance: 0,
-      daiBalance: 0,
       daiAddress: daiAddress,
-      xdaiBalance: 0,
       xdaiAddress: xdaiAddress,
       wyreBalance: 0,
-      ethprice: 0,
       denDaiBalance:0,
       mainnetweb3: mainnetweb3,
       mainnetMetaAccount: mainnetMetaAccount,
       xdaiweb3:xdaiweb3,
       xdaiMetaAccount: xdaiMetaAccount,
-      daiContract: daiContract,
       dendaiContract: dendaiContract,
       daiToXdaiMode: false,
       ethToDaiMode: false,
@@ -134,14 +113,15 @@ export default class Exchange extends React.Component {
     setTimeout(this.poll.bind(this),250)
   }
   async poll(){
-    let { daiContract, dendaiContract, mainnetweb3, xdaiweb3, xdaiAddress} = this.state
+    let { dendaiContract, mainnetweb3, xdaiweb3, xdaiAddress} = this.state
+    /*let { daiContract } = this.props
     if(daiContract){
       let daiBalance = await daiContract.methods.balanceOf(this.state.daiAddress).call()
       daiBalance = mainnetweb3.utils.fromWei(daiBalance,"ether")
       if(daiBalance!=this.state.daiBalance){
         this.setState({daiBalance})
       }
-    }
+    }*/
     if(this.props.ERC20TOKEN){
       let denDaiBalance = await dendaiContract.methods.balanceOf(this.state.daiAddress).call()
       denDaiBalance = mainnetweb3.utils.fromWei(denDaiBalance,"ether")
@@ -161,8 +141,8 @@ export default class Exchange extends React.Component {
         let percentDone = Math.min(100,((txAge * 100) / dendaiToxDaiEstimatedTime)+5)
 
         let xdaiBalanceShouldBe = parseFloat(this.state.xdaiBalanceShouldBe)-0.0005
-        console.log("watching for ",this.state.xdaiBalance,"to be ",xdaiBalanceShouldBe)
-        if(this.state.xdaiBalance>=(xdaiBalanceShouldBe)){
+        console.log("watching for ",this.props.xdaiBalance,"to be ",xdaiBalanceShouldBe)
+        if(this.props.xdaiBalance>=(xdaiBalanceShouldBe)){
           this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Transferred!",loaderBarColor:"#62f54a"})
           setTimeout(()=>{
             this.setState({
@@ -181,8 +161,8 @@ export default class Exchange extends React.Component {
         let txAge = Date.now() - this.state.loaderBarStartTime
         let percentDone = Math.min(100,((txAge * 100) / daiToxDaiEstimatedTime)+5)
 
-        //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
-        if(this.state.xdaiBalance<=(this.state.xdaiBalanceShouldBe+0.00005)){
+        console.log("watching for ",this.props.xdaiBalance,"to be less than ",this.state.xdaiBalanceShouldBe+0.0005)
+        if(this.props.xdaiBalance<=(this.state.xdaiBalanceShouldBe+0.00005)){
           this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Bridged!",loaderBarColor:"#62f54a"})
           setTimeout(()=>{
             this.setState({
@@ -199,19 +179,21 @@ export default class Exchange extends React.Component {
       }
 
     }
+    /*
+    console.log("SETTING ETH BALANCE OF "+this.state.daiAddress)
     this.setState({ethBalance:mainnetweb3.utils.fromWei(await mainnetweb3.eth.getBalance(this.state.daiAddress),'ether') })
     if(xdaiweb3){
       //console.log("xdaiweb3:",xdaiweb3,"xdaiAddress",xdaiAddress)
       let xdaiBalance = await xdaiweb3.eth.getBalance(this.state.daiAddress)
       //console.log("!! xdaiBalance:",xdaiBalance)
       this.setState({xdaiBalance:xdaiweb3.utils.fromWei(xdaiBalance,'ether')})
-    }
+    }*/
     if(this.state.daiToXdaiMode=="withdrawing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
       let percentDone = Math.min(100,((txAge * 100) / xdaiToDaiEstimatedTime)+5)
 
-      console.log("watching for ",this.state.daiBalance,"to be ",this.state.daiBalanceShouldBe-0.0005)
-      if(this.state.daiBalance>=(this.state.daiBalanceShouldBe-0.0005)){
+      console.log("watching for ",this.props.daiBalance,"to be ",this.state.daiBalanceShouldBe-0.0005)
+      if(this.props.daiBalance>=(this.state.daiBalanceShouldBe-0.0005)){
         this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Bridged!",loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
@@ -231,7 +213,7 @@ export default class Exchange extends React.Component {
       let percentDone = Math.min(100,((txAge * 100) / daiToxDaiEstimatedTime)+5)
 
       //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
-      if(this.state.xdaiBalance>=(this.state.xdaiBalanceShouldBe-0.0005)){
+      if(this.props.xdaiBalance>=(this.state.xdaiBalanceShouldBe-0.0005)){
         this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Bridged!",loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
@@ -249,8 +231,8 @@ export default class Exchange extends React.Component {
       let txAge = Date.now() - this.state.loaderBarStartTime
       let percentDone = Math.min(100,((txAge * 100) / sendDaiEstimatedTime)+5)
 
-      console.log("watching for ",this.state.daiBalance,"to be ",this.state.daiBalanceShouldBe-0.0005)
-      if(this.state.daiBalance<=(this.state.daiBalanceShouldBe-0.0005)){
+      console.log("watching for ",this.props.daiBalance,"to be ",this.state.daiBalanceShouldBe-0.0005)
+      if(this.props.daiBalance<=(this.state.daiBalanceShouldBe-0.0005)){
         this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Bridged!",loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
@@ -272,8 +254,8 @@ export default class Exchange extends React.Component {
       let percentDone = Math.min(100,((txAge * 100) / exchangeEstimatedTime) + 5)
       //ethBalanceAtStart:this.state.ethBalance,
       //ethBalanceShouldBe:this.state.ethBalance+amountOfChange,
-      console.log("watching for ",this.state.ethBalance,"to be ",this.state.ethBalanceShouldBe-0.001)
-      if(parseFloat(this.state.ethBalance)>=(this.state.ethBalanceShouldBe-0.001)){
+      console.log("watching for ",this.props.ethBalance,"to be ",this.state.ethBalanceShouldBe-0.001)
+      if(parseFloat(this.props.ethBalance)>=(this.state.ethBalanceShouldBe-0.001)){
         this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Exchanged!",loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
@@ -293,7 +275,7 @@ export default class Exchange extends React.Component {
       let percentDone = Math.min(100,((txAge * 100) / exchangeEstimatedTime)+5)
 
       //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
-      if(this.state.daiBalance>=(this.state.daiBalanceShouldBe-0.0005)){
+      if(this.props.daiBalance>=(this.state.daiBalanceShouldBe-0.0005)){
         this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Exchanged!",loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
@@ -312,8 +294,8 @@ export default class Exchange extends React.Component {
       let percentDone = Math.min(100,((txAge * 100) / exchangeEstimatedTime) + 5)
       //ethBalanceAtStart:this.state.ethBalance,
       //ethBalanceShouldBe:this.state.ethBalance+amountOfChange,
-      console.log("watching for ",this.state.ethBalance,"to be ",this.state.ethBalanceShouldBe-0.001)
-      if(parseFloat(this.state.ethBalance)<=(this.state.ethBalanceShouldBe-0.001)){
+      console.log("watching for ",this.props.ethBalance,"to be ",this.state.ethBalanceShouldBe-0.001)
+      if(parseFloat(this.props.ethBalance)<=(this.state.ethBalanceShouldBe-0.001)){
         this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Exchanged!",loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
@@ -332,7 +314,7 @@ export default class Exchange extends React.Component {
 
   }
   sendDai(){
-    if(parseFloat(this.state.daiBalance)<parseFloat(this.state.daiSendAmount)){
+    if(parseFloat(this.props.daiBalance)<parseFloat(this.state.daiSendAmount)){
       this.props.changeAlert({type: 'warning',message: 'Insufficient funds'});
     }else if(!this.state.daiSendToAddress || !this.state.daiSendToAddress.length === 42){
       this.props.changeAlert({type: 'warning',message: 'Please enter a valid to address'});
@@ -341,8 +323,8 @@ export default class Exchange extends React.Component {
     }else{
       this.setState({
         daiToXdaiMode:"sending",
-        daiBalanceAtStart:this.state.daiBalance,
-        daiBalanceShouldBe:parseFloat(this.state.daiBalance)-parseFloat(this.state.daiSendAmount),
+        daiBalanceAtStart:this.props.daiBalance,
+        daiBalanceShouldBe:parseFloat(this.props.daiBalance)-parseFloat(this.state.daiSendAmount),
         loaderBarColor:"#f5eb4a",
         loaderBarStatusText:"Calculating best gas price...",
         loaderBarPercent:0,
@@ -366,7 +348,7 @@ export default class Exchange extends React.Component {
     }
   }
   canSendDai() {
-    return (this.state.daiSendToAddress && this.state.daiSendToAddress.length === 42 && parseFloat(this.state.daiSendAmount)>0 && parseFloat(this.state.daiSendAmount) <= parseFloat(this.state.daiBalance))
+    return (this.state.daiSendToAddress && this.state.daiSendToAddress.length === 42 && parseFloat(this.state.daiSendAmount)>0 && parseFloat(this.state.daiSendAmount) <= parseFloat(this.props.daiBalance))
   }
   transferDai(destination,amount,message,cb) {
     axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
@@ -385,8 +367,6 @@ export default class Exchange extends React.Component {
         let gwei = Math.round(response.data.average*100)/1000
         if(this.state.mainnetMetaAccount){
           //send funds using metaaccount on mainnet
-          let mainDaiContract = new this.state.mainnetweb3.eth.Contract(daiContractObject.abi,daiContractObject.address)
-
 
           let paramsObject = {
             from: this.state.daiAddress,
@@ -396,8 +376,8 @@ export default class Exchange extends React.Component {
           }
           console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-          paramsObject.to = mainDaiContract._address
-          paramsObject.data = mainDaiContract.methods.transfer(
+          paramsObject.to = this.props.daiContract._address
+          paramsObject.data = this.props.daiContract.methods.transfer(
             destination,
             this.state.mainnetweb3.utils.toWei(amount,"ether")
           ).encodeABI()
@@ -417,12 +397,15 @@ export default class Exchange extends React.Component {
         }else{
           //send funds using metamask (or other injected web3 ... should be checked and on mainnet)
           console.log("Depositing to ",toDaiBridgeAccount)
-          let mainDaiContract = new this.props.web3.eth.Contract(daiContractObject.abi,daiContractObject.address)
+
           this.setState({
             loaderBarColor:"#f5eb4a",
             loaderBarStatusText:message,
           })
-          this.props.tx(mainDaiContract.methods.transfer(
+
+          let metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
+          console.log("CURRENT DAI CONTRACT YOU NEED TO GET ABI FROM:",this.props.daiContract)
+          this.props.tx(metaMaskDaiContract.methods.transfer(
             destination,
             this.state.mainnetweb3.utils.toWei(amount,"ether")
             ///TODO LET ME PASS IN A CERTAIN AMOUNT OF GAS INSTEAD OF LEANING BACK ON THE <GAS> COMPONENT!!!!!
@@ -440,9 +423,9 @@ export default class Exchange extends React.Component {
   }
   sendEth(){
 
-    let actualEthSendAmount = parseFloat(this.state.ethSendAmount)/parseFloat(this.state.ethprice)
+    let actualEthSendAmount = parseFloat(this.state.ethSendAmount)/parseFloat(this.props.ethprice)
 
-    if(parseFloat(this.state.ethBalance)<actualEthSendAmount){
+    if(parseFloat(this.props.ethBalance)<actualEthSendAmount){
       this.props.changeAlert({type: 'warning',message: 'Insufficient funds'});
     }else if(!this.state.ethSendToAddress || !this.state.ethSendToAddress.length === 42){
       this.props.changeAlert({type: 'warning',message: 'Please enter a valid to address'});
@@ -451,8 +434,8 @@ export default class Exchange extends React.Component {
     }else{
       this.setState({
         ethToDaiMode:"sending",
-        ethBalanceAtStart:this.state.ethBalance,
-        ethBalanceShouldBe:parseFloat(this.state.ethBalance)-actualEthSendAmount,
+        ethBalanceAtStart:this.props.ethBalance,
+        ethBalanceShouldBe:parseFloat(this.props.ethBalance)-actualEthSendAmount,
         loaderBarColor:"#f5eb4a",
         loaderBarStatusText:"Calculating best gas price...",
         loaderBarPercent:0,
@@ -476,8 +459,8 @@ export default class Exchange extends React.Component {
     }
   }
   canSendEth() {
-    let actualEthSendAmount = parseFloat(this.state.ethSendAmount)/parseFloat(this.state.ethprice)
-    return (this.state.ethSendToAddress && this.state.ethSendToAddress.length === 42 && actualEthSendAmount>0 && actualEthSendAmount <= parseFloat(this.state.ethBalance))
+    let actualEthSendAmount = parseFloat(this.state.ethSendAmount)/parseFloat(this.props.ethprice)
+    return (this.state.ethSendToAddress && this.state.ethSendToAddress.length === 42 && actualEthSendAmount>0 && actualEthSendAmount <= parseFloat(this.props.ethBalance))
   }
   transferEth(destination,call,amount,message,cb){
     if(this.state.mainnetMetaAccount){
@@ -644,7 +627,7 @@ export default class Exchange extends React.Component {
                 <i className="fas fa-arrow-up"  />
               </div>
               <div className="col-5 p-1" style={colStyle}>
-                <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <div className="input-group">
                   <div className="input-group-prepend">
                     <div className="input-group-text">$</div>
@@ -660,15 +643,15 @@ export default class Exchange extends React.Component {
                 </Scaler>
               </div>
               <div className="col-3 p-1">
-                <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={async ()=>{
+                <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
 
                   let amountOfxDaiToDeposit = this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether')
                   console.log("Using DenDai contract to deposit "+amountOfxDaiToDeposit+" xDai")
 
                   this.setState({
                     xdaiToDendaiMode:"depositing",
-                    xdaiBalanceAtStart:this.state.xdaiBalance,
-                    xdaiBalanceShouldBe:parseFloat(this.state.xdaiBalance)-parseFloat(this.state.amount),
+                    xdaiBalanceAtStart:this.props.xdaiBalance,
+                    xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)-parseFloat(this.state.amount),
                     loaderBarColor:"#3efff8",
                     loaderBarStatusText:"Depositing xDai into DenDai...",
                     loaderBarPercent:0,
@@ -768,7 +751,7 @@ export default class Exchange extends React.Component {
                   <i className="fas fa-arrow-down"  />
                 </div>
                 <div className="col-5 p-1" style={colStyle}>
-                  <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <div className="input-group">
                     <div className="input-group-prepend">
                       <div className="input-group-text">$</div>
@@ -784,15 +767,15 @@ export default class Exchange extends React.Component {
                   </Scaler>
                 </div>
                 <div className="col-3 p-1">
-                  <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={async ()=>{
+                  <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
 
                     let amountOfxDaiToWithdraw = this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether')
                     console.log("Using DenDai contract to withdraw "+amountOfxDaiToWithdraw+" xDai")
 
                     this.setState({
                       xdaiToDendaiMode:"withdrawing",
-                      xdaiBalanceAtStart:this.state.xdaiBalance,
-                      xdaiBalanceShouldBe:parseFloat(this.state.xdaiBalance)+parseFloat(this.state.amount),
+                      xdaiBalanceAtStart:this.props.xdaiBalance,
+                      xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)+parseFloat(this.state.amount),
                       loaderBarColor:"#3efff8",
                       loaderBarStatusText:"Withdrawing DenDai to xDai...",
                       loaderBarPercent:0,
@@ -864,20 +847,20 @@ export default class Exchange extends React.Component {
            <div className="content ops row">
 
              <div className="col-6 p-1">
-               <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor,whiteSpace:"nowrap"}} disabled={buttonsDisabled}  onClick={()=>{
+               <button className="btn btn-large w-100"  style={this.props.buttonStyle.primary} disabled={buttonsDisabled}  onClick={()=>{
                  this.setState({xdaiToDendaiMode:"deposit"})
                }}>
-                  <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                     <i className="fas fa-arrow-up"  /> xDai to {this.props.ERC20NAME}
                   </Scaler>
                </button>
              </div>
 
              <div className="col-6 p-1">
-               <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor,whiteSpace:"nowrap"}} disabled={buttonsDisabled}  onClick={()=>{
+               <button className="btn btn-large w-100"  style={this.props.buttonStyle.primary} disabled={buttonsDisabled}  onClick={()=>{
                  this.setState({xdaiToDendaiMode:"withdraw"})
                }}>
-                 <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-arrow-down" /> {this.props.ERC20NAME} to xDai
                  </Scaler>
                </button>
@@ -897,13 +880,13 @@ export default class Exchange extends React.Component {
                 {this.props.ERC20NAME}
               </div>
               <div className="col-5 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
-                  <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                     ${this.props.dollarDisplay(this.state.denDaiBalance)}
                   </Scaler>
               </div>
               <div className="col-2 p-1" style={{marginTop:8}}>
-                <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={this.props.goBack}>
-                  <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+                <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={this.props.goBack}>
+                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                     <i className="fas fa-arrow-right"></i>
                   </Scaler>
                 </button>
@@ -952,7 +935,7 @@ export default class Exchange extends React.Component {
               <i className="fas fa-arrow-up"  />
             </div>
             <div className="col-5 p-1" style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -970,14 +953,14 @@ export default class Exchange extends React.Component {
             <div className="col-3 p-1">
 
               <button className="btn btn-large w-100"  disabled={buttonsDisabled}
-                style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
+                style={this.props.buttonStyle.primary}
                 onClick={()=>{
-                console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
+                console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
 
                 this.setState({
                   daiToXdaiMode:"depositing",
-                  xdaiBalanceAtStart:this.state.xdaiBalance,
-                  xdaiBalanceShouldBe:parseFloat(this.state.xdaiBalance)+parseFloat(this.state.amount),
+                  xdaiBalanceAtStart:this.props.xdaiBalance,
+                  xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)+parseFloat(this.state.amount),
                   loaderBarColor:"#3efff8",
                   loaderBarStatusText:"Calculating best gas price...",
                   loaderBarPercent:0,
@@ -1028,7 +1011,7 @@ export default class Exchange extends React.Component {
               <i className="fas fa-arrow-down"  />
             </div>
             <div className="col-5 p-1" style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -1044,12 +1027,12 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={()=>{
-                console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
+              <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={()=>{
+                console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
                 this.setState({
                   daiToXdaiMode:"withdrawing",
-                  daiBalanceAtStart:this.state.daiBalance,
-                  daiBalanceShouldBe:parseFloat(this.state.daiBalance)+parseFloat(this.state.amount),
+                  daiBalanceAtStart:this.props.daiBalance,
+                  daiBalanceShouldBe:parseFloat(this.props.daiBalance)+parseFloat(this.state.amount),
                   loaderBarColor:"#f5eb4a",
                   loaderBarStatusText:"Sending funds to bridge...",
                   loaderBarPercent:0,
@@ -1087,20 +1070,20 @@ export default class Exchange extends React.Component {
         <div className="content ops row">
 
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled} onClick={()=>{
+            <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} disabled={buttonsDisabled} onClick={()=>{
               this.setState({daiToXdaiMode:"deposit"})
             }} >
-              <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <i className="fas fa-arrow-up"  /> DAI to xDai
               </Scaler>
             </button>
           </div>
 
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled}  onClick={()=>{
+            <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} disabled={buttonsDisabled}  onClick={()=>{
               this.setState({daiToXdaiMode:"withdraw"})
             }} >
-              <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <i className="fas fa-arrow-down"  /> xDai to DAI
               </Scaler>
             </button>
@@ -1144,7 +1127,7 @@ export default class Exchange extends React.Component {
               <i className="fas fa-arrow-up"  />
             </div>
             <div className="col-5 p-1" style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -1160,7 +1143,7 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={async ()=>{
+              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move ETH to DAI")
 
@@ -1169,12 +1152,12 @@ export default class Exchange extends React.Component {
                   webToUse = this.state.mainnetweb3
                 }
 
-                console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.state.daiBalance)
+                console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
 
                 let uniswapContract = new webToUse.eth.Contract(uniswapContractObject.abi,uniswapContractObject.address)
                 console.log(uniswapContract)
 
-                let amountOfEth = this.state.amount / this.state.ethprice
+                let amountOfEth = this.state.amount / this.props.ethprice
                 amountOfEth = webToUse.utils.toWei(""+Math.round(amountOfEth*10000)/10000,'ether')
                 console.log("amountOfEth",amountOfEth)
 
@@ -1209,8 +1192,8 @@ export default class Exchange extends React.Component {
                 })
 
                 this.setState({
-                  daiBalanceAtStart:this.state.daiBalance,
-                  daiBalanceShouldBe:parseFloat(this.state.daiBalance)+amountOfChange,
+                  daiBalanceAtStart:this.props.daiBalance,
+                  daiBalanceShouldBe:parseFloat(this.props.daiBalance)+amountOfChange,
                 })
 
                 ///TRANSFER ETH
@@ -1263,7 +1246,7 @@ export default class Exchange extends React.Component {
               <i className="fas fa-arrow-down"  />
             </div>
             <div className="col-5 p-1" style={colStyle}>
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -1279,7 +1262,7 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}} onClick={async ()=>{
+              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move DAI to ETH")
 
@@ -1290,7 +1273,7 @@ export default class Exchange extends React.Component {
                   webToUse = this.state.mainnetweb3
                 }
 
-                console.log("AMOUNT:",this.state.amount,"ETH BALANCE:",this.state.ethBalance)
+                console.log("AMOUNT:",this.state.amount,"ETH BALANCE:",this.props.ethBalance)
 
                 let uniswapContract = new webToUse.eth.Contract(uniswapContractObject.abi,uniswapContractObject.address)
                 console.log(uniswapContract)
@@ -1316,7 +1299,7 @@ export default class Exchange extends React.Component {
                 let amountOfChange = parseFloat(webToUse.utils.fromWei(""+mineth,'ether'))
                 console.log("ETH should change by ",amountOfChange)
 
-                let eventualEthBalance = parseFloat(this.state.ethBalance)+parseFloat(amountOfChange)
+                let eventualEthBalance = parseFloat(this.props.ethBalance)+parseFloat(amountOfChange)
                 console.log("----- WATCH FOR ETH BALANCE TO BE ",eventualEthBalance)
 
 
@@ -1333,10 +1316,8 @@ export default class Exchange extends React.Component {
                 })
 
 
-                //let's check the approval on the DAI contract
-                let daiContract = new webToUse.eth.Contract(daiContractObject.abi,daiContractObject.address)
 
-                let approval = await daiContract.methods.allowance(this.state.daiAddress,uniswapExchangeAccount).call()
+                let approval = await this.props.daiContract.methods.allowance(this.state.daiAddress,uniswapExchangeAccount).call()
 
 
                 if(this.state.mainnetMetaAccount){
@@ -1366,8 +1347,8 @@ export default class Exchange extends React.Component {
                         }
                         console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-                        paramsObject.to = daiContract._address
-                        paramsObject.data = daiContract.methods.approve(uniswapExchangeAccount,""+(amountOfDai)).encodeABI()
+                        paramsObject.to = this.props.daiContract._address
+                        paramsObject.data = this.props.daiContract.methods.approve(uniswapExchangeAccount,""+(amountOfDai)).encodeABI()
 
                         console.log("APPROVE TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
@@ -1378,7 +1359,7 @@ export default class Exchange extends React.Component {
                               this.setState({
                                 loaderBarColor:"#4ab3f5",
                                 loaderBarStatusText:"Waiting for 🦄 exchange...",
-                                ethBalanceAtStart:this.state.ethBalance,
+                                ethBalanceAtStart:this.props.ethBalance,
                                 ethBalanceShouldBe:eventualEthBalance,
                               })
 
@@ -1424,7 +1405,7 @@ export default class Exchange extends React.Component {
                         this.setState({
                           loaderBarColor:"#f5eb4a",
                           loaderBarStatusText:"Waiting for 🦄 exchange...",
-                          ethBalanceAtStart:this.state.ethBalance,
+                          ethBalanceAtStart:this.props.ethBalance,
                           ethBalanceShouldBe:eventualEthBalance,
                         })
 
@@ -1483,15 +1464,16 @@ export default class Exchange extends React.Component {
                       }
                     })
 
+                    let metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
 
                     this.props.tx(
-                      daiContract.methods.approve(uniswapExchangeAccount,""+(amountOfDai))//do 1000x so we don't have to waste gas doing it again
+                      metaMaskDaiContract.methods.approve(uniswapExchangeAccount,""+(amountOfDai))//do 1000x so we don't have to waste gas doing it again
                     ,100000,0,0,(receipt)=>{
                       if(receipt){
                         console.log("APPROVE COMPLETE?!?",receipt)
                         this.setState({
                           amount:"",
-                          ethBalanceAtStart:this.state.ethBalance,
+                          ethBalanceAtStart:this.props.ethBalance,
                           ethBalanceShouldBe:eventualEthBalance,
                           loaderBarColor:"#4ab3f5",
                           loaderBarStatusText:"Sending funds to 🦄 Exchange...",
@@ -1514,7 +1496,7 @@ export default class Exchange extends React.Component {
                   }else{
                     this.setState({
                       amount:"",
-                      ethBalanceAtStart:this.state.ethBalance,
+                      ethBalanceAtStart:this.props.ethBalance,
                       ethBalanceShouldBe:eventualEthBalance,
                       loaderBarColor:"#4ab3f5",
                       loaderBarStatusText:"Sending funds to 🦄 Exchange...",
@@ -1563,20 +1545,20 @@ export default class Exchange extends React.Component {
          <div className="content ops row">
 
            <div className="col-6 p-1">
-             <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor,whiteSpace:"nowrap"}} disabled={buttonsDisabled}  onClick={()=>{
+             <button className="btn btn-large w-100"  style={this.props.buttonStyle.primary} disabled={buttonsDisabled}  onClick={()=>{
                this.setState({ethToDaiMode:"deposit"})
              }}>
-               <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-arrow-up"  /> ETH to DAI
                </Scaler>
              </button>
            </div>
 
            <div className="col-6 p-1">
-             <button className="btn btn-large w-100"  style={{backgroundColor:this.props.mainStyle.mainColor,whiteSpace:"nowrap"}} disabled={buttonsDisabled}  onClick={()=>{
+             <button className="btn btn-large w-100"  style={this.props.buttonStyle.primary} disabled={buttonsDisabled}  onClick={()=>{
                this.setState({ethToDaiMode:"withdraw"})
              }}>
-              <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                <i className="fas fa-arrow-down" /> DAI to ETH
               </Scaler>
              </button>
@@ -1588,16 +1570,16 @@ export default class Exchange extends React.Component {
 
 
     let sendDaiButton = (
-      <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} disabled={buttonsDisabled} onClick={()=>{
+      <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} disabled={buttonsDisabled} onClick={()=>{
         this.setState({sendDai:true})
       }}>
-        <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
           <i className="fas fa-arrow-right"></i>
         </Scaler>
       </button>
     )
 
-
+    //style={{marginTop:40,backgroundColor:this.props.mainStyle.mainColor}}
     let sendDaiRow = ""
     if(this.state.sendDai){
       sendDaiRow = (
@@ -1618,7 +1600,7 @@ export default class Exchange extends React.Component {
               <input type="text" className="form-control" placeholder="0.00" value={this.state.daiSendAmount}
                      onChange={event => this.updateState('daiSendAmount', event.target.value)} />
             </div>
-            <button style={{marginTop:40,backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendDai ? '' : 'disabled'}`}
+            <button style={this.props.buttonStyle.primary} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendDai ? '' : 'disabled'}`}
                     onClick={this.sendDai.bind(this)}>
               Send
             </button>
@@ -1630,7 +1612,7 @@ export default class Exchange extends React.Component {
         <button className="btn btn-large w-100" style={{backgroundColor:"#888888",whiteSpace:"nowrap"}} onClick={()=>{
           this.setState({sendDai:false})
         }}>
-          <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-times"></i>
           </Scaler>
         </button>
@@ -1642,10 +1624,10 @@ export default class Exchange extends React.Component {
 
 
     let sendEthButton = (
-      <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={()=>{
+      <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={()=>{
         this.setState({sendEth:true})
       }}>
-        <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
           <i className="fas fa-arrow-right"></i>
         </Scaler>
       </button>
@@ -1672,7 +1654,7 @@ export default class Exchange extends React.Component {
               <input type="text" className="form-control" placeholder="0.00" value={this.state.ethSendAmount}
                      onChange={event => this.updateState('ethSendAmount', event.target.value)} />
             </div>
-            <button style={{marginTop:40,backgroundColor:this.props.mainStyle.mainColor}} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendEth ? '' : 'disabled'}`}
+            <button style={this.props.buttonStyle.primary} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendEth ? '' : 'disabled'}`}
                     onClick={this.sendEth.bind(this)}>
               Send
             </button>
@@ -1684,7 +1666,7 @@ export default class Exchange extends React.Component {
         <button className="btn btn-large w-100" style={{backgroundColor:"#888888",whiteSpace:"nowrap"}} onClick={()=>{
           this.setState({sendEth:false})
         }}>
-          <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-times"></i>
           </Scaler>
         </button>
@@ -1692,12 +1674,14 @@ export default class Exchange extends React.Component {
     }
 
 
+    //console.log("eth price ",this.props.ethBalance,this.props.ethprice)
+
     return (
       <div style={{marginTop:30}}>
 
         {tokenDisplay}
 
-        <div className="main-card card w-100">
+
           <div className="content ops row">
             <div className="col-2 p-1">
               <img style={logoStyle} src={this.props.xdai} />
@@ -1706,26 +1690,26 @@ export default class Exchange extends React.Component {
               xDai
             </div>
             <div className="col-5 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
-                <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
-                  ${this.props.dollarDisplay(this.state.xdaiBalance)}
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  ${this.props.dollarDisplay(this.props.xdaiBalance)}
                 </Scaler>
             </div>
             <div className="col-2 p-1" style={{marginTop:8}}>
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={this.props.goBack}>
-                <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={this.props.goBack}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-arrow-right"></i>
                 </Scaler>
               </button>
             </div>
 
           </div>
-        </div>
+
         <div className="main-card card w-100">
           {daiToXdaiDisplay}
         </div>
 
 
-        <div className="main-card card w-100">
+
           <div className="content ops row">
             <div className="col-2 p-1">
               <img style={logoStyle} src={this.props.dai} />
@@ -1734,8 +1718,8 @@ export default class Exchange extends React.Component {
               DAI
             </div>
             <div className="col-5 p-1" style={{marginTop:9,whiteSpace:"nowrap"}}>
-              <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
-                ${this.props.dollarDisplay(this.state.daiBalance)}
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                ${this.props.dollarDisplay(this.props.daiBalance)}
               </Scaler>
             </div>
             <div className="col-2 p-1" style={{marginTop:8}}>
@@ -1743,14 +1727,13 @@ export default class Exchange extends React.Component {
             </div>
           </div>
           {sendDaiRow}
-        </div>
+
 
         <div className="main-card card w-100">
           {ethToDaiDisplay}
         </div>
 
 
-        <div className="main-card card w-100">
           <div className="content ops row">
             <div className="col-2 p-1">
               <img style={logoStyle} src={this.props.eth} />
@@ -1759,8 +1742,8 @@ export default class Exchange extends React.Component {
               ETH
             </div>
             <div className="col-5 p-1" style={{marginTop:10,whiteSpace:"nowrap"}}>
-              <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
-                ${this.props.dollarDisplay(this.state.ethBalance*this.state.ethprice)}
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                ${this.props.dollarDisplay(this.props.ethBalance*this.props.ethprice)}
               </Scaler>
             </div>
             <div className="col-2 p-1" style={{marginTop:8}}>
@@ -1768,102 +1751,17 @@ export default class Exchange extends React.Component {
             </div>
           </div>
           {sendEthRow}
-        </div>
-
-
-        <div className="main-card card w-100" style={{opacity:0.333,padding:0}}>
-          <div className="content ops row">
-            <div className="col-12 p-1" style={{textAlign:"center",fontSize:16}}>
-              Bank Account or Credit Card:
-            </div>
-          </div>
-        </div>
-
-
-        <div className="main-card card w-100">
-          <div className="content ops row">
-            <div className="col-1 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
-              <img style={logoStyle} src={wyre} />
-              </Scaler>
-            </div>
-            <div className="col-5 p-1" style={{marginTop:7,whiteSpace:"nowrap"}}>
-              <Scaler config={{startZoomAt:700,origin:"50% 50%"}}>
-              Wyre
-              </Scaler>
-            </div>
-            <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={()=>{alert("Coming soon!")}}>
-                <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
-                  <i className="fas fa-plug"></i> Create/Connect
-                </Scaler>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="main-card card w-100">
-          <div className="content ops row">
-            <div className="col-1 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
-              <img style={logoStyle} src={coinbase} />
-              </Scaler>
-            </div>
-            <div className="col-5 p-1" style={{marginTop:7,whiteSpace:"nowrap"}}>
-              <Scaler config={{startZoomAt:750,origin:"50% 50%"}}>
-              Coinbase
-              </Scaler>
-            </div>
-            <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={()=>{alert("Coming soon!")}}>
-                <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
-                  <i className="fas fa-plug"></i> Create/Connect
-                </Scaler>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="main-card card w-100">
-          <div className="content ops row">
-            <div className="col-1 p-1">
-              <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
-              <img style={logoStyle} src={localeth} />
-              </Scaler>
-            </div>
-            <div className="col-5 p-1" style={{marginTop:7,whiteSpace:"nowrap"}}>
-              <Scaler config={{startZoomAt:650,origin:"50% 50%"}}>
-                LocalEth
-              </Scaler>
-            </div>
-            <div className="col-6 p-1">
-
-              <button className="btn btn-large w-100" style={{backgroundColor:"#0055fe",whiteSpace:"nowrap"}} onClick={()=>{alert("Coming soon!")}}>
-                <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
-                  <i className="fas fa-plug"></i> Create/Connect
-                </Scaler>
-              </button>
-
-            </div>
-          </div>
-        </div>
 
 
 
-        <div className="text-center bottom-text" style={{marginBottom:30}}>
-          <Scaler config={{startZoomAt:380,origin:"0% 50%"}}>
-            <span style={{padding:10,whiteSpace:"nowrap"}}>
-              <a href="https://dai-bridge.poa.network" style={{color:"#FFFFFF"}} target="_blank">
-                <i className="fas fa-credit-card"/> traditional bridge
-              </a>
-            </span>
-            <span style={{padding:10,whiteSpace:"nowrap"}}>
-              <a href="#" onClick={this.props.goBack} style={{color:"#FFFFFF"}}>
-                <i className="fas fa-times"/> done
-              </a>
-            </span>
-          </Scaler>
-        </div>
+
+
+
+
+
+
+
+
       </div>
     )
   }

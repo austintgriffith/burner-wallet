@@ -14,12 +14,8 @@ export default class Receive extends React.Component {
     }
   }
   render() {
-    let {changeAlert} = this.props
+    let {changeAlert,url} = this.props
 
-    let url = window.location.protocol+"//"+window.location.hostname
-    if(window.location.port&&window.location.port!=80&&window.location.port!=443){
-      url = url+":"+window.location.port
-    }
     let qrSize = Math.min(document.documentElement.clientWidth,512)-90
     let qrValue = url
 

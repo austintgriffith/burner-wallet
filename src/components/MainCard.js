@@ -26,7 +26,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
         </div>
       </div>
       <div className="content ops row">
-        <div className="col-6 p-1" onClick={() => changeView('send_with_link')}>
+        <div className="col-6 p-1" onClick={() => changeView('share')}>
           <button className="btn btn-large w-100" onClick={() => changeView('share')} style={buttonStyle.secondary}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <i className="fas fa-share"/> Share

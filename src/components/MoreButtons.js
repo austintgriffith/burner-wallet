@@ -20,7 +20,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
       </div>
       <div className="col-6 p-1">
         <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
-          changeView('bridge')}
+          changeView('exchange')}
         }>
           <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fa fa-random"></i> Exchange

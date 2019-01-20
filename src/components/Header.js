@@ -24,7 +24,7 @@ export  default ({ens, title, titleImage, mainStyle, balance, address, changeVie
       <div style={{marginTop:18,marginRight:10}}>
         <Blockie
           address={address}
-          config={{size:6}}
+          config={{size:7}}
          />
       </div>
       </Scaler>
@@ -36,12 +36,12 @@ export  default ({ens, title, titleImage, mainStyle, balance, address, changeVie
   return (
     <div className="header">
       <Scaler config={{startZoomAt:400,origin:"50% 50%",adjustedZoom:1}}>
-        <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{
+        <div onClick={()=>{
           changeView('main')
-        }}>
+        }} style={{cursor:"pointer",fontSize:36,letterSpacing:-1}}>
           {titleImage}
-          <span style={{paddingLeft:10}}>{title}</span>
-        </a>
+          {title}
+        </div>
       </Scaler>
       {topRight}
       {bottomRight}

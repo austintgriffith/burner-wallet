@@ -58,8 +58,6 @@ export default class SendWithLink extends React.Component {
     let { canSend } = this.state;
     return (
       <div>
-        <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay}/>
-        <Ruler/>
         <div className="content row">
           <div className="form-group w-100">
             <label htmlFor="amount_input">Amount</label>

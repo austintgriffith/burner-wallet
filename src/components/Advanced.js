@@ -46,14 +46,32 @@ export default class Advanced extends React.Component {
 
     return (
       <div style={{marginTop:20}}>
-        <div className="content qr row">
-          <div style={{width:"100%",textAlign:"center",paddingBottom:20,whiteSpace:"nowrap"}}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              {address}
-            </Scaler>
+
+      <div>
+        <div className="content ops row" style={{marginBottom:10}}>
+          <div className="col-6 p-1">
+            <a href="https://github.com/austintgriffith/burner-wallet" style={{color:"#FFFFFF"}} target="_blank">
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  <i className="fas fa-code"/> Code
+                </Scaler>
+              </button>
+            </a>
           </div>
-          <QRCode value={address} size={qrSize}/>
+          <div className="col-6 p-1">
+            <a href="https://medium.com/gitcoin/ethereum-in-emerging-economies-b235f8dac2f2" style={{color:"#FFFFFF"}} target="_blank">
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  <i className="fas fa-info"/> About
+                </Scaler>
+              </button>
+            </a>
+          </div>
         </div>
+        <div className="content ops row">
+          {privateKeyQrDisplay}
+        </div>
+      </div>
 
         {privateKey &&
         <div>
@@ -75,6 +93,17 @@ export default class Advanced extends React.Component {
         {privateKey &&
         <div>
           <div className="content ops row" style={{marginBottom:10}}>
+
+            <div className="col-6 p-1">
+            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
+              this.setState({privateKeyQr:!this.state.privateKeyQr})
+            }}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fas fa-key"/> Show
+              </Scaler>
+            </button>
+            </div>
+
             <CopyToClipboard text={privateKey}>
               <div className="col-6 p-1"
                    onClick={() => changeAlert({type: 'success', message: 'Private Key copied to clipboard'})}>
@@ -85,13 +114,7 @@ export default class Advanced extends React.Component {
                 </button>
               </div>
             </CopyToClipboard>
-            <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-key"/> Show
-              </Scaler>
-            </button>
-            </div>
+
           </div>
           <div className="content ops row">
             {privateKeyQrDisplay}
