@@ -57,32 +57,6 @@ let mainStyle = {
   mainColor:"#F76B1C",
 }
 
-let innerStyle = {
-  maxWidth:740,
-  margin:'0 auto'
-}
-
-let buttonStyle = {
-  primary: {
-    backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",
-    backgroundColor:mainStyle.mainColor,
-    color:"#FFFFFF",
-    whiteSpace:"nowrap",
-    cursor:"pointer",
-  },
-  secondary: {
-    border:"2px solid "+mainStyle.mainColor,
-    color:mainStyle.mainColor,
-    whiteSpace:"nowrap",
-    cursor:"pointer",
-  }
-}
-
-const invLogoStyle = {
-  maxWidth:50,
-  maxHeight:50,
-}
-
 let title = "Burner Wallet"
 let titleImage = (
   <span style={{paddingRight:20,paddingLeft:16}}><i className="fas fa-fire" /></span>
@@ -92,14 +66,14 @@ let titleImage = (
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
   WEB3_PROVIDER = "http://0.0.0.0:8545";
   CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20NAME = false//'BURN'
-  ERC20TOKEN = false//'Burner'//false//'Burner'
-  //ERC20IMAGE = cypherpunk
+  ERC20NAME = false//'DEN'
+  ERC20TOKEN = false//'BuffiDai'//false//'Burner'
+  ERC20IMAGE = false//bufficorn
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = 'Burner'
+  ERC20TOKEN = false//'Burner'
 }
 else if (window.location.hostname.indexOf("qreth") >= 0) {
   WEB3_PROVIDER = "https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac"
@@ -131,27 +105,59 @@ if(ERC20TOKEN=="BuffiDai"){
   mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
   mainStyle.backgroundColor = "#20012d"
   mainStyle.mainColor = "#b6299e"
+  mainStyle.mainColorAlt = "#de3ec3"
   title = "BuffiDai.io"
   titleImage = (
     <img src={bufficorn} style={{
       maxWidth:50,
       maxHeight:50,
-      marginTop:-24
+      marginRight:15,
+      marginTop:-10
     }}/>
   )
 } else if(ERC20TOKEN=="Burner"){
   mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
   mainStyle.backgroundColor = "#6c0664"
   mainStyle.mainColor = "#e72da3"
+  mainStyle.mainColorAlt = "#f948b8"
   title = "Burner Wallet"
   titleImage = (
     <img src={cypherpunk} style={{
       maxWidth:50,
       maxHeight:50,
-      marginTop:-24
+      marginRight:15,
+      marginTop:-10
     }}/>
   )
 }
+
+
+let innerStyle = {
+  maxWidth:740,
+  margin:'0 auto'
+}
+
+let buttonStyle = {
+  primary: {
+    backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",
+    backgroundColor:mainStyle.mainColor,
+    color:"#FFFFFF",
+    whiteSpace:"nowrap",
+    cursor:"pointer",
+  },
+  secondary: {
+    border:"2px solid "+mainStyle.mainColor,
+    color:mainStyle.mainColor,
+    whiteSpace:"nowrap",
+    cursor:"pointer",
+  }
+}
+
+const invLogoStyle = {
+  maxWidth:50,
+  maxHeight:50,
+}
+
 
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
@@ -855,14 +861,14 @@ render() {
                   <Admin
                     ERC20TOKEN={ERC20TOKEN}
                     vendors={this.state.vendors}
-                    mainStyle={mainStyle}
+                    buttonStyle={buttonStyle}
                     changeView={this.changeView}
                     contracts={this.state.contracts}
                     tx={this.state.tx}
                     web3={this.state.web3}
                   />
                   <MoreButtons
-                    mainStyle={mainStyle}
+                    buttonStyle={buttonStyle}
                     changeView={this.changeView}
                   />
                 </div>
@@ -873,7 +879,7 @@ render() {
                   <Vendor
                     ERC20TOKEN={ERC20TOKEN}
                     address={account}
-                    mainStyle={mainStyle}
+                    buttonStyle={buttonStyle}
                     changeView={this.changeView}
                     contracts={this.state.contracts}
                     vendor={this.state.isVendor}
@@ -882,7 +888,7 @@ render() {
                     dollarDisplay={dollarDisplay}
                   />
                   <MoreButtons
-                    mainStyle={mainStyle}
+                    buttonStyle={buttonStyle}
                     changeView={this.changeView}
                   />
                 </div>
@@ -891,7 +897,7 @@ render() {
               moreButtons = (
                 <div>
                   <MoreButtons
-                    mainStyle={mainStyle}
+                    buttonStyle={buttonStyle}
                     changeView={this.changeView}
                   />
                 </div>
@@ -968,33 +974,62 @@ render() {
             console.log("TARGET",targetAddress)
             return (
               <div>
-              <NavCard title={(
-                <div>
-                History
+                <div className="main-card card w-100">
+                  <NavCard title={(
+                    <div>
+                      History & Chat
+                    </div>
+                  )} goBack={this.goBack.bind(this)}/>
+                  {defaultBalanceDisplay}
+                  <History
+                    buttonStyle={buttonStyle}
+                    saveKey={this.saveKey.bind(this)}
+                    metaAccount={this.state.metaAccount}
+                    transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                    address={account}
+                    balance={balance}
+                    changeAlert={this.changeAlert}
+                    changeView={this.changeView}
+                    target={targetAddress}
+                    block={this.state.block}
+                    send={this.state.send}
+                    web3={this.state.web3}
+                    goBack={this.goBack.bind(this)}
+                    dollarDisplay={dollarDisplay}
+                  />
                 </div>
-              )} goBack={this.goBack.bind(this)}/>
-              <History
-                mainStyle={mainStyle}
-                saveKey={this.saveKey.bind(this)}
-                metaAccount={this.state.metaAccount}
-                transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
-                address={account}
-                balance={balance}
-                changeAlert={this.changeAlert}
-                changeView={this.changeView}
-                target={targetAddress}
-                block={this.state.block}
-                send={this.state.send}
-                web3={this.state.web3}
-                goBack={this.goBack.bind(this)}
-                dollarDisplay={dollarDisplay}
-              />
+                <Bottom
+                  action={()=>{
+                    this.changeView('main')
+                  }}
+                />
               </div>
 
             )
           }
 
-          let selected = "xdai"
+          let selected = "xDai"
+          let extraTokens = ""
+
+          let defaultBalanceDisplay = (
+            <div>
+              <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+              <Ruler/>
+            </div>
+          )
+
+          if(ERC20TOKEN){
+            selected = ERC20NAME
+            extraTokens = (
+              <div>
+                <Balance icon={ERC20IMAGE} selected={selected} text={ERC20NAME} amount={this.state.balance} address={account} dollarDisplay={dollarDisplay} />
+                <Ruler/>
+              </div>
+            )
+            defaultBalanceDisplay = extraTokens
+          }
+
+
 
           switch(view) {
             case 'main':
@@ -1002,11 +1037,13 @@ render() {
               <div>
                 <div className="main-card card w-100">
 
-                  <Balance icon={xdai} selected={selected} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} subDisplay={subBalanceDisplay}/>
+                  {extraTokens}
+
+                  <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
-                  <Balance icon={dai} selected={selected} text={"dai"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay} subDisplay={subBalanceDisplay}/>
+                  <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
-                  <Balance icon={eth} selected={selected} text={"eth"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay} subDisplay={subBalanceDisplay}/>
+                  <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
 
                   <MainCard
@@ -1021,6 +1058,7 @@ render() {
                   />
                   {moreButtons}
                   <RecentTransactions
+                    buttonStyle={buttonStyle}
                     ERC20TOKEN={ERC20TOKEN}
                     transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
                     changeView={this.changeView}
@@ -1077,8 +1115,7 @@ render() {
               <div>
                 <div className="send-to-address card w-100">
                   <NavCard title={'Withdraw'} goBack={this.goBack.bind(this)}/>
-                  <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} subDisplay={subBalanceDisplay}/>
-                  <Ruler/>
+                  {defaultBalanceDisplay}
                   <WithdrawFromPrivate
                     ERC20TOKEN={ERC20TOKEN}
                     buttonStyle={buttonStyle}
@@ -1106,8 +1143,7 @@ render() {
               <div>
                 <div className="send-to-address card w-100">
                   <NavCard title={'Send to Address'} goBack={this.goBack.bind(this)}/>
-                  <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} subDisplay={subBalanceDisplay}/>
-                  <Ruler/>
+                  {defaultBalanceDisplay}
                   <SendToAddress
                     ensLookup={this.ensLookup.bind(this)}
                     ERC20TOKEN={ERC20TOKEN}
@@ -1157,8 +1193,7 @@ render() {
               <div>
                 <div className="main-card card w-100">
                   <NavCard title={'Request Funds'} goBack={this.goBack.bind(this)}/>
-                  <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} subDisplay={subBalanceDisplay}/>
-                  <Ruler/>
+                  {defaultBalanceDisplay}
                   <RequestFunds
                     mainStyle={mainStyle}
                     balance={balance}
@@ -1208,8 +1243,7 @@ render() {
               <div>
                 <div className="main-card card w-100">
                   <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
-                  <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} subDisplay={subBalanceDisplay}/>
-                  <Ruler/>
+                  {defaultBalanceDisplay}
                   <SendWithLink balance={balance}
                     buttonStyle={buttonStyle}
                     changeAlert={this.changeAlert}
@@ -1304,21 +1338,26 @@ render() {
             case 'vendors':
             return (
               <div>
-              <NavCard title={'Vendors'} goBack={this.goBack.bind(this)}/>
-              <Vendors
-              ERC20TOKEN={ERC20TOKEN}
-              vendors={this.state.vendors}
-              address={account}
-              mainStyle={mainStyle}
-              changeView={this.changeView}
-              contracts={this.state.contracts}
-              vendor={this.state.isVendor}
-              tx={this.state.tx}
-              web3={this.state.web3}
-              block={this.state.block}
-              goBack={this.goBack.bind(this)}
-              dollarDisplay={dollarDisplay}
-              />
+                <div className="main-card card w-100">
+                  <NavCard title={'Vendors'} goBack={this.goBack.bind(this)}/>
+                  <Vendors
+                    ERC20TOKEN={ERC20TOKEN}
+                    vendors={this.state.vendors}
+                    address={account}
+                    mainStyle={mainStyle}
+                    changeView={this.changeView}
+                    contracts={this.state.contracts}
+                    vendor={this.state.isVendor}
+                    tx={this.state.tx}
+                    web3={this.state.web3}
+                    block={this.state.block}
+                    goBack={this.goBack.bind(this)}
+                    dollarDisplay={dollarDisplay}
+                  />
+                </div>
+                <Bottom
+                  action={this.goBack.bind(this)}
+                />
               </div>
             );
             case 'loader':

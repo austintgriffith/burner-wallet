@@ -42,7 +42,7 @@ export default class Advanced extends React.Component {
     this.setState({products})
   }
   render(){
-    let {dollarDisplay,mainStyle,contracts,vendor,tx,web3} = this.props
+    let {dollarDisplay,buttonStyle,contracts,vendor,tx,web3} = this.props
 
     let products = []
     for(let p in this.state.products){
@@ -84,8 +84,7 @@ export default class Advanced extends React.Component {
                 },1500)
               })
             }}
-            style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"
-          }}>
+            style={buttonStyle.secondary}>
             <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
               {productAvailableDisplay}
             </Scaler>
@@ -165,7 +164,7 @@ export default class Advanced extends React.Component {
             <h2>{web3.utils.hexToUtf8(vendor.name)}</h2>
           </div>
           <div className="col-4 p-1">
-          <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
+          <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
             this.setState({changingActive:true})
             let setActiveTo = !vendor.isActive
             tx(contracts[this.props.ERC20TOKEN].activateVendor(setActiveTo),120000,0,0,(result)=>{
@@ -197,7 +196,7 @@ export default class Advanced extends React.Component {
           </div>
           </div>
           <div className="col-4 p-1">
-          <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
+          <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
             //addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable)
             let nextId = this.state.products.length
             this.setState({addingProduct:true})

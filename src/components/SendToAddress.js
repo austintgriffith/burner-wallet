@@ -50,7 +50,9 @@ export default class SendToAddress extends React.Component {
 
     this.setState({ [key]: value },()=>{
       this.setState({ canSend: this.canSend() },()=>{
-        this.bounceToAmountIfReady()
+        if(key!="message"){
+          this.bounceToAmountIfReady()
+        }
       })
     });
     if(key=="toAddress"){
@@ -65,7 +67,9 @@ export default class SendToAddress extends React.Component {
       console.log("Resolved:",addr)
       if(addr!="0x0000000000000000000000000000000000000000"){
         this.setState({toAddress:addr,fromEns:value},()=>{
-          this.bounceToAmountIfReady()
+          if(key!="message"){
+            this.bounceToAmountIfReady()
+          }
         })
       }
     }

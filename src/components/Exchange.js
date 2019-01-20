@@ -75,7 +75,7 @@ export default class Exchange extends React.Component {
     if(props.ERC20TOKEN){
       try{
         console.log("Loading "+props.ERC20TOKEN+" Contract...")
-        dendaiContract = new xdaiweb3.eth.Contract(require("../contracts/"+props.ERC20TOKEN+".abi.js"),require("../contracts/"+props.ERC20TOKEN+".address.js"))
+        dendaiContract = new this.props.web3.eth.Contract(require("../contracts/"+props.ERC20TOKEN+".abi.js"),require("../contracts/"+props.ERC20TOKEN+".address.js"))
       }catch(e){
         console.log("ERROR LOADING dendaiContract Contract",e)
       }
@@ -871,29 +871,28 @@ export default class Exchange extends React.Component {
 
       tokenDisplay = (
         <div>
-          <div className="main-card card w-100">
-            <div className="content ops row">
-              <div className="col-2 p-1">
-                <img style={logoStyle} src={this.props.ERC20IMAGE} />
-              </div>
-              <div className="col-3 p-1" style={{marginTop:8}}>
-                {this.props.ERC20NAME}
-              </div>
-              <div className="col-5 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
-                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    ${this.props.dollarDisplay(this.state.denDaiBalance)}
-                  </Scaler>
-              </div>
-              <div className="col-2 p-1" style={{marginTop:8}}>
-                <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={this.props.goBack}>
-                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-arrow-right"></i>
-                  </Scaler>
-                </button>
-              </div>
-
+          <div className="content ops row" style={{paddingBottom:20}}>
+            <div className="col-2 p-1">
+              <img style={logoStyle} src={this.props.ERC20IMAGE} />
             </div>
+            <div className="col-3 p-1" style={{marginTop:8}}>
+              {this.props.ERC20NAME}
+            </div>
+            <div className="col-5 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  ${this.props.dollarDisplay(this.state.denDaiBalance)}
+                </Scaler>
+            </div>
+            <div className="col-2 p-1" style={{marginTop:8}}>
+              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={this.props.goBack}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  <i className="fas fa-arrow-right"></i>
+                </Scaler>
+              </button>
+            </div>
+
           </div>
+
           <div className="main-card card w-100">
             {xdaiToDendaiDisplay}
           </div>
@@ -1682,7 +1681,7 @@ export default class Exchange extends React.Component {
         {tokenDisplay}
 
 
-          <div className="content ops row">
+          <div className="content ops row" style={{paddingBottom:20}}>
             <div className="col-2 p-1">
               <img style={logoStyle} src={this.props.xdai} />
             </div>
@@ -1710,7 +1709,7 @@ export default class Exchange extends React.Component {
 
 
 
-          <div className="content ops row">
+          <div className="content ops row" style={{paddingBottom:20}}>
             <div className="col-2 p-1">
               <img style={logoStyle} src={this.props.dai} />
             </div>
@@ -1734,7 +1733,7 @@ export default class Exchange extends React.Component {
         </div>
 
 
-          <div className="content ops row">
+          <div className="content ops row" style={{paddingBottom:20}}>
             <div className="col-2 p-1">
               <img style={logoStyle} src={this.props.eth} />
             </div>

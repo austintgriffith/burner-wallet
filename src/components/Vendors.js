@@ -219,25 +219,11 @@ export default class Advanced extends React.Component {
 
     return (
       <div>
-        <div className="main-card card w-100">
+
           {loader}
           {vendorDisplay}
           {products}
 
-        </div>
-        <div className="text-center bottom-text">
-          <span style={{padding:10}}>
-            <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{
-              if(this.state.vendor){
-                this.setState({vendor:false})
-              }else{
-                this.props.goBack()
-              }
-            }}>
-              <i className="fas fa-times"/> done
-            </a>
-          </span>
-        </div>
       </div>
     )
   }
