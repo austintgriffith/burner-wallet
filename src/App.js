@@ -1427,7 +1427,7 @@ render() {
         })()}
         { ( !web3 /*|| !this.checkNetwork() */) &&
           <div>
-          <Loader />
+            <Loader />
           </div>
         }
         { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
