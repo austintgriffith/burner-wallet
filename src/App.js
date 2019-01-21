@@ -32,6 +32,10 @@ import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 
+//https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
+import RNMessageChannel from 'react-native-webview-messaging';
+
+
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
 import eth from './ethereum.png';
@@ -196,11 +200,21 @@ class App extends Component {
       sendKey: "",
       alert: null,
       loadingTitle:'loading...',
+      title: title,
+      extraHeadroom:0,
       balance: 0.00,
       vendors: {},
       ethprice: 0.00,
     };
     this.alertTimeout = null;
+
+    RNMessageChannel.on('json', update => {
+      let safeUpdate = {}
+      if(update.title) safeUpdate.title = update.title
+      if(update.extraHeadroom) safeUpdate.extraHeadroom = update.extraHeadroom
+      if(update.possibleNewPrivateKey) safeUpdate.possibleNewPrivateKey = update.possibleNewPrivateKey
+      this.setState(safeUpdate)
+    })
   }
   updateDimensions() {
     //force it to rerender when the window is resized to make sure qr fits etc
@@ -210,6 +224,7 @@ class App extends Component {
     this.setState(update)
   }
   componentDidMount(){
+
     document.body.style.backgroundColor = mainStyle.backgroundColor
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
@@ -821,24 +836,25 @@ render() {
   let eventParser = ""
 
 
-
-
-
-
-
-
-
+  let extraHead = ""
+  if(this.state.extraHeadroom){
+    extraHead = (
+      <div style={{marginTop:this.state.extraHeadroom}}>
+      </div>
+    )
+  }
 
   return (
     <div style={mainStyle}>
       <div style={innerStyle}>
+        {extraHead}
         {networkOverlay}
         {web3_setup}
 
         <div>
         <Header
         ens={this.state.ens}
-        title={title}
+        title={this.state.title}
         titleImage={titleImage}
         mainStyle={mainStyle}
         address={this.state.account}
@@ -1314,6 +1330,9 @@ render() {
               dollarDisplay={dollarDisplay}
               burnWallet={()=>{
                 burnMetaAccount()
+                if(RNMessageChannel){
+                  RNMessageChannel.send("burn")
+                }
                 if(localStorage&&typeof localStorage.setItem == "function"){
                   localStorage.setItem(this.state.account+"loadedBlocksTop","")
                   localStorage.setItem(this.state.account+"metaPrivateKey","")

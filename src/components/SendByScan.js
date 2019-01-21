@@ -4,6 +4,7 @@ import ReactLoading from 'react-loading';
 import FileReaderInput from 'react-file-reader-input';
 import QrCode from 'qrcode-reader';
 import qrimage from '../qrcode.png';
+import RNMessageChannel from 'react-native-webview-messaging';
 var Jimp = require("jimp");
 
 class SendByScan extends Component {
@@ -21,6 +22,8 @@ class SendByScan extends Component {
       isLoading: false
     };
     this.handleScan = this.handleScan.bind(this)
+
+    RNMessageChannel.send("qr")
   }
   stopRecording = () => this.setState({ delay: false });
   onImageLoad = data => {

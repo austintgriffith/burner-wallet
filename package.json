@@ -38,6 +38,7 @@
     "react-file-reader-input": "^2.0.0",
     "react-linkify": "^0.2.2",
     "react-loading": "^2.0.3",
+    "react-native-webview-messaging": "^1.2.3",
     "react-qr-reader": "^2.1.1",
     "react-scripts": "2.0.5",
     "react-scroll": "^1.7.10",
