@@ -1425,7 +1425,7 @@ render() {
           }
 
         })()}
-        { ( !web3 /*|| !this.checkNetwork() */) &&
+        { ( true ||  !web3 /*|| !this.checkNetwork() */) &&
           <div>
             <Loader />
           </div>

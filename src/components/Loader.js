@@ -28,7 +28,7 @@ class App extends Component {
           <div style={{position:"absolute",left:0,top:"200%",width:this.state.percent+"%",height:"120%",backgroundColor:"#FFFFFF",opacity:0.3}}>
           </div>
         </div>
-        <img src ={burnerloader} style={{width:"100%",height:"100%",opacity:0.88}}/>
+        <img src ={burnerloader} style={{width:"150%",height:"150%",marginLeft:"-25%",opacity:0.50}}/>
       </div>
     )
   }
