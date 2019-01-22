@@ -89,15 +89,15 @@ app.post('/link', async (req, res) => {
     console.log("CLAIM IS VALID...")
 
     //console.log("dApp reward estimation: ",req.body.reward)
-    web3.eth.getGasPrice()
-    .then((gasPrice) => {
-      gasPrice = gasPrice < 500000000 ? 1000000000 : gasPrice; // Fix for xDai 0 Txs avg
+    //web3.eth.getGasPrice()
+  //  .then((gasPrice) => {
+    //  gasPrice = gasPrice < 500000000 ? 1000000000 : gasPrice; // Fix for xDai 0 Txs avg
 
-      console.log("Relay gas estimation: ",gasAmount)
-      console.log("PARAMS",{from: accounts[DESKTOPMINERACCOUNT],gas: parseInt(gasAmount)+10000,gasPrice: parseInt(gasPrice)+500000000})
+  //    console.log("Relay gas estimation: ",gasAmount)
+    //  console.log("PARAMS",{from: accounts[DESKTOPMINERACCOUNT],gas: parseInt(gasAmount)+10000,gasPrice: parseInt(gasPrice)+500000000})
       /// OLD CODE BUT REVERTING FOR NOW, (gasAmount+10000)*(gasPrice+500000000)
       contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.claimHash,req.body.dest)
-      .send({from: accounts[DESKTOPMINERACCOUNT],gas: parseInt(gasAmount)+10000,gasPrice: parseInt(gasPrice)+500000000},
+      .send({from: accounts[DESKTOPMINERACCOUNT],gas: 240000,gasPrice: 1010101010},
         (error, transactionHash)=>{
           console.log("TX CALLBACK",error,transactionHash)
           res.set('Content-Type', 'application/json');
@@ -120,10 +120,10 @@ app.post('/link', async (req, res) => {
         console.log(error); //Tx promise
       });
 
-    })
+    /*})
     .catch((error) => {
       console.log(error); //Get Gas price promise
-    });
+    });*/
   }
 
 
