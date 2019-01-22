@@ -1,6 +1,9 @@
 pragma solidity 0.4.25;
 
-contract Links {
+import "tabookey-gasless/contracts/RelayRecipient.sol";
+import "tabookey-gasless/contracts/RecipientUtils.sol";
+
+contract Links is RelayRecipient, RecipientUtils {
 
     struct Fund {
         address sender;
@@ -272,5 +275,63 @@ contract Links {
     {
         assert(_b <= _a);
         return _a - _b;
+    }
+
+    /// @dev set the Relay Hub address that we trust
+    function set_hub(
+        RelayHub rhub
+    ) 
+        public 
+    {
+        init_relay_hub(rhub);
+    }
+
+    function deposit_to_relay_hub()
+        public
+        payable
+    {
+        RelayHub(get_hub_addr()).depositFor.value(msg.value)(this);
+    }
+
+    /// @dev decide whether this call should be allowed to called by a relay
+    /// @param encoded_function raw bytes of the transaction being relayed
+    /// @return fsdgf
+    function accept_relayed_call(
+        address /* relay */,
+        address /* from */,
+        bytes memory encoded_function,
+        uint /* gas_price */,
+        uint /* transaction_fee */
+    )
+        public 
+        view 
+        returns(uint32)
+    {
+        bytes4 claimFunctionIdentifier = RecipientUtils.sig("claim(bytes32,bytes,bytes32,address)");
+        bool is_call_to_claim = RecipientUtils.getMethodSig(encoded_function) == claimFunctionIdentifier;
+        if (!is_call_to_claim){
+            return 4;
+        }
+        bytes32 id = bytes32(RecipientUtils.getParam(encoded_function, 0));
+        bytes memory signature = RecipientUtils.getBytesParam(encoded_function, 1);
+        bytes32 claimHash = bytes32(RecipientUtils.getParam(encoded_function, 2));
+        address destination = address(RecipientUtils.getParam(encoded_function, 3));
+        bool is_claim_valid = isClaimValid(id, signature, claimHash, destination);
+        if (!is_claim_valid) {
+            return 5;
+        }
+        return 0;
+    }
+
+    function post_relayed_call(
+        address /* relay */,
+        address /* from */,
+        bytes memory/* encoded_function */,
+        bool /* success */,
+        uint /* used_gas */,
+        uint /* transaction_fee */
+    )
+        public 
+    {
     }
 }

@@ -224,11 +224,25 @@ module.exports = {
         assert(result==0,"fast ERRORS")
       });
     });
+    describe(bigHeader('RELAY HUB'), function(){
+      it('should set Relay Hub address to Relay Recepient and provide it with a deposit', async function(){
+        const Web3 = require('web3')
+        const web3ForStake = new Web3(new Web3.providers.HttpProvider(clevisConfig.provider))
+        let relayHubAddress = "0x9C57C0F1965D225951FE1B2618C92Eefd687654F"///<<<-------- Stable if using tbk docker. Change this to your deployed Relay Hub address
+        let linksAddress = localContractAddress("Links")
+        let linksAbi = localContractAbi("Links")
+        const accounts = await web3ForStake.eth.getAccounts()
+        let links = new web3ForStake.eth.Contract(linksAbi, linksAddress, ({from: accounts[0]}))
+        await links.methods.set_hub(relayHubAddress).send()
+        await links.methods.deposit_to_relay_hub().send({value: web3ForStake.utils.toWei("0.5", "ether")})
+      });
+    })
   },
 
   fast:()=>{
     describe(bigHeader('DEPLOY'), function() {
       it('should deploy all contracts', async function() {
+        this.timeout(6000000)
         let result = await clevis("test","deploy")
         assert(result==0,"deploy ERRORS")
       });
