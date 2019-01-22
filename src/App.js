@@ -429,29 +429,20 @@ class App extends Component {
         console.log("this.state.claimKey", this.state.claimKey)
         let sig = this.state.web3.eth.accounts.sign(claimHash, this.state.claimKey);
         sig = sig.signature;
-        //contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0).estimateGas()
-        //.then((gasAmount) => {
-          console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account,0)
-          /*
-          bytes32 _id,
-          bytes memory _signature,
-          bytes32 _claimHash,
-          address _destination,
-          uint256 _gasReward
-           */
-          tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0), 550000, false, 0, (result) => {
-            if (result) {
-              console.log("CLAIMED!!!", result)
-              this.setState({claimed: true})
-              setTimeout(() => {
-                this.setState({sending: false}, () => {
-                  //alert("DONE")
-                  //window.location = "/"
-                })
-              }, 2000)
-            }
-          })
-        //})
+
+        console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
+        tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account), 240000, false, 0, (result) => {
+          if (result) {
+            console.log("CLAIMED!!!", result)
+            this.setState({claimed: true})
+            setTimeout(() => {
+              this.setState({sending: false}, () => {
+                //alert("DONE")
+                window.location = "/"
+              })
+            }, 2000)
+          }
+        })
         .catch((error) => {
           console.log(error); //Estimate Gas promise
         });
@@ -1205,6 +1196,7 @@ render() {
               <div>
                 <div className="main-card card w-100">
                   <NavCard title={'Receive'} goBack={this.goBack.bind(this)}/>
+                  {defaultBalanceDisplay}
                   <Receive
                     ensLookup={this.ensLookup.bind(this)}
                     ERC20TOKEN={ERC20TOKEN}
