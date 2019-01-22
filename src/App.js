@@ -441,7 +441,7 @@ class App extends Component {
             setTimeout(() => {
               this.setState({sending: false}, () => {
                 //alert("DONE")
-                window.location = "/"
+                //window.location = "/"
               })
             }, 2000)
           }
