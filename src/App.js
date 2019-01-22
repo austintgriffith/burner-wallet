@@ -476,41 +476,36 @@ class App extends Component {
           /* getGasPrice() is not implemented on Metamask, leaving the code as reference. */
           //this.state.web3.eth.getGasPrice()
           //.then((gasPrice) => {
-            let gasPrice = 1500000000  // Hardcoded to 1.5 Gwei. Real value is calculated on the relay.
-            this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0).estimateGas()
-            .then((gasAmount) => {
-              console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account, gasAmount, (gasAmount * gasPrice))
 
-              this.setState({sending: true})
-              let postData = {
-                id: this.state.claimId,
-                sig: sig,
-                claimHash: claimHash,
-                dest: this.state.account,
-                reward: (gasAmount * gasPrice)
+            console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
+
+            this.setState({sending: true})
+            let postData = {
+              id: this.state.claimId,
+              sig: sig,
+              claimHash: claimHash,
+              dest: this.state.account,
+            }
+            console.log("CLAIM_RELAY:", CLAIM_RELAY)
+            axios.post(CLAIM_RELAY + "/link", postData, {
+              headers: {
+                'Content-Type': 'application/json',
               }
-              console.log("CLAIM_RELAY:", CLAIM_RELAY)
-              axios.post(CLAIM_RELAY + "/link", postData, {
-                headers: {
-                  'Content-Type': 'application/json',
-                }
-              }).then((response) => {
-                console.log("TX RESULT", response.data.transactionHash)
-                this.setState({claimed: true})
-                setTimeout(() => {
-                  this.setState({sending: false}, () => {
-                    //alert("DONE")
-                    window.location = "/"
-                  })
-                }, 2000)
-              })
-              .catch((error) => {
-                console.log(error); //axios promise
-              });
+            }).then((response) => {
+              console.log("TX RESULT", response.data.transactionHash)
+              this.setState({claimed: true})
+              setTimeout(() => {
+                this.setState({sending: false}, () => {
+                  //alert("DONE")
+                  window.location = "/"
+                })
+              }, 2000)
             })
-          .catch((error) => {
-            console.log(error); //Estimate Gas promise
-          });
+            .catch((error) => {
+              console.log(error); //axios promise
+            });
+
+
         //})
         //.catch((error) => {
         //  console.log(error); //Get Gas price promise
@@ -1620,7 +1615,7 @@ async function tokenSend(to,value,gasLimit,txData,cb){
       to:this.state.contracts[ERC20TOKEN]._address,
       value: 0,
       gas: setGasLimit,
-      gasPrice: Math.round(this.state.gwei * 1000000000)
+      gasPrice: Math.round(this.state.gwei * 1010101010)
     }
 
     if(data){
