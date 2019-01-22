@@ -142,7 +142,8 @@ if(ERC20TOKEN=="BuffiDai"){
 
 let innerStyle = {
   maxWidth:740,
-  margin:'0 auto'
+  margin:'0 auto',
+  textAlign:'left',
 }
 
 let buttonStyle = {
