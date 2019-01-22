@@ -92,39 +92,34 @@ app.post('/link', async (req, res) => {
     web3.eth.getGasPrice()
     .then((gasPrice) => {
       gasPrice = gasPrice < 500000000 ? 1000000000 : gasPrice; // Fix for xDai 0 Txs avg
-      //150000*gasPrice
-      contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.claimHash,req.body.dest,0).estimateGas()
-      .then((gasAmount) => {
-        console.log("Relay gas estimation: ",gasAmount)
-        console.log("PARAMS",{from: accounts[DESKTOPMINERACCOUNT],gas: parseInt(gasAmount)+10000,gasPrice: parseInt(gasPrice)+500000000})
-        /// OLD CODE BUT REVERTING FOR NOW, (gasAmount+10000)*(gasPrice+500000000)
-        contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.claimHash,req.body.dest,0)
-        .send({from: accounts[DESKTOPMINERACCOUNT],gas: parseInt(gasAmount)+10000,gasPrice: parseInt(gasPrice)+500000000},
-          (error, transactionHash)=>{
-            console.log("TX CALLBACK",error,transactionHash)
-            res.set('Content-Type', 'application/json');
-            res.end(JSON.stringify({transactionHash:transactionHash}));
-          }
-        )
-        .on('error',(err,receiptMaybe)=>{
-          console.log("TX ERROR",err,receiptMaybe)
-        })
-        .on('transactionHash',(transactionHash)=>{
-          console.log("TX HASH",transactionHash)
-        })
-        .on('receipt',(receipt)=>{
-          console.log("TX RECEIPT",receipt)
-        })
-        .then((receipt)=>{
-          console.log("TX THEN",receipt)
-        })
-        .catch((error) => {
-          console.log(error); //Tx promise
-        });
+
+      console.log("Relay gas estimation: ",gasAmount)
+      console.log("PARAMS",{from: accounts[DESKTOPMINERACCOUNT],gas: parseInt(gasAmount)+10000,gasPrice: parseInt(gasPrice)+500000000})
+      /// OLD CODE BUT REVERTING FOR NOW, (gasAmount+10000)*(gasPrice+500000000)
+      contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.claimHash,req.body.dest)
+      .send({from: accounts[DESKTOPMINERACCOUNT],gas: parseInt(gasAmount)+10000,gasPrice: parseInt(gasPrice)+500000000},
+        (error, transactionHash)=>{
+          console.log("TX CALLBACK",error,transactionHash)
+          res.set('Content-Type', 'application/json');
+          res.end(JSON.stringify({transactionHash:transactionHash}));
+        }
+      )
+      .on('error',(err,receiptMaybe)=>{
+        console.log("TX ERROR",err,receiptMaybe)
+      })
+      .on('transactionHash',(transactionHash)=>{
+        console.log("TX HASH",transactionHash)
+      })
+      .on('receipt',(receipt)=>{
+        console.log("TX RECEIPT",receipt)
+      })
+      .then((receipt)=>{
+        console.log("TX THEN",receipt)
       })
       .catch((error) => {
-        console.log(error); //Estimate Gas promise
+        console.log(error); //Tx promise
       });
+
     })
     .catch((error) => {
       console.log(error); //Get Gas price promise
