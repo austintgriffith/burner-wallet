@@ -3,6 +3,11 @@
   margin-right: 0;
 }
 
+.col-6 {
+   padding-left: 0;
+   padding-right: 0;
+}
+
 i.fas {
   cursor: pointer;
 }
@@ -67,7 +72,7 @@ i.fas {
 
   .bridge, .ops {
     .btn {
-      background-color: #FF0000;
+      background-color: #FFFFFF;
       color: white;
       font-weight: 500;
     }

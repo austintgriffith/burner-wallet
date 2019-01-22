@@ -4,21 +4,11 @@ export default ({changeView}) => {
   return (
     <div className="text-center bottom-text" style={{marginBottom:30}}>
       <Scaler config={{startZoomAt:350,origin:"35% 50%",adjustedZoom:1}}>
-        <span style={{padding:10,whiteSpace:"nowrap"}}>
-          <a href="https://github.com/austintgriffith/burner-wallet" style={{color:"#FFFFFF"}} target="_blank">
-            <i className="fas fa-code"/> Code
-          </a>
-        </span>
-        <span style={{padding:10,whiteSpace:"nowrap"}}>
-          <a href="https://medium.com/gitcoin/ethereum-in-emerging-economies-b235f8dac2f2" style={{color:"#FFFFFF"}} target="_blank">
-            <i className="fas fa-info-circle"/> About
-          </a>
-        </span>
-        <span style={{padding:10,whiteSpace:"nowrap"}}>
-          <a href="#" onClick={()=>{changeView('advanced')}} style={{color:"#FFFFFF"}}>
+        <button className={"btn btn-large w-50"} style={{backgroundColor:"#666666",color:"#FFFFFF",padding:10,whiteSpace:"nowrap"}} onClick={()=>{changeView('advanced')}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-wrench"/> Advanced
-          </a>
-        </span>
+          </Scaler>
+        </button>
       </Scaler>
     </div>
   )

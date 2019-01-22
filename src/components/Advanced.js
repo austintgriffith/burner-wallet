@@ -46,139 +46,154 @@ export default class Advanced extends React.Component {
 
     return (
       <div style={{marginTop:20}}>
-        <div className="main-card card w-100">
-          <div className="content qr row">
-            <div style={{width:"100%",textAlign:"center",padding:20}}>
-              {address}
-            </div>
-            <QRCode value={address} size={qrSize}/>
+
+      <div>
+        <div className="content ops row" style={{marginBottom:10}}>
+          <div className="col-6 p-1">
+            <a href="https://github.com/austintgriffith/burner-wallet" style={{color:"#FFFFFF"}} target="_blank">
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  <i className="fas fa-code"/> Code
+                </Scaler>
+              </button>
+            </a>
+          </div>
+          <div className="col-6 p-1">
+            <a href="https://medium.com/gitcoin/ethereum-in-emerging-economies-b235f8dac2f2" style={{color:"#FFFFFF"}} target="_blank">
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  <i className="fas fa-info"/> About
+                </Scaler>
+              </button>
+            </a>
           </div>
         </div>
-        <div className="main-card card w-100">
-          <div className="content ops row">
-            <div className="col-6 p-1">
+        <div className="content ops row">
+          {privateKeyQrDisplay}
+        </div>
+      </div>
 
-                <input type="text" className="form-control" placeholder="private key" value={this.state.newPrivateKey}
-                       onChange={event => this.setState({newPrivateKey:event.target.value})} />
-            </div>
-            <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
+        {privateKey &&
+        <div>
+          <div className="content ops row" >
+            <div className="col-12 p-1">
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.primary}
                       onClick={()=>{
-                        //let pkutils = require("ethereum-mnemonic-privatekey-utils")
-                        //const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(newPrivateKey)
-                        changeView('main')
-                        let possibleNewPrivateKey = this.state.newPrivateKey
-                        if(possibleNewPrivateKey.indexOf("0x")!=0){
-                          possibleNewPrivateKey = "0x"+possibleNewPrivateKey
-                        }
-                        setPossibleNewPrivateKey(possibleNewPrivateKey)
+                        console.log("BALANCE",balance)
+                        changeView('burn-wallet')
                       }}>
-                <Scaler config={{startZoomAt:500,origin:"0% 50%"}}>
-                  <i className="fas fa-plus-square"/> Create Wallet
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  <i className="fas fa-fire"/> Burn
                 </Scaler>
               </button>
             </div>
           </div>
-        </div>
-        <div className="main-card card w-100">
-          <div className="content ops row">
-            <div className="col-1 p-1" onClick={()=>{this.setState({seedPhraseHidden:!this.state.seedPhraseHidden})}}>
-              <i className="fas fa-eye"></i>
+        </div>}
+
+        {privateKey &&
+        <div>
+          <div className="content ops row" style={{marginBottom:10}}>
+
+            <div className="col-6 p-1">
+            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
+              this.setState({privateKeyQr:!this.state.privateKeyQr})
+            }}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fas fa-key"/> Show
+              </Scaler>
+            </button>
             </div>
-            <div className="col-5 p-1">
-            <input type={this.state.seedPhraseHidden?"password":"text"} className="form-control" placeholder="seed phrase" value={this.state.newSeedPhrase}
+
+            <CopyToClipboard text={privateKey}>
+              <div className="col-6 p-1"
+                   onClick={() => changeAlert({type: 'success', message: 'Private Key copied to clipboard'})}>
+                <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}>
+                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                    <i className="fas fa-key"/> Copy
+                  </Scaler>
+                </button>
+              </div>
+            </CopyToClipboard>
+
+          </div>
+          <div className="content ops row">
+            {privateKeyQrDisplay}
+          </div>
+        </div>
+        }
+
+        <div className="content ops row">
+          <div className="col-2 p-1">
+            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{this.setState({privateKeyHidden:!this.state.privateKeyHidden})}}>
+              <i className="fas fa-eye"></i>
+            </button>
+          </div>
+          <div className="col-4 p-1">
+              <input type={this.state.privateKeyHidden?"password":"text"}  autocorrect="off" autocapitalize="none"  autocorrect="off" autocapitalize="none" className="form-control" placeholder="private key" value={this.state.newPrivateKey}
+                     onChange={event => this.setState({newPrivateKey:event.target.value})} />
+          </div>
+          <div className="col-6 p-1">
+            <button className="btn btn-large w-100" style={this.props.buttonStyle.primary}
+                    onClick={()=>{
+                      //let pkutils = require("ethereum-mnemonic-privatekey-utils")
+                      //const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(newPrivateKey)
+                      changeView('main')
+                      let possibleNewPrivateKey = this.state.newPrivateKey
+                      if(possibleNewPrivateKey.indexOf("0x")!=0){
+                        possibleNewPrivateKey = "0x"+possibleNewPrivateKey
+                      }
+                      setPossibleNewPrivateKey(possibleNewPrivateKey)
+                    }}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fas fa-plus-square"/> Create
+              </Scaler>
+            </button>
+          </div>
+        </div>
+          <div className="content ops row">
+            <div className="col-2 p-1">
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{this.setState({seedPhraseHidden:!this.state.seedPhraseHidden})}}>
+                <i className="fas fa-eye"></i>
+              </button>
+            </div>
+            <div className="col-4 p-1">
+            <input type={this.state.seedPhraseHidden?"password":"text"}  autocorrect="off" autocapitalize="none" className="form-control" placeholder="seed phrase" value={this.state.newSeedPhrase}
                    onChange={event => this.setState({newSeedPhrase:event.target.value})} />
             </div>
             <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.primary}
                       onClick={()=>{
                         let pkutils = require("ethereum-mnemonic-privatekey-utils")
                         const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(this.state.newSeedPhrase)
                         changeView('main')
                         setPossibleNewPrivateKey("0x"+newPrivateKey)
                       }}>
-                <Scaler config={{startZoomAt:500,origin:"0% 50%"}}>
-                  <i className="fas fa-plus-square"/> Create Wallet
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  <i className="fas fa-plus-square"/> Create
                 </Scaler>
               </button>
             </div>
           </div>
-        </div>
-        <div className="main-card card w-100">
-          {privateKey &&
-          <div>
-            <div className="content ops row">
-              <CopyToClipboard text={privateKey}>
-                <div className="col-6 p-1"
-                     onClick={() => changeAlert({type: 'success', message: 'Private Key copied to clipboard'})}>
-                  <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}>
-                    <Scaler config={{startZoomAt:650,origin:"0% 50%"}}>
-                      <i className="fas fa-save"/> Copy Private Key
-                    </Scaler>
-                  </button>
-                </div>
-              </CopyToClipboard>
-              <div className="col-6 p-1">
-                <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
-                        onClick={()=>{
-                          console.log("BALANCE",balance)
-                          changeView('burn-wallet')
-                        }}>
-                  <Scaler config={{startZoomAt:500,origin:"0% 50%"}}>
-                    <i className="fas fa-fire"/> Burn Wallet
-                  </Scaler>
-                </button>
-              </div>
-            </div>
-          </div>
-          }
-        </div>
-        <div className="main-card card w-100">
-          {privateKey &&
-          <div>
-            <div className="content ops row">
-                <div className="col-12 p-1"
-                     onClick={() => {
-                       this.setState({privateKeyQr:!this.state.privateKeyQr})
-                     }}>
-                  <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}>
-                    <Scaler config={{startZoomAt:650,origin:"0% 50%"}}>
-                      <i className="fas fa-qrcode"/> Show Private Key QR Code
-                    </Scaler>
-                  </button>
-                </div>
-                {privateKeyQrDisplay}
-            </div>
-          </div>
-          }
-        </div>
-        <div className="main-card card w-100">
+
+
           <div className="content ops row">
             <div className="col-6 p-1">
-
-                <input type="text" className="form-control" placeholder="any text" value={this.state.newQr}
+                <input type="text" autocorrect="off" autocapitalize="none" className="form-control" placeholder="any text to encode" value={this.state.newQr}
                        onChange={event => this.setState({newQr:event.target.value})} />
             </div>
             <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}
                       onClick={()=>{
                         this.setState({showingQr:this.state.newQr})
                       }}>
-                <Scaler config={{startZoomAt:500,origin:"0% 50%"}}>
-                  <i className="fas fa-qrcode"/> To QR Code
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  <i className="fas fa-qrcode"/> To QR
                 </Scaler>
               </button>
             </div>
           </div>
           {showingQr}
-        </div>
-        <div className="text-center bottom-text">
-          <span style={{padding:10}}>
-            <a href="#" style={{color:"#FFFFFF"}} onClick={goBack}>
-              <i className="fas fa-times"/> done
-            </a>
-          </span>
-        </div>
+
       </div>
     )
   }

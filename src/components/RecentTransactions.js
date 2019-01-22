@@ -5,22 +5,36 @@ import { Scaler } from "dapparatus";
 
 const BockieSize = 4
 
-export default ({ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
+export default ({buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
   let txns = []
   for(let r in recentTxs){
     let thisValue = parseFloat(recentTxs[r].value)
     if(thisValue>0.0){
-      if(txns.length>0){
+      //if(txns.length>0){
         txns.push(
           <hr key={"ruler"+recentTxs[r].hash} style={{ "color": "#DFDFDF",marginTop:0,marginBottom:7 }}/>
         )
-      }
+      //}
 
       let extraIcon = ""
       if(recentTxs[r].data){
         extraIcon = (
-          <div style={{position:'absolute',right:0,top:7,opacity:0.3}}>
-            <i className="fas fa-comment"></i>
+          <div style={{position:'absolute',right:-3,top:0}}>
+            <button className="btn btn-large w-100" style={buttonStyle.primary}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fas fa-comment"></i>
+              </Scaler>
+            </button>
+          </div>
+        )
+      }else{
+        extraIcon = (
+          <div style={{position:'absolute',right:-3,top:0}}>
+            <button className="btn btn-large w-100" style={buttonStyle.secondary}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fas fa-comment"></i>
+              </Scaler>
+            </button>
           </div>
         )
       }
@@ -91,7 +105,7 @@ export default ({ERC20TOKEN, vendorName, address, recentTxs, block, changeView})
           <div className="col-3 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
             {toBlockie}
           </div>
-          <div className="col-3 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
+          <div className="col-2 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
             <Scaler config={{startZoomAt:600,origin:"25% 50%",adjustedZoom:1}}>
             <span style={{marginLeft:5,marginTop:-5,opacity:0.4,fontSize:12}}>{cleanTime((block-recentTxs[r].blockNumber)*5)} ago</span>
             </Scaler>
@@ -103,7 +117,7 @@ export default ({ERC20TOKEN, vendorName, address, recentTxs, block, changeView})
   }
   if(txns.length>0){
     return (
-      <div className="main-card card w-100">
+      <div style={{marginTop:30}}>
         {txns}
       </div>
     )

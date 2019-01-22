@@ -113,9 +113,6 @@ export default class SendToAddress extends React.Component {
 
     return (
       <div>
-        <div className="send-to-address card w-100">
-          <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay}/>
-          <Ruler/>
           <div className="content row">
             <div className="form-group w-100">
               <div className="form-group w-100">
@@ -145,19 +142,11 @@ export default class SendToAddress extends React.Component {
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
             </div>
-            <button className={`btn btn-success btn-lg w-100 ${canWithdraw ? '' : 'disabled'}`}
+            <button style={this.props.buttonStyle.primary} className={`btn btn-success btn-lg w-100 ${canWithdraw ? '' : 'disabled'}`}
                     onClick={this.withdraw}>
               Withdraw
             </button>
           </div>
-        </div>
-        <div className="text-center bottom-text">
-          <span style={{padding:10}}>
-            <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{this.props.goBack()}}>
-              <i className="fas fa-times"/> cancel
-            </a>
-          </span>
-        </div>
       </div>
     )
   }

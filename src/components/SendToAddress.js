@@ -13,6 +13,8 @@ export default class SendToAddress extends React.Component {
     let initialState = {
       amount: props.amount,
       message: props.message,
+      toAddress: "",
+      fromEns: "",
       canSend: false,
     }
     /*if(props.balance<=0){
@@ -44,17 +46,39 @@ export default class SendToAddress extends React.Component {
     window.history.pushState({},"", "/");
   }
 
-  updateState = (key, value) => {
+  updateState = async (key, value) => {
+
     this.setState({ [key]: value },()=>{
-      this.setState({ canSend: this.canSend() })
+      this.setState({ canSend: this.canSend() },()=>{
+        if(key!="message"){
+          this.bounceToAmountIfReady()
+        }
+      })
     });
     if(key=="toAddress"){
+      this.setState({fromEns:""})
       setTimeout(()=>{
         this.scrollToBottom()
       },30)
     }
+    if(key=="toAddress"&&value.indexOf(".eth")>=0){
+      console.log("Attempting to look up ",value)
+      let addr = await this.props.ensLookup(value)
+      console.log("Resolved:",addr)
+      if(addr!="0x0000000000000000000000000000000000000000"){
+        this.setState({toAddress:addr,fromEns:value},()=>{
+          if(key!="message"){
+            this.bounceToAmountIfReady()
+          }
+        })
+      }
+    }
   };
-
+  bounceToAmountIfReady(){
+    if(this.state.toAddress && this.state.toAddress.length === 42){
+      this.amountInput.focus();
+    }
+  }
   componentDidMount(){
     this.setState({ canSend: this.canSend() })
     setTimeout(()=>{
@@ -65,11 +89,11 @@ export default class SendToAddress extends React.Component {
       }else if(this.messageInput){
         this.messageInput.focus();
       }
-
       setTimeout(()=>{
         this.scrollToBottom()
       },30)
     },350)
+    /*
     setTimeout(()=>{
       if(this.props.balance<=0){
         console.log("No Funds, redirect back home...")
@@ -80,9 +104,19 @@ export default class SendToAddress extends React.Component {
           message: 'No funds to send.',
         });
       }
-    },2500)
+    },2500)*/
   }
 
+  canSend() {
+    /*const resolvedAddress = await this.ensProvider.resolveName(this.state.toAddress)
+    console.log(`RESOLVED ADDRESS ${resolvedAddress}`)
+    if(resolvedAddress != null){
+      this.setState({
+        toAddress: resolvedAddress
+      })
+    }*/
+    return (this.state.toAddress && this.state.toAddress.length === 42 && (this.state.amount>0 || this.state.message))
+  }
 
   scrollToBottom(){
     console.log("scrolling to bottom")
@@ -92,11 +126,8 @@ export default class SendToAddress extends React.Component {
       smooth: "easeInOutCubic",
     })
   }
-  canSend() {
-    return (this.state.toAddress && this.state.toAddress.length === 42 && (this.state.amount>0 || this.state.message))
-  }
 
-  send = () => {
+  send = async () => {
     let { toAddress, amount } = this.state;
     let {ERC20TOKEN} = this.props
 
@@ -147,7 +178,7 @@ export default class SendToAddress extends React.Component {
         })
       }
     }else{
-      this.props.changeAlert({type: 'warning', message: 'Please enter a valid address'})
+      this.props.changeAlert({type: 'warning', message: 'Please enter a valid address or ENS.'})
     }
   };
 
@@ -173,53 +204,49 @@ export default class SendToAddress extends React.Component {
 
     return (
       <div>
-        <div className="send-to-address card w-100">
-          <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay}/>
-          <Ruler/>
-          <div className="content row">
+        <div className="content row">
+          <div className="form-group w-100">
             <div className="form-group w-100">
-              <div className="form-group w-100">
-                <label htmlFor="amount_input">To Address</label>
+              <label htmlFor="amount_input">To Address</label>
+              <div className="input-group">
                 <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
                   ref={(input) => { this.addressInput = input; }}
                        onChange={event => this.updateState('toAddress', event.target.value)} />
-              </div>
-              <div>  { this.state.toAddress && this.state.toAddress.length==42 &&
-
-                <CopyToClipboard text={toAddress.toLowerCase()}>
-                  <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
-                    <Blockies seed={toAddress.toLowerCase()} scale={10}/>
-                  </div>
-                </CopyToClipboard>
-              }</div>
-              <label htmlFor="amount_input">Send Amount</label>
-              <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
+                <div class="input-group-append" onClick={() => this.props.changeView('send_by_scan')}>
+                  <span class="input-group-text" id="basic-addon2" style={this.props.buttonStyle.primary}>
+                    <i style={{color:"#FFFFFF"}} className="fas fa-qrcode" />
+                  </span>
                 </div>
-                <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
-                    ref={(input) => { this.amountInput = input; }}
-                       onChange={event => this.updateState('amount', event.target.value)} />
-              </div>
-              <div className="form-group w-100" style={{marginTop:20}}>
-                <label htmlFor="amount_input">{messageText}</label>
-                <input type="text" className="form-control" placeholder="optional unencrypted message" value={this.state.message}
-                  ref={(input) => { this.messageInput = input; }}
-                       onChange={event => this.updateState('message', event.target.value)} />
               </div>
             </div>
-            <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
-                    onClick={this.send}>
-              Send
-            </button>
+            <div>  { this.state.toAddress && this.state.toAddress.length==42 &&
+              <CopyToClipboard text={toAddress.toLowerCase()}>
+                <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
+                  <div style={{opacity:0.33}}>{this.state.fromEns}</div>
+                  <Blockies seed={toAddress.toLowerCase()} scale={10}/>
+                </div>
+              </CopyToClipboard>
+            }</div>
+            <label htmlFor="amount_input">Send Amount</label>
+            <div className="input-group">
+              <div className="input-group-prepend">
+                <div className="input-group-text">$</div>
+              </div>
+              <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
+                  ref={(input) => { this.amountInput = input; }}
+                     onChange={event => this.updateState('amount', event.target.value)} />
+            </div>
+            <div className="form-group w-100" style={{marginTop:20}}>
+              <label htmlFor="amount_input">{messageText}</label>
+              <input type="text" className="form-control" placeholder="optional unencrypted message" value={this.state.message}
+                ref={(input) => { this.messageInput = input; }}
+                     onChange={event => this.updateState('message', event.target.value)} />
+            </div>
           </div>
-        </div>
-        <div name="theVeryBottom" className="text-center bottom-text">
-          <span style={{padding:10}}>
-            <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{this.props.goBack()}}>
-              <i className="fas fa-times"/> cancel
-            </a>
-          </span>
+          <button className={`btn btn-lg w-100 ${canSend ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}
+                  onClick={this.send}>
+            Send
+          </button>
         </div>
       </div>
     )

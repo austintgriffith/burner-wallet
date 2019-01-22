@@ -10,7 +10,11 @@ import SendToAddress from './components/SendToAddress';
 import WithdrawFromPrivate from './components/WithdrawFromPrivate';
 import RequestFunds from './components/RequestFunds';
 import SendWithLink from './components/SendWithLink';
+import Receive from './components/Receive'
+import Share from './components/Share'
 import ShareLink from './components/ShareLink'
+import Balance from "./components/Balance";
+import Ruler from "./components/Ruler";
 import MainCard from './components/MainCard';
 import History from './components/History';
 import Advanced from './components/Advanced';
@@ -24,42 +28,60 @@ import Footer from './components/Footer';
 import Loader from './components/Loader';
 import BurnWallet from './components/BurnWallet'
 import Exchange from './components/Exchange'
+import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
+import namehash from 'eth-ens-namehash'
+
+//https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
+import RNMessageChannel from 'react-native-webview-messaging';
+
+
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
+import eth from './ethereum.png';
+import dai from './dai.jpg';
+import xdai from './xdai.jpg';
+
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
+
+let XDAI_PROVIDER = "https://dai.poa.network"
 
 let WEB3_PROVIDER
 let CLAIM_RELAY
 let ERC20TOKEN
 let ERC20IMAGE
 let ERC20NAME
+let HARDCODEVIEW// = "exchange"
 
 let mainStyle = {
   width:"100%",
   height:"100%",
-  backgroundImage:"linear-gradient(#F69E4D, #F76B1C)",
-  backgroundColor:"#F76B1C",
+  backgroundImage:"linear-gradient(#404040, #111111)",
+  backgroundColor:"#111111",
   hotColor:"#F69E4D",
-  mainColor:"#8762A6"
+  mainColorAlt:"#fa7d36",
+  mainColor:"#F76B1C",
 }
 
 let title = "Burner Wallet"
 let titleImage = (
-  <i className="fas fa-fire" />
+  <span style={{paddingRight:20,paddingLeft:16}}><i className="fas fa-fire" /></span>
 )
+
+//<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
+  XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://0.0.0.0:8545";
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20NAME = false//'BURN'
-  ERC20TOKEN = false//'Burner'//false//'Burner'
-  //ERC20IMAGE = cypherpunk
+  CLAIM_RELAY = 'http://localhost:18462'
+  ERC20NAME = false//'DEN'
+  ERC20TOKEN = false//'BuffiDai'//false//'Burner'
+  ERC20IMAGE = false//bufficorn
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = 'Burner'
+  ERC20TOKEN = false//'Burner'
 }
 else if (window.location.hostname.indexOf("qreth") >= 0) {
   WEB3_PROVIDER = "https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac"
@@ -91,27 +113,59 @@ if(ERC20TOKEN=="BuffiDai"){
   mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
   mainStyle.backgroundColor = "#20012d"
   mainStyle.mainColor = "#b6299e"
+  mainStyle.mainColorAlt = "#de3ec3"
   title = "BuffiDai.io"
   titleImage = (
     <img src={bufficorn} style={{
       maxWidth:50,
       maxHeight:50,
-      marginTop:-24
+      marginRight:15,
+      marginTop:-10
     }}/>
   )
 } else if(ERC20TOKEN=="Burner"){
   mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
   mainStyle.backgroundColor = "#6c0664"
   mainStyle.mainColor = "#e72da3"
+  mainStyle.mainColorAlt = "#f948b8"
   title = "Burner Wallet"
   titleImage = (
     <img src={cypherpunk} style={{
       maxWidth:50,
       maxHeight:50,
-      marginTop:-24
+      marginRight:15,
+      marginTop:-10
     }}/>
   )
 }
+
+
+let innerStyle = {
+  maxWidth:740,
+  margin:'0 auto'
+}
+
+let buttonStyle = {
+  primary: {
+    backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",
+    backgroundColor:mainStyle.mainColor,
+    color:"#FFFFFF",
+    whiteSpace:"nowrap",
+    cursor:"pointer",
+  },
+  secondary: {
+    border:"2px solid "+mainStyle.mainColor,
+    color:mainStyle.mainColor,
+    whiteSpace:"nowrap",
+    cursor:"pointer",
+  }
+}
+
+const invLogoStyle = {
+  maxWidth:50,
+  maxHeight:50,
+}
+
 
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
@@ -123,13 +177,16 @@ let dollarDisplay = (amount)=>{
 }
 
 let interval
+let intervalLong
 
 class App extends Component {
   constructor(props) {
     let view = 'main'
     let cachedView = localStorage.getItem("view")
     let cachedViewSetAge = Date.now() - localStorage.getItem("viewSetTime")
-    if(cachedViewSetAge < 300000 && cachedView&&cachedView!=0){
+    if(HARDCODEVIEW){
+      view = HARDCODEVIEW
+    }else if(cachedViewSetAge < 300000 && cachedView&&cachedView!=0){
       view = cachedView
     }
     console.log("CACHED VIEW",view)
@@ -143,10 +200,27 @@ class App extends Component {
       sendKey: "",
       alert: null,
       loadingTitle:'loading...',
+      title: title,
+      extraHeadroom:0,
       balance: 0.00,
-      vendors: {}
+      vendors: {},
+      ethprice: 0.00,
     };
     this.alertTimeout = null;
+
+    RNMessageChannel.on('json', update => {
+      let safeUpdate = {}
+      if(update.title) safeUpdate.title = update.title
+      if(update.extraHeadroom) safeUpdate.extraHeadroom = update.extraHeadroom
+      if(update.possibleNewPrivateKey) safeUpdate.possibleNewPrivateKey = update.possibleNewPrivateKey
+
+      this.setState(safeUpdate,()=>{
+        if(this.state.possibleNewPrivateKey){
+          this.dealWithPossibleNewPrivateKey()
+        }
+      })
+
+    })
   }
   updateDimensions() {
     //force it to rerender when the window is resized to make sure qr fits etc
@@ -156,6 +230,7 @@ class App extends Component {
     this.setState(update)
   }
   componentDidMount(){
+
     document.body.style.backgroundColor = mainStyle.backgroundColor
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
@@ -214,9 +289,23 @@ class App extends Component {
     setTimeout(this.poll.bind(this),150)
     setTimeout(this.poll.bind(this),650)
     interval = setInterval(this.poll.bind(this),1500)
+    intervalLong = setInterval(this.longPoll.bind(this),45000)
+    setTimeout(this.longPoll.bind(this),150)
+
+    let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
+    let ensContract = new mainnetweb3.eth.Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
+    let daiContract
+    try{
+      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359")
+    }catch(e){
+      console.log("ERROR LOADING DAI Stablecoin Contract",e)
+    }
+    let xdaiweb3 = new Web3(new Web3.providers.HttpProvider(XDAI_PROVIDER))
+    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract})
   }
   componentWillUnmount() {
     clearInterval(interval)
+    clearInterval(intervalLong)
     window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
   async poll() {
@@ -231,6 +320,37 @@ class App extends Component {
       //console.log("isVendor",isVendor)
       this.setState({gasBalance:gasBalance,balance:tokenBalance,isAdmin:isAdmin,isVendor:isVendor})
     }
+
+    if(this.state.account){
+      let ethBalance = 0.00
+      let daiBalance = 0.00
+      let xdaiBalance = 0.00
+
+      if(this.state.mainnetweb3){
+
+        ethBalance = await this.state.mainnetweb3.eth.getBalance(this.state.account)
+        ethBalance = this.state.mainnetweb3.utils.fromWei(""+ethBalance,'ether')
+
+        if(this.state.daiContract){
+          daiBalance = await this.state.daiContract.methods.balanceOf(this.state.account).call()
+          daiBalance = this.state.mainnetweb3.utils.fromWei(""+daiBalance,'ether')
+        }
+
+      }
+      if(this.state.xdaiweb3){
+        xdaiBalance = await this.state.xdaiweb3.eth.getBalance(this.state.account)
+        xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
+      }
+
+      this.setState({ethBalance,daiBalance,xdaiBalance})
+    }
+  }
+  longPoll() {
+    axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
+     .then((response)=>{
+       let ethprice = response.data.data.quotes.USD.price
+       this.setState({ethprice})
+     })
   }
   setPossibleNewPrivateKey(value){
     this.setState({possibleNewPrivateKey:value},()=>{
@@ -239,8 +359,9 @@ class App extends Component {
   }
   dealWithPossibleNewPrivateKey(){
     //console.log("possibleNewPrivateKey",this.state.possibleNewPrivateKey,this.state)
+    //alert(this.state.possibleNewPrivateKey)
     //only import pks over empty metaaccounts
-    if(this.state.balance>=0.10 || !this.state.metaAccount){
+    if(this.state.balance>=0.10 || this.state.ethBalance>=0.001 || this.state.daiBalance>=0.1 ){
       console.log("Can't import private key, so ask to withdraw")
       this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
         this.changeView('withdraw_from_private')
@@ -278,6 +399,16 @@ class App extends Component {
       }
     }
   }
+  async ensLookup(name){
+    let hash = namehash.hash(name)
+    console.log("namehash",name,hash)
+    let resolver = await this.state.ensContract.methods.resolver(hash).call()
+    if(resolver=="0x0000000000000000000000000000000000000000") return "0x0000000000000000000000000000000000000000"
+    console.log("resolver",resolver)
+    let ensResolver = new this.state.mainnetweb3.eth.Contract(require("./contracts/ENSResolver.abi.js"),resolver)
+    console.log("ensResolver:",ensResolver)
+    return ensResolver.methods.addr(hash).call()
+  }
   chainClaim(tx, contracts) {
     console.log("DOING CLAIM ONCHAIN", this.state.claimId, this.state.claimKey, this.state.account);
     this.setState({sending: true})
@@ -297,10 +428,17 @@ class App extends Component {
         console.log("this.state.claimKey", this.state.claimKey)
         let sig = this.state.web3.eth.accounts.sign(claimHash, this.state.claimKey);
         sig = sig.signature;
-        contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0).estimateGas()
-        .then((gasAmount) => {
-          console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account, gasAmount)
-          tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account, 0), gasAmount + 5000, false, 0, (result) => {
+        //contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0).estimateGas()
+        //.then((gasAmount) => {
+          console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account,0)
+          /*
+          bytes32 _id,
+          bytes memory _signature,
+          bytes32 _claimHash,
+          address _destination,
+          uint256 _gasReward
+           */
+          tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0), 220000, false, 0, (result) => {
             if (result) {
               console.log("CLAIMED!!!", result)
               this.setState({claimed: true})
@@ -312,7 +450,7 @@ class App extends Component {
               }, 2000)
             }
           })
-        })
+        //})
         .catch((error) => {
           console.log(error); //Estimate Gas promise
         });
@@ -344,7 +482,7 @@ class App extends Component {
           //this.state.web3.eth.getGasPrice()
           //.then((gasPrice) => {
             let gasPrice = 1500000000  // Hardcoded to 1.5 Gwei. Real value is calculated on the relay.
-            this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,150000*gasPrice).estimateGas()
+            this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0).estimateGas()
             .then((gasAmount) => {
               console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account, gasAmount, (gasAmount * gasPrice))
 
@@ -382,14 +520,14 @@ class App extends Component {
         //.catch((error) => {
         //  console.log(error); //Get Gas price promise
         //});
-      }  
+      }
     })
     .catch((error) => {
       console.log(error); //FUNDS promise
     });
   }
   changeView = (view,cb) => {
-    if(view=="bridge"||view=="main"/*||view.indexOf("account_")==0*/){
+    if(view=="exchange"||view=="main"/*||view.indexOf("account_")==0*/){
       localStorage.setItem("view",view)//some pages should be sticky because of metamask reloads
       localStorage.setItem("viewSetTime",Date.now())
     }
@@ -646,7 +784,7 @@ render() {
   } = this.state;
 
   let networkOverlay = ""
-  if(web3 && !this.checkNetwork() && view!="bridge"){
+  if(web3 && !this.checkNetwork() && view!="exchange"){
     networkOverlay = (
       <img style={{zIndex:12,position:'absolute',opacity:0.95,right:0,top:0}} src={customRPCHint} />
     )
@@ -666,7 +804,7 @@ render() {
       }}
       onReady={(contracts, customLoader) => {
         console.log("contracts loaded", contracts)
-        this.setState({contracts: contracts}, async () => {
+        this.setState({contracts: contracts,customLoader: customLoader}, async () => {
           console.log("Contracts Are Ready:", contracts)
           this.checkClaim(tx, contracts);
         })
@@ -704,544 +842,725 @@ render() {
 
   let eventParser = ""
 
+
+  let extraHead = ""
+  if(this.state.extraHeadroom){
+    extraHead = (
+      <div style={{marginTop:this.state.extraHeadroom}}>
+      </div>
+    )
+  }
+
   return (
     <div style={mainStyle}>
-    {networkOverlay}
-    {web3_setup}
+      <div style={innerStyle}>
+        {extraHead}
+        {networkOverlay}
+        {web3_setup}
 
-    <div className="container-fluid">
-    <Header
-    ens={this.state.ens}
-    title={title}
-    titleImage={titleImage}
-    mainStyle={mainStyle}
-    address={this.state.account}
-    changeView={this.changeView}
-    balance={balance}
-    view={this.state.view}
-    />
-    {web3 /*&& this.checkNetwork()*/ && (() => {
-      //console.log("VIEW:",view)
-
-      let moreButtons = (
-        <MoreButtons
+        <div>
+        <Header
+        ens={this.state.ens}
+        title={this.state.title}
+        titleImage={titleImage}
         mainStyle={mainStyle}
+        address={this.state.account}
         changeView={this.changeView}
+        balance={balance}
+        view={this.state.view}
         />
-      )
+        {web3 /*&& this.checkNetwork()*/ && (() => {
+          //console.log("VIEW:",view)
 
-      let subBalanceDisplay = ""
-      if(ERC20TOKEN){
-        if(!this.state.gasBalance){
-          subBalanceDisplay = ""
-        }else{
-          subBalanceDisplay = (
-            <div style={{opacity:0.4,fontSize:12,position:'absolute',right:0,marginTop:5}}>
-            {Math.round(this.state.gasBalance*10000)/10000}
-            </div>
-          )
-        }
-
-
-        if(this.state.isAdmin){
-          moreButtons = (
-            <div>
-            <Admin
-            ERC20TOKEN={ERC20TOKEN}
-            vendors={this.state.vendors}
-            mainStyle={mainStyle}
-            changeView={this.changeView}
-            contracts={this.state.contracts}
-            tx={this.state.tx}
-            web3={this.state.web3}
-            />
+          let moreButtons = (
             <MoreButtons
-            mainStyle={mainStyle}
-            changeView={this.changeView}
+              buttonStyle={buttonStyle}
+              changeView={this.changeView}
             />
-            </div>
           )
-        }else if(this.state.isVendor&&this.state.isVendor.isAllowed){
-          moreButtons = (
-            <div>
-            <Vendor
-            ERC20TOKEN={ERC20TOKEN}
-            address={account}
-            mainStyle={mainStyle}
-            changeView={this.changeView}
-            contracts={this.state.contracts}
-            vendor={this.state.isVendor}
-            tx={this.state.tx}
-            web3={this.state.web3}
-            dollarDisplay={dollarDisplay}
-            />
-            <MoreButtons
-            mainStyle={mainStyle}
-            changeView={this.changeView}
-            />
-            </div>
-          )
-        }else if(ERC20TOKEN=="Burner"){
-          moreButtons = (
-            <div>
-            <MoreButtons
-            mainStyle={mainStyle}
-            changeView={this.changeView}
-            />
-            </div>
-          )
-        }else{
-          moreButtons = ""
-        }
 
-        if(this.state.contracts){
-          eventParser = (
-            <div style={{color:"#000000"}}>
-              <Events
-                config={{hide:true}}
-                contract={this.state.contracts[ERC20TOKEN]}
-                eventName={"Transfer"}
-                block={this.state.block}
-                filter={{from:this.state.account}}
-                onUpdate={(eventData,allEvents)=>{this.setState({transferFrom:allEvents},this.syncFullTransactions)}}
-              />
-              <Events
-                config={{hide:true}}
-                contract={this.state.contracts[ERC20TOKEN]}
-                eventName={"Transfer"}
-                block={this.state.block}
-                filter={{to:this.state.account}}
-                onUpdate={(eventData,allEvents)=>{this.setState({transferTo:allEvents},this.syncFullTransactions)}}
-              />
-              <Events
-                config={{hide:true}}
-                contract={this.state.contracts[ERC20TOKEN]}
-                eventName={"TransferWithData"}
-                block={this.state.block}
-                filter={{from:this.state.account}}
-                onUpdate={(eventData,allEvents)=>{this.setState({transferFromWithData:allEvents},this.syncFullTransactions)}}
-              />
-              <Events
-                config={{hide:true}}
-                contract={this.state.contracts[ERC20TOKEN]}
-                eventName={"TransferWithData"}
-                block={this.state.block}
-                filter={{to:this.state.account}}
-                onUpdate={(eventData,allEvents)=>{this.setState({transferToWithData:allEvents},this.syncFullTransactions)}}
-              />
-              <Events
-                config={{hide:true}}
-                contract={this.state.contracts[ERC20TOKEN]}
-                eventName={"UpdateVendor"}
-                block={this.state.block}
-                onUpdate={(vendor, all)=>{
-                  let {vendors} = this.state
-                  console.log("VENDOR",vendor)
-                  if(!vendors[vendor.wallet] || vendors[vendor.wallet].blockNumber<vendor.blockNumber){
-                    vendors[vendor.wallet] = {
-                      name: this.state.web3.utils.hexToUtf8(vendor.name),
-                      isAllowed: vendor.isAllowed,
-                      isActive: vendor.isActive,
-                      wallet: vendor.wallet,
-                      blockNumber: vendor.blockNumber
-                    }
-                  }
-                  this.setState({vendors})
-                }}
-              />
-            </div>
-          )
-        }
-      }
-
-
-      if(view.indexOf("account_")==0)
-      {
-
-        let targetAddress = view.replace("account_","")
-        console.log("TARGET",targetAddress)
-        return (
-          <div>
-          <NavCard title={(
-            <div>
-            History
-            </div>
-          )} goBack={this.goBack.bind(this)}/>
-          <History
-          mainStyle={mainStyle}
-          saveKey={this.saveKey.bind(this)}
-          metaAccount={this.state.metaAccount}
-          transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
-          address={account}
-          balance={balance}
-          changeAlert={this.changeAlert}
-          changeView={this.changeView}
-          target={targetAddress}
-          block={this.state.block}
-          send={this.state.send}
-          web3={this.state.web3}
-          goBack={this.goBack.bind(this)}
-          dollarDisplay={dollarDisplay}
-          />
-          </div>
-
-        )
-      }
-
-      switch(view) {
-        case 'main':
-        return (
-          <div>
-          <MainCard
-          subBalanceDisplay={subBalanceDisplay}
-          mainStyle={mainStyle}
-          address={account}
-          balance={balance}
-          changeAlert={this.changeAlert}
-          changeView={this.changeView}
-          dollarDisplay={dollarDisplay}
-          ERC20TOKEN={ERC20TOKEN}
-          />
-          {moreButtons}
-          <RecentTransactions
-            ERC20TOKEN={ERC20TOKEN}
-            transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
-            changeView={this.changeView}
-            address={account}
-            block={this.state.block}
-            recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
-          />
-          <BottomLinks
-          changeView={this.changeView}
-          />
-          </div>
-        );
-        case 'advanced':
-        return (
-          <div>
-          <NavCard title={'Advanced'} goBack={this.goBack.bind(this)}/>
-          <Advanced
-          mainStyle={mainStyle}
-          address={account}
-          balance={balance}
-          changeView={this.changeView}
-          privateKey={metaAccount.privateKey}
-          changeAlert={this.changeAlert}
-          goBack={this.goBack.bind(this)}
-          setPossibleNewPrivateKey={this.setPossibleNewPrivateKey.bind(this)}
-          />
-          </div>
-        )
-        case 'send_by_scan':
-        return (
-          <SendByScan
-          mainStyle={mainStyle}
-          goBack={this.goBack.bind(this)}
-          changeView={this.changeView}
-          onError={(error) =>{
-            this.changeAlert("danger",error)
-          }}
-          />
-        );
-        case 'withdraw_from_private':
-        return (
-          <div>
-          <NavCard title={'Withdraw'} goBack={this.goBack.bind(this)}/>
-          <WithdrawFromPrivate
-          ERC20TOKEN={ERC20TOKEN}
-          balance={balance}
-          address={account}
-          contracts={this.state.contracts}
-          web3={web3}
-          //amount={false}
-          privateKey={this.state.withdrawFromPrivateKey}
-          goBack={this.goBack.bind(this)}
-          changeView={this.changeView}
-          changeAlert={this.changeAlert}
-          dollarDisplay={dollarDisplay}
-          />
-          </div>
-        );
-        case 'send_to_address':
-        return (
-          <div>
-          <NavCard title={'Send to Address'} goBack={this.goBack.bind(this)}/>
-          <SendToAddress
-          ERC20TOKEN={ERC20TOKEN}
-          mainStyle={mainStyle}
-          balance={balance}
-          web3={this.state.web3}
-          address={account}
-          send={send}
-          goBack={this.goBack.bind(this)}
-          changeView={this.changeView}
-          changeAlert={this.changeAlert}
-          dollarDisplay={dollarDisplay}
-          />
-          </div>
-        );
-        case 'request_funds':
-        return (
-          <div>
-          <NavCard title={'Request Funds'} goBack={this.goBack.bind(this)}/>
-          <RequestFunds
-          mainStyle={mainStyle}
-          balance={balance}
-          address={account}
-          send={send}
-          goBack={this.goBack.bind(this)}
-          changeView={this.changeView}
-          changeAlert={this.changeAlert}
-          dollarDisplay={dollarDisplay}
-          />
-          </div>
-        );
-        case 'share-link':
-        return (
-          <div>
-          <NavCard title={'Share Link'} goBack={this.goBack.bind(this)} />
-          <ShareLink
-          mainStyle={mainStyle}
-          sendKey={this.state.sendKey}
-          sendLink={this.state.sendLink}
-          balance={balance}
-          address={account}
-          changeAlert={this.changeAlert}
-          goBack={this.goBack.bind(this)}
-          />
-          </div>
-        );
-        case 'send_with_link':
-        return (
-          <div>
-          <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
-          <SendWithLink balance={balance}
-          mainStyle={mainStyle}
-          changeAlert={this.changeAlert}
-          sendWithLink={(amount,cb)=>{
-            let randomHash = this.state.web3.utils.sha3(""+Math.random())
-            let randomWallet = this.state.web3.eth.accounts.create()
-            let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
-            console.log("STATE",this.state,this.state.contracts)
-            this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature),140000,false,amount*10**18,async (receipt)=>{
-              this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
-                console.log("STATE SAVED",this.state)
-              })
-              cb(receipt)
-            })
-          }}
-          address={account}
-          changeView={this.changeView}
-          goBack={this.goBack.bind(this)}
-          dollarDisplay={dollarDisplay}
-          />
-          </div>
-        );
-        case 'burn-wallet':
-        return (
-          <div>
-          <NavCard title={"Burn Private Key"} goBack={this.goBack.bind(this)}/>
-          <BurnWallet
-          mainStyle={mainStyle}
-          address={account}
-          balance={balance}
-          goBack={this.goBack.bind(this)}
-          dollarDisplay={dollarDisplay}
-          burnWallet={()=>{
-            burnMetaAccount()
-            if(localStorage&&typeof localStorage.setItem == "function"){
-              localStorage.setItem(this.state.account+"loadedBlocksTop","")
-              localStorage.setItem(this.state.account+"metaPrivateKey","")
-              localStorage.setItem(this.state.account+"recentTxs","")
-              localStorage.setItem(this.state.account+"transactionsByAddress","")
-              this.setState({recentTxs:[],transactionsByAddress:{}})
+          let subBalanceDisplay = ""
+          if(ERC20TOKEN){
+            if(!this.state.gasBalance){
+              subBalanceDisplay = ""
+            }else{
+              subBalanceDisplay = (
+                <div style={{opacity:0.4,fontSize:12,position:'absolute',right:0,marginTop:5}}>
+                {Math.round(this.state.gasBalance*10000)/10000}
+                </div>
+              )
             }
-          }}
-          />
-          </div>
-        );
-        case 'bridge':
-        return (
-          <div>
-          <NavCard title={"Exchange"} goBack={this.goBack.bind(this)}/>
-          <Exchange
-          ERC20NAME={ERC20NAME}
-          ERC20IMAGE={ERC20IMAGE}
-          ERC20TOKEN={ERC20TOKEN}
-          isVendor={this.state.isVendor}
-          isAdmin={this.state.isAdmin}
-          contracts={this.state.contracts}
-          mainStyle={mainStyle}
-          changeAlert={this.changeAlert}
-          setGwei={this.setGwei}
-          network={this.state.network}
-          tx={this.state.tx}
-          web3={this.state.web3}
-          send={this.state.send}
-          address={account}
-          balance={balance}
-          goBack={this.goBack.bind(this)}
-          dollarDisplay={dollarDisplay}
-          />
-          </div>
-        );
-        case 'vendors':
-        return (
-          <div>
-          <NavCard title={'Vendors'} goBack={this.goBack.bind(this)}/>
-          <Vendors
-          ERC20TOKEN={ERC20TOKEN}
-          vendors={this.state.vendors}
-          address={account}
-          mainStyle={mainStyle}
-          changeView={this.changeView}
-          contracts={this.state.contracts}
-          vendor={this.state.isVendor}
-          tx={this.state.tx}
-          web3={this.state.web3}
-          block={this.state.block}
-          goBack={this.goBack.bind(this)}
-          dollarDisplay={dollarDisplay}
-          />
-          </div>
-        );
-        case 'loader':
-        return (
-          <div>
-          <NavCard title={"Sending..."} goBack={this.goBack.bind(this)}/>
-          <Loader />
-          </div>
-        );
-        case 'reader':
-        return (
-          <div>
-          <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)}/>
-          <Loader />
-          </div>
-        );
-        case 'claimer':
-        return (
-          <div>
-          <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)}/>
-          <Loader />
-          </div>
-        );
-        default:
-        return (
-          <div>unknown view</div>
-        )
-      }
-
-    })()}
-    { ( !web3 /*|| !this.checkNetwork() */) &&
-      <div>
-      <Loader />
-      </div>
-    }
-    { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
-    </div>
 
 
+            if(this.state.isAdmin){
+              moreButtons = (
+                <div>
+                  <Admin
+                    ERC20TOKEN={ERC20TOKEN}
+                    vendors={this.state.vendors}
+                    buttonStyle={buttonStyle}
+                    changeView={this.changeView}
+                    contracts={this.state.contracts}
+                    tx={this.state.tx}
+                    web3={this.state.web3}
+                  />
+                  <MoreButtons
+                    buttonStyle={buttonStyle}
+                    changeView={this.changeView}
+                  />
+                </div>
+              )
+            }else if(this.state.isVendor&&this.state.isVendor.isAllowed){
+              moreButtons = (
+                <div>
+                  <Vendor
+                    ERC20TOKEN={ERC20TOKEN}
+                    address={account}
+                    buttonStyle={buttonStyle}
+                    changeView={this.changeView}
+                    contracts={this.state.contracts}
+                    vendor={this.state.isVendor}
+                    tx={this.state.tx}
+                    web3={this.state.web3}
+                    dollarDisplay={dollarDisplay}
+                  />
+                  <MoreButtons
+                    buttonStyle={buttonStyle}
+                    changeView={this.changeView}
+                  />
+                </div>
+              )
+            }else if(ERC20TOKEN=="Burner"){
+              moreButtons = (
+                <div>
+                  <MoreButtons
+                    buttonStyle={buttonStyle}
+                    changeView={this.changeView}
+                  />
+                </div>
+              )
+            }else{
+              moreButtons = ""
+            }
 
-    <Dapparatus
-    config={{
-      DEBUG: false,
-      hide: true,
-      requiredNetwork: ['Unknown', 'xDai'],
-      metatxAccountGenerator: false,
-    }}
-    //used to pass a private key into Dapparatus
-    newPrivateKey={this.state.newPrivateKey}
-    fallbackWeb3Provider={WEB3_PROVIDER}
-    onUpdate={async (state) => {
-      //console.log("DAPPARATUS UPDATE",state)
-      if(ERC20TOKEN){
-        delete state.balance
-      }
-      if (state.web3Provider) {
-        state.web3 = new Web3(state.web3Provider)
-        this.setState(state,()=>{
-          //console.log("state set:",this.state)
-          if(this.state.possibleNewPrivateKey){
-            this.dealWithPossibleNewPrivateKey()
+            if(this.state.contracts){
+              eventParser = (
+                <div style={{color:"#000000"}}>
+                  <Events
+                    config={{hide:true}}
+                    contract={this.state.contracts[ERC20TOKEN]}
+                    eventName={"Transfer"}
+                    block={this.state.block}
+                    filter={{from:this.state.account}}
+                    onUpdate={(eventData,allEvents)=>{this.setState({transferFrom:allEvents},this.syncFullTransactions)}}
+                  />
+                  <Events
+                    config={{hide:true}}
+                    contract={this.state.contracts[ERC20TOKEN]}
+                    eventName={"Transfer"}
+                    block={this.state.block}
+                    filter={{to:this.state.account}}
+                    onUpdate={(eventData,allEvents)=>{this.setState({transferTo:allEvents},this.syncFullTransactions)}}
+                  />
+                  <Events
+                    config={{hide:true}}
+                    contract={this.state.contracts[ERC20TOKEN]}
+                    eventName={"TransferWithData"}
+                    block={this.state.block}
+                    filter={{from:this.state.account}}
+                    onUpdate={(eventData,allEvents)=>{this.setState({transferFromWithData:allEvents},this.syncFullTransactions)}}
+                  />
+                  <Events
+                    config={{hide:true}}
+                    contract={this.state.contracts[ERC20TOKEN]}
+                    eventName={"TransferWithData"}
+                    block={this.state.block}
+                    filter={{to:this.state.account}}
+                    onUpdate={(eventData,allEvents)=>{this.setState({transferToWithData:allEvents},this.syncFullTransactions)}}
+                  />
+                  <Events
+                    config={{hide:true}}
+                    contract={this.state.contracts[ERC20TOKEN]}
+                    eventName={"UpdateVendor"}
+                    block={this.state.block}
+                    onUpdate={(vendor, all)=>{
+                      let {vendors} = this.state
+                      console.log("VENDOR",vendor)
+                      if(!vendors[vendor.wallet] || vendors[vendor.wallet].blockNumber<vendor.blockNumber){
+                        vendors[vendor.wallet] = {
+                          name: this.state.web3.utils.hexToUtf8(vendor.name),
+                          isAllowed: vendor.isAllowed,
+                          isActive: vendor.isActive,
+                          wallet: vendor.wallet,
+                          blockNumber: vendor.blockNumber
+                        }
+                      }
+                      this.setState({vendors})
+                    }}
+                  />
+                </div>
+              )
+            }
           }
-          if(!this.state.parsingTheChain){
-            this.setState({parsingTheChain:true},async ()=>{
-              let upperBoundOfSearch = this.state.block
-              //parse through recent transactions and store in local storage
-
-              if(localStorage&&typeof localStorage.setItem == "function"){
-
-                let initResult = this.initRecentTxs()
-                let recentTxs = initResult[0]
-                let transactionsByAddress = initResult[1]
-
-                let loadedBlocksTop = this.state.loadedBlocksTop
-                if(!loadedBlocksTop){
-                  loadedBlocksTop = localStorage.getItem(this.state.account+"loadedBlocksTop")
-                }
-
-                //  Look back through previous blocks since this account
-                //  was last online... this could be bad. We might need a
-                //  central server keeping track of all these and delivering
-                //  a list of recent transactions
 
 
-                let updatedTxs = false
-                if(!loadedBlocksTop || loadedBlocksTop<this.state.block){
-                  if(!loadedBlocksTop) loadedBlocksTop = Math.max(2,this.state.block-5)
+          if(view.indexOf("account_")==0)
+          {
 
-                  if(this.state.block - loadedBlocksTop > MAX_BLOCK_TO_LOOK_BACK){
-                    loadedBlocksTop = this.state.block-MAX_BLOCK_TO_LOOK_BACK
-                  }
+            let targetAddress = view.replace("account_","")
+            console.log("TARGET",targetAddress)
+            return (
+              <div>
+                <div className="main-card card w-100">
+                  <NavCard title={(
+                    <div>
+                      History & Chat
+                    </div>
+                  )} goBack={this.goBack.bind(this)}/>
+                  {defaultBalanceDisplay}
+                  <History
+                    buttonStyle={buttonStyle}
+                    saveKey={this.saveKey.bind(this)}
+                    metaAccount={this.state.metaAccount}
+                    transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                    address={account}
+                    balance={balance}
+                    changeAlert={this.changeAlert}
+                    changeView={this.changeView}
+                    target={targetAddress}
+                    block={this.state.block}
+                    send={this.state.send}
+                    web3={this.state.web3}
+                    goBack={this.goBack.bind(this)}
+                    dollarDisplay={dollarDisplay}
+                  />
+                </div>
+                <Bottom
+                  action={()=>{
+                    this.changeView('main')
+                  }}
+                />
+              </div>
 
-                  let paddedLoadedBlocks = parseInt(loadedBlocksTop)+BLOCKS_TO_PARSE_PER_BLOCKTIME
-                  //console.log("choosing the min of ",paddedLoadedBlocks,"and",this.state.block)
-                  let parseBlock=Math.min(paddedLoadedBlocks,this.state.block)
+            )
+          }
 
-                  //console.log("MIN:",parseBlock)
-                  upperBoundOfSearch = parseBlock
-                  console.log(" +++++++======= Parsing recent blocks ~"+this.state.block)
-                  //first, if we are still back parsing, we need to look at *this* block too
-                  if(upperBoundOfSearch<this.state.block){
-                    for(let b=this.state.block;b>this.state.block-6;b--){
-                      //console.log(" ++ Parsing *CURRENT BLOCK* Block "+b+" for transactions...")
-                      updatedTxs = (await this.parseBlocks(b,recentTxs,transactionsByAddress)) || updatedTxs
-                    }
-                  }
-                  console.log(" +++++++======= Parsing from "+loadedBlocksTop+" to "+upperBoundOfSearch+"....")
-                  while(loadedBlocksTop<parseBlock){
-                    //console.log(" ++ Parsing Block "+parseBlock+" for transactions...")
-                    updatedTxs = (await this.parseBlocks(parseBlock,recentTxs,transactionsByAddress)) || updatedTxs
-                    parseBlock--
-                  }
-                }
+          let selected = "xDai"
+          let extraTokens = ""
 
-                if(updatedTxs||!this.state.recentTxs){
-                  this.sortAndSaveTransactions(recentTxs,transactionsByAddress)
-                }
+          let defaultBalanceDisplay = (
+            <div>
+              <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+              <Ruler/>
+            </div>
+          )
 
-                localStorage.setItem(this.state.account+"loadedBlocksTop",upperBoundOfSearch)
-                this.setState({parsingTheChain:false,loadedBlocksTop:upperBoundOfSearch})
+          if(ERC20TOKEN){
+            selected = ERC20NAME
+            extraTokens = (
+              <div>
+                <Balance icon={ERC20IMAGE} selected={selected} text={ERC20NAME} amount={this.state.balance} address={account} dollarDisplay={dollarDisplay} />
+                <Ruler/>
+              </div>
+            )
+            defaultBalanceDisplay = extraTokens
+          }
+
+          switch(view) {
+            case 'main':
+            return (
+              <div>
+                <div className="main-card card w-100">
+
+                  {extraTokens}
+
+                  <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                  <Ruler/>
+                  <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                  <Ruler/>
+                  <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
+                  <Ruler/>
+
+                  <MainCard
+                    subBalanceDisplay={subBalanceDisplay}
+                    buttonStyle={buttonStyle}
+                    address={account}
+                    balance={balance}
+                    changeAlert={this.changeAlert}
+                    changeView={this.changeView}
+                    dollarDisplay={dollarDisplay}
+                    ERC20TOKEN={ERC20TOKEN}
+                  />
+                  {moreButtons}
+                  <RecentTransactions
+                    buttonStyle={buttonStyle}
+                    ERC20TOKEN={ERC20TOKEN}
+                    transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                    changeView={this.changeView}
+                    address={account}
+                    block={this.state.block}
+                    recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
+                  />
+                </div>
+                <Bottom
+                  icon={"wrench"}
+                  text={"Advanced"}
+                  action={()=>{
+                    this.changeView('advanced')
+                  }}
+                />
+              </div>
+            );
+            case 'advanced':
+            return (
+              <div>
+                <div className="main-card card w-100">
+                  <NavCard title={'Advanced'} goBack={this.goBack.bind(this)}/>
+                  <Advanced
+                    buttonStyle={buttonStyle}
+                    address={account}
+                    balance={balance}
+                    changeView={this.changeView}
+                    privateKey={metaAccount.privateKey}
+                    changeAlert={this.changeAlert}
+                    goBack={this.goBack.bind(this)}
+                    setPossibleNewPrivateKey={this.setPossibleNewPrivateKey.bind(this)}
+                  />
+                </div>
+                <Bottom
+                  action={()=>{
+                    this.changeView('main')
+                  }}
+                />
+              </div>
+            )
+            case 'send_by_scan':
+            return (
+              <SendByScan
+              mainStyle={mainStyle}
+              goBack={this.goBack.bind(this)}
+              changeView={this.changeView}
+              onError={(error) =>{
+                this.changeAlert("danger",error)
+              }}
+              />
+            );
+            case 'withdraw_from_private':
+            return (
+              <div>
+                <div className="send-to-address card w-100">
+                  <NavCard title={'Withdraw'} goBack={this.goBack.bind(this)}/>
+                  {defaultBalanceDisplay}
+                  <WithdrawFromPrivate
+                    ERC20TOKEN={ERC20TOKEN}
+                    buttonStyle={buttonStyle}
+                    balance={balance}
+                    address={account}
+                    contracts={this.state.contracts}
+                    web3={web3}
+                    //amount={false}
+                    privateKey={this.state.withdrawFromPrivateKey}
+                    goBack={this.goBack.bind(this)}
+                    changeView={this.changeView}
+                    changeAlert={this.changeAlert}
+                    dollarDisplay={dollarDisplay}
+                  />
+                </div>
+                <Bottom
+                  action={()=>{
+                    this.changeView('main')
+                  }}
+                />
+              </div>
+            );
+            case 'send_to_address':
+            return (
+              <div>
+                <div className="send-to-address card w-100">
+                  <NavCard title={'Send to Address'} goBack={this.goBack.bind(this)}/>
+                  {defaultBalanceDisplay}
+                  <SendToAddress
+                    ensLookup={this.ensLookup.bind(this)}
+                    ERC20TOKEN={ERC20TOKEN}
+                    buttonStyle={buttonStyle}
+                    balance={balance}
+                    web3={this.state.web3}
+                    address={account}
+                    send={send}
+                    goBack={this.goBack.bind(this)}
+                    changeView={this.changeView}
+                    changeAlert={this.changeAlert}
+                    dollarDisplay={dollarDisplay}
+                  />
+                </div>
+                <Bottom
+                  text={"cancel"}
+                  action={this.goBack.bind(this)}
+                />
+              </div>
+            );
+            case 'receive':
+            return (
+              <div>
+                <div className="main-card card w-100">
+                  <NavCard title={'Receive'} goBack={this.goBack.bind(this)}/>
+                  <Receive
+                    ensLookup={this.ensLookup.bind(this)}
+                    ERC20TOKEN={ERC20TOKEN}
+                    mainStyle={mainStyle}
+                    balance={balance}
+                    web3={this.state.web3}
+                    address={account}
+                    send={send}
+                    goBack={this.goBack.bind(this)}
+                    changeView={this.changeView}
+                    changeAlert={this.changeAlert}
+                    dollarDisplay={dollarDisplay}
+                  />
+                </div>
+                <Bottom
+                  action={this.goBack.bind(this)}
+                />
+              </div>
+            );
+            case 'request_funds':
+            return (
+              <div>
+                <div className="main-card card w-100">
+                  <NavCard title={'Request Funds'} goBack={this.goBack.bind(this)}/>
+                  {defaultBalanceDisplay}
+                  <RequestFunds
+                    mainStyle={mainStyle}
+                    balance={balance}
+                    address={account}
+                    send={send}
+                    goBack={this.goBack.bind(this)}
+                    changeView={this.changeView}
+                    changeAlert={this.changeAlert}
+                    dollarDisplay={dollarDisplay}
+                  />
+                </div>
+                <Bottom
+                  action={this.goBack.bind(this)}
+                />
+              </div>
+            );
+            case 'share':
+
+              let url = window.location.protocol+"//"+window.location.hostname
+              if(window.location.port&&window.location.port!=80&&window.location.port!=443){
+                url = url+":"+window.location.port
               }
-              //console.log("~~ DONE PARSING SET ~~")
+
+              return (
+                <div>
+                  <div className="main-card card w-100">
+                    <NavCard title={title} goBack={this.goBack.bind(this)} />
+                    <Share
+                      title={url}
+                      url={url}
+                      mainStyle={mainStyle}
+                      sendKey={this.state.sendKey}
+                      sendLink={this.state.sendLink}
+                      balance={balance}
+                      address={account}
+                      changeAlert={this.changeAlert}
+                      goBack={this.goBack.bind(this)}
+                    />
+                  </div>
+                  <Bottom
+                    action={this.goBack.bind(this)}
+                  />
+                </div>
+              );
+            case 'share-link':
+              return (
+                <div>
+                  <div className="main-card card w-100">
+                    <NavCard title={'Share Link'} goBack={this.goBack.bind(this)} />
+                      <ShareLink
+                        sendKey={this.state.sendKey}
+                        sendLink={this.state.sendLink}
+                        balance={balance}
+                        address={account}
+                        changeAlert={this.changeAlert}
+                        goBack={this.goBack.bind(this)}
+                      />
+                  </div>
+                  <Bottom
+                    action={this.goBack.bind(this)}
+                  />
+                </div>
+              );
+            case 'send_with_link':
+            return (
+              <div>
+                <div className="main-card card w-100">
+                  <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
+                  {defaultBalanceDisplay}
+                  <SendWithLink balance={balance}
+                    buttonStyle={buttonStyle}
+                    changeAlert={this.changeAlert}
+                    sendWithLink={(amount,cb)=>{
+                      let randomHash = this.state.web3.utils.sha3(""+Math.random())
+                      let randomWallet = this.state.web3.eth.accounts.create()
+                      let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
+                      console.log("STATE",this.state,this.state.contracts)
+                      this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature),140000,false,amount*10**18,async (receipt)=>{
+                        this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
+                          console.log("STATE SAVED",this.state)
+                        })
+                        cb(receipt)
+                      })
+                    }}
+                    address={account}
+                    changeView={this.changeView}
+                    goBack={this.goBack.bind(this)}
+                    dollarDisplay={dollarDisplay}
+                  />
+                </div>
+                <Bottom
+                  text={"cancel"}
+                  action={this.goBack.bind(this)}
+                />
+              </div>
+            );
+            case 'burn-wallet':
+            return (
+              <div>
+              <NavCard title={"Burn Private Key"} goBack={this.goBack.bind(this)}/>
+              <BurnWallet
+              mainStyle={mainStyle}
+              address={account}
+              balance={balance}
+              goBack={this.goBack.bind(this)}
+              dollarDisplay={dollarDisplay}
+              burnWallet={()=>{
+                burnMetaAccount()
+                if(RNMessageChannel){
+                  RNMessageChannel.send("burn")
+                }
+                if(localStorage&&typeof localStorage.setItem == "function"){
+                  localStorage.setItem(this.state.account+"loadedBlocksTop","")
+                  localStorage.setItem(this.state.account+"metaPrivateKey","")
+                  localStorage.setItem(this.state.account+"recentTxs","")
+                  localStorage.setItem(this.state.account+"transactionsByAddress","")
+                  this.setState({recentTxs:[],transactionsByAddress:{}})
+                }
+              }}
+              />
+              </div>
+            );
+            case 'exchange':
+            return (
+              <div>
+                <div className="main-card card w-100">
+                  <NavCard title={"Exchange"} goBack={this.goBack.bind(this)}/>
+                  <Exchange
+                    eth={eth}
+                    dai={dai}
+                    xdai={xdai}
+                    ERC20NAME={ERC20NAME}
+                    ERC20IMAGE={ERC20IMAGE}
+                    ERC20TOKEN={ERC20TOKEN}
+                    ethprice={this.state.ethprice}
+                    ethBalance={this.state.ethBalance}
+                    daiBalance={this.state.daiBalance}
+                    xdaiBalance={this.state.xdaiBalance}
+                    mainnetweb3={this.state.mainnetweb3}
+                    xdaiweb3={this.state.xdaiweb3}
+                    daiContract={this.state.daiContract}
+                    ensContract={this.state.ensContract}
+                    isVendor={this.state.isVendor}
+                    isAdmin={this.state.isAdmin}
+                    contracts={this.state.contracts}
+                    buttonStyle={buttonStyle}
+                    changeAlert={this.changeAlert}
+                    setGwei={this.setGwei}
+                    network={this.state.network}
+                    tx={this.state.tx}
+                    web3={this.state.web3}
+                    send={this.state.send}
+                    address={account}
+                    balance={balance}
+                    goBack={this.goBack.bind(this)}
+                    dollarDisplay={dollarDisplay}
+                  />
+                </div>
+                <Bottom
+                  action={this.goBack.bind(this)}
+                />
+              </div>
+            );
+            case 'vendors':
+            return (
+              <div>
+                <div className="main-card card w-100">
+                  <NavCard title={'Vendors'} goBack={this.goBack.bind(this)}/>
+                  <Vendors
+                    ERC20TOKEN={ERC20TOKEN}
+                    vendors={this.state.vendors}
+                    address={account}
+                    mainStyle={mainStyle}
+                    changeView={this.changeView}
+                    contracts={this.state.contracts}
+                    vendor={this.state.isVendor}
+                    tx={this.state.tx}
+                    web3={this.state.web3}
+                    block={this.state.block}
+                    goBack={this.goBack.bind(this)}
+                    dollarDisplay={dollarDisplay}
+                  />
+                </div>
+                <Bottom
+                  action={this.goBack.bind(this)}
+                />
+              </div>
+            );
+            case 'loader':
+            return (
+              <div>
+                <div className="main-card card w-100">
+                  <NavCard title={"Sending..."} goBack={this.goBack.bind(this)}/>
+                </div>
+              <Loader />
+              </div>
+            );
+            case 'reader':
+            return (
+              <div>
+                <div className="main-card card w-100">
+                  <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)}/>
+                </div>
+                <Loader />
+              </div>
+            );
+            case 'claimer':
+            return (
+              <div>
+                <div className="main-card card w-100">
+                  <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)}/>
+                </div>
+              <Loader />
+              </div>
+            );
+            default:
+            return (
+              <div>unknown view</div>
+            )
+          }
+
+        })()}
+        { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
+          <div>
+            <Loader />
+          </div>
+        }
+        { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
+        </div>
+
+
+
+        <Dapparatus
+        config={{
+          DEBUG: false,
+          hide: true,
+          requiredNetwork: ['Unknown', 'xDai'],
+          metatxAccountGenerator: false,
+        }}
+        //used to pass a private key into Dapparatus
+        newPrivateKey={this.state.newPrivateKey}
+        fallbackWeb3Provider={WEB3_PROVIDER}
+        onUpdate={async (state) => {
+          //console.log("DAPPARATUS UPDATE",state)
+          if(ERC20TOKEN){
+            delete state.balance
+          }
+          if (state.web3Provider) {
+            state.web3 = new Web3(state.web3Provider)
+            this.setState(state,()=>{
+              //console.log("state set:",this.state)
+              if(this.state.possibleNewPrivateKey){
+                this.dealWithPossibleNewPrivateKey()
+              }
+              if(!this.state.parsingTheChain){
+                this.setState({parsingTheChain:true},async ()=>{
+                  let upperBoundOfSearch = this.state.block
+                  //parse through recent transactions and store in local storage
+
+                  if(localStorage&&typeof localStorage.setItem == "function"){
+
+                    let initResult = this.initRecentTxs()
+                    let recentTxs = initResult[0]
+                    let transactionsByAddress = initResult[1]
+
+                    let loadedBlocksTop = this.state.loadedBlocksTop
+                    if(!loadedBlocksTop){
+                      loadedBlocksTop = localStorage.getItem(this.state.account+"loadedBlocksTop")
+                    }
+
+                    //  Look back through previous blocks since this account
+                    //  was last online... this could be bad. We might need a
+                    //  central server keeping track of all these and delivering
+                    //  a list of recent transactions
+
+
+                    let updatedTxs = false
+                    if(!loadedBlocksTop || loadedBlocksTop<this.state.block){
+                      if(!loadedBlocksTop) loadedBlocksTop = Math.max(2,this.state.block-5)
+
+                      if(this.state.block - loadedBlocksTop > MAX_BLOCK_TO_LOOK_BACK){
+                        loadedBlocksTop = this.state.block-MAX_BLOCK_TO_LOOK_BACK
+                      }
+
+                      let paddedLoadedBlocks = parseInt(loadedBlocksTop)+BLOCKS_TO_PARSE_PER_BLOCKTIME
+                      //console.log("choosing the min of ",paddedLoadedBlocks,"and",this.state.block)
+                      let parseBlock=Math.min(paddedLoadedBlocks,this.state.block)
+
+                      //console.log("MIN:",parseBlock)
+                      upperBoundOfSearch = parseBlock
+                      console.log(" +++++++======= Parsing recent blocks ~"+this.state.block)
+                      //first, if we are still back parsing, we need to look at *this* block too
+                      if(upperBoundOfSearch<this.state.block){
+                        for(let b=this.state.block;b>this.state.block-6;b--){
+                          //console.log(" ++ Parsing *CURRENT BLOCK* Block "+b+" for transactions...")
+                          updatedTxs = (await this.parseBlocks(b,recentTxs,transactionsByAddress)) || updatedTxs
+                        }
+                      }
+                      console.log(" +++++++======= Parsing from "+loadedBlocksTop+" to "+upperBoundOfSearch+"....")
+                      while(loadedBlocksTop<parseBlock){
+                        //console.log(" ++ Parsing Block "+parseBlock+" for transactions...")
+                        updatedTxs = (await this.parseBlocks(parseBlock,recentTxs,transactionsByAddress)) || updatedTxs
+                        parseBlock--
+                      }
+                    }
+
+                    if(updatedTxs||!this.state.recentTxs){
+                      this.sortAndSaveTransactions(recentTxs,transactionsByAddress)
+                    }
+
+                    localStorage.setItem(this.state.account+"loadedBlocksTop",upperBoundOfSearch)
+                    this.setState({parsingTheChain:false,loadedBlocksTop:upperBoundOfSearch})
+                  }
+                  //console.log("~~ DONE PARSING SET ~~")
+                })
+              }
             })
           }
-        })
-      }
-    }}
-    />
-    <Gas
-    network={this.state.network}
-    onUpdate={(state)=>{
-      console.log("Gas price update:",state)
-      this.setState(state,()=>{
-        this.state.gwei += 0.1
-        console.log("GWEI set:",this.state)
-      })
-    }}
-    />
-    {eventParser}
+        }}
+        />
+        <Gas
+        network={this.state.network}
+        onUpdate={(state)=>{
+          console.log("Gas price update:",state)
+          this.setState(state,()=>{
+            this.state.gwei += 0.1
+            console.log("GWEI set:",this.state)
+          })
+        }}
+        />
+        {eventParser}
+      </div>
     </div>
   )
 }

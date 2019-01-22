@@ -160,7 +160,7 @@ export default class History extends React.Component {
     })
   }
   render(){
-    let {transactionsByAddress,address,changeView,block,goBack,target} = this.props
+    let {transactionsByAddress,address,changeView,block,goBack,target,buttonStyle} = this.props
 
     let theseTransactionsByAddress = []
     if(transactionsByAddress&&transactionsByAddress[target]){
@@ -193,7 +193,8 @@ export default class History extends React.Component {
           let emojiText = toArray(theseTransactionsByAddress[r].data)
           //<Emoji text={Autolinker.link()} />
           txns.push(
-            <div key={"tx"+r} className="main-card card w-100">
+            <div style={{paddingTop:10,paddingBottom:10}}>
+              <Ruler />
               <div className="content ops row" style={{position:"relative"}}>
                 <div style={{position:'absolute',right:0,top:-13,opacity:0.5,fontSize:12}}>
                   {isEncrypted} {cleanTime((block-theseTransactionsByAddress[r].blockNumber)*5)} ago
@@ -214,7 +215,8 @@ export default class History extends React.Component {
           )
         }else{
           txns.push(
-            <div key={"tx"+r} className="main-card card w-100" style={{paddingTop:3,paddingBottom:21}}>
+            <div key={"tx"+r} style={{paddingTop:3,paddingBottom:21}}>
+              <Ruler />
               <div className="content ops row" style={{position:"relative",paddingTop:3}}>
                 <div style={{position:'absolute',right:0,top:6,opacity:0.5,fontSize:12}}>
                   {cleanTime((block-theseTransactionsByAddress[r].blockNumber)*5)} ago
@@ -240,7 +242,8 @@ export default class History extends React.Component {
         if(theseTransactionsByAddress[r].data){
           let emojiText = toArray(theseTransactionsByAddress[r].data)
           txns.push(
-            <div key={"tx"+r} className="main-card card w-100">
+            <div key={"tx"+r} style={{paddingTop:10,paddingBottom:10}}>
+              <Ruler />
               <div className="content ops row" style={{position:"relative"}}>
                 <div style={{position:'absolute',left:0,top:-13,opacity:0.5,fontSize:12}}>
                   {isEncrypted} {cleanTime((block-theseTransactionsByAddress[r].blockNumber)*5)} ago
@@ -261,7 +264,8 @@ export default class History extends React.Component {
           )
         }else{
           txns.push(
-            <div key={"tx"+r} className="main-card card w-100" style={{paddingTop:3,paddingBottom:21}}>
+            <div key={"tx"+r} style={{paddingTop:3,paddingBottom:21}}>
+              <Ruler />
               <div className="content ops row" style={{position:"relative",paddingTop:3}}>
                 <div style={{position:'absolute',left:0,top:6,opacity:0.5,fontSize:12}}>
                   {cleanTime((block-theseTransactionsByAddress[r].blockNumber)*5)} ago
@@ -298,7 +302,7 @@ export default class History extends React.Component {
       )
     }else{
       sendChatButton = (
-        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
+        <button className="btn btn-large w-100" style={buttonStyle.primary}
                 onClick={this.sendChat.bind(this)}>
           <Scaler config={{startZoomAt:700,origin:"-10px 50%"}}>
             <i className="fas fa-comment"/>
@@ -306,7 +310,7 @@ export default class History extends React.Component {
         </button>
       )
       sendFundsButton = (
-        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
+        <button className="btn btn-large w-100" style={buttonStyle.secondary}
                 onClick={this.sendChat.bind(this)}>
           <Scaler config={{startZoomAt:700,origin:"-10px 50%"}}>
             <i className="fas fa-comment"/>
@@ -327,7 +331,7 @@ export default class History extends React.Component {
       )
     }else if(this.props.metaAccount){
       waveButton = (
-        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
+        <button className="btn btn-large w-100" style={buttonStyle.primary}
                 onClick={()=>{
                   this.setState({waving:true})
                   this.props.send(this.props.target, 0, 120000, this.props.web3.utils.utf8ToHex(":wave:"), (result) => {
@@ -413,7 +417,7 @@ export default class History extends React.Component {
       sendForm = (
         <div className="content ops row">
           <div className="col-1 p-1">
-            <button className="btn btn-large w-100" style={{backgroundColor:this.props.mainStyle.mainColor,whiteSpace:"nowrap",marginLeft:-10}}
+            <button className="btn btn-large w-100" style={buttonStyle.secondary}
               onClick={()=>{
                 this.setState({sendingFunds:true},()=>{
                   setTimeout(()=>{
@@ -445,44 +449,38 @@ export default class History extends React.Component {
 
     return (
       <div style={{marginTop:20}}>
-        <div className="main-card card w-100">
-          <Balance amount={this.props.balance} address={this.props.address} dollarDisplay={this.props.dollarDisplay}/>
-          <Ruler/>
           <div className="content ops row">
-            <div className="col-4 p-1">
+            <div className="col-2 p-1">
               <a href={"https://blockscout.com/poa/dai/address/"+target+"/transactions"} target="_blank">
                 <Blockies seed={target} scale={5}/> {isEncrypted}
               </a>
             </div>
 
-            <div className="col-4 p-1">
+            <div className="col-2 p-1">
               <CopyToClipboard text={target}>
-                <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:this.props.mainStyle.mainColor}}
+                <button className="btn btn-large w-100" style={buttonStyle.secondary}
                   onClick={() => this.props.changeAlert({type: 'success', message: target+' copied to clipboard'})}>
-                  <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
-                    <i className="fas fa-save"/> Copy
+                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                    <i className="fas fa-save"/>
                   </Scaler>
                 </button>
               </CopyToClipboard>
             </div>
-
+            <div className="col-4 p-1">
+            </div>
             <div className="col-4 p-1">
               {waveButton}
             </div>
 
           </div>
-        </div>
+
         {txns}
-        <div className="main-card card w-100">
-          {sendForm}
-        </div>
-        <div name="theVeryBottom" className="text-center bottom-text">
-          <span style={{padding:10}}>
-            <a href="#" style={{color:"#FFFFFF"}} onClick={goBack}>
-              <i className="fas fa-times"/> done
-            </a>
-          </span>
-        </div>
+
+        <Ruler />
+
+        {sendForm}
+
+
       </div>
     )
   }

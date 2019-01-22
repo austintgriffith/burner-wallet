@@ -14,7 +14,7 @@ export default class Advanced extends React.Component {
     }
   }
   render(){
-    let {mainStyle,contracts,tx,web3,vendors} = this.props
+    let {buttonStyle,contracts,tx,web3,vendors} = this.props
 
     let vendorBlockie = ""
     if(this.state.newVendor){
@@ -37,8 +37,7 @@ export default class Advanced extends React.Component {
           onClick={()=>{
             window.location = "/vendors;"+vendors[v].wallet
           }}
-          style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"
-        }}>
+          style={this.props.buttonStyle.secondary}>
           <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
             {vendors[v].name}
           </Scaler>
@@ -77,8 +76,7 @@ export default class Advanced extends React.Component {
               },1500)
             })
           }}
-          style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"
-        }}>
+          style={this.props.buttonStyle.secondary}>
           <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
             {vendorAllowedDisplay}
           </Scaler>
@@ -117,8 +115,7 @@ export default class Advanced extends React.Component {
               },1500)
             })
           }}
-          style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"
-        }}>
+          style={this.props.buttonStyle.secondary}>
           <Scaler config={{startZoomAt:500,origin:"50% 50%"}}>
             {vendorActiveDisplay}
           </Scaler>
@@ -191,7 +188,7 @@ export default class Advanced extends React.Component {
                    onChange={event => this.setState({newVendorName:event.target.value})} />
           </div>
           <div className="col-4 p-1">
-          <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
+          <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
             this.setState({addingVendor:true})
             tx(contracts[this.props.ERC20TOKEN].addVendor(this.state.newVendor,web3.utils.utf8ToHex(this.state.newVendorName)),480000,0,0,(result)=>{
               console.log("VENDOR ADDED",result)
@@ -217,7 +214,7 @@ export default class Advanced extends React.Component {
                    onChange={event => this.setState({newAdmin:event.target.value})} />
           </div>
           <div className="col-4 p-1">
-          <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
+          <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
             this.setState({addingAdmin:true})
             console.log("CONTRACTSSSSSSS",this.props.ERC20TOKEN,this.props.contracts)
             tx(this.props.contracts[this.props.ERC20TOKEN].updateAdmin(this.state.newAdmin,true),(result)=>{
