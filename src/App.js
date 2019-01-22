@@ -209,19 +209,22 @@ class App extends Component {
     };
     this.alertTimeout = null;
 
-    RNMessageChannel.on('json', update => {
-      let safeUpdate = {}
-      if(update.title) safeUpdate.title = update.title
-      if(update.extraHeadroom) safeUpdate.extraHeadroom = update.extraHeadroom
-      if(update.possibleNewPrivateKey) safeUpdate.possibleNewPrivateKey = update.possibleNewPrivateKey
-
-      this.setState(safeUpdate,()=>{
-        if(this.state.possibleNewPrivateKey){
-          this.dealWithPossibleNewPrivateKey()
-        }
+    try{
+      RNMessageChannel.on('json', update => {
+        try{
+          let safeUpdate = {}
+          if(update.title) safeUpdate.title = update.title
+          if(update.extraHeadroom) safeUpdate.extraHeadroom = update.extraHeadroom
+          if(update.possibleNewPrivateKey) safeUpdate.possibleNewPrivateKey = update.possibleNewPrivateKey
+          this.setState(safeUpdate,()=>{
+            if(this.state.possibleNewPrivateKey){
+              this.dealWithPossibleNewPrivateKey()
+            }
+          })
+        }catch(e){console.log(e)}
       })
+    }catch(e){console.log(e)}
 
-    })
   }
   updateDimensions() {
     //force it to rerender when the window is resized to make sure qr fits etc
