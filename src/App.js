@@ -419,7 +419,7 @@ class App extends Component {
 
     let fund = await contracts.Links.funds(this.state.claimId).call()
     console.log("FUND FOR "+this.state.claimId+" IS: ", fund)
-    if (fund) {
+    if (fund&&parseInt(fund.nonce)>0) {
       this.setState({fund: fund})
 
 
@@ -450,69 +450,73 @@ class App extends Component {
       .catch((error) => {
         console.log(error); //Estimate Gas promise
       });
+    }else{
+      console.log("FUND IS NOT READY YET, WAITING...")
+      setTimeout(()=>{
+        this.chainClaim(tx, contracts)
+      },3000)
     }
 
     this.forceUpdate();
   }
-  relayClaim() {
-      console.log("DOING CLAIM THROUGH RELAY")
-      this.state.contracts.Links.funds(this.state.claimId).call().then((fund) => {
-        if (fund) {
-          this.setState({fund: fund})
-          console.log("FUND: ", fund)
+  async relayClaim() {
+    console.log("DOING CLAIM THROUGH RELAY")
+    let fund = await this.state.contracts.Links.funds(this.state.claimId).call()
+      if (fund&&parseInt(fund.nonce)>0) {
+        this.setState({fund: fund})
+        console.log("FUND: ", fund)
 
-          let claimHash = this.state.web3.utils.soliditySha3(
-            {type: 'bytes32', value: this.state.claimId}, // fund id
-            {type: 'address', value: this.state.account}, // destination address
-            {type: 'uint256', value: fund[3]}, // nonce
-            {type: 'address', value: this.state.contracts.Links._address} // contract address
-          )
-          console.log("claimHash", claimHash)
-          console.log("this.state.claimKey", this.state.claimKey)
-          let sig = this.state.web3.eth.accounts.sign(claimHash, this.state.claimKey);
-          sig = sig.signature
-          /* getGasPrice() is not implemented on Metamask, leaving the code as reference. */
-          //this.state.web3.eth.getGasPrice()
-          //.then((gasPrice) => {
+        let claimHash = this.state.web3.utils.soliditySha3(
+          {type: 'bytes32', value: this.state.claimId}, // fund id
+          {type: 'address', value: this.state.account}, // destination address
+          {type: 'uint256', value: fund[3]}, // nonce
+          {type: 'address', value: this.state.contracts.Links._address} // contract address
+        )
+        console.log("claimHash", claimHash)
+        console.log("this.state.claimKey", this.state.claimKey)
+        let sig = this.state.web3.eth.accounts.sign(claimHash, this.state.claimKey);
+        sig = sig.signature
+        /* getGasPrice() is not implemented on Metamask, leaving the code as reference. */
+        //this.state.web3.eth.getGasPrice()
+        //.then((gasPrice) => {
 
-            console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
+          console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
 
-            this.setState({sending: true})
-            let postData = {
-              id: this.state.claimId,
-              sig: sig,
-              claimHash: claimHash,
-              dest: this.state.account,
+          this.setState({sending: true})
+          let postData = {
+            id: this.state.claimId,
+            sig: sig,
+            claimHash: claimHash,
+            dest: this.state.account,
+          }
+          console.log("CLAIM_RELAY:", CLAIM_RELAY," POSTDATA:",postData)
+          axios.post(CLAIM_RELAY + "/link", postData, {
+            headers: {
+              'Content-Type': 'application/json',
             }
-            console.log("CLAIM_RELAY:", CLAIM_RELAY)
-            axios.post(CLAIM_RELAY + "/link", postData, {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            }).then((response) => {
-              console.log("TX RESULT", response.data.transactionHash)
-              this.setState({claimed: true})
-              setTimeout(() => {
-                this.setState({sending: false}, () => {
-                  //alert("DONE")
-                  window.location = "/"
-                })
-              }, 2000)
-            })
-            .catch((error) => {
-              console.log(error); //axios promise
-            });
+          }).then((response) => {
+            console.log("TX RESULT", response.data.transactionHash)
+            this.setState({claimed: true})
+            setTimeout(() => {
+              this.setState({sending: false}, () => {
+                //alert("DONE")
+                window.location = "/"
+              })
+            }, 2000)
+          })
+          .catch((error) => {
+            console.log(error); //axios promise
+          });
 
 
-        //})
-        //.catch((error) => {
-        //  console.log(error); //Get Gas price promise
-        //});
-      }
-    })
-    .catch((error) => {
-      console.log(error); //FUNDS promise
-    });
+      //})
+      //.catch((error) => {
+      //  console.log(error); //Get Gas price promise
+      //});
+    }else{
+      console.log("Fund is not valid yet, trying again....")
+      setTimeout(this.relayClaim,2000)
+    }
   }
   changeView = (view,cb) => {
     if(view=="exchange"||view=="main"/*||view.indexOf("account_")==0*/){
