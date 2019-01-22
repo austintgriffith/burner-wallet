@@ -213,7 +213,13 @@ class App extends Component {
       if(update.title) safeUpdate.title = update.title
       if(update.extraHeadroom) safeUpdate.extraHeadroom = update.extraHeadroom
       if(update.possibleNewPrivateKey) safeUpdate.possibleNewPrivateKey = update.possibleNewPrivateKey
-      this.setState(safeUpdate)
+
+      this.setState(safeUpdate,()=>{
+        if(this.state.possibleNewPrivateKey){
+          this.dealWithPossibleNewPrivateKey()
+        }
+      })
+
     })
   }
   updateDimensions() {
@@ -353,8 +359,9 @@ class App extends Component {
   }
   dealWithPossibleNewPrivateKey(){
     //console.log("possibleNewPrivateKey",this.state.possibleNewPrivateKey,this.state)
+    //alert(this.state.possibleNewPrivateKey)
     //only import pks over empty metaaccounts
-    if(this.state.balance>=0.10 || this.state.ethBalance>=0.001 || this.state.daiBalance>=0.1 || !this.state.metaAccount){
+    if(this.state.balance>=0.10 || this.state.ethBalance>=0.001 || this.state.daiBalance>=0.1 ){
       console.log("Can't import private key, so ask to withdraw")
       this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
         this.changeView('withdraw_from_private')
