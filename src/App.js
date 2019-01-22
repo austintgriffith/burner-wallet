@@ -439,14 +439,14 @@ class App extends Component {
           address _destination,
           uint256 _gasReward
            */
-          tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0), 220000, false, 0, (result) => {
+          tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0), 550000, false, 0, (result) => {
             if (result) {
               console.log("CLAIMED!!!", result)
               this.setState({claimed: true})
               setTimeout(() => {
                 this.setState({sending: false}, () => {
                   //alert("DONE")
-                  window.location = "/"
+                  //window.location = "/"
                 })
               }, 2000)
             }
