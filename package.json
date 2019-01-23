@@ -41,6 +41,7 @@
     "react-scripts": "2.0.5",
     "react-scroll": "^1.7.10",
     "s3": "^4.4.0",
+    "scrypt": "^6.0.3",
     "web3": "1.0.0-beta.33"
   },
   "scripts": {
@@ -59,7 +60,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "clevis": "^0.1.1",
+    "clevis": "^0.1.2",
     "mocha": "^5.2.0",
     "webpack": "^4.28.4"
   }
