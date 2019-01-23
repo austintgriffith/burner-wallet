@@ -7,9 +7,9 @@ import Balance from "./Balance";
 export default ({mainStyle, address, balance, burnWallet, goBack, dollarDisplay}) => {
 
   return (
-    <div className="main-card card w-100">
-      <Balance amount={balance} address={address} dollarDisplay={dollarDisplay}/>
-      <div style={{textAlign:"center",width:"100%",fontWeight:'bold',fontSize:40}}>
+
+    <div>
+      <div style={{textAlign:"center",width:"100%",fontWeight:'bold',fontSize:30}}>
         Are you sure you want to burn this private key?
       </div>
       <div style={{textAlign:"center",marginTop:20,width:"100%",fontWeight:'bold',fontSize:20}}>

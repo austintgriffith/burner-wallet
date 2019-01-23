@@ -15,38 +15,12 @@ export default class Advanced extends React.Component {
       changingAvailable: {}
     }
   }
-  componentDidMount(){
-    interval = setInterval(this.poll.bind(this),3000)
-    setTimeout(this.poll.bind(this),444)
-  }
-  componentWillUnmount(){
-    clearInterval(interval)
-  }
-  async poll(){
-    let id = 0
-    let products = []//this.state.products
-    if(!products){
-      products = []
-    }
-
-    let found = true
-    while(found){
-      let nextProduct = await this.props.contracts[this.props.ERC20TOKEN].products(this.props.address,id).call()
-      if(nextProduct.exists){
-        products[id++] = nextProduct
-      }else{
-        found=false
-      }
-    }
-    ///console.log("========PPPPPP",products)
-    this.setState({products})
-  }
   render(){
     let {dollarDisplay,buttonStyle,contracts,vendor,tx,web3} = this.props
 
     let products = []
-    for(let p in this.state.products){
-      let prod = this.state.products[p]
+    for(let p in this.props.products){
+      let prod = this.props.products[p]
       if(prod.exists){
 
         //console.log(prod)
@@ -106,7 +80,7 @@ export default class Advanced extends React.Component {
         }
 
         products.push(
-          <div className="content bridge row" style={{opacity}}>
+          <div key={p} className="content bridge row" style={{opacity}}>
             <div className="col-6 p-1">
               {web3.utils.hexToUtf8(prod.name)}
             </div>
@@ -197,17 +171,22 @@ export default class Advanced extends React.Component {
           </div>
           <div className="col-4 p-1">
           <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
-            //addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable)
-            let nextId = this.state.products.length
-            this.setState({addingProduct:true})
-            tx(contracts[this.props.ERC20TOKEN].addProduct(nextId,web3.utils.utf8ToHex(this.state.newProductName),web3.utils.toWei(""+this.state.newProductAmount, 'ether'),true),240000,0,0,(result)=>{
-              console.log("PRODUCT ADDED",result)
-              this.setState({newProductAmount:"",newProductName:""})
-              setTimeout(this.poll.bind(this),100)
-              setTimeout(()=>{
-                this.setState({addingProduct:false})
-              },1500)
-            })
+            if(!this.state.newProductName || !this.state.newProductAmount){
+              this.props.changeAlert({type: 'warning', message: 'Please enter a valid product and price.'})
+            }else{
+              //addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable)
+              let nextId = this.state.products.length
+              this.setState({addingProduct:true})
+              tx(contracts[this.props.ERC20TOKEN].addProduct(nextId,web3.utils.utf8ToHex(this.state.newProductName),web3.utils.toWei(""+this.state.newProductAmount, 'ether'),true),240000,0,0,(result)=>{
+                console.log("PRODUCT ADDED",result)
+                this.setState({newProductAmount:"",newProductName:""})
+                setTimeout(this.poll.bind(this),100)
+                setTimeout(()=>{
+                  this.setState({addingProduct:false})
+                },1500)
+              })
+            }
+
           }}>
             <Scaler config={{startZoomAt:650,origin:"20% 50%"}}>
               {addProductText}

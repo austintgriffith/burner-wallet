@@ -24,3 +24,12 @@ a:visited {
   line-height: 1;
   letter-spacing: -0.8px;
 }
+
+.topBlockie {
+
+    -webkit-transform: scale(4,1) rotate(90deg) ;
+    -moz-transform: scale(4,1) rotate(90deg) ;
+    -o-transform: scale(4,1) rotate(90deg) ;
+    -ms-transform: scale(4,1) rotate(90deg) ;
+
+}

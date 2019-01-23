@@ -24,46 +24,10 @@ export default class Advanced extends React.Component {
       showQR: {}
     }
   }
-  componentDidMount(){
-    interval = setInterval(this.poll.bind(this),3000)
-    setTimeout(this.poll.bind(this),444)
-  }
-  componentWillUnmount(){
-    clearInterval(interval)
-  }
-  async poll(){
-    let id = 0
-    if(this.state.vendor){
-      if(!this.state.vendorObject){
-        let vendorData = await this.props.contracts[this.props.ERC20TOKEN].vendors(this.state.vendor).call()
-        console.log("vendorData",vendorData)
-        vendorData.name = this.props.web3.utils.hexToUtf8(vendorData.name)
-        this.setState({vendorObject:vendorData})
-      }
-      console.log("Looking up products for vendor ",this.state.vendor)
-      let products = []//this.state.products
-      if(!products){
-        products = []
-      }
-      let found = true
-      while(found){
-        let nextProduct = await this.props.contracts[this.props.ERC20TOKEN].products(this.state.vendor,id).call()
-        if(nextProduct.exists){
-          products[id++] = nextProduct
-        }else{
-          found=false
-        }
-      }
-      this.setState({products,loading:false})
-    }else{
-
-      this.setState({loading:false})
-    }
-  }
   render(){
-    let {mainStyle,contracts,tx,web3,vendors,dollarDisplay} = this.props
+    let {mainStyle,contracts,tx,web3,vendors,dollarDisplay,vendorObject} = this.props
 
-    let {vendor,vendorObject} = this.state
+    let {vendor} = this.state
 
     let url = window.location.protocol+"//"+window.location.hostname
     if(window.location.port&&window.location.port!=80&&window.location.port!=443){
@@ -95,8 +59,8 @@ export default class Advanced extends React.Component {
 
       let qrSize = Math.min(document.documentElement.clientWidth,512)-90
 
-      for(let p in this.state.products){
-        let prod = this.state.products[p]
+      for(let p in this.props.products){
+        let prod = this.props.products[p]
         if(prod.exists&&prod.isAvailable){
 
           let extraQR = ""

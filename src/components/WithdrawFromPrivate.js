@@ -78,7 +78,7 @@ export default class SendToAddress extends React.Component {
         if(this.props.ERC20TOKEN){
           tx={
             to:this.props.contracts[this.props.ERC20TOKEN]._address,
-            data: this.props.contracts[this.props.ERC20TOKEN].transfer(this.props.address,this.props.web3.utils.toWei(amount,'ether')).encodeABI(),
+            data: this.props.contracts[this.props.ERC20TOKEN].transfer(this.props.address,this.props.web3.utils.toWei(""+amount,'ether')).encodeABI(),
             gas: 60000,
             gasPrice: Math.round(1100000000)//1.1gwei
           }
@@ -111,6 +111,38 @@ export default class SendToAddress extends React.Component {
   render() {
     let { canWithdraw, fromAddress } = this.state;
 
+    let products = []
+    for(let p in this.props.products){
+      let prod = this.props.products[p]
+      if(prod.exists){
+        if(prod.isAvailable){
+          let costInDollars = this.props.web3.utils.fromWei(prod.cost,'ether')
+          products.push(
+            <div key={p} className="content bridge row">
+              <div className="col-12 p-1">
+                <button className="btn btn-large w-100"
+                  onClick={()=>{
+                    console.log(prod.id,prod.name,prod.cost,prod.isAvailable)
+                    let currentAmount = this.state.amount
+                    if(currentAmount) currentAmount+=parseFloat(costInDollars)
+                    else currentAmount = parseFloat(costInDollars)
+                    if(currentAmount!=this.state.amount){
+                      this.setState({amount:currentAmount})
+                    }
+                  }}
+                  style={this.props.buttonStyle.secondary}>
+                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                    {this.props.web3.utils.hexToUtf8(prod.name)} ${this.props.dollarDisplay(costInDollars)}
+                  </Scaler>
+                </button>
+              </div>
+            </div>
+          )
+        }
+
+      }
+    }
+
     return (
       <div>
           <div className="content row">
@@ -134,6 +166,7 @@ export default class SendToAddress extends React.Component {
               </div>
 
               <label htmlFor="amount_input">Withdraw Amount</label>
+
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -141,6 +174,7 @@ export default class SendToAddress extends React.Component {
                 <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
+              {products}
             </div>
             <button style={this.props.buttonStyle.primary} className={`btn btn-success btn-lg w-100 ${canWithdraw ? '' : 'disabled'}`}
                     onClick={this.withdraw}>
