@@ -12,6 +12,50 @@ What we need is a way to exchange an intuitive currency like DAI using a simple 
 
 [![burnerwalletvideosplash](https://user-images.githubusercontent.com/2653167/50697319-23033280-0fff-11e9-8891-77965ecf1fcf.jpg)](https://youtu.be/k1Ssz1dvcpk)
 
+### Contributing as a Developer/Designer
+
+```
+git clone https://github.com/austintgriffith/burner-wallet.git
+cd burner-wallet
+```
+
+
+initialize burner:
+```
+npx clevis init
+```
+(You'll need to hit enter a few times to specify some config directories.)
+
+
+install burner: 
+```
+npm i
+```
+
+
+in a new terminal install and fire up ganache:
+```
+ganache-cli
+```
+
+in a new terminal start the app:
+```
+npm start
+```
+
+you probably want to have a bin alias for clevis in your .bashrc or .profile as mentioned in the [clevis docs](https://github.com/austintgriffith/clevis):
+```
+alias clevis='./node_modules/clevis/bin.js'
+```
+
+in a new terminal compile and deploy all contracts:
+```
+clevis test full
+```
+
+Take a look at `tests/clevis.js`, the `metamask()` function in particular, to give your MetaMask accounts some ETH when you run the full test. 
+
+
 
 # Original Video
 
@@ -34,7 +78,8 @@ Here is a follow up video to show how to go from fiat to DAI to xDai and back:
 
 ----------
 
-### Contributing as a Developer/Designer
+
+#### Docker Dev Version
 
 You will want to fork this repo and then clone it down. Since I own the repo I'll just clone it:
 ```
@@ -81,7 +126,7 @@ tail -f geth.log
 
 If you would like to give your intial account some eth to start out:
 ```
-🗜️ Clevis:/dapp 🗜️ clevis sendTo 5 0 ***YOUR_ETH_ADDRESS***
+🗜️ Clevis:/dapp 🗜️ clevis send 5 0 ***YOUR_ETH_ADDRESS***
 ```
 
 Or better yet, edit the tests/clevis.js to send you xDai every time you run the test suite:
