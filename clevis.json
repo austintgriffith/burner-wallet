@@ -1,7 +1,7 @@
 {
   "provider": "http://0.0.0.0:8545",
-  "gasprice": 2.5,
-  "ethprice": 84.5493965568,
+  "gasprice": 4,
+  "ethprice": 400,
   "deploygas": 5500000,
   "xfergas": 1300000,
   "DEBUG": true,
