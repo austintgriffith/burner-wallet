@@ -29,7 +29,7 @@ npx clevis init
 
 install burner: 
 ```
-npm i
+npm ci
 ```
 
 
