@@ -45,7 +45,7 @@ cd burner-wallet
 initialize burner:
 ```
 npx clevis init
-``
+```
 (You'll need to hit enter a few times to specify some config directories.)
 
 
