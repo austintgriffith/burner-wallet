@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n';
 import './App.scss';
 import Header from './components/Header';
 import NavCard from './components/NavCard';
@@ -844,6 +846,7 @@ render() {
   }
 
   return (
+    <I18nextProvider i18n={i18n}>
     <div style={mainStyle}>
       <div style={innerStyle}>
         {extraHead}
@@ -1555,6 +1558,7 @@ render() {
         {eventParser}
       </div>
     </div>
+    </I18nextProvider>
   )
 }
 }

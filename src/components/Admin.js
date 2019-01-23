@@ -3,6 +3,7 @@ import { Scaler } from "dapparatus";
 import Blockies from 'react-blockies';
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
+import i18next from 'i18next';
 const QRCode = require('qrcode.react');
 
 export default class Advanced extends React.Component {
@@ -145,26 +146,26 @@ export default class Advanced extends React.Component {
 
     let addAdminText = (
       <span>
-        <i className="fas fa-user-astronaut"></i> Add Admin
+        <i className="fas fa-user-astronaut"></i> {i18next.t('admin.add_admin')}
       </span>
     )
     if(this.state.addingAdmin){
       addAdminText = (
         <span>
-          <i className="fas fa-cog fa-spin"></i> Adding
+          <i className="fas fa-cog fa-spin"></i> {i18next.t('admin.adding')}
         </span>
       )
     }
 
     let addVendorText = (
       <span>
-        <i className="fas fa-user"></i> Add Vendor
+        <i className="fas fa-user"></i> {i18next.t('admin.add_vendor')}
       </span>
     )
     if(this.state.addingVendor){
       addVendorText = (
         <span>
-          <i className="fas fa-cog fa-spin"></i> Adding
+          <i className="fas fa-cog fa-spin"></i> {i18next.t('admin.adding')}
         </span>
       )
     }

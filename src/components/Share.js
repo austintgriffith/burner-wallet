@@ -4,6 +4,7 @@ import Balance from "./Balance";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
+import i18n from '../i18n';
 const QRCode = require('qrcode.react');
 
 export default class Receive extends React.Component {
@@ -22,7 +23,7 @@ export default class Receive extends React.Component {
     return (
       <div>
         <CopyToClipboard text={qrValue} onCopy={() => {
-          changeAlert({type: 'success', message: 'URL copied to clipboard'})
+          changeAlert({type: 'success', message: i18n.t('share.copied')})
         }}>
           <div className="content qr row" style={{cursor:"pointer"}}>
             <QRCode value={qrValue} size={qrSize}/>

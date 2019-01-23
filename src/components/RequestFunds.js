@@ -3,6 +3,7 @@ import Ruler from "./Ruler";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import {CopyToClipboard} from "react-copy-to-clipboard";
+import i18n from '../i18n';
 const QRCode = require('qrcode.react');
 
 export default class RequestFunds extends React.Component {
@@ -87,7 +88,7 @@ export default class RequestFunds extends React.Component {
               </div>
             </div>
             <div className="form-group w-100">
-              <label htmlFor="amount_input">Item or Message</label>
+              <label htmlFor="amount_input">{i18n.t('request_funds.item_message')}</label>
               <input type="text" className="form-control" placeholder="Hot Dogs" value={this.state.message}
                      onChange={event => this.updateState('message', event.target.value)} />
             </div>

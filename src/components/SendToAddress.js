@@ -4,6 +4,7 @@ import Balance from "./Balance";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
+import i18n from '../i18n';
 
 
 export default class SendToAddress extends React.Component {
@@ -145,10 +146,10 @@ export default class SendToAddress extends React.Component {
         if(!ERC20TOKEN && parseFloat(amount)-parseFloat(this.props.balance)<=.01){
           extraHint = "(gas costs)"
         }
-        this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100+' '+extraHint})
+        this.props.changeAlert({type: 'warning', message: i18n.t('send_to_address')+'$'+Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100+' '+extraHint})
       }else if((ERC20TOKEN && (parseFloat(this.props.balance)<parseFloat(amount)))){
         console.log("SO THE BALANCE IS LESS!")
-        this.props.changeAlert({type: 'warning', message: 'You can only send $'+parseFloat(this.props.balance)})
+        this.props.changeAlert({type: 'warning', message: i18n.t('send_to_address')+'$'+parseFloat(this.props.balance)})
       }else{
         console.log("SWITCH TO LOADER VIEW...",amount)
         this.props.changeView('loader')
@@ -178,7 +179,7 @@ export default class SendToAddress extends React.Component {
         })
       }
     }else{
-      this.props.changeAlert({type: 'warning', message: 'Please enter a valid address or ENS.'})
+      this.props.changeAlert({type: 'warning', message: i18n.t('send_to_address.error')})
     }
   };
 
@@ -207,7 +208,7 @@ export default class SendToAddress extends React.Component {
         <div className="content row">
           <div className="form-group w-100">
             <div className="form-group w-100">
-              <label htmlFor="amount_input">To Address</label>
+              <label htmlFor="amount_input">{i18n.t('send_to_address.to_address')}</label>
               <div className="input-group">
                 <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
                   ref={(input) => { this.addressInput = input; }}
@@ -227,7 +228,7 @@ export default class SendToAddress extends React.Component {
                 </div>
               </CopyToClipboard>
             }</div>
-            <label htmlFor="amount_input">Send Amount</label>
+            <label htmlFor="amount_input">{i18n.t('send_to_address.send_amount')}</label>
             <div className="input-group">
               <div className="input-group-prepend">
                 <div className="input-group-text">$</div>

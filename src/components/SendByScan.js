@@ -5,6 +5,7 @@ import FileReaderInput from 'react-file-reader-input';
 import QrCode from 'qrcode-reader';
 import qrimage from '../qrcode.png';
 import RNMessageChannel from 'react-native-webview-messaging';
+import i18n from "../i18n";
 var Jimp = require("jimp");
 
 class SendByScan extends Component {
@@ -139,7 +140,7 @@ class SendByScan extends Component {
             <div style={{marginBottom:20}}><i className="fas fa-ban"></i></div>
           </div>
           <div style={{textAlign:"center",paddingTop:"25%"}}>
-            <div>Please Try Again</div>
+            <div>{i18n.t('send_by_scan.try_again')}</div>
 
           </div>
           <div style={{textAlign:"center",padding:"10%",paddingTop:"15%",fontSize:16}}>
@@ -171,11 +172,11 @@ class SendByScan extends Component {
             <img src={qrimage} style={{position:"absolute",left:"36%",top:"25%",padding:4,border:"1px solid #888888",opacity:0.25,maxWidth:"30%",maxHight:"30%"}} />
           </div>
           <div style={{textAlign:"center",paddingTop:"45%"}}>
-            <div>Capture QR Code:</div>
+            <div>{i18n.t('send_by_scan.capture')}</div>
               <div className="main-card card w-100" style={{backgroundColor:"#000000"}}>
                 <div className="content ops row" style={{paddingLeft:"12%",paddingRight:"12%",paddingTop:10}}>
                     <button className="btn btn-large w-100" style={{backgroundColor:this.props.mainStyle.mainColor}}>
-                        <i className="fas fa-camera"  /> Take Photo
+                        <i className="fas fa-camera"  /> {i18n.t('send_by_scan.take_photo')}
                     </button>
                 </div>
               </div>

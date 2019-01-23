@@ -2,6 +2,7 @@ import React from 'react';
 import { Scaler } from "dapparatus";
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
+import i18n from '../i18n';
 const QRCode = require('qrcode.react');
 
 export default class Advanced extends React.Component {
@@ -53,7 +54,7 @@ export default class Advanced extends React.Component {
             <a href="https://github.com/austintgriffith/burner-wallet" style={{color:"#FFFFFF"}} target="_blank">
               <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-code"/> Code
+                  <i className="fas fa-code"/> {i18n.t('code')}
                 </Scaler>
               </button>
             </a>
@@ -62,7 +63,7 @@ export default class Advanced extends React.Component {
             <a href="https://medium.com/gitcoin/ethereum-in-emerging-economies-b235f8dac2f2" style={{color:"#FFFFFF"}} target="_blank">
               <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-info"/> About
+                  <i className="fas fa-info"/> {i18n.t('about')}
                 </Scaler>
               </button>
             </a>
@@ -83,7 +84,7 @@ export default class Advanced extends React.Component {
                         changeView('burn-wallet')
                       }}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-fire"/> Burn
+                  <i className="fas fa-fire"/> {i18n.t('burn')}
                 </Scaler>
               </button>
             </div>
@@ -99,7 +100,7 @@ export default class Advanced extends React.Component {
               this.setState({privateKeyQr:!this.state.privateKeyQr})
             }}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-key"/> Show
+                <i className="fas fa-key"/> {i18n.t('show')}
               </Scaler>
             </button>
             </div>
@@ -109,7 +110,7 @@ export default class Advanced extends React.Component {
                    onClick={() => changeAlert({type: 'success', message: 'Private Key copied to clipboard'})}>
                 <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-key"/> Copy
+                    <i className="fas fa-key"/> {i18n.t('copy')}
                   </Scaler>
                 </button>
               </div>
@@ -145,7 +146,7 @@ export default class Advanced extends React.Component {
                       setPossibleNewPrivateKey(possibleNewPrivateKey)
                     }}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-plus-square"/> Create
+                <i className="fas fa-plus-square"/> {i18n.t('create')}
               </Scaler>
             </button>
           </div>
@@ -169,7 +170,7 @@ export default class Advanced extends React.Component {
                         setPossibleNewPrivateKey("0x"+newPrivateKey)
                       }}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-plus-square"/> Create
+                  <i className="fas fa-plus-square"/> {i18n.t('create')}
                 </Scaler>
               </button>
             </div>
@@ -187,7 +188,7 @@ export default class Advanced extends React.Component {
                         this.setState({showingQr:this.state.newQr})
                       }}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-qrcode"/> To QR
+                  <i className="fas fa-qrcode"/> {i18n.t('advanced.to_qr')}
                 </Scaler>
               </button>
             </div>
