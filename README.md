@@ -36,6 +36,48 @@ Here is a follow up video to show how to go from fiat to DAI to xDai and back:
 
 ### Contributing as a Developer/Designer
 
+```
+git clone https://github.com/austintgriffith/burner-wallet.git
+cd burner-wallet
+```
+
+
+initialize burner:
+```
+npx clevis init
+``
+(You'll need to hit enter a few times to specify some config directories.)
+
+
+install burner: 
+```
+npm i
+```
+
+
+install and fire up ganache:
+```
+ganache-cli
+```
+
+
+start app:
+```
+npm start
+```
+
+
+compile and deploy all contracts:
+```
+clevis test full
+```
+
+Take a look at `tests/clevis.js`, the `metamask()` function in particular to give your MetaMask accounts some ETH when you run the full test. 
+
+
+
+#### Docker Dev Version
+
 You will want to fork this repo and then clone it down. Since I own the repo I'll just clone it:
 ```
 cd ~;git clone https://github.com/austintgriffith/burner-wallet.git
@@ -81,7 +123,7 @@ tail -f geth.log
 
 If you would like to give your intial account some eth to start out:
 ```
-🗜️ Clevis:/dapp 🗜️ clevis sendTo 5 0 ***YOUR_ETH_ADDRESS***
+🗜️ Clevis:/dapp 🗜️ clevis send 5 0 ***YOUR_ETH_ADDRESS***
 ```
 
 Or better yet, edit the tests/clevis.js to send you xDai every time you run the test suite:
