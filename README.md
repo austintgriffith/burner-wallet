@@ -33,24 +33,22 @@ npm i
 ```
 
 
-install and fire up ganache:
+in a new terminal install and fire up ganache:
 ```
 ganache-cli
 ```
 
-
-start app:
+in a new terminal start the app:
 ```
 npm start
 ```
 
-
-compile and deploy all contracts:
+in a new terminal compile and deploy all contracts:
 ```
 clevis test full
 ```
 
-Take a look at `tests/clevis.js`, the `metamask()` function in particular to give your MetaMask accounts some ETH when you run the full test. 
+Take a look at `tests/clevis.js`, the `metamask()` function in particular, to give your MetaMask accounts some ETH when you run the full test. 
 
 
 
