@@ -1,6 +1,6 @@
 *.pem
 .env
-#clevis.json
+clevis.json
 relayhttpprovider.env
 cloudfront.id.1
 cloudfront.id.2
