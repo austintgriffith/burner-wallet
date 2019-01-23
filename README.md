@@ -48,7 +48,7 @@ in a new terminal compile and deploy all contracts:
 clevis test full
 ```
 
-Take a look at `tests/clevis.js`, the `metamask()` function in particular to give your MetaMask accounts some ETH when you run the full test. 
+Take a look at `tests/clevis.js`, the `metamask()` function in particular, to give your MetaMask accounts some ETH when you run the full test. 
 
 
 
