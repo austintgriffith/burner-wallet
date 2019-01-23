@@ -21,10 +21,10 @@ contract Links {
     );
     event Claimed(
         bytes32 indexed id,
-        address sender, 
-        uint256 value, 
-        address indexed receiver, 
-        uint256 indexed nonce, 
+        address sender,
+        uint256 value,
+        address indexed receiver,
+        uint256 indexed nonce,
         bool claimed
     );
 
@@ -32,11 +32,11 @@ contract Links {
     /// @param _id Fund lookup key value.
     /// @param _signature Sender signature.
     function send(
-        bytes32 _id, 
+        bytes32 _id,
         bytes memory _signature
-    )   
-        public 
-        payable 
+    )
+        public
+        payable
         returns (bool)
     {
         require(msg.value >= 1500000000000000,"Links::send, needs to be at least 0.0015 xDai to pay relay reward");
@@ -68,33 +68,30 @@ contract Links {
     /// @param _signature Sender signature.
     /// @param _destination Destination address.
     function claim(
-        bytes32 _id, 
-        bytes memory _signature, 
-        bytes32 _claimHash, 
-        address _destination,
-        uint256 _gasReward
-    ) 
-        public 
+        bytes32 _id,
+        bytes memory _signature,
+        bytes32 _claimHash,
+        address _destination
+    )
+        public
         returns (bool)
     {
         require(isFundValid(_id),"Links::claim, invalid fund");
-        require(_gasReward <= 1500000000000000, "Links::claim, cannot reward more than 0.0015 xDai");
-        require(_gasReward <= funds[_id].value,"Links::claim, gas reward is greater than the fund value");
-        return executeClaim(_id,_signature,_claimHash,_destination,_gasReward);
+        return executeClaim(_id,_signature,_claimHash,_destination);
     }
-  
+
     /// @dev Off chain relayer can validate the claim before submitting.
     /// @param _id Claim lookup key value.
     /// @param _signature Sender signature.
     /// @param _destination Destination address.
     function isClaimValid(
-        bytes32 _id, 
+        bytes32 _id,
         bytes memory _signature,
-        bytes32 _claimHash, 
+        bytes32 _claimHash,
         address _destination
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns (bool)
     {
         // address(0) destination is valid
@@ -108,7 +105,7 @@ contract Links {
                 signer = recoverSigner(claimHash1,_signature);
             } else{
                 return false;
-            } 
+            }
             if(signer != address(0)){
                 return(funds[_id].signer == signer);
             } else{
@@ -119,13 +116,13 @@ contract Links {
         }
     }
 
-    /// @dev Validate fund status. 
+    /// @dev Validate fund status.
     /// @param _id Lookup key id.
     function isFundValid(
         bytes32 _id
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns (bool)
     {
         address sender = funds[_id].sender;
@@ -134,16 +131,16 @@ contract Links {
         uint256 nonce = funds[_id].nonce;
         /* solium-disable-next-line security/no-inline-assembly */
         assembly {
-          // Cannot assume empty initial values without initializating them. 
+          // Cannot assume empty initial values without initializating them.
           sender := and(sender, 0xffffffff)
           signer := and(signer, 0xffffffff)
           value := and(value, 0xffffffff)
           nonce := and(nonce, 0xffffffff)
         }
         return (
-          sender != address(0) && 
-          signer != address(0) && 
-          value > uint256(0) && 
+          sender != address(0) &&
+          signer != address(0) &&
+          value > uint256(0) &&
           nonce > uint256(0) &&
           nonce < contractNonce
         );
@@ -153,13 +150,12 @@ contract Links {
     /// @param _id Claim lookup key value.
     /// @param _destination Destination address.
     function executeClaim(
-        bytes32 _id, 
-        bytes memory _signature, 
-        bytes32 _claimHash, 
-        address _destination,
-        uint256 _gasReward
-    ) 
-        private 
+        bytes32 _id,
+        bytes memory _signature,
+        bytes32 _claimHash,
+        address _destination
+    )
+        private
         returns (bool)
     {
         //makes sure signature is correct and fund is valid.
@@ -169,45 +165,19 @@ contract Links {
         bool claimed = funds[_id].claimed;
         uint256 value = funds[_id].value;
         uint256 nonce = funds[_id].nonce;
- 
+
         assert(nonce < contractNonce);
         if(claimed == false){
-            // gasReward > 0, relayer is paying to claim and taking its reward
-            if(_gasReward > 0){
-                // !isContract - Preventive measure against deployed contracts. 
-                require(!isContract(msg.sender),"Links::executeClaim, relay sender should not be a contract");
-                // temporary fund invalidation
-                funds[_id].claimed = true;
-                residual = safeSub(value, _gasReward);
-                // address.send() restricts to 2300 gas units
-                /* solium-disable-next-line security/no-send */
-                status = _destination.send(residual);
-                // update fund with correct status
-                funds[_id].claimed = status;
-                // update fund
-                if(status == true){
-                    // DESTROY object so it can't be claimed again and free storage space.
-                    delete funds[_id];
-                } else{
-                    funds[_id].value = residual;
-                }
-                /* solium-disable-next-line security/no-send */
-                require(msg.sender.send(_gasReward),"Links::executeClaim, could not pay relayer");
-
-            // Gas Reward == 0, msg.sender is paying to claim
-            } else if(_gasReward == 0){
-                // temporary fund invalidation
-                funds[_id].claimed = true;
-                /* solium-disable-next-line security/no-send */
-                status = _destination.send(value);
-                // update fund with correct status
-                funds[_id].claimed = status;
-                if(status == true){
-                    // DESTROY object so it can't be claimed again and free storage space.
-                    delete funds[_id];
-                } 
+            // temporary fund invalidation
+            funds[_id].claimed = true;
+            /* solium-disable-next-line security/no-send */
+            status = _destination.send(value);
+            // update fund with correct status
+            funds[_id].claimed = status;
+            if(status == true){
+                // DESTROY object so it can't be claimed again and free storage space.
+                delete funds[_id];
             }
-
         } else{
             status = claimed;
             // DESTROY object so it can't be claimed again and free storage space.
@@ -223,10 +193,10 @@ contract Links {
     ///@return whether the target address is a contract
     function isContract(
         address account
-    ) 
-        private 
-        view 
-        returns (bool) 
+    )
+        private
+        view
+        returns (bool)
     {
         uint256 size;
         // TODO Check this again before the Serenity release, because all addresses will be contracts then.
@@ -239,11 +209,11 @@ contract Links {
     /// @param _hash bytes32 data.
     /// @param _signature message signature (65 bytes).
     function recoverSigner(
-        bytes32 _hash, 
+        bytes32 _hash,
         bytes memory _signature
-    ) 
-        private 
-        pure 
+    )
+        private
+        pure
         returns (address)
     {
         bytes32 r;
@@ -279,12 +249,12 @@ contract Links {
 
     /// @dev Adds two numbers, throws on overflow.
     function safeAdd(
-        uint256 _a, 
+        uint256 _a,
         uint256 _b
-    ) 
-        private 
-        pure 
-        returns (uint256 c) 
+    )
+        private
+        pure
+        returns (uint256 c)
     {
         c = _a + _b;
         assert(c >= _a);
@@ -293,12 +263,12 @@ contract Links {
 
     /// @dev Substracts two numbers, throws on underflow.
     function safeSub(
-        uint256 _a, 
+        uint256 _a,
         uint256 _b
-    ) 
-        private 
-        pure 
-        returns (uint256) 
+    )
+        private
+        pure
+        returns (uint256)
     {
         assert(_b <= _a);
         return _a - _b;

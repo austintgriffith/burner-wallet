@@ -23,7 +23,11 @@ class SendByScan extends Component {
     };
     this.handleScan = this.handleScan.bind(this)
 
-    RNMessageChannel.send("qr")
+    if(RNMessageChannel&&typeof RNMessageChannel.send == "function"){
+      try{
+        RNMessageChannel.send("qr")
+      }catch(e){}
+    }
   }
   stopRecording = () => this.setState({ delay: false });
   onImageLoad = data => {
