@@ -43,6 +43,11 @@ in a new terminal start the app:
 npm start
 ```
 
+you probably want to have a bin alias for clevis in your .bashrc or .profile as mentioned in the [clevis docs](https://github.com/austintgriffith/clevis):
+```
+alias clevis='./node_modules/clevis/bin.js'
+```
+
 in a new terminal compile and deploy all contracts:
 ```
 clevis test full
