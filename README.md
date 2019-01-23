@@ -33,19 +33,17 @@ npm i
 ```
 
 
-install and fire up ganache:
+in a new terminal install and fire up ganache:
 ```
 ganache-cli
 ```
 
-
-start app:
+in a new terminal start the app:
 ```
 npm start
 ```
 
-
-compile and deploy all contracts:
+in a new terminal compile and deploy all contracts:
 ```
 clevis test full
 ```
