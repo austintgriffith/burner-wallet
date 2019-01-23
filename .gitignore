@@ -10,9 +10,6 @@ aws.json
 backend/redisdata
 accounts.json
 **.DS_*
-openzeppelin-solidity
-zeppelin-solidity
-package-lock.json
 *.log
 *.ens
 */*/*.abi
