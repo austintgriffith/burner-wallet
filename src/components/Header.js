@@ -1,10 +1,40 @@
 import React from 'react';
 import { Scaler, Blockie } from "dapparatus";
-export  default ({ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
+import burnerloader from '../burnerloader.gif';
+export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
 
   let sendButtonOpacity = 1.0
-  if(view=="send_to_address"){
+  if(view=="send_to_address" || view=="receive"){
     sendButtonOpacity = 0
+  }
+
+  let moneyDisplay
+  let blockieDisplay
+  if(typeof total == "undefined" || Number.isNaN(total)){
+    moneyDisplay = (
+      <div style={{opacity:0.2}}>
+        loading...
+      </div>
+    )
+    blockieDisplay = (
+      <div>
+        <img src ={burnerloader} style={{maxHeight:50,opacity:0.25,marginLeft:-20}}/>
+      </div>
+    )
+  }else{
+    moneyDisplay = (
+      <div>
+        ${dollarDisplay(total)}
+      </div>
+    )
+    blockieDisplay = (
+      <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank" style={{color:"#FFFFFF"}}>
+        <Blockie
+          address={address}
+          config={{size:6}}
+         />
+      </a>
+    )
   }
 
   let bottomRight = (
@@ -17,20 +47,22 @@ export  default ({ens, title, titleImage, mainStyle, balance, address, changeVie
     </div>
   )
 
+  let topLeft = (
+    <div style={{zIndex:-2,position:"absolute",left:12,top:4,zIndex:1,cursor:"pointer"}}  >
+      {blockieDisplay}
+    </div>
+  )
+
   let topRight = (
-    <div className={"topBlockie"} style={{zIndex:-2,position:"absolute",right:80,top:4,zIndex:1,cursor:"pointer"}}  >
-      <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank" style={{color:"#FFFFFF"}}>
-        <Blockie
-          address={address}
-          config={{size:3}}
-         />
-      </a>
+    <div style={{zIndex:-2,position:"absolute",right:28,top:-4,zIndex:1,fontSize:46}}  >
+      {moneyDisplay}
     </div>
   )
 
 
   return (
     <div className="header">
+      {topLeft}
       {topRight}
       {bottomRight}
     </div>

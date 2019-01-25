@@ -877,6 +877,8 @@ render() {
     )
   }
 
+  console.log(this.state.ethBalance, this.state.ethprice, this.state.daiBalance, this.state.xdaiBalance)
+
   return (
     <div style={mainStyle}>
       <div style={innerStyle}>
@@ -886,14 +888,16 @@ render() {
 
         <div>
         <Header
-        ens={this.state.ens}
-        title={this.state.title}
-        titleImage={titleImage}
-        mainStyle={mainStyle}
-        address={this.state.account}
-        changeView={this.changeView}
-        balance={balance}
-        view={this.state.view}
+          total={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice) + parseFloat(this.state.daiBalance) + parseFloat(this.state.xdaiBalance)}
+          ens={this.state.ens}
+          title={this.state.title}
+          titleImage={titleImage}
+          mainStyle={mainStyle}
+          address={this.state.account}
+          changeView={this.changeView}
+          balance={balance}
+          view={this.state.view}
+          dollarDisplay={dollarDisplay}
         />
         {web3 /*&& this.checkNetwork()*/ && (() => {
           //console.log("VIEW:",view)
@@ -1241,9 +1245,10 @@ render() {
                   <NavCard title={'Receive'} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <Receive
+                    block={this.state.block}
                     ensLookup={this.ensLookup.bind(this)}
                     ERC20TOKEN={ERC20TOKEN}
-                    mainStyle={mainStyle}
+                    buttonStyle={buttonStyle}
                     balance={balance}
                     web3={this.state.web3}
                     address={account}
@@ -1252,6 +1257,10 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
+                    transactionsByAddress={this.state.transactionsByAddress}
+                    fullTransactionsByAddress={this.state.fullTransactionsByAddress}
+                    fullRecentTxs={this.state.fullRecentTxs}
+                    recentTxs={this.state.recentTxs}
                   />
                 </div>
                 <Bottom
