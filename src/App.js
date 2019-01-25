@@ -74,9 +74,9 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://0.0.0.0:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  ERC20NAME = 'BURN'
-  ERC20TOKEN = 'Burner'
-  ERC20IMAGE = cypherpunk
+  ERC20NAME = false//'BURN'
+  ERC20TOKEN = false//'Burner'
+  ERC20IMAGE = false//cypherpunk
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
@@ -877,7 +877,31 @@ render() {
     )
   }
 
-  console.log(this.state.ethBalance, this.state.ethprice, this.state.daiBalance, this.state.xdaiBalance)
+  let totalBalance = parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice) + parseFloat(this.state.daiBalance) + parseFloat(this.state.xdaiBalance)
+  if(ERC20TOKEN){
+    totalBalance += parseFloat(this.state.balance)
+  }
+
+  let header = (
+    <div style={{height:50}}>
+    </div>
+  )
+  if(web3){
+    header = (
+      <Header
+        total={totalBalance}
+        ens={this.state.ens}
+        title={this.state.title}
+        titleImage={titleImage}
+        mainStyle={mainStyle}
+        address={this.state.account}
+        changeView={this.changeView}
+        balance={balance}
+        view={this.state.view}
+        dollarDisplay={dollarDisplay}
+      />
+    )
+  }
 
   return (
     <div style={mainStyle}>
@@ -887,18 +911,10 @@ render() {
         {web3_setup}
 
         <div>
-        <Header
-          total={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice) + parseFloat(this.state.daiBalance) + parseFloat(this.state.xdaiBalance)}
-          ens={this.state.ens}
-          title={this.state.title}
-          titleImage={titleImage}
-          mainStyle={mainStyle}
-          address={this.state.account}
-          changeView={this.changeView}
-          balance={balance}
-          view={this.state.view}
-          dollarDisplay={dollarDisplay}
-        />
+          {header}
+
+
+
         {web3 /*&& this.checkNetwork()*/ && (() => {
           //console.log("VIEW:",view)
 

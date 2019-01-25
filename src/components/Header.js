@@ -3,9 +3,15 @@ import { Scaler, Blockie } from "dapparatus";
 import burnerloader from '../burnerloader.gif';
 export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
 
+
   let sendButtonOpacity = 1.0
   if(view=="send_to_address" || view=="receive"){
     sendButtonOpacity = 0
+  }
+
+  let name = ens
+  if(!name){
+    name = address.substring(2,8)
   }
 
   let moneyDisplay
@@ -48,8 +54,8 @@ export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balan
   )
 
   let topLeft = (
-    <div style={{zIndex:-2,position:"absolute",left:12,top:4,zIndex:1,cursor:"pointer"}}  >
-      {blockieDisplay}
+    <div style={{zIndex:-2,position:"absolute",left:14,top:4,zIndex:1,cursor:"pointer"}}  >
+      {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
     </div>
   )
 
