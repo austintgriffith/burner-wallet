@@ -5,9 +5,11 @@ export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balan
 
 
   let sendButtonOpacity = 1.0
-  if(view=="send_to_address" || view=="receive"){
+  if(view=="receive"){
     sendButtonOpacity = 0
   }
+
+
 
   let name = ens
   if(!name){
@@ -33,18 +35,46 @@ export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balan
         ${dollarDisplay(total)}
       </div>
     )
-    blockieDisplay = (
-      <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank" style={{color:"#FFFFFF"}}>
-        <Blockie
-          address={address}
-          config={{size:6}}
-         />
-      </a>
-    )
+    if(view=="main"){
+      blockieDisplay = (
+        <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank" style={{color:"#FFFFFF"}}>
+          <Blockie
+            address={address}
+            config={{size:6}}
+           />
+        </a>
+      )
+    }else{
+      blockieDisplay = (
+        <a href={"/"} style={{color:"#FFFFFF"}}>
+          <Blockie
+            address={address}
+            config={{size:6}}
+           />
+        </a>
+      )
+    }
+
+  }
+
+  let scanButtonStyle = {
+    opacity:sendButtonOpacity,
+    position:"fixed",
+    right:20,
+    bottom:20,
+    zIndex:2,
+    cursor:"pointer"
+  }
+
+  if(view=="send_to_address"){
+    scanButtonStyle.position = "absolute"
+    scanButtonStyle.right = -3
+    scanButtonStyle.top = 217
+    delete scanButtonStyle.bottom
   }
 
   let bottomRight = (
-    <div style={{opacity:sendButtonOpacity,position:"fixed",right:20,bottom:20,zIndex:2,cursor:"pointer"}} onClick={() => changeView('send_by_scan')} >
+    <div style={scanButtonStyle} onClick={() => changeView('send_by_scan')} >
       <div style={{position:'relative',backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",backgroundColor:mainStyle.mainColor,borderRadius:"50%",width:82,height:82,boxShadow: "0.5px 0.5px 5px #000000"}}>
         <a href="#" style={{color:'#FFFFFF',position:'absolute',left:27,top:24}}>
           <i className="fas fa-qrcode" />

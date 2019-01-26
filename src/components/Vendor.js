@@ -43,19 +43,18 @@ export default class Advanced extends React.Component {
         let productIsActive = (
           <button className="btn btn-large w-100"
             onClick={()=>{
-              let {changingAvailable} = this.state
+              let changingAvailable = this.state.changingAvailable
               changingAvailable[p] = true
               this.setState({changingAvailable})
               //addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable)
               console.log(prod.id,prod.name,prod.cost,prod.isAvailable)
               tx(contracts[this.props.ERC20TOKEN].addProduct(prod.id,prod.name,prod.cost,!prod.isAvailable),240000,0,0,(result)=>{
-                console.log("PRODUCT:",result)
+                console.log("===PRODUCT:",result)
+                let changingAvailable = this.state.changingAvailable
+                changingAvailable[p] = false
+
+                this.setState({changingAvailable})
                 setTimeout(this.poll.bind(this),444)
-                setTimeout(()=>{
-                  let {changingAvailable} = this.state
-                  changingAvailable[p] = false
-                  this.setState({changingAvailable})
-                },1500)
               })
             }}
             style={buttonStyle.secondary}>
@@ -175,15 +174,13 @@ export default class Advanced extends React.Component {
               this.props.changeAlert({type: 'warning', message: 'Please enter a valid product and price.'})
             }else{
               //addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable)
-              let nextId = this.state.products.length
+              let nextId = this.props.products.length
               this.setState({addingProduct:true})
               tx(contracts[this.props.ERC20TOKEN].addProduct(nextId,web3.utils.utf8ToHex(this.state.newProductName),web3.utils.toWei(""+this.state.newProductAmount, 'ether'),true),240000,0,0,(result)=>{
                 console.log("PRODUCT ADDED",result)
-                this.setState({newProductAmount:"",newProductName:""})
+                this.setState({addingProduct:false,newProductAmount:"",newProductName:""})
                 setTimeout(this.poll.bind(this),100)
-                setTimeout(()=>{
-                  this.setState({addingProduct:false})
-                },1500)
+
               })
             }
 

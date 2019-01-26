@@ -1143,6 +1143,7 @@ render() {
                   />
                   {moreButtons}
                   <RecentTransactions
+                    view={this.state.view}
                     buttonStyle={buttonStyle}
                     ERC20TOKEN={ERC20TOKEN}
                     transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
@@ -1261,6 +1262,7 @@ render() {
                   <NavCard title={'Receive'} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <Receive
+                    view={this.state.view}
                     block={this.state.block}
                     ensLookup={this.ensLookup.bind(this)}
                     ERC20TOKEN={ERC20TOKEN}
@@ -1742,3 +1744,10 @@ let sortByBlockNumber = (a,b)=>{
 }
 
 export default App;
+
+
+
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};

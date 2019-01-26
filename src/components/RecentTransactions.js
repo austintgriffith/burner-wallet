@@ -5,7 +5,7 @@ import { Scaler } from "dapparatus";
 
 const BockieSize = 4
 
-export default ({max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
+export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
   let txns = []
   let count=0
   if(!max) max=9999
@@ -13,11 +13,16 @@ export default ({max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, b
     let thisValue = parseFloat(recentTxs[r].value)
     if(thisValue>0.0){
 
+      let extraUp = 0
+      if(view=="receive"){
+        extraUp=-10
+      }
+      console.log("view",view)
 
       let extraIcon = ""
       if(recentTxs[r].data){
         extraIcon = (
-          <div style={{position:'absolute',right:-3,top:0}}>
+          <div style={{position:'absolute',right:-3,top:extraUp}}>
             <button className="btn btn-large w-100" style={buttonStyle.primary}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-comment"></i>
@@ -27,7 +32,7 @@ export default ({max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, b
         )
       }else{
         extraIcon = (
-          <div style={{position:'absolute',right:-3,top:0}}>
+          <div style={{position:'absolute',right:-3,top:extraUp}}>
             <button className="btn btn-large w-100" style={buttonStyle.secondary}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-comment"></i>

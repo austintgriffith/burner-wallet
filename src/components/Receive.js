@@ -15,7 +15,7 @@ export default class Receive extends React.Component {
     }
   }
   render() {
-    let {buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay,account} = this.props
+    let {view,buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay,account} = this.props
 
     let url = window.location.protocol+"//"+window.location.hostname
     if(window.location.port&&window.location.port!=80&&window.location.port!=443){
@@ -41,6 +41,7 @@ export default class Receive extends React.Component {
             </div>
           </CopyToClipboard>
           <RecentTransactions
+            view={view}
             max={5}
             buttonStyle={buttonStyle}
             ERC20TOKEN={ERC20TOKEN}
