@@ -1,0 +1,95 @@
+{
+  "en": {
+    "app_name": "Burner Wallet",
+    "about": "About",
+    "code": "Code",
+    "burn": "Burn",
+    "show": "Show",
+    "create": "Create",
+    "advance": "Advanced",
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "amount": "Amount",
+    "send": "Send",
+    "main_card": {
+      "receive": "Receive",
+      "send": "Send",
+      "share": "Share",
+      "link": "Link",
+      "vendors": "Vendors"
+    },
+    "send_with_link": {
+      "error": "Please enter a valid amount"
+    },
+    "share": {
+      "copied": "URL copied to clipboard"
+    },
+    "vendor": {
+      "updating": "Updating",
+      "open": "Open",
+      "closed": "Closed",
+      "add_product": "Add Product",
+      "adding": "Adding"
+    },
+    "withdraw_from_private": {
+      "from_address": "Withdraw from Address",
+      "amount": "Withdraw Amount",
+      "withdraw": "Withdraw",
+      "error": "Please enter a valid amount to withdraw"
+    },
+    "send_to_address": {
+      "to_address": "To Address",
+      "send_amount": "Send Amount",
+      "notice": "You can only send ",
+      "error": "Please enter a valid address or ENS."
+    },
+    "send_by_scan": {
+      "try_again": "Please try again",
+      "take_photo": "Take Photo",
+      "capture": "Capture QR Code:"
+    },
+    "more_buttons": {
+      "request": "Request",
+      "exchange": "Exchange"
+    },
+    "receive": {
+      "address_copied": "Address copied to clipboard"
+    },
+    "history": {
+      "metamask_error": "Encrypted messaging not available with MetaMask",
+      "wave": "Wave"
+    },
+    "exchange": {
+      "withdrawal_explanation": "Only vendors can withdraw more than they deposited",
+      "funds_transferred": "Funds Transferred!",
+      "funds_bridged": "Funds Bridged",
+      "insufficient_funds": "Insufficient funds",
+      "invalid_to_address": "Please enter a valid to address",
+      "invalid_to_amount": "Please enter a valid to amount",
+      "calculate_gas_price": "Calculating best gas price...",
+      "go_to_etherscan": "go to etherscan?",
+      "idk": "idk where to go from here? something that explains the bridge?"
+    },
+    "request_funds": {
+      "item_message": "Item or Message"
+    },
+    "admin": {
+      "add_admin": "Add Admin",
+      "adding": "Adding",
+      "add_vendor": "Add Vendor"
+    },
+    "advanced": {
+      "to_qr": "To QR"
+    },
+    "balance_display": {
+      "waiting_for_api": "Waiting for API",
+      "no_currency_api": "No Currency API Data Available"
+    },
+    "burn_wallet": {
+      "burn_private_key_question": "Are you sure you want to burn this private key?",
+      "disclaimer": "Don't do it! You will lose all funds!",
+      "cancel": "No, Cancel",
+      "burn": "Burn It!"
+    }
+  }
+}
