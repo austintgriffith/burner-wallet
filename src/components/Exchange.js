@@ -9,6 +9,7 @@ import localeth from '../localeth.png';
 
 import Web3 from 'web3';
 import axios from "axios"
+import i18n from '../i18n';
 
 const GASBOOSTPRICE = 0.1
 
@@ -93,13 +94,13 @@ export default class Exchange extends React.Component {
       dendaiContract: dendaiContract,
       daiToXdaiMode: false,
       ethToDaiMode: false,
-      loaderBarStatusText:"loading...",
+      loaderBarStatusText: i18n.t('loading'),
       loaderBarStartTime:Date.now(),
       loaderBarPercent: 2,
       loaderBarColor: "#aaaaaa",
       gwei: 5,
       maxWithdrawlAmount: 0.00,
-      withdrawalExplanation: "Only vendors can withdraw more than they deposited"
+      withdrawalExplanation: i18n.t('exchange.withdrawal_explanation')
     }
   }
   updateState = (key, value) => {
@@ -143,11 +144,11 @@ export default class Exchange extends React.Component {
         let xdaiBalanceShouldBe = parseFloat(this.state.xdaiBalanceShouldBe)-0.0005
         console.log("watching for ",this.props.xdaiBalance,"to be ",xdaiBalanceShouldBe)
         if(this.props.xdaiBalance>=(xdaiBalanceShouldBe)){
-          this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Transferred!",loaderBarColor:"#62f54a"})
+          this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_transferred'),loaderBarColor:"#62f54a"})
           setTimeout(()=>{
             this.setState({
               xdaiToDendaiMode: false,
-              loaderBarStatusText:"Loading...",
+              loaderBarStatusText: i18n.t('loading'),
               loaderBarStartTime:0,
               loaderBarPercent: 1,
               loaderBarColor: "#FFFFFF"
@@ -163,11 +164,11 @@ export default class Exchange extends React.Component {
 
         console.log("watching for ",this.props.xdaiBalance,"to be less than ",this.state.xdaiBalanceShouldBe+0.0005)
         if(this.props.xdaiBalance<=(this.state.xdaiBalanceShouldBe+0.00005)){
-          this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Bridged!",loaderBarColor:"#62f54a"})
+          this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_bridged'),loaderBarColor:"#62f54a"})
           setTimeout(()=>{
             this.setState({
               xdaiToDendaiMode: false,
-              loaderBarStatusText:"Loading...",
+              loaderBarStatusText: i18n.t('loading'),
               loaderBarStartTime:0,
               loaderBarPercent: 1,
               loaderBarColor: "#FFFFFF"
@@ -194,11 +195,11 @@ export default class Exchange extends React.Component {
 
       console.log("watching for ",this.props.daiBalance,"to be ",this.state.daiBalanceShouldBe-0.0005)
       if(this.props.daiBalance>=(this.state.daiBalanceShouldBe-0.0005)){
-        this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Bridged!",loaderBarColor:"#62f54a"})
+        this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_bridged'),loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
             daiToXdaiMode: false,
-            loaderBarStatusText:"Loading...",
+            loaderBarStatusText: i18n.t('loading'),
             loaderBarStartTime:0,
             loaderBarPercent: 1,
             loaderBarColor: "#FFFFFF"
@@ -214,11 +215,11 @@ export default class Exchange extends React.Component {
 
       //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
       if(this.props.xdaiBalance>=(this.state.xdaiBalanceShouldBe-0.0005)){
-        this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Bridged!",loaderBarColor:"#62f54a"})
+        this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_bridged'),loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
             daiToXdaiMode: false,
-            loaderBarStatusText:"Loading...",
+            loaderBarStatusText: i18n.t('loading'),
             loaderBarStartTime:0,
             loaderBarPercent: 1,
             loaderBarColor: "#FFFFFF"
@@ -233,11 +234,11 @@ export default class Exchange extends React.Component {
 
       console.log("watching for ",this.props.daiBalance,"to be ",this.state.daiBalanceShouldBe-0.0005)
       if(this.props.daiBalance<=(this.state.daiBalanceShouldBe-0.0005)){
-        this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Bridged!",loaderBarColor:"#62f54a"})
+        this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_bridged'),loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
             daiToXdaiMode: false,
-            loaderBarStatusText:"Loading...",
+            loaderBarStatusText: i18n.t('loading'),
             loaderBarStartTime:0,
             loaderBarPercent: 1,
             loaderBarColor: "#FFFFFF"
@@ -256,11 +257,11 @@ export default class Exchange extends React.Component {
       //ethBalanceShouldBe:this.state.ethBalance+amountOfChange,
       console.log("watching for ",this.props.ethBalance,"to be ",this.state.ethBalanceShouldBe-0.001)
       if(parseFloat(this.props.ethBalance)>=(this.state.ethBalanceShouldBe-0.001)){
-        this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Exchanged!",loaderBarColor:"#62f54a"})
+        this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_'),loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
             ethToDaiMode: false,
-            loaderBarStatusText:"Loading...",
+            loaderBarStatusText: i18n.t('loading'),
             loaderBarStartTime:0,
             loaderBarPercent: 1,
             loaderBarColor: "#FFFFFF"
@@ -276,11 +277,11 @@ export default class Exchange extends React.Component {
 
       //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
       if(this.props.daiBalance>=(this.state.daiBalanceShouldBe-0.0005)){
-        this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Exchanged!",loaderBarColor:"#62f54a"})
+        this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_'),loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
             ethToDaiMode: false,
-            loaderBarStatusText:"Loading...",
+            loaderBarStatusText: i18n.t('loading'),
             loaderBarStartTime:0,
             loaderBarPercent: 1,
             loaderBarColor: "#FFFFFF"
@@ -296,11 +297,11 @@ export default class Exchange extends React.Component {
       //ethBalanceShouldBe:this.state.ethBalance+amountOfChange,
       console.log("watching for ",this.props.ethBalance,"to be ",this.state.ethBalanceShouldBe-0.001)
       if(parseFloat(this.props.ethBalance)<=(this.state.ethBalanceShouldBe-0.001)){
-        this.setState({loaderBarPercent:100,loaderBarStatusText:"Funds Exchanged!",loaderBarColor:"#62f54a"})
+        this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_'),loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
             ethToDaiMode: false,
-            loaderBarStatusText:"Loading...",
+            loaderBarStatusText: i18n.t('loading'),
             loaderBarStartTime:0,
             loaderBarPercent: 1,
             loaderBarColor: "#FFFFFF"
@@ -315,22 +316,22 @@ export default class Exchange extends React.Component {
   }
   sendDai(){
     if(parseFloat(this.props.daiBalance)<parseFloat(this.state.daiSendAmount)){
-      this.props.changeAlert({type: 'warning',message: 'Insufficient funds'});
+      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.insufficient_funds')});
     }else if(!this.state.daiSendToAddress || !this.state.daiSendToAddress.length === 42){
-      this.props.changeAlert({type: 'warning',message: 'Please enter a valid to address'});
+      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_address')});
     }else if(!(parseFloat(this.state.daiSendAmount) > 0)){
-      this.props.changeAlert({type: 'warning',message: 'Please enter a valid amount to send'});
+      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_amount')});
     }else{
       this.setState({
         daiToXdaiMode:"sending",
         daiBalanceAtStart:this.props.daiBalance,
         daiBalanceShouldBe:parseFloat(this.props.daiBalance)-parseFloat(this.state.daiSendAmount),
         loaderBarColor:"#f5eb4a",
-        loaderBarStatusText:"Calculating best gas price...",
+        loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
         loaderBarPercent:0,
         loaderBarStartTime: Date.now(),
         loaderBarClick:()=>{
-          alert("go to etherscan?")
+          alert(i18n.t('exchange.go_to_etherscan'))
         }
       })
       this.setState({sendDai:false})
@@ -426,22 +427,22 @@ export default class Exchange extends React.Component {
     let actualEthSendAmount = parseFloat(this.state.ethSendAmount)/parseFloat(this.props.ethprice)
 
     if(parseFloat(this.props.ethBalance)<actualEthSendAmount){
-      this.props.changeAlert({type: 'warning',message: 'Insufficient funds'});
+      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.insufficient_funds')});
     }else if(!this.state.ethSendToAddress || !this.state.ethSendToAddress.length === 42){
-      this.props.changeAlert({type: 'warning',message: 'Please enter a valid to address'});
+      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_address')});
     }else if(!(actualEthSendAmount>0)){
-      this.props.changeAlert({type: 'warning',message: 'Please enter a valid amount to send'});
+      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_amount')});
     }else{
       this.setState({
         ethToDaiMode:"sending",
         ethBalanceAtStart:this.props.ethBalance,
         ethBalanceShouldBe:parseFloat(this.props.ethBalance)-actualEthSendAmount,
         loaderBarColor:"#f5eb4a",
-        loaderBarStatusText:"Calculating best gas price...",
+        loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
         loaderBarPercent:0,
         loaderBarStartTime: Date.now(),
         loaderBarClick:()=>{
-          alert("go to etherscan?")
+          alert(i18n.t('exchange.go_to_etherscan'))
         }
       })
       this.setState({sendEth:false})
@@ -522,7 +523,7 @@ export default class Exchange extends React.Component {
         loaderBarColor:"#4ab3f5",
         loaderBarStatusText:message,
         loaderBarClick:()=>{
-          alert("idk where to go from here? something that explains the bridge?")
+          alert(i18n.t('exchange.idk'));
         }
       })
       if(call){
@@ -557,7 +558,7 @@ export default class Exchange extends React.Component {
         <a href="#" style={{color:"#000000"}} onClick={()=>{
           this.setState({ethToDaiMode:false})
         }}>
-          <i className="fas fa-times"/> cancel
+          <i className="fas fa-times"/> {i18n.t('cancel')}
         </a>
       </span>
     )
@@ -566,7 +567,7 @@ export default class Exchange extends React.Component {
         <a href="#" style={{color:"#000000"}} onClick={()=>{
           this.setState({daiToXdaiMode:false})
         }}>
-          <i className="fas fa-times"/> cancel
+          <i className="fas fa-times"/> {i18n.t('cancel')}
         </a>
       </span>
     )
@@ -575,7 +576,7 @@ export default class Exchange extends React.Component {
         <a href="#" style={{color:"#000000"}} onClick={()=>{
           this.setState({xdaiToDendaiMode:false})
         }}>
-          <i className="fas fa-times"/> cancel
+          <i className="fas fa-times"/> {i18n.t('cancel')}
         </a>
       </span>
     )
@@ -589,7 +590,7 @@ export default class Exchange extends React.Component {
     let adjustedFontSize = Math.round((Math.min(document.documentElement.clientWidth,600)/600)*24)
     let adjustedTop = Math.round((Math.min(document.documentElement.clientWidth,600)/600)*-20)+9
 
-    let xdaiToDendaiDisplay = "loading..."
+    let xdaiToDendaiDisplay =  i18n.t('loading')
 
     let tokenDisplay = ""
     if(this.props.ERC20TOKEN){
@@ -657,7 +658,7 @@ export default class Exchange extends React.Component {
                     loaderBarPercent:0,
                     loaderBarStartTime: Date.now(),
                     loaderBarClick:()=>{
-                      alert("go to etherscan?")
+                      alert(i18n.t('exchange.go_to_etherscan'))
                     }
                   })
 
@@ -781,7 +782,7 @@ export default class Exchange extends React.Component {
                       loaderBarPercent:0,
                       loaderBarStartTime: Date.now(),
                       loaderBarClick:()=>{
-                        alert("go to etherscan?")
+                        alert(i18n.t('exchange.go_to_etherscan'))
                       }
                     })
 
@@ -900,7 +901,7 @@ export default class Exchange extends React.Component {
       )
     }
 
-    let daiToXdaiDisplay = "loading..."
+    let daiToXdaiDisplay =  i18n.t('loading')
     //console.log("daiToXdaiMode",daiToXdaiMode)
     if(daiToXdaiMode=="sending" || daiToXdaiMode=="withdrawing" || daiToXdaiMode=="depositing"){
       daiToXdaiDisplay = (
@@ -961,11 +962,11 @@ export default class Exchange extends React.Component {
                   xdaiBalanceAtStart:this.props.xdaiBalance,
                   xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)+parseFloat(this.state.amount),
                   loaderBarColor:"#3efff8",
-                  loaderBarStatusText:"Calculating best gas price...",
+                  loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
                   loaderBarPercent:0,
                   loaderBarStartTime: Date.now(),
                   loaderBarClick:()=>{
-                    alert("go to etherscan?")
+                    alert(i18n.t('exchange.go_to_etherscan'))
                   }
                 })
                 //send ERC20 DAI to 0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016 (toXdaiBridgeAccount)
@@ -975,7 +976,7 @@ export default class Exchange extends React.Component {
                     loaderBarColor:"#4ab3f5",
                     loaderBarStatusText:"Waiting for bridge...",
                     loaderBarClick:()=>{
-                      alert("idk where to go from here? something that explains the bridge?")
+                      alert(i18n.t('exchange.idk'))
                     }
                   })
                 })
@@ -1037,7 +1038,7 @@ export default class Exchange extends React.Component {
                   loaderBarPercent:0,
                   loaderBarStartTime: Date.now(),
                   loaderBarClick:()=>{
-                    alert("go to etherscan?")
+                    alert(i18n.t('exchange.go_to_etherscan'))
                   }
                 })
                 console.log("Withdrawing to ",toDaiBridgeAccount)
@@ -1049,7 +1050,7 @@ export default class Exchange extends React.Component {
                       loaderBarColor:"#4ab3f5",
                       loaderBarStatusText:"Waiting for bridge...",
                       loaderBarClick:()=>{
-                        alert("idk where to go from here? something that explains the bridge?")
+                        alert(i18n.t('exchange.idk'))
                       }
                     })
                   }
@@ -1091,7 +1092,7 @@ export default class Exchange extends React.Component {
       )
     }
 
-    let ethToDaiDisplay = "loading..."
+    let ethToDaiDisplay =  i18n.t('loading')
 
     if(ethToDaiMode=="sending" || ethToDaiMode=="depositing" || ethToDaiMode=="withdrawing"){
       ethToDaiDisplay = (
@@ -1182,11 +1183,11 @@ export default class Exchange extends React.Component {
                 this.setState({
                   ethToDaiMode:"depositing",
                   loaderBarColor:"#3efff8",
-                  loaderBarStatusText:"Calculating best gas price...",
+                  loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
                   loaderBarPercent:0,
                   loaderBarStartTime: Date.now(),
                   loaderBarClick:()=>{
-                    alert("go to etherscan?")
+                    alert(i18n.t('exchange.go_to_etherscan'))
                   }
                 })
 
@@ -1207,7 +1208,7 @@ export default class Exchange extends React.Component {
                       loaderBarColor:"#4ab3f5",
                       loaderBarStatusText:"Waiting for 🦄 exchange...",
                       loaderBarClick:()=>{
-                        alert("idk where to go from here? something that explains the bridge?")
+                        alert(i18n.t('exchange.idk'))
                       }
                     })
                   }
@@ -1306,11 +1307,11 @@ export default class Exchange extends React.Component {
                 this.setState({
                   ethToDaiMode:"withdrawing",
                   loaderBarColor:"#3efff8",
-                  loaderBarStatusText:"Calculating best gas price...",
+                  loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
                   loaderBarPercent:0,
                   loaderBarStartTime: Date.now(),
                   loaderBarClick:()=>{
-                    alert("go to etherscan?")
+                    alert(i18n.t('exchange.go_to_etherscan'))
                   }
                 })
 
@@ -1459,7 +1460,7 @@ export default class Exchange extends React.Component {
                       loaderBarColor:"#42ceb2",
                       loaderBarStatusText:"Approving 🦄 exchange...",
                       loaderBarClick:()=>{
-                        alert("idk where to go from here? something that explains the bridge?")
+                        alert(i18n.t('exchange.idk'))
                       }
                     })
 
@@ -1477,7 +1478,7 @@ export default class Exchange extends React.Component {
                           loaderBarColor:"#4ab3f5",
                           loaderBarStatusText:"Sending funds to 🦄 Exchange...",
                           loaderBarClick:()=>{
-                            alert("idk where to go from here? something that explains the bridge?")
+                            alert(i18n.t('exchange.idk'))
                           }
                         })
 
@@ -1500,7 +1501,7 @@ export default class Exchange extends React.Component {
                       loaderBarColor:"#4ab3f5",
                       loaderBarStatusText:"Sending funds to 🦄 Exchange...",
                       loaderBarClick:()=>{
-                        alert("idk where to go from here? something that explains the bridge?")
+                        alert(i18n.t('exchange.idk'))
                       }
                     })
 

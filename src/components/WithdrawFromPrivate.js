@@ -4,6 +4,7 @@ import Ruler from "./Ruler";
 import { Scaler } from "dapparatus";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
+import i18n from '../i18n';
 
 let pollInterval
 
@@ -104,7 +105,7 @@ export default class SendToAddress extends React.Component {
         });
 
     }else{
-      this.props.changeAlert({type: 'warning', message: 'Please enter a valid amount to withdraw'})
+      this.props.changeAlert({type: 'warning', message: i18n.t('withdraw_from_private.error')})
     }
   };
 
@@ -148,7 +149,7 @@ export default class SendToAddress extends React.Component {
           <div className="content row">
             <div className="form-group w-100">
               <div className="form-group w-100">
-                <label htmlFor="amount_input">Withdraw From Address</label>
+                <label htmlFor="amount_input">{i18n.t('withdraw_from_private.from_address')}</label>
                 <input type="text" className="form-control" placeholder="0x..." value={fromAddress} />
               </div>
 
@@ -165,8 +166,7 @@ export default class SendToAddress extends React.Component {
                   </div>
               </div>
 
-              <label htmlFor="amount_input">Withdraw Amount</label>
-
+              <label htmlFor="amount_input">{i18n.t('withdraw_from_private.amount')}</label>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -178,7 +178,7 @@ export default class SendToAddress extends React.Component {
             </div>
             <button style={this.props.buttonStyle.primary} className={`btn btn-success btn-lg w-100 ${canWithdraw ? '' : 'disabled'}`}
                     onClick={this.withdraw}>
-              Withdraw
+              {i18n.t('withdraw_from_private.withdraw')}
             </button>
           </div>
       </div>

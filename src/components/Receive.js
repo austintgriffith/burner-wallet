@@ -5,6 +5,7 @@ import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
+import i18n from '../i18n';
 const QRCode = require('qrcode.react');
 
 export default class Receive extends React.Component {
@@ -28,7 +29,7 @@ export default class Receive extends React.Component {
       <div>
         <div className="send-to-address w-100">
           <CopyToClipboard text={address} onCopy={() => {
-            changeAlert({type: 'success', message: 'Address copied to clipboard'})
+            changeAlert({type: 'success', message: i18n.t('receive.address_copied')})
           }}>
             <div className="content qr row" style={{cursor:"pointer"}}>
               <QRCode value={qrValue} size={qrSize}/>
@@ -55,7 +56,7 @@ export default class Receive extends React.Component {
         <div name="theVeryBottom" className="text-center bottom-text">
           <span style={{padding:10}}>
             <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{this.props.goBack()}}>
-              <i className="fas fa-times"/> cancel
+              <i className="fas fa-times"/> {i18n.t('cancel')}
             </a>
           </span>
         </div>

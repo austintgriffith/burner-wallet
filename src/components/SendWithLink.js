@@ -2,6 +2,7 @@ import React from 'react';
 import Ruler from "./Ruler";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
+import i18n from '../i18n';
 
 
 export default class SendWithLink extends React.Component {
@@ -50,7 +51,7 @@ export default class SendWithLink extends React.Component {
         })
       //}
     }else{
-      this.props.changeAlert({type: 'warning', message: 'Please enter a valid amount'})
+      this.props.changeAlert({type: 'warning', message: i18n.t('send_with_link.error')})
     }
   };
 

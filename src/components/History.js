@@ -7,6 +7,7 @@ import Linkify from 'react-linkify'
 import {toArray} from 'react-emoji-render';
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
+import i18next from 'i18next';
 const QRCode = require('qrcode.react');
 const Transaction = require("ethereumjs-tx")
 const EthUtil = require('ethereumjs-util')
@@ -341,7 +342,7 @@ export default class History extends React.Component {
                   })
                 }}>
           <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
-            <i className="fas fa-handshake"/> Wave
+            <i className="fas fa-handshake"/> {i18next.t('history.wave')}
           </Scaler>
         </button>
       )
@@ -349,10 +350,10 @@ export default class History extends React.Component {
       waveButton = (
         <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:"#aaaaaa"}}
                 onClick={()=>{
-                  this.props.changeAlert({type: 'warning', message: 'Encrypted messaging not available with MetaMask'})
+                  this.props.changeAlert({type: 'warning', message: i18next.t('history.metamask_error')})
                 }}>
           <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
-            <i className="fas fa-handshake"/> Wave
+            <i className="fas fa-handshake"/> {i18next.t('history.wave')}
           </Scaler>
         </button>
       )

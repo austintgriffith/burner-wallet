@@ -3,6 +3,7 @@ import { Scaler } from "dapparatus";
 import Blockies from 'react-blockies';
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
+import i18n from '../i18n';
 const QRCode = require('qrcode.react');
 
 let interval
@@ -98,33 +99,33 @@ export default class Advanced extends React.Component {
     if(this.state.changingActive){
       venderButtonText = (
           <div>
-            <i className="fas fa-cog fa-spin"></i> Updating
+            <i className="fas fa-cog fa-spin"></i> {i18n.t('vendor.updating')}
           </div>
       )
     }else if(vendor.isActive){
       venderButtonText = (
           <div>
-            <i className="fas fa-thumbs-up"></i> Open
+            <i className="fas fa-thumbs-up"></i> {i18n.t('vendor.open')}
           </div>
       )
     }else{
       venderButtonText = (
         <div>
-          <i className="fas fa-window-close"></i> Closed
+          <i className="fas fa-window-close"></i> {i18n.t('vendor.closed')}
         </div>
       )
     }
 
     let addProductText = (
       <span>
-        <i className="fas fa-plus-square"></i> Add Product
+        <i className="fas fa-plus-square"></i> {i18n.t('vendor.add_product')}
       </span>
     )
 
     if(this.state.addingProduct){
       addProductText = (
         <span>
-          <i className="fas fa-cog fa-spin"></i> Adding
+          <i className="fas fa-cog fa-spin"></i> {i18n.t('vendor.adding')}
         </span>
       )
     }

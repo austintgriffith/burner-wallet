@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 import eth from '../ethereum.png';
+import i18n from '../i18n';
 
 export default class BalanceDisplay extends React.Component {
 
@@ -9,7 +10,7 @@ export default class BalanceDisplay extends React.Component {
       super(props);
 
       this.state = {
-        currencyOptions: "Waiting For API",
+        currencyOptions: i18n.t('waiting_for_api'),
         value: "USD",
         rate: '1',
         apiError: false
@@ -60,7 +61,7 @@ export default class BalanceDisplay extends React.Component {
       let currencySelect;
 
       if(this.state.apiError){
-        currencySelect = <div style={{textAlign:"center"}}>No Currency API Data Available</div>
+        currencySelect = <div style={{textAlign:"center"}}>{i18n.t('no_currency_api')}</div>
       }else{
         currencySelect = (
           <>
