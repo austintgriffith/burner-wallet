@@ -653,7 +653,7 @@ export default class Exchange extends React.Component {
                     xdaiBalanceAtStart:this.props.xdaiBalance,
                     xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)-parseFloat(this.state.amount),
                     loaderBarColor:"#3efff8",
-                    loaderBarStatusText:"Depositing xDai into DenDai...",
+                    loaderBarStatusText:"Depositing xDai into "+ERC20NAME+"...",
                     loaderBarPercent:0,
                     loaderBarStartTime: Date.now(),
                     loaderBarClick:()=>{
@@ -691,7 +691,7 @@ export default class Exchange extends React.Component {
                     });
 
                   }else{
-                    console.log("Use MetaMask to withdraw DenDai to xDai")
+                    console.log("Use MetaMask to withdraw "+ERC20NAME+" to xDai")
                     this.props.tx(
                       this.props.contracts[this.props.ERC20TOKEN].deposit()
                     ,120000,0,amountOfxDaiToDeposit,(receipt)=>{
@@ -770,14 +770,14 @@ export default class Exchange extends React.Component {
                   <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
 
                     let amountOfxDaiToWithdraw = this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether')
-                    console.log("Using DenDai contract to withdraw "+amountOfxDaiToWithdraw+" xDai")
+                    console.log("Using "+ERC20NAME+" contract to withdraw "+amountOfxDaiToWithdraw+" xDai")
 
                     this.setState({
                       xdaiToDendaiMode:"withdrawing",
                       xdaiBalanceAtStart:this.props.xdaiBalance,
                       xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)+parseFloat(this.state.amount),
                       loaderBarColor:"#3efff8",
-                      loaderBarStatusText:"Withdrawing DenDai to xDai...",
+                      loaderBarStatusText:"Withdrawing "+ERC20NAME+" to xDai...",
                       loaderBarPercent:0,
                       loaderBarStartTime: Date.now(),
                       loaderBarClick:()=>{
@@ -815,7 +815,7 @@ export default class Exchange extends React.Component {
                       });
 
                     }else{
-                      console.log("Use MetaMask to withdraw DenDai to xDai")
+                      console.log("Use MetaMask to withdraw "+ERC20NAME+" to xDai")
                       this.props.tx(
                         this.props.contracts[this.props.ERC20TOKEN].withdraw(""+amountOfxDaiToWithdraw)
                       ,120000,0,0,(receipt)=>{
