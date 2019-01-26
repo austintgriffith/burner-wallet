@@ -74,9 +74,18 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://0.0.0.0:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  ERC20NAME = false//'BURN'
-  ERC20TOKEN = false//'Burner'
-  ERC20IMAGE = false//cypherpunk
+  if(false){
+    ERC20NAME = false
+    ERC20TOKEN = false
+    ERC20IMAGE = false
+  }else{
+    ERC20NAME = 'BURN'
+    ERC20TOKEN = 'Burner'
+    ERC20IMAGE = cypherpunk
+    XDAI_PROVIDER = "http://10.0.0.107:8545"
+    WEB3_PROVIDER = "http://10.0.0.107:8545";
+  }
+
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";

@@ -31,36 +31,48 @@ class SendByScan extends Component {
   }
   stopRecording = () => this.setState({ delay: false });
   onImageLoad = data => {
+    console.log("IMAGE LOAD",data)
     console.log(data)
   }
   handleScan = data => {
+    console.log("DATA")
+    console.log(data)
+    let dataAfterColon
     if(data){
-      let colonAt = data.lastIndexOf(":")
-      if(colonAt>=0) data = data.substring(colonAt+1)
-      let slashAt = data.lastIndexOf("/")
-      if(slashAt>=0) data = data.substring(slashAt+1)
+      dataAfterColon = data
+      let colonAt = dataAfterColon.lastIndexOf(":")
+      if(colonAt>=0) dataAfterColon = dataAfterColon.substring(colonAt+1)
+      if(!dataAfterColon){
+        dataAfterColon = data
+      }
+      let slashAt = dataAfterColon.lastIndexOf("/")
+      if(slashAt>=0) dataAfterColon = dataAfterColon.substring(slashAt+1)
+      if(!dataAfterColon){
+        dataAfterColon = data
+      }
       console.log("SCAN",data)
     }
-
-
-    if (data) {
+    if (dataAfterColon) {
       this.stopRecording();
       this.props.changeView('reader')
       setTimeout(()=>{
         //maybe they just scanned an address?
-        window.location = "/"+data
+        window.location = "/"+dataAfterColon
       },100)
     }
   };
   chooseDeviceId = (a,b) => {
+    console.log("chooseDeviceId ",a,b)
     console.log("choose",a,b)
   }
   handleError = error => {
+    console.log("SCAN ERROR")
     console.error(error);
     this.setState({legacyMode:true})
     this.props.onError(error);
   };
   onClose = () => {
+    console.log("SCAN CLOSE")
     this.stopRecording();
     this.props.goBack();
   };

@@ -41,7 +41,7 @@ export default class RequestFunds extends React.Component {
         url = url+":"+window.location.port
       }
       let qrSize = Math.min(document.documentElement.clientWidth,512)-90
-      let qrValue = url+"/"+this.props.address+";"+amount+";"+encodeURI(message).replaceAll("#","%23")
+      let qrValue = url+"/"+this.props.address+";"+amount+";"+encodeURI(message).replaceAll("#","%23").replaceAll(";","%3B").replaceAll(":","%3A").replaceAll("/","%2F")
 
       return (
         <div>

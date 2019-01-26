@@ -17,8 +17,6 @@ export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recent
       if(view=="receive"){
         extraUp=-10
       }
-      console.log("view",view)
-
       let extraIcon = ""
       if(recentTxs[r].data){
         extraIcon = (

@@ -112,7 +112,7 @@ export default class Advanced extends React.Component {
 
           let productLocation = "/"+vendor+";"+theAmount+";"+theName+";"+correctVendorObject.name+":"
 
-          productLocation = encodeURI(productLocation).replaceAll("#","%23")
+          productLocation = encodeURI(productLocation).replaceAll("#","%23").replaceAll(";","%3B").replaceAll(":","%3A").replaceAll("/","%2F")
 
           let qrValue = url+productLocation
 
