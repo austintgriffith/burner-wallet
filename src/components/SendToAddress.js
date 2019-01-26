@@ -35,7 +35,7 @@ export default class SendToAddress extends React.Component {
         if(parts.length>2){
           initialState.toAddress = parts[0].replace("/","")
           initialState.amount = parts[1]
-          initialState.message = decodeURI(parts[2])
+          initialState.message = decodeURI(parts[2]).replaceAll("%23","#")
         }
         if(parts.length>3){
           initialState.extraMessage = decodeURI(parts[3])

@@ -35,20 +35,22 @@ class SendByScan extends Component {
     console.log(data)
   }
   handleScan = data => {
+    if(data){
+      let colonAt = data.lastIndexOf(":")
+      if(colonAt>=0) data = data.substring(colonAt+1)
+      let slashAt = data.lastIndexOf("/")
+      if(slashAt>=0) data = data.substring(slashAt+1)
+      console.log("SCAN",data)
+    }
+
+
     if (data) {
       this.stopRecording();
       this.props.changeView('reader')
-      if(data.indexOf("http")>=0){
-        setTimeout(()=>{
-          //we are good this is already an http address
-          window.location = data
-        },100)
-      } else {
-        setTimeout(()=>{
-          //maybe they just scanned an address?
-          window.location = "/"+data
-        },100)
-      }
+      setTimeout(()=>{
+        //maybe they just scanned an address?
+        window.location = "/"+data
+      },100)
     }
   };
   chooseDeviceId = (a,b) => {

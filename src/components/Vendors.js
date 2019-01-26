@@ -20,7 +20,7 @@ export default class Advanced extends React.Component {
     this.state = {
       vendor: vendor,
       vendorObject: false,
-      loading: true,
+      loading: false,
       showQR: {}
     }
   }
@@ -34,46 +34,49 @@ export default class Advanced extends React.Component {
   async poll(){
     let id = 0
     if(this.state.vendor){
-      if(!this.state.vendorObject){
-        let vendorData = await this.props.contracts[this.props.ERC20TOKEN].vendors(this.state.vendor).call()
-        console.log("vendorData",vendorData)
-        vendorData.name = this.props.web3.utils.hexToUtf8(vendorData.name)
-        this.setState({vendorObject:vendorData})
-      }
-      console.log("Looking up products for vendor ",this.state.vendor)
-      let products = []//this.state.products
-      if(!products){
-        products = []
-      }
-      let found = true
-      while(found){
-        let nextProduct = await this.props.contracts[this.props.ERC20TOKEN].products(this.state.vendor,id).call()
-        if(nextProduct.exists){
-          products[id++] = nextProduct
-        }else{
-          found=false
-        }
-      }
-      this.setState({products,loading:false})
+     if(!this.state.vendorObject){
+       let vendorData = await this.props.contracts[this.props.ERC20TOKEN].vendors(this.state.vendor).call()
+       console.log("vendorData",vendorData)
+       vendorData.name = this.props.web3.utils.hexToUtf8(vendorData.name)
+       this.setState({vendorObject:vendorData})
+     }
+     console.log("Looking up products for vendor ",this.state.vendor)
+     let products = []//this.state.products
+     if(!products){
+       products = []
+     }
+     let found = true
+     while(found){
+       let nextProduct = await this.props.contracts[this.props.ERC20TOKEN].products(this.state.vendor,id).call()
+       if(nextProduct.exists){
+         products[id++] = nextProduct
+       }else{
+         found=false
+       }
+     }
+     this.setState({products,loading:false})
     }else{
 
-      this.setState({loading:false})
+     this.setState({loading:false})
     }
   }
   render(){
-    let {mainStyle,contracts,tx,web3,vendors,dollarDisplay} = this.props
+    let {mainStyle,contracts,tx,web3,vendors,dollarDisplay,vendorObject} = this.props
 
-    let {vendor,vendorObject} = this.state
+    let {vendor} = this.state
 
     let url = window.location.protocol+"//"+window.location.hostname
     if(window.location.port&&window.location.port!=80&&window.location.port!=443){
       url = url+":"+window.location.port
     }
 
+    let correctVendorObject = this.state.vendorObject
+    if(!correctVendorObject) correctVendorObject = vendorObject
+
     let products = []
     let vendorDisplay = []
     if(vendor){
-      if(vendorObject){
+      if(correctVendorObject){
         products.push(
           <div className="nav-card card">
             <div className="row">
@@ -84,7 +87,7 @@ export default class Advanced extends React.Component {
 
               <div style={{textAlign:"center",width:"100%",fontSize:22}}>
                 <Scaler config={{startZoomAt:500,origin:"80% 50%",adjustedZoom:1}}>
-                  {vendorObject.name}
+                  {correctVendorObject.name}
                 </Scaler>
               </div>
 
@@ -95,17 +98,21 @@ export default class Advanced extends React.Component {
 
       let qrSize = Math.min(document.documentElement.clientWidth,512)-90
 
-      for(let p in this.state.products){
-        let prod = this.state.products[p]
+      let correctProducts = this.state.products
+      if(!correctProducts) correctProducts=this.props.products
+
+      for(let p in correctProducts){
+        let prod = correctProducts[p]
         if(prod.exists&&prod.isAvailable){
 
           let extraQR = ""
 
-
           let theName = web3.utils.hexToUtf8(prod.name)
           let theAmount = web3.utils.fromWei(prod.cost,'ether')
 
-          let productLocation = "/"+vendor+";"+theAmount+";"+theName+";"+vendorObject.name+":"
+          let productLocation = "/"+vendor+";"+theAmount+";"+theName+";"+correctVendorObject.name+":"
+
+          productLocation = encodeURI(productLocation).replaceAll("#","%23")
 
           let qrValue = url+productLocation
 
@@ -120,7 +127,7 @@ export default class Advanced extends React.Component {
               <div className="main-card card w-100" style={{paddingTop:40}} onClick={toggleQR}>
                 <div className="content qr row">
                     <QRCode value={qrValue} size={qrSize}/>
-                    <div style={{width:'100%',textAlign:'center'}}><div>{vendorObject.name}</div>  {theName}:   ${dollarDisplay(theAmount)}</div>
+                    <div style={{width:'100%',textAlign:'center'}}><div>{correctVendorObject.name}</div>  {theName}:   ${dollarDisplay(theAmount)}</div>
                 </div>
               </div>
             )
@@ -167,15 +174,17 @@ export default class Advanced extends React.Component {
 
 
       let qrValue = url+"/vendors;"+this.state.vendor
-
-      products.push(
-        <div className="main-card card w-100" style={{paddingTop:40}}>
-          <div className="content qr row">
-              <QRCode value={qrValue} size={qrSize}/>
-              <div style={{width:'100%',textAlign:'center'}}>{vendorObject.name}</div>
+      if(vendorObject){
+        products.push(
+          <div className="main-card card w-100" style={{paddingTop:40}}>
+            <div className="content qr row">
+                <QRCode value={qrValue} size={qrSize}/>
+                <div style={{width:'100%',textAlign:'center'}}>{vendorObject.name}</div>
+            </div>
           </div>
-        </div>
-      )
+        )
+      }
+
     }else{
       for(let v in vendors){
         if(vendors[v].isAllowed&&vendors[v].isActive){
@@ -183,7 +192,7 @@ export default class Advanced extends React.Component {
           let vendorButton = (
             <button disabled={!vendors[v].isActive} className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
                 this.setState({loading:true,vendor:vendors[v].wallet,vendorObject:vendors[v]},()=>{
-                  this.poll()
+                   this.poll()
                 })
             }}>
               <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>

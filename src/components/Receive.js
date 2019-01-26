@@ -3,6 +3,7 @@ import Ruler from "./Ruler";
 import Balance from "./Balance";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
+import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
 const QRCode = require('qrcode.react');
@@ -15,7 +16,7 @@ export default class Receive extends React.Component {
     }
   }
   render() {
-    let {buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay} = this.props
+    let {view,buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay,account} = this.props
 
     let url = window.location.protocol+"//"+window.location.hostname
     if(window.location.port&&window.location.port!=80&&window.location.port!=443){
@@ -40,6 +41,17 @@ export default class Receive extends React.Component {
               </div>
             </div>
           </CopyToClipboard>
+          <RecentTransactions
+            view={view}
+            max={5}
+            buttonStyle={buttonStyle}
+            ERC20TOKEN={ERC20TOKEN}
+            transactionsByAddress={ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
+            changeView={this.changeView}
+            address={account}
+            block={this.props.block}
+            recentTxs={ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
+          />
         </div>
         <div name="theVeryBottom" className="text-center bottom-text">
           <span style={{padding:10}}>

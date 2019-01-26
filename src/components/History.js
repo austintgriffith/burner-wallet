@@ -30,7 +30,7 @@ export default class History extends React.Component {
     }
   }
   componentDidMount(){
-    this.nameInput.focus();
+    //this.nameInput.focus();
     interval = setInterval(()=>{
       this.poll()
     },250)
@@ -102,7 +102,7 @@ export default class History extends React.Component {
 
   }
   scrollToBottom(){
-    scroller.scrollTo('theVeryBottom', {
+    scroller.scrollTo('sendForm', {
       duration: 1000,
       delay: 100,
       smooth: "easeInOutCubic",
@@ -479,6 +479,7 @@ export default class History extends React.Component {
 
         <Ruler />
 
+        <div name="sendForm"></div>
         {sendForm}
 
 
