@@ -35,7 +35,7 @@ export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balan
         ${dollarDisplay(total)}
       </div>
     )
-    if(view=="main"){
+    if(view=="main" || view=="exchange"){
       blockieDisplay = (
         <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank" style={{color:"#FFFFFF"}}>
           <Blockie
