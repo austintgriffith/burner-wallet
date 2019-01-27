@@ -1,95 +1,95 @@
 {
   "en": {
     "app_name": "Burner Wallet",
-    "about": "About",
-    "code": "Code",
-    "burn": "Burn",
-    "show": "Show",
-    "create": "Create",
-    "advance": "Advanced",
-    "loading": "Loading...",
-    "cancel": "Cancel",
-    "amount": "Amount",
-    "send": "Send",
+    "about": "Sobre nostros",
+    "code": "Codigo",
+    "burn": "Quemar",
+    "show": "Mostrar",
+    "create": "Crear",
+    "advance": "Advancedo",
+    "loading": "Cargando...",
+    "cancel": "Cancelar",
+    "amount": "Monto",
+    "send": "Enviar",
     "main_card": {
-      "receive": "Receive",
-      "send": "Send",
-      "share": "Share",
+      "receive": "Receibir",
+      "send": "Enviar",
+      "share": "Compartir",
       "link": "Link",
-      "vendors": "Vendors"
+      "vendors": "Vendedores"
     },
     "send_with_link": {
-      "error": "Please enter a valid amount"
+      "error": "Por favor ingrese un monto valido"
     },
     "share": {
-      "copied": "URL copied to clipboard"
+      "copied": "URL copiado al portapapeles"
     },
     "vendor": {
-      "updating": "Updating",
-      "open": "Open",
-      "closed": "Closed",
-      "add_product": "Add Product",
-      "adding": "Adding"
+      "updating": "Actualizando",
+      "open": "Abrir",
+      "closed": "Cerrar",
+      "add_product": "Añadir producto",
+      "adding": "Agregando"
     },
     "withdraw_from_private": {
-      "from_address": "Withdraw from Address",
-      "amount": "Withdraw Amount",
-      "withdraw": "Withdraw",
-      "error": "Please enter a valid amount to withdraw"
+      "from_address": "Retirar de cuenta",
+      "amount": "Retirar monto",
+      "withdraw": "Retirar",
+      "error": "Por favor ingrese un monto valido"
     },
     "send_to_address": {
-      "to_address": "To Address",
-      "send_amount": "Send Amount",
-      "notice": "You can only send ",
-      "error": "Please enter a valid address or ENS."
+      "to_address": "Destinatario",
+      "send_amount": "Enviar monto",
+      "notice": "Solo puede enviar ",
+      "error": "Por favor ingresar cuenta valida o ENS."
     },
     "send_by_scan": {
-      "try_again": "Please try again",
-      "take_photo": "Take Photo",
-      "capture": "Capture QR Code:"
+      "try_again": "Por favor intenta de nuevo",
+      "take_photo": "Tomar foto",
+      "capture": "Capturar codigo QR:"
     },
     "more_buttons": {
-      "request": "Request",
-      "exchange": "Exchange"
+      "request": "Solicitar",
+      "exchange": "Intercambio"
     },
     "receive": {
-      "address_copied": "Address copied to clipboard"
+      "address_copied": "Cuenta copiada"
     },
     "history": {
-      "metamask_error": "Encrypted messaging not available with MetaMask",
-      "wave": "Wave"
+      "metamask_error": "Mensajes encriptados no compatibles con Metamask",
+      "wave": "Saludar"
     },
     "exchange": {
-      "withdrawal_explanation": "Only vendors can withdraw more than they deposited",
-      "funds_transferred": "Funds Transferred!",
-      "funds_bridged": "Funds Bridged",
-      "insufficient_funds": "Insufficient funds",
-      "invalid_to_address": "Please enter a valid to address",
-      "invalid_to_amount": "Please enter a valid to amount",
-      "calculate_gas_price": "Calculating best gas price...",
-      "go_to_etherscan": "go to etherscan?",
+      "withdrawal_explanation": "Solo vendedores pueden retirar mas fondos de lo depositado",
+      "funds_transferred": "Fondos transferidos!",
+      "funds_bridged": "Fundos Entablados",
+      "insufficient_funds": "Fondos insufcientes",
+      "invalid_to_address": "Por favor ingresa una cuenta valida",
+      "invalid_to_amount": "Por favor ingresa un monto valido",
+      "calculate_gas_price": "Calculando el mejor precio de gas...",
+      "go_to_etherscan": "Ir a Etherscan?",
       "idk": "idk where to go from here? something that explains the bridge?"
     },
     "request_funds": {
-      "item_message": "Item or Message"
+      "item_message": "Item o Mensaje"
     },
     "admin": {
-      "add_admin": "Add Admin",
-      "adding": "Adding",
-      "add_vendor": "Add Vendor"
+      "add_admin": "Agregar Admin",
+      "adding": "Agregando",
+      "add_vendor": "Agregar vendedor"
     },
     "advanced": {
-      "to_qr": "To QR"
+      "to_qr": "A QR"
     },
     "balance_display": {
-      "waiting_for_api": "Waiting for API",
-      "no_currency_api": "No Currency API Data Available"
+      "waiting_for_api": "Esperando por API",
+      "no_currency_api": "No hay datos de API de conversion de divisa disponible"
     },
     "burn_wallet": {
-      "burn_private_key_question": "Are you sure you want to burn this private key?",
-      "disclaimer": "Don't do it! You will lose all funds!",
-      "cancel": "No, Cancel",
-      "burn": "Burn It!"
+      "burn_private_key_question": "Estas seguro que quieres quemar esta llave privada?",
+      "disclaimer": "No lo hagas! Perderas todos tus fondos!",
+      "cancel": "No, Cancelar",
+      "burn": "Quemalo!"
     }
   }
 }
