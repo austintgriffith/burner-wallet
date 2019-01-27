@@ -23,7 +23,7 @@ const colStyle = {
   whiteSpace:"nowrap"
 }
 
-const dendaiToxDaiEstimatedTime = 12000
+const dendaiToxDaiEstimatedTime = 7000
 const xdaiToDaiEstimatedTime = 160000
 const daiToxDaiEstimatedTime = 330000
 
@@ -1052,7 +1052,7 @@ export default class Exchange extends React.Component {
                   let paramsObject = {
                     from: this.state.daiAddress,
                     to: toDaiBridgeAccount,
-                    value: this.state.amount,
+                    value: this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether'),
                     gas: 120000,
                     gasPrice: Math.round(1.1 * 1000000000)
                   }
