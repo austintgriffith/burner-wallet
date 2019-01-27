@@ -20,8 +20,8 @@ export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balan
   let blockieDisplay
   if(typeof total == "undefined" || Number.isNaN(total)){
     moneyDisplay = (
-      <div style={{opacity:0.2}}>
-        loading...
+      <div style={{opacity:0.1,fontSize:18}}>
+        connecting...
       </div>
     )
     blockieDisplay = (
@@ -84,7 +84,7 @@ export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balan
   )
 
   let topLeft = (
-    <div style={{zIndex:-2,position:"absolute",left:14,top:4,zIndex:1,cursor:"pointer"}}  >
+    <div style={{zIndex:-2,position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}}  >
       {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
     </div>
   )

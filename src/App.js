@@ -76,7 +76,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://0.0.0.0:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(false){
+  if(true){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
@@ -364,6 +364,9 @@ class App extends Component {
 
       this.setState({gasBalance:gasBalance,balance:tokenBalance,isAdmin:isAdmin,isVendor:isVendor,hasUpdateOnce:true,vendorObject,products})
     }
+    if(!ERC20TOKEN){
+      this.setState({hasUpdateOnce:true})
+    }
 
     if(this.state.account){
       let ethBalance = 0.00
@@ -404,9 +407,7 @@ class App extends Component {
   async dealWithPossibleNewPrivateKey(){
     //this happens as page load and you need to wait until
     if(this.state && this.state.hasUpdateOnce){
-      console.log("DEAL WITH PK AND BALANCE IS",this.state.balance,this.state.xdaiBalance,this.state.ethBalance,this.state.daiBalance)
       if(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 ){
-        console.log("Can't import private key, so ask to withdraw")
         this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
           this.changeView('withdraw_from_private')
         })
@@ -1515,7 +1516,7 @@ render() {
 
                   <NavCard title={"Sending..."} goBack={this.goBack.bind(this)}/>
                 </div>
-              <Loader />
+              <Loader mainStyle={mainStyle}/>
               </div>
             );
             case 'reader':
@@ -1525,7 +1526,7 @@ render() {
 
                   <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)}/>
                 </div>
-                <Loader />
+                <Loader mainStyle={mainStyle}/>
               </div>
             );
             case 'claimer':
@@ -1535,7 +1536,7 @@ render() {
 
                   <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)}/>
                 </div>
-              <Loader />
+              <Loader mainStyle={mainStyle}/>
               </div>
             );
             default:
@@ -1547,7 +1548,7 @@ render() {
         })()}
         { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
           <div>
-            <Loader />
+            <Loader mainStyle={mainStyle}/>
           </div>
         }
         { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }

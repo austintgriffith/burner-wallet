@@ -1042,19 +1042,56 @@ export default class Exchange extends React.Component {
                   }
                 })
                 console.log("Withdrawing to ",toDaiBridgeAccount)
-                this.props.send(toDaiBridgeAccount, this.state.amount, 120000, (result) => {
-                  console.log("RESUTL!!!!",result)
-                  if(result && result.transactionHash){
-                    this.setState({
-                      amount:"",
-                      loaderBarColor:"#4ab3f5",
-                      loaderBarStatusText:"Waiting for bridge...",
-                      loaderBarClick:()=>{
-                        alert(i18n.t('exchange.idk'))
-                      }
-                    })
+
+
+
+
+                if(this.state.xdaiMetaAccount){
+                  //send funds using metaaccount on xdai
+
+                  let paramsObject = {
+                    from: this.state.daiAddress,
+                    to: toDaiBridgeAccount,
+                    value: this.state.amount,
+                    gas: 120000,
+                    gasPrice: Math.round(1.1 * 1000000000)
                   }
-                })
+                  console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+                  console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+                  this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
+                    console.log("========= >>> SIGNED",signed)
+                      this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                        console.log("META RECEIPT",receipt)
+                        this.setState({
+                          amount:"",
+                          loaderBarColor:"#4ab3f5",
+                          loaderBarStatusText:"Waiting for bridge...",
+                          loaderBarClick:()=>{
+                            alert(i18n.t('exchange.idk'))
+                          }
+                        })
+                      }).on('error', (err)=>{
+                        console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                      }).then(console.log)
+                  });
+
+                }else{
+                  this.props.send(toDaiBridgeAccount, this.state.amount, 120000, (result) => {
+                    console.log("RESUTL!!!!",result)
+                    if(result && result.transactionHash){
+                      this.setState({
+                        amount:"",
+                        loaderBarColor:"#4ab3f5",
+                        loaderBarStatusText:"Waiting for bridge...",
+                        loaderBarClick:()=>{
+                          alert(i18n.t('exchange.idk'))
+                        }
+                      })
+                    }
+                  })
+                }
+
               }}>
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-down" /> Send
