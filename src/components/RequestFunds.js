@@ -83,7 +83,7 @@ export default class RequestFunds extends React.Component {
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
                 </div>
-                <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
+                <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
             </div>
