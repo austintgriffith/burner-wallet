@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import { fr, en } from "./locales";
+import { fr, en, es } from "./locales";
 
 const i18n = i18next;
 const options = {
@@ -11,11 +11,14 @@ const options = {
   debug: true,
 
   resources: {
-    pt: {
+    fr: {
       common: fr.fr
     },
     en: {
       common: en.en
+    },
+    es: {
+      common: es.es
     }
   },
 
@@ -34,8 +37,5 @@ const options = {
 };
 
 i18next.use(LanguageDetector).init(options);
-i18next.changeLanguage("en", (err, t) => {
-  if (err) return console.log("Something went wrong during loading");
-});
 
 export default i18n;
