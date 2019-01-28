@@ -44,7 +44,7 @@
     "react-scripts": "^2.1.3",
     "react-scroll": "^1.7.10",
     "s3": "^4.4.0",
-    "web3": "^1.0.0-beta.33"
+    "web3": "1.0.0-beta.33"
   },
   "scripts": {
     "start": "react-scripts start",
