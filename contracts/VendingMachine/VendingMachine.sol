@@ -202,7 +202,7 @@ contract VendingMachine is AdminRole, WhitelistedRole {
   }
 
   function addVendor(address _vendorAddress, bytes32 _name) public onlyAdmin {
-    require(!vendors[_vendorAddress].exists, "This address already is a vendor.");
+    require(!vendors[_vendorAddress].exists, "VendingMachine::addVendor This address already is a vendor.");
 
     vendors[_vendorAddress] = Vendor({
       name: _name,
@@ -229,7 +229,7 @@ contract VendingMachine is AdminRole, WhitelistedRole {
   }
 
   function _updateVendor(address _vendorAddress, bytes32 _name, bool _isActive, bool _isAllowed) private {
-    require(vendors[_vendorAddress].exists, "Cannot update a non-existent vendor");
+    require(vendors[_vendorAddress].exists, "VendingMachine::_updateVendor Cannot update a non-existent vendor");
 
     vendors[_vendorAddress].name = _name;
     vendors[_vendorAddress].isActive = _isActive;
