@@ -117,24 +117,24 @@ module.exports = {
 
 
         //make my metamask user an admin
-        result = await clevis("contract","updateAdmin","Burner","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb","true")
-        printTxResult(result)
-
-
-
-        result = await clevis("send","0.10","0","0x34aa3f359a9d614239015126635ce7732c18fdf3")///<<<-------- change this to your metamask accounts
-        printTxResult(result)
-        result = await clevis("contract","updateAdmin","Burner","0","0x34aa3f359a9d614239015126635ce7732c18fdf3","true")
-        printTxResult(result)
-        result = await clevis("contract","mint","Burner","0","0x34aa3f359a9d614239015126635ce7732c18fdf3","10000000000000000000")
-        printTxResult(result)
-
-
-
-        result = await clevis("contract","updateAdmin","BuffiDai","0","0x34aa3f359a9d614239015126635ce7732c18fdf3","true")
-        printTxResult(result)
-        result = await clevis("contract","mint","BuffiDai","0","0x34aa3f359a9d614239015126635ce7732c18fdf3","10000000000000000000")
-        printTxResult(result)
+        // result = await clevis("contract","updateAdmin","Burner","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb","true")
+        // printTxResult(result)
+        //
+        //
+        //
+        // result = await clevis("send","0.10","0","0x34aa3f359a9d614239015126635ce7732c18fdf3")///<<<-------- change this to your metamask accounts
+        // printTxResult(result)
+        // result = await clevis("contract","updateAdmin","Burner","0","0x34aa3f359a9d614239015126635ce7732c18fdf3","true")
+        // printTxResult(result)
+        // result = await clevis("contract","mint","Burner","0","0x34aa3f359a9d614239015126635ce7732c18fdf3","10000000000000000000")
+        // printTxResult(result)
+        //
+        //
+        //
+        // result = await clevis("contract","updateAdmin","BuffiDai","0","0x34aa3f359a9d614239015126635ce7732c18fdf3","true")
+        // printTxResult(result)
+        // result = await clevis("contract","mint","BuffiDai","0","0x34aa3f359a9d614239015126635ce7732c18fdf3","10000000000000000000")
+        // printTxResult(result)
 
 
 
@@ -144,46 +144,46 @@ module.exports = {
           result = await clevis("send",""+(0.05*a),"2","0x0ca60587993c418904728f70bec0b164b55a8fb0")///<<<-------- change this to your metamask accounts
         }*/
 
-        result = await clevis("send","1.99","0","0x548395928fee26be5ccc6de0c3a3411b416570a8")
-        printTxResult(result)
-        result = await clevis("send","0.10","0","0xfe49026946f11cb51c2d1b273346f34c07e5ab69")
-        printTxResult(result)
-        result = await clevis("send","0.10","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")
-        printTxResult(result)
-
-        let buffiDaiContractAddress = fs.readFileSync(clevisConfig.CONTRACTS_FOLDER + "/BuffiDai/BuffiDai.address").toString().trim()
-        result = await clevis("send","5","0",buffiDaiContractAddress)
-        printTxResult(result)
-
-        result = await clevis("contract","mint","Burner","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb","1000000000000000000")
-        printTxResult(result)
-
-        result = await clevis("contract","mint","Burner","0","0xfe49026946f11cb51c2d1b273346f34c07e5ab69","1000000000000000000")
-        printTxResult(result)
-
-
-        result = await clevis("send","0.10","0","0xa6b068b1ae5f781aabba9ba7a6c67491e4dd5e8a")
-        printTxResult(result)
-        result = await clevis("contract","mint","Burner","0","0xa6b068b1ae5f781aabba9ba7a6c67491e4dd5e8a","1000000000000000000")
-        printTxResult(result)
-
-
-        result = await clevis("send","0.10","0","0x6497e454db92af76df6a917435d0a8ecbe4e9903")
-        printTxResult(result)
-        result = await clevis("contract","mint","Burner","0","0x6497e454db92af76df6a917435d0a8ecbe4e9903","1000000000000000000")
-        printTxResult(result)
-
-
-        result = await clevis("send","0.10","0","0x53a910a6f8b5bded15cbdacc19f186027f84a36f")
-        printTxResult(result)
-        result = await clevis("contract","mint","Burner","0","0x53a910a6f8b5bded15cbdacc19f186027f84a36f","1000000000000000000")
-        printTxResult(result)
-
-
-        result = await clevis("send","0.10","0","0x021952bf46e3a144652544a9ad9dd9272c2d5e9a")
-        printTxResult(result)
-        result = await clevis("contract","mint","Burner","0","0x021952bf46e3a144652544a9ad9dd9272c2d5e9a","1000000000000000000")
-        printTxResult(result)
+        // result = await clevis("send","1.99","0","0x548395928fee26be5ccc6de0c3a3411b416570a8")
+        // printTxResult(result)
+        // result = await clevis("send","0.10","0","0xfe49026946f11cb51c2d1b273346f34c07e5ab69")
+        // printTxResult(result)
+        // result = await clevis("send","0.10","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")
+        // printTxResult(result)
+        //
+        // let buffiDaiContractAddress = fs.readFileSync(clevisConfig.CONTRACTS_FOLDER + "/BuffiDai/BuffiDai.address").toString().trim()
+        // result = await clevis("send","5","0",buffiDaiContractAddress)
+        // printTxResult(result)
+        //
+        // result = await clevis("contract","mint","Burner","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb","1000000000000000000")
+        // printTxResult(result)
+        //
+        // result = await clevis("contract","mint","Burner","0","0xfe49026946f11cb51c2d1b273346f34c07e5ab69","1000000000000000000")
+        // printTxResult(result)
+        //
+        //
+        // result = await clevis("send","0.10","0","0xa6b068b1ae5f781aabba9ba7a6c67491e4dd5e8a")
+        // printTxResult(result)
+        // result = await clevis("contract","mint","Burner","0","0xa6b068b1ae5f781aabba9ba7a6c67491e4dd5e8a","1000000000000000000")
+        // printTxResult(result)
+        //
+        //
+        // result = await clevis("send","0.10","0","0x6497e454db92af76df6a917435d0a8ecbe4e9903")
+        // printTxResult(result)
+        // result = await clevis("contract","mint","Burner","0","0x6497e454db92af76df6a917435d0a8ecbe4e9903","1000000000000000000")
+        // printTxResult(result)
+        //
+        //
+        // result = await clevis("send","0.10","0","0x53a910a6f8b5bded15cbdacc19f186027f84a36f")
+        // printTxResult(result)
+        // result = await clevis("contract","mint","Burner","0","0x53a910a6f8b5bded15cbdacc19f186027f84a36f","1000000000000000000")
+        // printTxResult(result)
+        //
+        //
+        // result = await clevis("send","0.10","0","0x021952bf46e3a144652544a9ad9dd9272c2d5e9a")
+        // printTxResult(result)
+        // result = await clevis("contract","mint","Burner","0","0x021952bf46e3a144652544a9ad9dd9272c2d5e9a","1000000000000000000")
+        // printTxResult(result)
 
 
 

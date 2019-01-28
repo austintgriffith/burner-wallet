@@ -157,6 +157,10 @@ contract VendingMachine is AdminRole, WhitelistedRole {
     emit Withdraw(msg.sender, amount);
   }
 
+  function adminMint(address to, uint256 amount) public onlyAdmin {
+    tokenContract.mint(to, amount);
+  }
+
   function sweep(uint256 amount) public onlySuperAdmin {
       msg.sender.transfer(amount);
   }
