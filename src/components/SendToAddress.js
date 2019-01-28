@@ -142,6 +142,7 @@ export default class SendToAddress extends React.Component {
       console.log("ERC20TOKEN",ERC20TOKEN,"this.props.balance",parseFloat(this.props.balance),"amount",parseFloat(amount))
 
       if(!ERC20TOKEN && parseFloat(this.props.balance) <= 0){
+        console.log("No funds!?!",ERC20TOKEN,parseFloat(this.props.balance))
         this.props.changeAlert({type: 'warning', message: "No Funds."})
       }else if(!ERC20TOKEN && parseFloat(this.props.balance)-0.0001<=parseFloat(amount)){
         let extraHint = ""
