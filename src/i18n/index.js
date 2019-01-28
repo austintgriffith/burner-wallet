@@ -37,5 +37,8 @@ const options = {
 };
 
 i18next.use(LanguageDetector).init(options);
+i18next.changeLanguage(navigator.language, (err, t) => {
+  if (err) return console.log("Something went wrong during loading");
+});
 
 export default i18n;

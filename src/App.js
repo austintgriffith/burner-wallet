@@ -66,7 +66,7 @@ let mainStyle = {
   mainColor:"#F76B1C",
 }
 
-let title = "Burner Wallet"
+let title = i18n.t('app_name')
 let titleImage = (
   <span style={{paddingRight:20,paddingLeft:16}}><i className="fas fa-fire" /></span>
 )
@@ -1075,7 +1075,7 @@ render() {
 
                   <NavCard title={(
                     <div>
-                      History & Chat
+                      {i18n.t('history_chat')}
                     </div>
                   )} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
@@ -1167,7 +1167,7 @@ render() {
                 </div>
                 <Bottom
                   icon={"wrench"}
-                  text={"Advanced"}
+                  text={i18n.t('advance_title')}
                   action={()=>{
                     this.changeView('advanced')
                   }}
@@ -1179,7 +1179,7 @@ render() {
               <div>
                 <div className="main-card card w-100" style={{zIndex:1}}>
 
-                  <NavCard title={'Advanced'} goBack={this.goBack.bind(this)}/>
+                  <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
                   <Advanced
                     buttonStyle={buttonStyle}
                     address={account}
@@ -1215,7 +1215,7 @@ render() {
               return (
                 <div>
                   <div className="send-to-address card w-100" style={{zIndex:1}}>
-                    <NavCard title={'Withdraw'} goBack={this.goBack.bind(this)}/>
+                    <NavCard title={i18n.t('withdraw')} goBack={this.goBack.bind(this)}/>
                     {defaultBalanceDisplay}
                     <WithdrawFromPrivate
                       ERC20TOKEN={ERC20TOKEN}
@@ -1244,7 +1244,7 @@ render() {
             return (
               <div>
                 <div className="send-to-address card w-100" style={{zIndex:1}}>
-                  <NavCard title={'Send to Address'} goBack={this.goBack.bind(this)}/>
+                  <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <SendToAddress
                     ensLookup={this.ensLookup.bind(this)}
@@ -1261,7 +1261,7 @@ render() {
                   />
                 </div>
                 <Bottom
-                  text={"cancel"}
+                  text={i18n.t('cancel')}
                   action={this.goBack.bind(this)}
                 />
               </div>
@@ -1271,7 +1271,7 @@ render() {
               <div>
                 <div className="main-card card w-100" style={{zIndex:1}}>
 
-                  <NavCard title={'Receive'} goBack={this.goBack.bind(this)}/>
+                  <NavCard title={i18n.t('receive_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <Receive
                     view={this.state.view}
@@ -1303,7 +1303,7 @@ render() {
               <div>
                 <div className="main-card card w-100" style={{zIndex:1}}>
 
-                  <NavCard title={'Request Funds'} goBack={this.goBack.bind(this)}/>
+                  <NavCard title={i18n.t('request_funds_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <RequestFunds
                     mainStyle={mainStyle}
@@ -1399,7 +1399,7 @@ render() {
                   />
                 </div>
                 <Bottom
-                  text={"cancel"}
+                  text={i18n.t('cancel')}
                   action={this.goBack.bind(this)}
                 />
               </div>
@@ -1433,7 +1433,7 @@ render() {
                   />
                 </div>
                 <Bottom
-                  text={"cancel"}
+                  text={i18n.t('cancel')}
                   action={this.goBack.bind(this)}
                 />
               </div>
@@ -1443,7 +1443,7 @@ render() {
               <div>
                 <div className="main-card card w-100" style={{zIndex:1}}>
 
-                  <NavCard title={"Exchange"} goBack={this.goBack.bind(this)}/>
+                  <NavCard title={i18n.t('exchange_title')} goBack={this.goBack.bind(this)}/>
                   <Exchange
                     eth={eth}
                     dai={dai}
@@ -1485,7 +1485,7 @@ render() {
               <div>
                 <div className="main-card card w-100" style={{zIndex:1}}>
 
-                  <NavCard title={'Vendors'} goBack={this.goBack.bind(this)}/>
+                  <NavCard title={i18n.t('vendors')} goBack={this.goBack.bind(this)}/>
                   <Vendors
                     ERC20TOKEN={ERC20TOKEN}
                     products={this.state.products}
