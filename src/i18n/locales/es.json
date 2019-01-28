@@ -6,11 +6,21 @@
     "burn": "Quemar",
     "show": "Mostrar",
     "create": "Crear",
+    "receive_title": "Recibir",
+    "send_to_address_title": "Enviar a la dirección", 
     "advance": "Avanzado",
+    "advance_title": "Avanzado", 
     "loading": "Cargando...",
     "cancel": "Cancelar",
+    "done": "Listo", 
+    "exchange_title": "Intercambiar", 
     "amount": "Monto",
     "send": "Enviar",
+    "withdraw": "Retirar", 
+    "history_chat": "Historia y Conversaciones", 
+    "request_funds_title": "Solicitar Fondos", 
+    "request": "Solicitar", 
+    "vendors": "Vendedores", 
     "main_card": {
       "receive": "Recibir",
       "send": "Enviar",
@@ -32,7 +42,7 @@
       "adding": "Agregando"
     },
     "withdraw_from_private": {
-      "from_address": "Retirar de cuenta",
+      "from_address": "Retirar de la dirección",
       "amount": "Retirar monto",
       "withdraw": "Retirar",
       "error": "Por favor ingrese un monto válido."
@@ -41,7 +51,7 @@
       "to_address": "Destinatario",
       "send_amount": "Enviar monto",
       "notice": "Sólo se puede enviar ",
-      "error": "Por favor ingresar cuenta valida o ENS."
+      "error": "Por favor ingresar dirección valida o ENS."
     },
     "send_by_scan": {
       "try_again": "Por favor intenta de nuevo",
@@ -53,7 +63,7 @@
       "exchange": "Intercambio"
     },
     "receive": {
-      "address_copied": "Cuenta copiada"
+      "address_copied": "Dirección copiada"
     },
     "history": {
       "metamask_error": "Los mensajes encriptados no son compatibles con Metamask",
@@ -62,16 +72,18 @@
     "exchange": {
       "withdrawal_explanation": "Solo los vendedores pueden retirar más fondos de lo depositado",
       "funds_transferred": "Fondos transferidos!",
-      "funds_bridged": "Fondos intercambiados",
+      "funds_bridged": "Fondos intercambiados!",
       "insufficient_funds": "Fondos insufcientes",
-      "invalid_to_address": "Por favor ingresa una cuenta válida",
+      "invalid_to_address": "Por favor ingresa una dirección válida",
       "invalid_to_amount": "Por favor ingresa un monto válido",
       "calculate_gas_price": "Calculando el mejor precio del gas...",
       "go_to_etherscan": "Ir a Etherscan?",
       "idk": "No sé qué hacer? Cómo funciona el intercambio?"
     },
     "request_funds": {
-      "item_message": "Artículo o Mensaje"
+      "item_message": "Artículo o Mensaje",
+      "button": "Solicitar", 
+      "amount": "Solicitar Cantidad"
     },
     "admin": {
       "add_admin": "Agregar Administrador",
