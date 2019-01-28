@@ -1,1 +1,1 @@
-module.exports = ['0x359C64A7fbcdccb35E2245737729C18ee315Dd62']
+module.exports = [require("fs").readFileSync("./contracts/ERC20Vendable/ERC20Vendable.address").toString().trim()]

@@ -18,9 +18,6 @@ describe('VendingMachine', function() {
     await clevis('compile', 'ERC20Vendable')
     let erc20Tx = await clevis('deploy', 'ERC20Vendable', '0')
 
-    //Hacky as fuck due to how clevis uses constructor args
-    fs.writeFileSync(`${process.cwd()}/contracts/VendingMachine/arguments.js`, `module.exports = ['${erc20Tx.contractAddress}']`)
-
     await clevis('compile', 'VendingMachine')
     let vendTx = await clevis('deploy', 'VendingMachine', '0')
     machineAddress = vendTx.contractAddress
