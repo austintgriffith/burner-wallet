@@ -229,6 +229,7 @@ module.exports = {
   fast:()=>{
     describe(bigHeader('DEPLOY'), function() {
       it('should deploy all contracts', async function() {
+        this.timeout(6000000)
         let result = await clevis("test","deploy")
         assert(result==0,"deploy ERRORS")
       });
