@@ -62,7 +62,7 @@
     "exchange": {
       "withdrawal_explanation": "Only vendors can withdraw more than they deposited",
       "funds_transferred": "Funds Transferred!",
-      "funds_bridged": "Funds Bridged",
+      "funds_bridged": "Funds Exchanged",
       "insufficient_funds": "Insufficient funds",
       "invalid_to_address": "Please enter a valid to address",
       "invalid_to_amount": "Please enter a valid to amount",

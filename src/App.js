@@ -59,8 +59,8 @@ let HARDCODEVIEW// = "exchange"
 let mainStyle = {
   width:"100%",
   height:"100%",
-  backgroundImage:"linear-gradient(#404040, #111111)",
-  backgroundColor:"#111111",
+  backgroundImage:"linear-gradient(#292929, #191919)",
+  backgroundColor:"#191919",
   hotColor:"#F69E4D",
   mainColorAlt:"#fa7d36",
   mainColor:"#F76B1C",
@@ -246,7 +246,6 @@ class App extends Component {
     this.setState(update)
   }
   componentDidMount(){
-
     document.body.style.backgroundColor = mainStyle.backgroundColor
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
