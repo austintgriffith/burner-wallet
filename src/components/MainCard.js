@@ -17,7 +17,12 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
 
   let pushDownWithWhiteSpace = 0
   if(y){
-    pushDownWithWhiteSpace = y-370
+    if(ERC20TOKEN){
+      pushDownWithWhiteSpace = y-443
+    }else{
+      pushDownWithWhiteSpace = y-370
+    }
+
   }
   if(pushDownWithWhiteSpace>230){
     pushDownWithWhiteSpace=230
