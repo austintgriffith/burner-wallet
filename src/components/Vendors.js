@@ -110,9 +110,9 @@ export default class Advanced extends React.Component {
           let theName = web3.utils.hexToUtf8(prod.name)
           let theAmount = web3.utils.fromWei(prod.cost,'ether')
 
-          let productLocation = "/"+vendor+";"+theAmount+";"+theName+";"+correctVendorObject.name+":"
+          let productLocation = "/"+vendor+";"+theAmount+";"+theName.replaceAll("#","%23").replaceAll(";","%3B").replaceAll(":","%3A").replaceAll("/","%2F")+";"+correctVendorObject.name+":"
 
-          productLocation = encodeURI(productLocation).replaceAll("#","%23").replaceAll(";","%3B").replaceAll(":","%3A").replaceAll("/","%2F")
+          productLocation = encodeURI(productLocation)
 
           let qrValue = url+productLocation
 
