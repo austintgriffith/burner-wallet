@@ -3,8 +3,6 @@ import { Blockie } from "dapparatus";
 import Ruler from "./Ruler";
 import { Scaler } from "dapparatus";
 
-const BockieSize = 4
-
 export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
   let txns = []
   let count=0
@@ -67,7 +65,7 @@ export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recent
       let toBlockie = (
         <Blockie
           address={recentTxs[r].to}
-          config={{size:BockieSize}}
+          config={{size:4}}
         />
       )
       if(recentTxs[r].to==address && recentTxs[r].data) {
@@ -94,7 +92,7 @@ export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recent
 
         if(blockAge<=1&&recentTxs[r].to==address){
           txns.push(
-            <div style={{position:'relative',cursor:'pointer',paddingTop:10,paddingBottom:10}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
+            <div key={"green"+count} style={{position:'relative',cursor:'pointer',paddingTop:10,paddingBottom:10}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
               if(recentTxs[r].from==address){
                 changeView("account_"+recentTxs[r].to)
               }else{
@@ -107,7 +105,7 @@ export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recent
               <div className="col-3" style={{textAlign:'center',paddingTop:6}}>
                 <Blockie
                   address={recentTxs[r].from}
-                  config={{size:BockieSize+3}}
+                  config={{size:7}}
                 />
               </div>
               <div className="col-3" style={{textAlign:'center',paddingTop:15,whiteSpace:"nowrap",letterSpacing:-1}}>
@@ -122,7 +120,7 @@ export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recent
           )
         }else{
           txns.push(
-            <div style={{position:'relative',cursor:'pointer'}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
+            <div key={count} style={{position:'relative',cursor:'pointer'}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
               if(recentTxs[r].from==address){
                 changeView("account_"+recentTxs[r].to)
               }else{
@@ -133,7 +131,7 @@ export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recent
               <div className="col-3 p-1" style={{textAlign:'center'}}>
                 <Blockie
                   address={recentTxs[r].from}
-                  config={{size:BockieSize}}
+                  config={{size:4}}
                 />
               </div>
               <div className="col-3 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>

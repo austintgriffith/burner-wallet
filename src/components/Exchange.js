@@ -413,7 +413,7 @@ export default class Exchange extends React.Component {
           console.log("CURRENT DAI CONTRACT YOU NEED TO GET ABI FROM:",this.props.daiContract)
           this.props.tx(metaMaskDaiContract.methods.transfer(
             destination,
-            this.state.mainnetweb3.utils.toWei(amount,"ether")
+            this.state.mainnetweb3.utils.toWei(""+amount,"ether")
             ///TODO LET ME PASS IN A CERTAIN AMOUNT OF GAS INSTEAD OF LEANING BACK ON THE <GAS> COMPONENT!!!!!
           ),120000,0,0,(receipt)=>{
             if(receipt){

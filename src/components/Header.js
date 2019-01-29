@@ -93,7 +93,7 @@ export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balan
   }
 
   let topRight = (
-    <div style={{zIndex:-2,position:"absolute",right:28,top:-4,zIndex:1,fontSize:46}}  >
+    <div style={{zIndex:-2,position:"absolute",right:28,top:-4,zIndex:1,fontSize:46,opacity:0.9}}  >
       {moneyDisplay}
     </div>
   )
