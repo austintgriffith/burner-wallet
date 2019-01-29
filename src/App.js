@@ -111,14 +111,16 @@ else if (window.location.hostname.indexOf("buffidai") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20NAME = 'DEN'
-  ERC20TOKEN = 'BuffiDai'
+  ERC20VENDOR = 'VendingMachine'
+  ERC20TOKEN = 'ERC20Vendable'
   ERC20IMAGE = bufficorn
 }
 else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = 'Burner'
   ERC20NAME = 'BURN'
+  ERC20VENDOR = 'VendingMachine'
+  ERC20TOKEN = 'ERC20Vendable'
   ERC20IMAGE = cypherpunk
 }
 
