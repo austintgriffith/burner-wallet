@@ -174,10 +174,13 @@ export default class SendToAddress extends React.Component {
           if(result && result.transactionHash){
             this.props.goBack();
             window.history.pushState({},"", "/");
+            /*
             this.props.changeAlert({
               type: 'success',
               message: 'Sent! '+result.transactionHash,
-            });
+            });*/
+            this.props.setReceipt({to:toAddress,from:result.from,amount:parseFloat(amount),message:this.state.message,result:result})
+            this.props.changeView("receipt");
           }
         })
       }

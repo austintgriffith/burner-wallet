@@ -4,6 +4,6 @@
 */
 
 module.exports = [
-  "Vendy",
-  "VEND"
+  "Burner",
+  "BURN"
 ]

@@ -44,8 +44,8 @@ export default class Receive extends React.Component {
             buttonStyle={buttonStyle}
             ERC20TOKEN={ERC20TOKEN}
             transactionsByAddress={ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
-            changeView={this.changeView}
-            address={account}
+            changeView={changeView}
+            address={address}
             block={this.props.block}
             recentTxs={ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
           />

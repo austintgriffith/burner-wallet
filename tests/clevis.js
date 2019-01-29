@@ -127,8 +127,16 @@ module.exports = {
         result = await clevis("send","0.10","0","0x34aa3f359a9d614239015126635ce7732c18fdf3")///<<<-------- change this to your metamask accounts
        printTxResult(result)
 
-        result = await clevis("send","0.10","0","0x363a5a1ceb4f0d4025e334f7b4b909a7fa49b2cb")///<<<-------- change this to your metamask accounts
+
+
+        // GAS UP YOUR RANDOM INCOG ACCOUNTS HERE:
+
+        result = await clevis("send","0.10","0","0xa9887c69538ccf8692066e0fd5d12a9593ab0403")///<<<-------- change this to your metamask accounts
         printTxResult(result)
+        result = await clevis("send","0.10","0","0x3baa2f6302ce57eb2ad94c9571b19e1073b079be")///<<<-------- change this to your metamask accounts
+        printTxResult(result)
+
+
 
       });
     });

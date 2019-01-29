@@ -19,16 +19,12 @@ contract ERC20Vendable is ERC20, Ownable {
     _;
   }
 
-
   //to emulate how we send data with a transaction, we do that here on a token transfer to enable similar chat in the burner
   function transferWithData(address to, uint256 value, bytes data) public returns (bool) {
     emit TransferWithData(msg.sender,to,value,data);
     return transfer(to, value);
   }
   event TransferWithData(address indexed from, address indexed to, uint256 value, bytes data);
-
-
-
 
   //Ideally the Vending Machine would actually create the ERC20Vendable,
   //and we could make mint and burn onlyCreator.

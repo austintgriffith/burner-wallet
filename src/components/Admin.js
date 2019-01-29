@@ -143,6 +143,7 @@ export default class Advanced extends React.Component {
       )
     }
 
+    /*
     let addAdminText = (
       <span>
         <i className="fas fa-user-astronaut"></i> {i18next.t('admin.add_admin')}
@@ -154,7 +155,7 @@ export default class Advanced extends React.Component {
           <i className="fas fa-cog fa-spin"></i> {i18next.t('admin.adding')}
         </span>
       )
-    }
+    }*/
 
     let addVendorText = (
       <span>
@@ -205,34 +206,35 @@ export default class Advanced extends React.Component {
           </div>
         </div>
 
-        <div className="content bridge row">
-          <div className="col-1 p-1">
-            {adminBlockie}
-          </div>
-          <div className="col-7 p-1">
-            <input type="text" className="form-control" placeholder="0x..." value={this.state.newAdmin}
-                   onChange={event => this.setState({newAdmin:event.target.value})} />
-          </div>
-          <div className="col-4 p-1">
-          <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-            this.setState({addingAdmin:true})
-            console.log("CONTRACTSSSSSSS",this.props.ERC20VENDOR,this.props.contracts)
-            tx(this.props.contracts[this.props.ERC20VENDOR].addAdmin(this.state.newAdmin),240000,false,0,(result)=>{
-              console.log("ADMIN ADDED",result)
-              this.setState({newAdmin:""})
-              setTimeout(()=>{
-                this.setState({addingAdmin:false})
-              },1500)
-            })
-          }}>
-            <Scaler config={{startZoomAt:600,origin:"20% 50%"}}>
-              {addAdminText}
-            </Scaler>
-          </button>
-          </div>
-        </div>
-
       </div>
     )
   }
 }
+/*
+<div className="content bridge row">
+  <div className="col-1 p-1">
+    {adminBlockie}
+  </div>
+  <div className="col-7 p-1">
+    <input type="text" className="form-control" placeholder="0x..." value={this.state.newAdmin}
+           onChange={event => this.setState({newAdmin:event.target.value})} />
+  </div>
+  <div className="col-4 p-1">
+  <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
+    this.setState({addingAdmin:true})
+    console.log("CONTRACTSSSSSSS",this.props.ERC20VENDOR,this.props.contracts)
+    tx(this.props.contracts[this.props.ERC20VENDOR].addAdmin(this.state.newAdmin),240000,false,0,(result)=>{
+      console.log("ADMIN ADDED",result)
+      this.setState({newAdmin:""})
+      setTimeout(()=>{
+        this.setState({addingAdmin:false})
+      },1500)
+    })
+  }}>
+    <Scaler config={{startZoomAt:600,origin:"20% 50%"}}>
+      {addAdminText}
+    </Scaler>
+  </button>
+  </div>
+</div>
+ */

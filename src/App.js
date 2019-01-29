@@ -17,6 +17,7 @@ import Share from './components/Share'
 import ShareLink from './components/ShareLink'
 import Balance from "./components/Balance";
 import Ruler from "./components/Ruler";
+import Receipt from "./components/Receipt";
 import MainCard from './components/MainCard';
 import History from './components/History';
 import Advanced from './components/Advanced';
@@ -55,7 +56,7 @@ let ERC20TOKEN
 let ERC20VENDOR
 let ERC20IMAGE
 let ERC20NAME
-let HARDCODEVIEW// = "exchange"
+let HARDCODEVIEW// = "receipt"
 
 let mainStyle = {
   width:"100%",
@@ -77,7 +78,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://0.0.0.0:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(true){
+  if(false){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
@@ -380,13 +381,19 @@ class App extends Component {
 
       if(this.state.mainnetweb3){
 
-        ethBalance = await this.state.mainnetweb3.eth.getBalance(this.state.account)
-        ethBalance = this.state.mainnetweb3.utils.fromWei(""+ethBalance,'ether')
+        try{
+          ethBalance = await this.state.mainnetweb3.eth.getBalance(this.state.account)
+          ethBalance = this.state.mainnetweb3.utils.fromWei(""+ethBalance,'ether')
 
-        if(this.state.daiContract){
-          daiBalance = await this.state.daiContract.methods.balanceOf(this.state.account).call()
-          daiBalance = this.state.mainnetweb3.utils.fromWei(""+daiBalance,'ether')
+          if(this.state.daiContract){
+            daiBalance = await this.state.daiContract.methods.balanceOf(this.state.account).call()
+            daiBalance = this.state.mainnetweb3.utils.fromWei(""+daiBalance,'ether')
+          }
+        }catch(e){
+          console.log(e)
         }
+
+
 
       }
       if(this.state.xdaiweb3){
@@ -568,6 +575,9 @@ class App extends Component {
       console.log("Fund is not valid yet, trying again....")
       setTimeout(this.relayClaim,2000)
     }
+  }
+  setReceipt = (obj)=>{
+    this.setState({receipt:obj})
   }
   changeView = (view,cb) => {
     if(view=="exchange"||view=="main"/*||view.indexOf("account_")==0*/){
@@ -1263,12 +1273,45 @@ render() {
                     send={send}
                     goBack={this.goBack.bind(this)}
                     changeView={this.changeView}
+                    setReceipt={this.setReceipt}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
                   />
                 </div>
                 <Bottom
                   text={i18n.t('cancel')}
+                  action={this.goBack.bind(this)}
+                />
+              </div>
+            );
+            case 'receipt':
+            return (
+              <div>
+                <div className="main-card card w-100" style={{zIndex:1}}>
+
+                  <NavCard title={i18n.t('receipt_title')} goBack={this.goBack.bind(this)}/>
+                  <Receipt
+                    receipt={this.state.receipt}
+                    view={this.state.view}
+                    block={this.state.block}
+                    ensLookup={this.ensLookup.bind(this)}
+                    ERC20TOKEN={ERC20TOKEN}
+                    buttonStyle={buttonStyle}
+                    balance={balance}
+                    web3={this.state.web3}
+                    address={account}
+                    send={send}
+                    goBack={this.goBack.bind(this)}
+                    changeView={this.changeView}
+                    changeAlert={this.changeAlert}
+                    dollarDisplay={dollarDisplay}
+                    transactionsByAddress={this.state.transactionsByAddress}
+                    fullTransactionsByAddress={this.state.fullTransactionsByAddress}
+                    fullRecentTxs={this.state.fullRecentTxs}
+                    recentTxs={this.state.recentTxs}
+                  />
+                </div>
+                <Bottom
                   action={this.goBack.bind(this)}
                 />
               </div>
@@ -1712,6 +1755,14 @@ async function tokenSend(to,value,gasLimit,txData,cb){
       this.state.web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
         console.log("META RECEIPT",receipt)
         cb(receipt)
+      }).on('error',(error)=>{
+        console.log("ERRROROROROROR",error)
+        let errorString = error.toString()
+        if(errorString.indexOf("have enough funds")>=0){
+          this.changeAlert({type: 'danger', message: 'Not enough funds to send message.'})
+        }else{
+          this.changeAlert({type: 'danger', message: errorString})
+        }
       })
     });
 
