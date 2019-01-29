@@ -73,10 +73,13 @@ export default class Exchange extends React.Component {
     }
 
     let dendaiContract
+    let vendorContract
     if(props.ERC20TOKEN){
       try{
         console.log("Loading "+props.ERC20TOKEN+" Contract...")
         dendaiContract = new this.props.web3.eth.Contract(require("../contracts/"+props.ERC20TOKEN+".abi.js"),require("../contracts/"+props.ERC20TOKEN+".address.js"))
+        vendorContract = new this.props.web3.eth.Contract(require("../contracts/"+props.ERC20VENDOR+".abi.js"),require("../contracts/"+props.ERC20VENDOR+".address.js"))
+        console.log("SET vendorContract",vendorContract)
       }catch(e){
         console.log("ERROR LOADING dendaiContract Contract",e)
       }
@@ -92,6 +95,7 @@ export default class Exchange extends React.Component {
       xdaiweb3:xdaiweb3,
       xdaiMetaAccount: xdaiMetaAccount,
       dendaiContract: dendaiContract,
+      vendorContract: vendorContract,
       daiToXdaiMode: false,
       ethToDaiMode: false,
       loaderBarStatusText: i18n.t('loading'),
@@ -114,7 +118,7 @@ export default class Exchange extends React.Component {
     setTimeout(this.poll.bind(this),250)
   }
   async poll(){
-    let { dendaiContract, mainnetweb3, xdaiweb3, xdaiAddress} = this.state
+    let { vendorContract, dendaiContract, mainnetweb3, xdaiweb3, xdaiAddress} = this.state
     /*let { daiContract } = this.props
     if(daiContract){
       let daiBalance = await daiContract.methods.balanceOf(this.state.daiAddress).call()
@@ -130,7 +134,8 @@ export default class Exchange extends React.Component {
         this.setState({denDaiBalance})
       }
 
-      let maxWithdrawlAmount = await dendaiContract.methods.offrampAllowance(this.state.daiAddress).call()
+      console.log("vendorContract",vendorContract)
+      let maxWithdrawlAmount = await vendorContract.methods.allowance(this.state.daiAddress).call()
       maxWithdrawlAmount = mainnetweb3.utils.fromWei(maxWithdrawlAmount,"ether")
       if(maxWithdrawlAmount!=this.state.maxWithdrawlAmount){
         this.setState({maxWithdrawlAmount})

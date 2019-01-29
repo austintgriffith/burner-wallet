@@ -52,6 +52,7 @@ let XDAI_PROVIDER = "https://dai.poa.network"
 let WEB3_PROVIDER
 let CLAIM_RELAY
 let ERC20TOKEN
+let ERC20VENDOR
 let ERC20IMAGE
 let ERC20NAME
 let HARDCODEVIEW// = "exchange"
@@ -76,16 +77,17 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://0.0.0.0:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(false){
+  if(true){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
   }else{
     ERC20NAME = 'BURN'
-    ERC20TOKEN = 'Burner'
+    ERC20VENDOR = 'VendingMachine'
+    ERC20TOKEN = 'ERC20Vendable'
     ERC20IMAGE = cypherpunk
-    XDAI_PROVIDER = "http://10.0.0.107:8545"
-    WEB3_PROVIDER = "http://10.0.0.107:8545";
+    XDAI_PROVIDER = "http://localhost:8545"
+    WEB3_PROVIDER = "http://localhost:8545";
   }
 
 }
@@ -134,7 +136,7 @@ if(ERC20TOKEN=="BuffiDai"){
       marginTop:-10
     }}/>
   )
-} else if(ERC20TOKEN=="Burner"){
+} else if(ERC20TOKEN=="ERC20Vendable"){
   mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
   mainStyle.backgroundColor = "#6c0664"
   mainStyle.mainColor = "#e72da3"
@@ -327,12 +329,16 @@ class App extends Component {
     if(ERC20TOKEN&&this.state.contracts){
       let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
       gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
+      //console.log("Getting balanceOf "+this.state.account+" in contract ",this.state.contracts[ERC20TOKEN])
       let tokenBalance = await this.state.contracts[ERC20TOKEN].balanceOf(this.state.account).call()
+      //console.log("balance is ",tokenBalance)
       tokenBalance = this.state.web3.utils.fromWei(""+tokenBalance,'ether')
-      let isAdmin = await this.state.contracts[ERC20TOKEN].admin(this.state.account).call()
-      //console.log("ISADMIN",isAdmin)
-      let isVendor = await this.state.contracts[ERC20TOKEN].vendors(this.state.account).call()
-      //console.log("isVendor",isVendor)
+
+      //console.log("Getting admin from ",this.state.contracts[ERC20VENDOR])
+      let isAdmin = await this.state.contracts[ERC20VENDOR].isAdmin(this.state.account).call()
+      console.log("ISADMIN",this.state.account,isAdmin)
+      let isVendor = await this.state.contracts[ERC20VENDOR].vendors(this.state.account).call()
+      console.log("isVendor",isVendor)
 
       let vendorObject = this.state.vendorObject
       let products = []//this.state.products
@@ -340,7 +346,7 @@ class App extends Component {
         //console.log("LOADING VENDOR PRODUCTS")
         let id = 0
         if(!vendorObject){
-          let vendorData = await this.state.contracts[ERC20TOKEN].vendors(this.state.account).call()
+          let vendorData = await this.state.contracts[ERC20VENDOR].vendors(this.state.account).call()
           //console.log("vendorData",vendorData)
           vendorData.name = this.state.web3.utils.hexToUtf8(vendorData.name)
           vendorObject = vendorData
@@ -351,7 +357,7 @@ class App extends Component {
         }
         let found = true
         while(found){
-          let nextProduct = await this.state.contracts[ERC20TOKEN].products(this.state.account,id).call()
+          let nextProduct = await this.state.contracts[ERC20VENDOR].products(this.state.account,id).call()
           if(nextProduct.exists){
             products[id++] = nextProduct
           }else{
@@ -954,6 +960,7 @@ render() {
               moreButtons = (
                 <div>
                   <Admin
+                    ERC20VENDOR={ERC20VENDOR}
                     ERC20TOKEN={ERC20TOKEN}
                     vendors={this.state.vendors}
                     buttonStyle={buttonStyle}
@@ -972,7 +979,7 @@ render() {
               moreButtons = (
                 <div>
                   <Vendor
-                    ERC20TOKEN={ERC20TOKEN}
+                    ERC20VENDOR={ERC20VENDOR}
                     products={this.state.products}
                     address={account}
                     buttonStyle={buttonStyle}
@@ -1040,18 +1047,18 @@ render() {
                   />
                   <Events
                     config={{hide:true}}
-                    contract={this.state.contracts[ERC20TOKEN]}
+                    contract={this.state.contracts[ERC20VENDOR]}
                     eventName={"UpdateVendor"}
                     block={this.state.block}
                     onUpdate={(vendor, all)=>{
                       let {vendors} = this.state
                       console.log("VENDOR",vendor)
-                      if(!vendors[vendor.wallet] || vendors[vendor.wallet].blockNumber<vendor.blockNumber){
-                        vendors[vendor.wallet] = {
+                      if(!vendors[vendor.vendor] || vendors[vendor.vendor].blockNumber<vendor.blockNumber){
+                        vendors[vendor.vendor] = {
                           name: this.state.web3.utils.hexToUtf8(vendor.name),
                           isAllowed: vendor.isAllowed,
                           isActive: vendor.isActive,
-                          wallet: vendor.wallet,
+                          vendor: vendor.vendor,
                           blockNumber: vendor.blockNumber
                         }
                       }
@@ -1451,6 +1458,7 @@ render() {
                     ERC20NAME={ERC20NAME}
                     ERC20IMAGE={ERC20IMAGE}
                     ERC20TOKEN={ERC20TOKEN}
+                    ERC20VENDOR={ERC20VENDOR}
                     ethprice={this.state.ethprice}
                     ethBalance={this.state.ethBalance}
                     daiBalance={this.state.daiBalance}
@@ -1487,7 +1495,7 @@ render() {
 
                   <NavCard title={i18n.t('vendors')} goBack={this.goBack.bind(this)}/>
                   <Vendors
-                    ERC20TOKEN={ERC20TOKEN}
+                    ERC20VENDOR={ERC20VENDOR}
                     products={this.state.products}
                     vendorObject={this.state.vendorObject}
                     vendors={this.state.vendors}

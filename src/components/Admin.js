@@ -36,7 +36,7 @@ export default class Advanced extends React.Component {
       let vendorButton = (
         <button disabled={!vendors[v].isActive||!vendors[v].isAllowed} className="btn btn-large w-100"
           onClick={()=>{
-            window.location = "/vendors;"+vendors[v].wallet
+            window.location = "/vendors;"+vendors[v].vendor
           }}
           style={this.props.buttonStyle.secondary}>
           <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
@@ -68,7 +68,7 @@ export default class Advanced extends React.Component {
             changingAllowed[v] = true
             this.setState({changingAllowed})
             //updateVendor(address wallet, bytes32 name, bool newAllowed)
-            tx(contracts[this.props.ERC20TOKEN].updateVendor(vendors[v].wallet,web3.utils.utf8ToHex(vendors[v].name),vendors[v].isActive,!vendors[v].isAllowed),120000,0,0,(result)=>{
+            tx(contracts[this.props.ERC20VENDOR].updateVendor(vendors[v].vendor,web3.utils.utf8ToHex(vendors[v].name),vendors[v].isActive,!vendors[v].isAllowed),120000,0,0,(result)=>{
               console.log("ACTIVE:",result)
               setTimeout(()=>{
                 let {changingAllowed} = this.state
@@ -107,7 +107,7 @@ export default class Advanced extends React.Component {
             changingAllowed[v] = true
             this.setState({changingAllowed})
             //updateVendor(address wallet, bytes32 name, bool newAllowed)
-            tx(contracts[this.props.ERC20TOKEN].updateVendor(vendors[v].wallet,web3.utils.utf8ToHex(vendors[v].name),!vendors[v].isActive,vendors[v].isAllowed),120000,0,0,(result)=>{
+            tx(contracts[this.props.ERC20VENDOR].updateVendor(vendors[v].vendor,web3.utils.utf8ToHex(vendors[v].name),!vendors[v].isActive,vendors[v].isAllowed),120000,0,0,(result)=>{
               console.log("ACTIVE:",result)
               setTimeout(()=>{
                 let {changingAllowed} = this.state
@@ -125,11 +125,10 @@ export default class Advanced extends React.Component {
 
 
 
-
       vendorDisplay.push(
         <div key={v} className="content bridge row">
           <div className="col-2 p-1" style={{textAlign:'center'}}>
-            <Blockies seed={vendors[v].wallet.toLowerCase()} scale={5}/>
+            <Blockies seed={vendors[v].vendor.toLowerCase()} scale={5}/>
           </div>
           <div className="col-6 p-1" style={{textAlign:'center'}}>
             {vendorButton}
@@ -191,7 +190,7 @@ export default class Advanced extends React.Component {
           <div className="col-4 p-1">
           <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
             this.setState({addingVendor:true})
-            tx(contracts[this.props.ERC20TOKEN].addVendor(this.state.newVendor,web3.utils.utf8ToHex(this.state.newVendorName)),480000,0,0,(result)=>{
+            tx(contracts[this.props.ERC20VENDOR].addVendor(this.state.newVendor,web3.utils.utf8ToHex(this.state.newVendorName)),480000,0,0,(result)=>{
               console.log("VENDOR ADDED",result)
               this.setState({newVendor:"",newVendorName:""})
               setTimeout(()=>{
@@ -217,8 +216,8 @@ export default class Advanced extends React.Component {
           <div className="col-4 p-1">
           <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
             this.setState({addingAdmin:true})
-            console.log("CONTRACTSSSSSSS",this.props.ERC20TOKEN,this.props.contracts)
-            tx(this.props.contracts[this.props.ERC20TOKEN].updateAdmin(this.state.newAdmin,true),240000,false,0,(result)=>{
+            console.log("CONTRACTSSSSSSS",this.props.ERC20VENDOR,this.props.contracts)
+            tx(this.props.contracts[this.props.ERC20VENDOR].addAdmin(this.state.newAdmin),240000,false,0,(result)=>{
               console.log("ADMIN ADDED",result)
               this.setState({newAdmin:""})
               setTimeout(()=>{
