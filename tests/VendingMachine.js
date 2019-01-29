@@ -3,7 +3,6 @@
 const assert = require('assert')
 const clevis = require('clevis')
 const { expect } = require('chai')
-const fs = require('fs')
 const { BN, hexToUtf8, utf8ToHex } = require('web3').utils
 
 describe('VendingMachine', function() {
@@ -62,6 +61,21 @@ describe('VendingMachine', function() {
         expect(balance).to.equal('1')
       })
     ]);
+  });
+
+  it("should not let a regular user mint", async function() {
+    let tx = clevis('contract', 'adminMint', 'VendingMachine', 1, accounts[1], '1')
+
+    await assert.rejects(tx, "Should not let regular user mint")
+  });
+
+  it("should let an admin mint", async function() {
+    let balanceBefore = await clevis('contract', 'balanceOf', 'ERC20Vendable', accounts[1])
+    await clevis('contract', 'adminMint', 'VendingMachine', 0, accounts[1], '1')
+    let balanceAfter = await clevis('contract', 'balanceOf', 'ERC20Vendable', accounts[1])
+
+    let difference = new BN(balanceAfter).sub(new BN(balanceBefore))
+    expect(difference.toString()).to.equal('1')
   });
 
   it("should not allow unauthorized withdrawls", async function () {
