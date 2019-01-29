@@ -613,6 +613,7 @@ export default class Exchange extends React.Component {
         )
 
       }else if(xdaiToDendaiMode=="deposit"){
+
         console.log("CHECKING META ACCOUNT ",this.state.xdaiMetaAccount,this.props.network)
         if(!this.state.xdaiMetaAccount && (this.props.network!="xDai"&&this.props.network!="Unknown")){
           xdaiToDendaiDisplay = (
@@ -927,6 +928,17 @@ export default class Exchange extends React.Component {
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
               Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>Mainnet</span>
+              <a href="#" onClick={()=>{this.setState({daiToXdaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
+                <i className="fas fa-times"/> dismiss
+              </a>
+            </div>
+          </div>
+        )
+      }else if(this.props.ethBalance<=0){
+        daiToXdaiDisplay = (
+          <div className="content ops row" style={{textAlign:'center'}}>
+            <div className="col-12 p-1">
+              Error: You must have ETH to send DAI.
               <a href="#" onClick={()=>{this.setState({daiToXdaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
                 <i className="fas fa-times"/> dismiss
               </a>
@@ -1323,6 +1335,17 @@ export default class Exchange extends React.Component {
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
               Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>Mainnet</span>
+              <a href="#" onClick={()=>{this.setState({ethToDaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
+                <i className="fas fa-times"/> dismiss
+              </a>
+            </div>
+          </div>
+        )
+      }else if(this.props.ethBalance<=0){
+        ethToDaiDisplay = (
+          <div className="content ops row" style={{textAlign:'center'}}>
+            <div className="col-12 p-1">
+              Error: You must have ETH to send DAI.
               <a href="#" onClick={()=>{this.setState({ethToDaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
                 <i className="fas fa-times"/> dismiss
               </a>

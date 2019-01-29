@@ -11,7 +11,8 @@ export default class Advanced extends React.Component {
     super(props);
     this.state = {
       privateKeyQr:false,
-      seedPhraseHidden:true
+      seedPhraseHidden:true,
+      privateKeyHidden:true
     }
   }
   render(){
@@ -45,6 +46,88 @@ export default class Advanced extends React.Component {
       )
     }
 
+
+    let inputPrivateEyeButton = ""
+    let inputPrivateSize = "col-4 p-1"
+
+    if(this.state.newPrivateKey){
+      inputPrivateEyeButton = (
+        <div className="col-2 p-1">
+          <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{this.setState({privateKeyHidden:!this.state.privateKeyHidden})}}>
+            <i className="fas fa-eye"></i>
+          </button>
+        </div>
+      )
+    }else{
+      inputPrivateSize = "col-6 p-1"
+    }
+
+    let inputPrivateKeyRow = (
+      <div className="content ops row">
+        <div className={inputPrivateSize}>
+            <input type={this.state.privateKeyHidden?"password":"text"}  autocorrect="off" autocapitalize="none"  autocorrect="off" autocapitalize="none" className="form-control" placeholder="private key" value={this.state.newPrivateKey}
+                   onChange={event => this.setState({newPrivateKey:event.target.value})} />
+        </div>
+        {inputPrivateEyeButton}
+        <div className="col-6 p-1">
+          <button className="btn btn-large w-100" style={this.props.buttonStyle.primary}
+                  onClick={()=>{
+                    //let pkutils = require("ethereum-mnemonic-privatekey-utils")
+                    //const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(newPrivateKey)
+                    changeView('main')
+                    let possibleNewPrivateKey = this.state.newPrivateKey
+                    if(possibleNewPrivateKey.indexOf("0x")!=0){
+                      possibleNewPrivateKey = "0x"+possibleNewPrivateKey
+                    }
+                    setPossibleNewPrivateKey(possibleNewPrivateKey)
+                  }}>
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              <i className="fas fa-plus-square"/> {i18n.t('create')}
+            </Scaler>
+          </button>
+        </div>
+      </div>
+    )
+
+
+    let inputSeedEyeButton = ""
+    let inputSeedSize = "col-4 p-1"
+
+    if(this.state.newSeedPhrase){
+      inputSeedEyeButton = (
+        <div className="col-2 p-1">
+          <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{this.setState({seedPhraseHidden:!this.state.seedPhraseHidden})}}>
+            <i className="fas fa-eye"></i>
+          </button>
+        </div>
+      )
+    }else{
+      inputSeedSize = "col-6 p-1"
+    }
+
+    let inputSeedRow = (
+      <div className="content ops row">
+        <div className={inputSeedSize}>
+        <input type={this.state.seedPhraseHidden?"password":"text"}  autocorrect="off" autocapitalize="none" className="form-control" placeholder="seed phrase" value={this.state.newSeedPhrase}
+               onChange={event => this.setState({newSeedPhrase:event.target.value})} />
+        </div>
+        {inputSeedEyeButton}
+        <div className="col-6 p-1">
+          <button className="btn btn-large w-100" style={this.props.buttonStyle.primary}
+                  onClick={()=>{
+                    let pkutils = require("ethereum-mnemonic-privatekey-utils")
+                    const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(this.state.newSeedPhrase)
+                    changeView('main')
+                    setPossibleNewPrivateKey("0x"+newPrivateKey)
+                  }}>
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              <i className="fas fa-plus-square"/> {i18n.t('create')}
+            </Scaler>
+          </button>
+        </div>
+      </div>
+    )
+
     return (
       <div style={{marginTop:20}}>
 
@@ -68,9 +151,6 @@ export default class Advanced extends React.Component {
               </button>
             </a>
           </div>
-        </div>
-        <div className="content ops row">
-          {privateKeyQrDisplay}
         </div>
       </div>
 
@@ -123,77 +203,27 @@ export default class Advanced extends React.Component {
         </div>
         }
 
+        {inputPrivateKeyRow}
+
+        {inputSeedRow}
+
         <div className="content ops row">
-          <div className="col-2 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{this.setState({privateKeyHidden:!this.state.privateKeyHidden})}}>
-              <i className="fas fa-eye"></i>
-            </button>
-          </div>
-          <div className="col-4 p-1">
-              <input type={this.state.privateKeyHidden?"password":"text"}  autocorrect="off" autocapitalize="none"  autocorrect="off" autocapitalize="none" className="form-control" placeholder="private key" value={this.state.newPrivateKey}
-                     onChange={event => this.setState({newPrivateKey:event.target.value})} />
+          <div className="col-6 p-1">
+              <input type="text" autocorrect="off" autocapitalize="none" className="form-control" placeholder="any text to encode" value={this.state.newQr}
+                     onChange={event => this.setState({newQr:event.target.value})} />
           </div>
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.primary}
+            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}
                     onClick={()=>{
-                      //let pkutils = require("ethereum-mnemonic-privatekey-utils")
-                      //const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(newPrivateKey)
-                      changeView('main')
-                      let possibleNewPrivateKey = this.state.newPrivateKey
-                      if(possibleNewPrivateKey.indexOf("0x")!=0){
-                        possibleNewPrivateKey = "0x"+possibleNewPrivateKey
-                      }
-                      setPossibleNewPrivateKey(possibleNewPrivateKey)
+                      this.setState({showingQr:this.state.newQr})
                     }}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-plus-square"/> {i18n.t('create')}
+                <i className="fas fa-qrcode"/> {i18n.t('advanced.to_qr')}
               </Scaler>
             </button>
           </div>
         </div>
-          <div className="content ops row">
-            <div className="col-2 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{this.setState({seedPhraseHidden:!this.state.seedPhraseHidden})}}>
-                <i className="fas fa-eye"></i>
-              </button>
-            </div>
-            <div className="col-4 p-1">
-            <input type={this.state.seedPhraseHidden?"password":"text"}  autocorrect="off" autocapitalize="none" className="form-control" placeholder="seed phrase" value={this.state.newSeedPhrase}
-                   onChange={event => this.setState({newSeedPhrase:event.target.value})} />
-            </div>
-            <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.primary}
-                      onClick={()=>{
-                        let pkutils = require("ethereum-mnemonic-privatekey-utils")
-                        const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(this.state.newSeedPhrase)
-                        changeView('main')
-                        setPossibleNewPrivateKey("0x"+newPrivateKey)
-                      }}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-plus-square"/> {i18n.t('create')}
-                </Scaler>
-              </button>
-            </div>
-          </div>
-
-
-          <div className="content ops row">
-            <div className="col-6 p-1">
-                <input type="text" autocorrect="off" autocapitalize="none" className="form-control" placeholder="any text to encode" value={this.state.newQr}
-                       onChange={event => this.setState({newQr:event.target.value})} />
-            </div>
-            <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}
-                      onClick={()=>{
-                        this.setState({showingQr:this.state.newQr})
-                      }}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-qrcode"/> {i18n.t('advanced.to_qr')}
-                </Scaler>
-              </button>
-            </div>
-          </div>
-          {showingQr}
+        {showingQr}
 
       </div>
     )
