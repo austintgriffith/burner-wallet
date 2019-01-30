@@ -679,8 +679,8 @@ export default class Exchange extends React.Component {
                     }
                     console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-                    paramsObject.to = this.state.dendaiContract._address
-                    paramsObject.data = this.state.dendaiContract.methods.deposit().encodeABI()
+                    paramsObject.to = this.state.vendorContract._address
+                    paramsObject.data = this.state.vendorContract.methods.deposit().encodeABI()
 
                     console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
@@ -700,7 +700,7 @@ export default class Exchange extends React.Component {
                   }else{
                     console.log("Use MetaMask to withdraw "+this.props.ERC20NAME+" to xDai")
                     this.props.tx(
-                      this.props.contracts[this.props.ERC20TOKEN].deposit()
+                      this.props.contracts[this.props.ERC20VENDOR].deposit()
                     ,120000,0,amountOfxDaiToDeposit,(receipt)=>{
                       if(receipt){
                         console.log("EXCHANGE COMPLETE?!?",receipt)
@@ -803,8 +803,8 @@ export default class Exchange extends React.Component {
                       }
                       console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-                      paramsObject.to = this.state.dendaiContract._address
-                      paramsObject.data = this.state.dendaiContract.methods.withdraw(""+amountOfxDaiToWithdraw).encodeABI()
+                      paramsObject.to = this.state.vendorContract._address
+                      paramsObject.data = this.state.vendorContract.methods.withdraw(""+amountOfxDaiToWithdraw).encodeABI()
 
                       console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
@@ -824,7 +824,7 @@ export default class Exchange extends React.Component {
                     }else{
                       console.log("Use MetaMask to withdraw "+this.props.ERC20NAME+" to xDai")
                       this.props.tx(
-                        this.props.contracts[this.props.ERC20TOKEN].withdraw(""+amountOfxDaiToWithdraw)
+                        this.props.contracts[this.props.ERC20VENDOR].withdraw(""+amountOfxDaiToWithdraw)
                       ,120000,0,0,(receipt)=>{
                         if(receipt){
                           console.log("EXCHANGE COMPLETE?!?",receipt)
