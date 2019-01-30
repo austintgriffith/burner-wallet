@@ -198,6 +198,7 @@ let intervalLong
 
 class App extends Component {
   constructor(props) {
+    console.log("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[["+title+"]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
     let view = 'main'
     let cachedView = localStorage.getItem("view")
     let cachedViewSetAge = Date.now() - localStorage.getItem("viewSetTime")
@@ -878,7 +879,8 @@ render() {
       onReady={(state) => {
         console.log("Transactions component is ready:", state);
         if(ERC20TOKEN){
-          delete state.send
+          state.nativeSend = state.send
+          //delete state.send
           state.send = tokenSend.bind(this)
         }
         console.log(state)
@@ -1522,6 +1524,7 @@ render() {
                     tx={this.state.tx}
                     web3={this.state.web3}
                     send={this.state.send}
+                    nativeSend={this.state.nativeSend}
                     address={account}
                     balance={balance}
                     goBack={this.goBack.bind(this)}
@@ -1818,10 +1821,3 @@ let sortByBlockNumber = (a,b)=>{
 }
 
 export default App;
-
-
-
-String.prototype.replaceAll = function(search, replacement) {
-    var target = this;
-    return target.replace(new RegExp(search, 'g'), replacement);
-};

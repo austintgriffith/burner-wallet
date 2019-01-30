@@ -74,7 +74,8 @@ export default class Exchange extends React.Component {
 
     let dendaiContract
     let vendorContract
-    if(props.ERC20TOKEN){
+    console.log("NETWORK:",this.props.network)
+    if(props.ERC20TOKEN&&this.props.network=="xDai"){
       try{
         console.log("Loading "+props.ERC20TOKEN+" Contract...")
         dendaiContract = new this.props.web3.eth.Contract(require("../contracts/"+props.ERC20TOKEN+".abi.js"),require("../contracts/"+props.ERC20TOKEN+".address.js"))
@@ -127,7 +128,7 @@ export default class Exchange extends React.Component {
         this.setState({daiBalance})
       }
     }*/
-    if(this.props.ERC20TOKEN){
+    if(this.props.ERC20TOKEN&&dendaiContract){
       let denDaiBalance = await dendaiContract.methods.balanceOf(this.state.daiAddress).call()
       denDaiBalance = mainnetweb3.utils.fromWei(denDaiBalance,"ether")
       if(denDaiBalance!=this.state.denDaiBalance){
@@ -1108,19 +1109,41 @@ export default class Exchange extends React.Component {
                   });
 
                 }else{
-                  this.props.send(toDaiBridgeAccount, this.state.amount, 120000, (result) => {
-                    console.log("RESUTL!!!!",result)
-                    if(result && result.transactionHash){
-                      this.setState({
-                        amount:"",
-                        loaderBarColor:"#4ab3f5",
-                        loaderBarStatusText:"Waiting for bridge...",
-                        loaderBarClick:()=>{
-                          alert(i18n.t('exchange.idk'))
-                        }
-                      })
-                    }
-                  })
+
+                  //BECAUSE THIS COULD BE ON A TOKEN, THE SEND FUNCTION IS SENDING TOKENS TO THE BRIDGE HAHAHAHA LETs FIX THAT
+                  if(this.props.ERC20TOKEN){
+                    console.log("native sending ",this.state.amount," to ",toDaiBridgeAccount)
+                    this.props.nativeSend(toDaiBridgeAccount, this.state.amount, 120000, (result) => {
+                      console.log("RESUTL!!!!",result)
+                      if(result && result.transactionHash){
+                        this.setState({
+                          amount:"",
+                          loaderBarColor:"#4ab3f5",
+                          loaderBarStatusText:"Waiting for bridge...",
+                          loaderBarClick:()=>{
+                            alert(i18n.t('exchange.idk'))
+                          }
+                        })
+                      }
+                    })
+                  }else{
+                    console.log("sending ",this.state.amount," to ",toDaiBridgeAccount)
+                    this.props.send(toDaiBridgeAccount, this.state.amount, 120000, (result) => {
+                      console.log("RESUTL!!!!",result)
+                      if(result && result.transactionHash){
+                        this.setState({
+                          amount:"",
+                          loaderBarColor:"#4ab3f5",
+                          loaderBarStatusText:"Waiting for bridge...",
+                          loaderBarClick:()=>{
+                            alert(i18n.t('exchange.idk'))
+                          }
+                        })
+                      }
+                    })
+                  }
+
+
                 }
 
               }}>

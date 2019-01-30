@@ -1,3 +1,3 @@
 #!/bin/bash
 #npm run build &&
-clevis upload buffidai.io && clevis invalidate E3UXHQH85ACKYA
+./node_modules/clevis/bin.js upload buffidai.io && ./node_modules/clevis/bin.js invalidate E3UXHQH85ACKYA

@@ -1,3 +1,3 @@
 #!/bin/bash
 #npm run build &&
-clevis upload burnerwallet.io && clevis invalidate EO4J1L211YU2O
+./node_modules/clevis/bin.js upload burnerwallet.io && ./node_modules/clevis/bin.js invalidate EO4J1L211YU2O
