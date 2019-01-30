@@ -51,7 +51,7 @@ export default class Exchange extends React.Component {
 
     let xdaiweb3 = this.props.xdaiweb3
     //make it easier for local debugging...
-    if(false && window.location.hostname.indexOf("localhost")>=0){
+    if(true && window.location.hostname.indexOf("localhost")>=0){
       console.log("WARNING, USING LOCAL RPC")
       xdaiweb3 = new Web3(new Web3.providers.HttpProvider("http://0.0.0.0:8545"))
     }
@@ -727,7 +727,7 @@ export default class Exchange extends React.Component {
             <div className="content ops row" style={{textAlign:'center'}}>
               <div className="col-12 p-1">
                 Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>dai.poa.network</span>
-                <a href="#" onClick={()=>{this.setState({daiToXdaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
+                <a href="#" onClick={()=>{this.setState({xdaiToDendaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
                   <i className="fas fa-times"/> dismiss
                 </a>
               </div>
