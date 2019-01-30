@@ -11,7 +11,7 @@ import Web3 from 'web3';
 import axios from "axios"
 import i18n from '../i18n';
 
-const GASBOOSTPRICE = 0.1
+const GASBOOSTPRICE = 0.25
 
 const logoStyle = {
   maxWidth:50,
@@ -615,7 +615,7 @@ export default class Exchange extends React.Component {
 
       }else if(xdaiToDendaiMode=="deposit"){
 
-        console.log("CHECKING META ACCOUNT ",this.state.xdaiMetaAccount,this.props.network)
+        //console.log("CHECKING META ACCOUNT ",this.state.xdaiMetaAccount,this.props.network)
         if(!this.state.xdaiMetaAccount && (this.props.network!="xDai"&&this.props.network!="Unknown")){
           xdaiToDendaiDisplay = (
             <div className="content ops row" style={{textAlign:'center'}}>
@@ -952,7 +952,7 @@ export default class Exchange extends React.Component {
             <div className="col-1 p-1"  style={colStyle}>
               <i className="fas fa-arrow-up"  />
             </div>
-            <div className="col-5 p-1" style={colStyle}>
+            <div className="col-6 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
@@ -970,7 +970,7 @@ export default class Exchange extends React.Component {
               </div>
               </Scaler>
             </div>
-            <div className="col-3 p-1"  style={colStyle}>
+            <div className="col-2 p-1"  style={colStyle}>
               <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {daiCancelButton}
               </Scaler>
@@ -1035,7 +1035,7 @@ export default class Exchange extends React.Component {
             <div className="col-1 p-1"  style={colStyle}>
               <i className="fas fa-arrow-down"  />
             </div>
-            <div className="col-5 p-1" style={colStyle}>
+            <div className="col-6 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
@@ -1053,7 +1053,7 @@ export default class Exchange extends React.Component {
               </div>
               </Scaler>
             </div>
-            <div className="col-3 p-1"  style={colStyle}>
+            <div className="col-2 p-1"  style={colStyle}>
               <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {daiCancelButton}
               </Scaler>
@@ -1217,7 +1217,7 @@ export default class Exchange extends React.Component {
             <div className="col-1 p-1"  style={colStyle}>
               <i className="fas fa-arrow-up"  />
             </div>
-            <div className="col-5 p-1" style={colStyle}>
+            <div className="col-6 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
@@ -1263,7 +1263,7 @@ export default class Exchange extends React.Component {
               </div>
               </Scaler>
             </div>
-            <div className="col-3 p-1"  style={colStyle}>
+            <div className="col-2 p-1"  style={colStyle}>
               <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {ethCancelButton}
               </Scaler>
@@ -1382,7 +1382,7 @@ export default class Exchange extends React.Component {
             <div className="col-1 p-1"  style={colStyle}>
               <i className="fas fa-arrow-down"  />
             </div>
-            <div className="col-5 p-1" style={colStyle}>
+            <div className="col-6 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
                 <div className="input-group-prepend">
@@ -1400,7 +1400,7 @@ export default class Exchange extends React.Component {
               </div>
               </Scaler>
             </div>
-            <div className="col-3 p-1"  style={colStyle}>
+            <div className="col-2 p-1"  style={colStyle}>
               <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {ethCancelButton}
               </Scaler>

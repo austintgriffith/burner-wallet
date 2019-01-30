@@ -60,7 +60,6 @@
       var moveLoader = function(){
         var firstLoader = document.getElementById('firstLoaderBar')
         if(firstLoader){
-          console.log(currentFirstLoaderValue)
           if(parseInt(currentFirstLoaderValue)>=100){
             currentFirstLoaderValue = "100%"
             clearInterval(firstLoaderInterval)

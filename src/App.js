@@ -78,7 +78,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://0.0.0.0:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(true){
+  if(false){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
@@ -330,7 +330,7 @@ class App extends Component {
     window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
   async poll() {
-    if(ERC20TOKEN&&this.state.contracts){
+    if(ERC20TOKEN&&this.state.contracts&&this.state.network=="xDai"){
       let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
       gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
       //console.log("Getting balanceOf "+this.state.account+" in contract ",this.state.contracts[ERC20TOKEN])
@@ -1011,7 +1011,7 @@ render() {
                   />
                 </div>
               )
-            }else if(ERC20TOKEN=="Burner"){
+            }else if(ERC20TOKEN){
               moreButtons = (
                 <div>
                   <MoreButtons
