@@ -495,8 +495,8 @@ class App extends Component {
       let sig = this.state.web3.eth.accounts.sign(claimHash, this.state.claimKey);
       sig = sig.signature;
 
-      console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
-      tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account), 240000, false, 0, (result) => {
+      console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account,0)
+      tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account,0), 240000, false, 0, (result) => {
         if (result) {
           console.log("CLAIMED!!!", result)
           this.setState({claimed: true})
@@ -509,7 +509,7 @@ class App extends Component {
         }
       })
       .catch((error) => {
-        console.log(error); //Estimate Gas promise
+        console.log(error);
       });
     }else{
       console.log("FUND IS NOT READY YET, WAITING...")
@@ -537,43 +537,33 @@ class App extends Component {
         console.log("this.state.claimKey", this.state.claimKey)
         let sig = this.state.web3.eth.accounts.sign(claimHash, this.state.claimKey);
         sig = sig.signature
-        /* getGasPrice() is not implemented on Metamask, leaving the code as reference. */
-        //this.state.web3.eth.getGasPrice()
-        //.then((gasPrice) => {
-
-          console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
-
-          this.setState({sending: true})
-          let postData = {
-            id: this.state.claimId,
-            sig: sig,
-            claimHash: claimHash,
-            dest: this.state.account,
+      
+        console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
+        this.setState({sending: true})
+        let postData = {
+          id: this.state.claimId,
+          sig: sig,
+          claimHash: claimHash,
+          dest: this.state.account,
+        }
+        console.log("CLAIM_RELAY:", CLAIM_RELAY," POSTDATA:",postData)
+        axios.post(CLAIM_RELAY + "/link", postData, {
+          headers: {
+            'Content-Type': 'application/json',
           }
-          console.log("CLAIM_RELAY:", CLAIM_RELAY," POSTDATA:",postData)
-          axios.post(CLAIM_RELAY + "/link", postData, {
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          }).then((response) => {
-            console.log("TX RESULT", response.data.transactionHash)
-            this.setState({claimed: true})
-            setTimeout(() => {
-              this.setState({sending: false}, () => {
-                //alert("DONE")
-                window.location = "/"
-              })
-            }, 2000)
-          })
-          .catch((error) => {
-            console.log(error); //axios promise
-          });
-
-
-      //})
-      //.catch((error) => {
-      //  console.log(error); //Get Gas price promise
-      //});
+        }).then((response) => {
+          console.log("TX RESULT", response.data.transactionHash)
+          this.setState({claimed: true})
+          setTimeout(() => {
+            this.setState({sending: false}, () => {
+              //alert("DONE")
+              window.location = "/"
+            })
+          }, 2000)
+        })
+        .catch((error) => {
+          console.log(error); //axios promise
+        });
     }else{
       console.log("Fund is not valid yet, trying again....")
       setTimeout(this.relayClaim,2000)
