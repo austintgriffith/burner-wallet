@@ -46,40 +46,18 @@ contract Links {
 
     /// @dev Verifies if it is a valid Id.
     modifier ifValidId(bytes32 Id){
-        if(isFundValid(Id)){
-            _;
-        } else{
-            revert("Links::ifValidId, Id does not exists.");
-        }
+        require(isFundValid(Id),"Links::ifValidId, Id does NOT exists.");
+        _;
     }
     /// @dev Verifies if the Id exists.
     modifier ifNotValidId(bytes32 Id){
-        if(!isFundValid(Id)){
-            _;
-        } else{
-            revert("Links::ifNotValidId, Id exists.");
-        }
-    }
-    /// @dev Verifies if the claim is valid.
-    modifier ifValidClaim(        
-        bytes32 Id, 
-        bytes memory Signature, 
-        bytes32 ClaimHash, 
-        address Destination
-    ){
-        if(isClaimValid(Id,Signature,ClaimHash,Destination)){
-            _;
-        } else{
-            revert("Links::ifValidClaim, invalid claim.");
-        }
+        require(!isFundValid(Id),"Links::ifNotValidId, Id exists.");
+        _;
     }
     /// @dev Verifies if it is a valid Signature lenght.
     modifier ifValidSig(bytes memory Signature){
-        if(Signature.length == 65){
-            _;
-        } else{
-            revert("Links::ifValidSig, invalid signature lenght");
-        }
+        require(Signature.length == 65,"Links::ifValidSig, invalid signature lenght");
+        _;
     }
 
     /// @dev Create fund.
@@ -233,16 +211,15 @@ contract Links {
         address _destination,
         uint256 _gasReward
     ) 
-        private 
-        ifValidClaim(_id,_signature,_claimHash,_destination)
+        private
         returns (bool)
     {
+        require(isClaimValid(_id,_signature,_claimHash,_destination),"Links::executeClaim, invalid claim.");
         bool status = false;
         uint256 residual = uint256(0);
         bool claimed = funds[_id].claimed;
         uint256 value = funds[_id].value;
         uint256 nonce = funds[_id].nonce;
-        address sender = funds[_id].sender;
 
         assert(nonce < contractNonce);
         // validate mutex/flag status
@@ -253,7 +230,7 @@ contract Links {
             funds[_id].claimed = true;
             // expired funds can only be claimed back by original sender.
             if(isClaimExpired(_id,_signature,_claimHash,_destination)){
-                require(msg.sender == sender,"Links::executeClaim, not original sender");
+                require(msg.sender == funds[_id].sender,"Links::executeClaim, not original sender");
                 msg.sender.transfer(value);
                 delete funds[_id];
                 status = true;
