@@ -61,7 +61,7 @@ export default class SendToAddress extends React.Component {
   }
 
   canWithdraw() {
-    return (this.state.amount > 0 && this.state.amount <= this.state.fromBalance)
+    return (parseFloat(this.state.amount) > 0 && parseFloat(this.state.amount) <= parseFloat(this.state.fromBalance))
   }
 
   withdraw = () => {
@@ -142,6 +142,23 @@ export default class SendToAddress extends React.Component {
         }
 
       }
+    }
+    if(products.length>0){
+      products.push(
+        <div key={"reset"} className="content bridge row">
+          <div className="col-12 p-1">
+            <button className="btn btn-large w-100"
+              onClick={()=>{
+                this.setState({amount:""})
+              }}
+              style={this.props.buttonStyle.secondary}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                Reset
+              </Scaler>
+            </button>
+          </div>
+        </div>
+      )
     }
 
     return (

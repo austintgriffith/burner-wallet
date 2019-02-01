@@ -3,14 +3,26 @@
     "app_name": "Burner Wallet",
     "about": "About",
     "code": "Code",
-    "burn": "Burn",
-    "show": "Show",
+    "burn": "Burn PK",
+    "show": "Show PK",
+    "copy": "Copy PK",
     "create": "Create",
+    "receive_title": "Receive",
+    "receipt_title": "Receipt",
+    "send_to_address_title": "Send to Address",
     "advance": "Advanced",
+    "advance_title": "Advanced",
     "loading": "Loading...",
     "cancel": "Cancel",
+    "done": "Done",
+    "exchange_title": "Exchange",
     "amount": "Amount",
     "send": "Send",
+    "withdraw": "Withdraw",
+    "history_chat": "History & Chat",
+    "request_funds_title": "Request funds",
+    "request": "Request",
+    "vendors": "Vendors",
     "main_card": {
       "receive": "Receive",
       "send": "Send",
@@ -62,7 +74,7 @@
     "exchange": {
       "withdrawal_explanation": "Only vendors can withdraw more than they deposited",
       "funds_transferred": "Funds Transferred!",
-      "funds_bridged": "Funds Bridged",
+      "funds_bridged": "Funds Exchanged",
       "insufficient_funds": "Insufficient funds",
       "invalid_to_address": "Please enter a valid to address",
       "invalid_to_amount": "Please enter a valid to amount",
@@ -71,7 +83,9 @@
       "idk": "idk where to go from here? something that explains the bridge?"
     },
     "request_funds": {
-      "item_message": "Item or Message"
+      "item_message": "Item or Message",
+      "button": "Request",
+      "amount": "Request Amount"
     },
     "admin": {
       "add_admin": "Add Admin",

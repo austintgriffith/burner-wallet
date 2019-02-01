@@ -7,6 +7,26 @@ import i18next from 'i18next';
 
 export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
 
+
+  var w = window,
+  d = document,
+  e = d.documentElement,
+  g = d.getElementsByTagName('body')[0],
+  x = w.innerWidth || e.clientWidth || g.clientWidth,
+  y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+  let pushDownWithWhiteSpace = 0
+  if(y){
+    if(ERC20TOKEN){
+      pushDownWithWhiteSpace = y-443
+    }else{
+      pushDownWithWhiteSpace = y-370
+    }
+
+  }
+  if(pushDownWithWhiteSpace>230){
+    pushDownWithWhiteSpace=230
+  }
   let sendButtons = (
     <div>
       <div className="content ops row">
@@ -87,7 +107,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
 
 
   return (
-    <div>
+    <div style={{paddingTop:pushDownWithWhiteSpace}}>
       <div>
         {sendButtons}
       </div>

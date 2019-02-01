@@ -141,15 +141,18 @@ export default class SendToAddress extends React.Component {
       }
       console.log("ERC20TOKEN",ERC20TOKEN,"this.props.balance",parseFloat(this.props.balance),"amount",parseFloat(amount))
 
-      if(!ERC20TOKEN && parseFloat(this.props.balance)-0.0001<=parseFloat(amount)){
+      if(!ERC20TOKEN && parseFloat(this.props.balance) <= 0){
+        console.log("No funds!?!",ERC20TOKEN,parseFloat(this.props.balance))
+        this.props.changeAlert({type: 'warning', message: "No Funds."})
+      }else if(!ERC20TOKEN && parseFloat(this.props.balance)-0.0001<=parseFloat(amount)){
         let extraHint = ""
         if(!ERC20TOKEN && parseFloat(amount)-parseFloat(this.props.balance)<=.01){
           extraHint = "(gas costs)"
         }
-        this.props.changeAlert({type: 'warning', message: i18n.t('send_to_address')+'$'+Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100+' '+extraHint})
+        this.props.changeAlert({type: 'warning', message: '$'+Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100+' '+extraHint})
       }else if((ERC20TOKEN && (parseFloat(this.props.balance)<parseFloat(amount)))){
         console.log("SO THE BALANCE IS LESS!")
-        this.props.changeAlert({type: 'warning', message: i18n.t('send_to_address')+'$'+parseFloat(this.props.balance)})
+        this.props.changeAlert({type: 'warning', message: '$'+parseFloat(this.props.balance)})
       }else{
         console.log("SWITCH TO LOADER VIEW...",amount)
         this.props.changeView('loader')
@@ -171,10 +174,13 @@ export default class SendToAddress extends React.Component {
           if(result && result.transactionHash){
             this.props.goBack();
             window.history.pushState({},"", "/");
+            /*
             this.props.changeAlert({
               type: 'success',
               message: 'Sent! '+result.transactionHash,
-            });
+            });*/
+            this.props.setReceipt({to:toAddress,from:result.from,amount:parseFloat(amount),message:this.state.message,result:result})
+            this.props.changeView("receipt");
           }
         })
       }

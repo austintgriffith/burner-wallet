@@ -45,7 +45,7 @@
     "react-scroll": "^1.7.10",
     "s3": "^4.4.0",
     "tabookey-gasless": "0.3.0",
-    "web3": "^1.0.0-beta.33"
+    "web3": "1.0.0-beta.33"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -63,8 +63,9 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "clevis": "^0.1.3",
+    "clevis": "github:austintgriffith/clevis#master",
     "mocha": "^5.2.0",
+    "openzeppelin-solidity": "2.0.0",
     "webpack": "^4.28.4"
   }
 }

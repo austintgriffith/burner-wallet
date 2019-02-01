@@ -1,3 +1,3 @@
 #!/bin/bash
-#npm run build && 
-clevis upload xdai.io && clevis invalidate $(cat cloudfront.id.2)
+#npm run build &&
+./node_modules/clevis/bin.js upload xdai.io && ./node_modules/clevis/bin.js invalidate $(cat cloudfront.id.2)

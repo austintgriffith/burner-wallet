@@ -78,7 +78,7 @@ export default class RequestFunds extends React.Component {
         <div>
           <div className="content row">
             <div className="form-group w-100">
-              <label htmlFor="amount_input">Request Amount</label>
+              <label htmlFor="amount_input">{i18n.t('request_funds.amount')}</label>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
@@ -94,7 +94,7 @@ export default class RequestFunds extends React.Component {
             </div>
             <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canRequest ? '' : 'disabled'}`}
                     onClick={this.request}>
-              Request
+              {i18n.t('request_funds.button')}
             </button>
           </div>
         </div>

@@ -3,8 +3,6 @@ import { Blockie } from "dapparatus";
 import Ruler from "./Ruler";
 import { Scaler } from "dapparatus";
 
-const BockieSize = 4
-
 export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
   let txns = []
   let count=0
@@ -67,12 +65,12 @@ export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recent
       let toBlockie = (
         <Blockie
           address={recentTxs[r].to}
-          config={{size:BockieSize}}
+          config={{size:4}}
         />
       )
       if(recentTxs[r].to==address && recentTxs[r].data) {
         let message = recentTxs[r].data
-        let limit = 14
+        let limit = 18
         if(message.length>limit){
           message = message.substring(0,limit-3)+"..."
         }
@@ -89,37 +87,72 @@ export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recent
             <hr key={"ruler"+recentTxs[r].hash} style={{ "color": "#DFDFDF",marginTop:0,marginBottom:7 }}/>
           )
         //}
-        txns.push(
-          <div style={{position:'relative',cursor:'pointer'}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
-            if(recentTxs[r].from==address){
-              changeView("account_"+recentTxs[r].to)
-            }else{
-              changeView("account_"+recentTxs[r].from)
-            }
-          }}>
-            {extraIcon}
-            <div className="col-3 p-1" style={{textAlign:'center'}}>
-              <Blockie
-                address={recentTxs[r].from}
-                config={{size:BockieSize}}
-              />
-            </div>
-            <div className="col-3 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
-              <Scaler config={{startZoomAt:600,origin:"25% 50%",adjustedZoom:1}}>
-                {dollarView}
-              </Scaler>
-            </div>
-            <div className="col-3 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
-              {toBlockie}
-            </div>
-            <div className="col-2 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
-              <Scaler config={{startZoomAt:600,origin:"25% 50%",adjustedZoom:1}}>
-              <span style={{marginLeft:5,marginTop:-5,opacity:0.4,fontSize:12}}>{cleanTime((block-recentTxs[r].blockNumber)*5)} ago</span>
-              </Scaler>
-            </div>
 
-          </div>
-        )
+        let blockAge = block-recentTxs[r].blockNumber
+
+        if(blockAge<=1&&recentTxs[r].to==address){
+          txns.push(
+            <div key={"green"+count} style={{position:'relative',cursor:'pointer',paddingTop:10,paddingBottom:10}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
+              if(recentTxs[r].from==address){
+                changeView("account_"+recentTxs[r].to)
+              }else{
+                changeView("account_"+recentTxs[r].from)
+              }
+            }}>
+              <div className="col-3" style={{textAlign:'center'}}>
+                <i className="fas fa-check-circle" style={{color:"#39e917",fontSize:70,opacity:.7}}></i>
+              </div>
+              <div className="col-3" style={{textAlign:'center',paddingTop:6}}>
+                <Blockie
+                  address={recentTxs[r].from}
+                  config={{size:7}}
+                />
+              </div>
+              <div className="col-3" style={{textAlign:'center',paddingTop:15,whiteSpace:"nowrap",letterSpacing:-1}}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  {dollarView}
+                </Scaler>
+              </div>
+              <div className="col-3" style={{textAlign:'center',paddingTop:15,whiteSpace:"nowrap",letterSpacing:-1}}>
+                {toBlockie}
+              </div>
+            </div>
+          )
+        }else{
+          txns.push(
+            <div key={count} style={{position:'relative',cursor:'pointer'}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
+              if(recentTxs[r].from==address){
+                changeView("account_"+recentTxs[r].to)
+              }else{
+                changeView("account_"+recentTxs[r].from)
+              }
+            }}>
+              {extraIcon}
+              <div className="col-3 p-1" style={{textAlign:'center'}}>
+                <Blockie
+                  address={recentTxs[r].from}
+                  config={{size:4}}
+                />
+              </div>
+              <div className="col-3 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
+                <Scaler config={{startZoomAt:600,origin:"25% 50%",adjustedZoom:1}}>
+                  {dollarView}
+                </Scaler>
+              </div>
+              <div className="col-3 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
+                {toBlockie}
+              </div>
+              <div className="col-2 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
+                <Scaler config={{startZoomAt:600,origin:"25% 50%",adjustedZoom:1}}>
+                <span style={{marginLeft:5,marginTop:-5,opacity:0.4,fontSize:12}}>{cleanTime((blockAge)*5)} ago</span>
+                </Scaler>
+              </div>
+
+            </div>
+          )
+        }
+
+
       }
 
     }

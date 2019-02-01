@@ -35,7 +35,7 @@ export default class Advanced extends React.Component {
     let id = 0
     if(this.state.vendor){
      if(!this.state.vendorObject){
-       let vendorData = await this.props.contracts[this.props.ERC20TOKEN].vendors(this.state.vendor).call()
+       let vendorData = await this.props.contracts[this.props.ERC20VENDOR].vendors(this.state.vendor).call()
        console.log("vendorData",vendorData)
        vendorData.name = this.props.web3.utils.hexToUtf8(vendorData.name)
        this.setState({vendorObject:vendorData})
@@ -47,7 +47,7 @@ export default class Advanced extends React.Component {
      }
      let found = true
      while(found){
-       let nextProduct = await this.props.contracts[this.props.ERC20TOKEN].products(this.state.vendor,id).call()
+       let nextProduct = await this.props.contracts[this.props.ERC20VENDOR].products(this.state.vendor,id).call()
        if(nextProduct.exists){
          products[id++] = nextProduct
        }else{
@@ -110,9 +110,9 @@ export default class Advanced extends React.Component {
           let theName = web3.utils.hexToUtf8(prod.name)
           let theAmount = web3.utils.fromWei(prod.cost,'ether')
 
-          let productLocation = "/"+vendor+";"+theAmount+";"+theName+";"+correctVendorObject.name+":"
+          let productLocation = "/"+vendor+";"+theAmount+";"+theName.replaceAll("#","%23").replaceAll(";","%3B").replaceAll(":","%3A").replaceAll("/","%2F")+";"+correctVendorObject.name+":"
 
-          productLocation = encodeURI(productLocation).replaceAll("#","%23").replaceAll(";","%3B").replaceAll(":","%3A").replaceAll("/","%2F")
+          productLocation = encodeURI(productLocation)
 
           let qrValue = url+productLocation
 
@@ -191,7 +191,7 @@ export default class Advanced extends React.Component {
 
           let vendorButton = (
             <button disabled={!vendors[v].isActive} className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap"}} onClick={()=>{
-                this.setState({loading:true,vendor:vendors[v].wallet,vendorObject:vendors[v]},()=>{
+                this.setState({loading:true,vendor:vendors[v].vendor,vendorObject:vendors[v]},()=>{
                    this.poll()
                 })
             }}>
@@ -203,7 +203,7 @@ export default class Advanced extends React.Component {
           vendorDisplay.push(
             <div key={v} className="content bridge row">
               <div className="col-2 p-1" style={{textAlign:'center'}}>
-                <Blockies seed={vendors[v].wallet.toLowerCase()} scale={5}/>
+                <Blockies seed={vendors[v].vendor.toLowerCase()} scale={5}/>
               </div>
               <div className="col-10 p-1" style={{textAlign:'center'}}>
                 {vendorButton}
