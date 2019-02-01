@@ -60,6 +60,11 @@ contract Links {
         _;
     }
 
+    /// @dev fallback
+    function () external{
+        revert("Links::fallback");
+    }
+
     /// @dev Create fund.
     /// @param _id Fund lookup key value.
     /// @param _signature Sender signature.
@@ -74,8 +79,10 @@ contract Links {
         payable
         returns (bool)
     {
-        require(msg.value >= 1000000000000000,"Links::send, needs to be at least 0.001 xDai to pay relay reward");
+        require(msg.value >= 1000000000000000,"Links::send, needs to be at least 0.001 xDai/Eth to pay relay reward");
         require(_expirationDays >= uint256(0),"Links::send, invalid expiration days");
+        // !isContract - Preventive measure against deployed contracts. 
+        require(!msg.sender.isContract(),"Links::send, sender should not be a contract");
         address signer = ECDSA.recover(_id.toEthSignedMessageHash(),_signature);
         require(signer != address(0),"Links::send, invalid signer");
         // defaulting to 6 months expiration
@@ -117,7 +124,7 @@ contract Links {
         returns (bool)
     {
         require(_gasReward <= funds[_id].value,"Links::claim, gas reward is greater than the fund value");
-        require(_gasReward <= 1000000000000000, "Links::claim, cannot reward more than 0.001 xDai");
+        require(_gasReward <= 1000000000000000, "Links::claim, cannot reward more than 0.001 xDai/Eth");
         return executeClaim(_id,_signature,_claimHash,_destination,_gasReward);
     }
   
