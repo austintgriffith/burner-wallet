@@ -119,8 +119,8 @@ else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20NAME = 'BURN'
-  ERC20VENDOR = 'VendingMachine'
-  ERC20TOKEN = 'ERC20Vendable'
+  ERC20VENDOR = 'BurnerVendor'
+  ERC20TOKEN = 'Burner'
   ERC20IMAGE = cypherpunk
 }
 
