@@ -55,7 +55,30 @@
         </div>
       </div>
     </div>
+    <div id="log" style="position:absolute;left:0px;top:0px;z-index:99;color:#ffffff;background-color:#000000;opacity:0.5;">
+      LOG
+    </div>
     <script>
+
+      (function () {
+          var old = console.log;
+          var logger = document.getElementById('log');
+          console.log = function (message) {
+              if (typeof message == 'object') {
+                  logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
+              } else {
+                  logger.innerHTML += message + '<br />';
+              }
+          }
+          console.error = function (message) {
+              if (typeof message == 'object') {
+                  logger.innerHTML += "ERRRRR;;"+(JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
+              } else {
+                  logger.innerHTML += "ERRRRR;;"+message + '<br />';
+              }
+          }
+      })();
+
       var currentFirstLoaderValue = 15
       var moveLoader = function(){
         var firstLoader = document.getElementById('firstLoaderBar')

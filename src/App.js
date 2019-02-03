@@ -75,9 +75,9 @@ let titleImage = (
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "http://localhost:8545"
-  WEB3_PROVIDER = "http://0.0.0.0:8545";
-  CLAIM_RELAY = 'http://localhost:18462'
+  XDAI_PROVIDER = "http://10.0.0.107:8545"
+  WEB3_PROVIDER = "http://10.0.0.107:8545";
+  CLAIM_RELAY = 'http://10.0.0.107:18462'
   if(false){
     ERC20NAME = false
     ERC20TOKEN = false
@@ -87,8 +87,8 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
     ERC20IMAGE = cypherpunk
-    XDAI_PROVIDER = "http://localhost:8545"
-    WEB3_PROVIDER = "http://localhost:8545";
+    XDAI_PROVIDER = "http://10.0.0.107:8545"
+    WEB3_PROVIDER = "http://10.0.0.107:8545";
   }
 
 }
@@ -96,6 +96,13 @@ else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = false//'Burner'
+}
+else if (window.location.hostname.indexOf("wallet.galleass.io") >= 0) {
+  //WEB3_PROVIDER = "https://rinkeby.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac";
+  WEB3_PROVIDER = "http://localhost:8545"
+  //CLAIM_RELAY = 'https://x.xdai.io'
+  ERC20TOKEN = false//'Burner'
+  document.domain = 'galleass.io'
 }
 else if (window.location.hostname.indexOf("qreth") >= 0) {
   WEB3_PROVIDER = "https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac"
@@ -198,6 +205,8 @@ let intervalLong
 
 class App extends Component {
   constructor(props) {
+
+
     console.log("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[["+title+"]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
     let view = 'main'
     let cachedView = localStorage.getItem("view")
@@ -330,6 +339,10 @@ class App extends Component {
     window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
   async poll() {
+
+    //console.log(">>>>>>> <<< >>>>>> Looking into iframe...")
+    //console.log(document.getElementById('galleassFrame').contentWindow['web3'])
+
     if(ERC20TOKEN&&this.state.contracts&&this.state.network=="xDai"){
       let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
       gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
@@ -1716,6 +1729,10 @@ render() {
   )
 }
 }
+
+//<iframe id="galleassFrame" style={{zIndex:99,position:"absolute",left:0,top:0,width:800,height:600}} src="https://galleass.io" />
+
+
 async function tokenSend(to,value,gasLimit,txData,cb){
   let {account,web3} = this.state
 
