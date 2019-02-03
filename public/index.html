@@ -56,10 +56,10 @@
       </div>
     </div>
     <div id="log" style="position:absolute;left:0px;top:0px;z-index:99;color:#ffffff;background-color:#000000;opacity:0.5;">
-      LOG
     </div>
     <script>
-
+      //uncomment to move logs to html for debugging devices
+      /*
       (function () {
           var old = console.log;
           var logger = document.getElementById('log');
@@ -78,6 +78,7 @@
               }
           }
       })();
+      */
 
       var currentFirstLoaderValue = 15
       var moveLoader = function(){
