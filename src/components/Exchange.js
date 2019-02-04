@@ -1304,7 +1304,7 @@ export default class Exchange extends React.Component {
                 let timestamp = currentBlock.timestamp
                 console.log("timestamp",timestamp)
 
-                let deadline = timestamp+300
+                let deadline = timestamp+600
                 let mintokens = output
                 console.log("ethToTokenSwapInput",mintokens,deadline)
 
