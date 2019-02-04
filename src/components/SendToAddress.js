@@ -31,10 +31,11 @@ export default class SendToAddress extends React.Component {
         initialState.toAddress = window.location.pathname.substring(1)
       }else{
         let parts = window.location.pathname.split(";")
-        console.log("PARTS",parts)
-        if(parts.length>2){
+        if(parts.length>=2){
           initialState.toAddress = parts[0].replace("/","")
           initialState.amount = parts[1]
+        }
+        if(parts.length>2){
           initialState.message = decodeURI(parts[2]).replaceAll("%23","#").replaceAll("%3B",";").replaceAll("%3A",":").replaceAll("%2F","/")
         }
         if(parts.length>3){
