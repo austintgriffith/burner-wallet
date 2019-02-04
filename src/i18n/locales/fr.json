@@ -1,5 +1,109 @@
 {
   "fr": {
-    "app_name": "Burner Wallet"
+    "app_name": "Burner Wallet",
+    "about": "Propos",
+    "code": "Code",
+    "burn": "Brûle le PK",
+    "show": "Montrez le PK",
+    "copy": "Copier le PK",
+    "create": "Génére",
+    "receive_title": "Recevoir",
+    "receipt_title": "Reçu",
+    "send_to_address_title": "Envoyer à l'adresse",
+    "advance": "Avancé",
+    "advance_title": "Avancé",
+    "loading": "Chargement...",
+    "cancel": "Annuler",
+    "done": "Fini",
+    "exchange_title": "Change",
+    "amount": "Somme",
+    "send": "Envoyer",
+    "withdraw": "Retirer",
+    "history_chat": "Antécédents & Chatter",
+    "request_funds_title": "Demander des fonds",
+    "request": "Demande",
+    "vendors": "Vendeurs",
+    "main_card": {
+      "receive": "Receive",
+      "send": "Recevoir",
+      "share": "Partager",
+      "link": "Lien",
+      "vendors": "Vendeurs"
+    },
+    "send_with_link": {
+      "error": "Indiquer une somme valable s'il vous plaît"
+    },
+    "share": {
+      "copied": "Le URL est copiées dans le presse-papier"
+    },
+    "vendor": {
+      "updating": "Mise à jour",
+      "open": "Ouvert",
+      "closed": "Fermé",
+      "add_product": "Ajouter des produits",
+      "adding": "Ajoutant"
+    },
+    "withdraw_from_private": {
+      "from_address": "Retirer à l'adresse",
+      "amount": "Retirer somme",
+      "withdraw": "Retirer",
+      "error": "Entrer un montant valide à retirer s'il vous plaît"
+    },
+    "send_to_address": {
+      "to_address": "Envoyer à l'adresse",
+      "send_amount": "Envoyer somme",
+      "notice": "Vous pouvez envoyer seulement ",
+      "error": "Entrez une adresse valide ou ENS s'il vous plaît"
+    },
+    "send_by_scan": {
+      "try_again": "Veuillez réessayer",
+      "take_photo": "Prendre une photo",
+      "capture": "Capturer le code QR:"
+    },
+    "more_buttons": {
+      "request": "Demande",
+      "exchange": "Échange"
+    },
+    "receive": {
+      "address_copied": "L'adresse est copiées dans le presse-papier"
+    },
+    "history": {
+      "metamask_error": "Messagerie cryptée non disponible avec MetaMask",
+      "wave": "Signe de la main"
+    },
+    "exchange": {
+      "withdrawal_explanation": "Seuls les vendeurs peuvent retirer plus qu'ils ont déposé",
+      "funds_transferred": "Fonds transférés!",
+      "funds_bridged": "Fonds échangés",
+      "insufficient_funds": "Insuffisance de fonds",
+      "invalid_to_address": "Entrez une adresse valide s'il vous plaît",
+      "invalid_to_amount": "Entrez une somme valide s'il vous plaît",
+      "calculate_gas_price": "Calcul du meilleur prix du gaz...",
+      "go_to_etherscan": "Aller à etherscan?",
+      "idk": "Je ne sais pas où aller en partant d'ici? Quelque chose qui explique le pont?"
+    },
+    "request_funds": {
+      "item_message": "Article ou Message",
+      "button": "Demande",
+      "amount": "Demande somme"
+    },
+    "admin": {
+      "add_admin": "Ajouter un administrateur",
+      "adding": "Ajoutant",
+      "add_vendor": "Ajouter un vendeur"
+    },
+    "advanced": {
+      "to_qr": "À QR"
+    },
+    "balance_display": {
+      "waiting_for_api": "Attente pour API",
+      "no_currency_api": "Pas de monnaie API données disponibles"
+    },
+    "burn_wallet": {
+      "burn_private_key_question": "Êtes-vous sûr de vouloir brûler ce PK?",
+      "disclaimer": "Ne le faites pas! Vous perdez tous les fonds!",
+      "cancel": "Non, annuler",
+      "burn": "Brûle-le!"
+    }
   }
 }

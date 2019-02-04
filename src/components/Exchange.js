@@ -877,11 +877,18 @@ export default class Exchange extends React.Component {
         )
       }
 
+      let link = ""
+      if(this.props.contracts){
+        link = "https://blockscout.com/poa/dai/address/"+this.props.contracts[this.props.ERC20TOKEN]._address+"/contracts"
+      }
+
       tokenDisplay = (
         <div>
           <div className="content ops row" style={{paddingBottom:20}}>
             <div className="col-2 p-1">
-              <img style={logoStyle} src={this.props.ERC20IMAGE} />
+              <a href={link} target="_blank">
+                <img style={logoStyle} src={this.props.ERC20IMAGE} />
+              </a>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
               {this.props.ERC20NAME}
