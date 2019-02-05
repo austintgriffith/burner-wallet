@@ -194,6 +194,8 @@ const invLogoStyle = {
   maxHeight:50,
 }
 
+let metaReceiptTracker = {}
+
 
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
@@ -1790,7 +1792,10 @@ async function tokenSend(to,value,gasLimit,txData,cb){
       console.log("SIGNED:",signed)
       this.state.web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
         console.log("META RECEIPT",receipt)
-        cb(receipt)
+        if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+          metaReceiptTracker[receipt.transactionHash] = true
+          cb(receipt)
+        }
       }).on('error',(error)=>{
         console.log("ERRROROROROROR",error)
         let errorString = error.toString()

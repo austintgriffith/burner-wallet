@@ -43,6 +43,7 @@ const uniswapContractObject = {
 
 let interval
 let intervalLong
+let metaReceiptTracker = {}
 
 export default class Exchange extends React.Component {
 
@@ -395,9 +396,13 @@ export default class Exchange extends React.Component {
             console.log("========= >>> SIGNED",signed)
               this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                 console.log("META RECEIPT",receipt)
-                cb(receipt)
+                if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                  metaReceiptTracker[receipt.transactionHash] = true
+                  cb(receipt)
+                }
               }).on('error', (err)=>{
                 console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                this.props.changeAlert({type: 'danger',message: err.toString()});
               }).then(console.log)
           });
 
@@ -508,9 +513,13 @@ export default class Exchange extends React.Component {
             console.log("========= >>> SIGNED",signed)
               this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                 console.log("META RECEIPT",receipt)
-                cb(receipt)
+                if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                  metaReceiptTracker[receipt.transactionHash] = true
+                  cb(receipt)
+                }
               }).on('error', (err)=>{
                 console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                this.props.changeAlert({type: 'danger',message: err.toString()});
               }).then(console.log)
           });
 
@@ -689,12 +698,15 @@ export default class Exchange extends React.Component {
                       console.log("========= >>> SIGNED",signed)
                         this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                           console.log("META RECEIPT",receipt)
-                          this.setState({
-                            amount:"",
-
-                          })
+                          if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                            metaReceiptTracker[receipt.transactionHash] = true
+                            this.setState({
+                              amount:"",
+                            })
+                          }
                         }).on('error', (err)=>{
                           console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                          this.props.changeAlert({type: 'danger',message: err.toString()});
                         }).then(console.log)
                     });
 
@@ -813,12 +825,15 @@ export default class Exchange extends React.Component {
                         console.log("========= >>> SIGNED",signed)
                           this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                             console.log("META RECEIPT",receipt)
-                            this.setState({
-                              amount:"",
-
-                            })
+                            if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                              metaReceiptTracker[receipt.transactionHash] = true
+                              this.setState({
+                                amount:"",
+                              })
+                            }
                           }).on('error', (err)=>{
                             console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                            this.props.changeAlert({type: 'danger',message: err.toString()});
                           }).then(console.log)
                       });
 
@@ -1102,16 +1117,20 @@ export default class Exchange extends React.Component {
                     console.log("========= >>> SIGNED",signed)
                       this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                         console.log("META RECEIPT",receipt)
-                        this.setState({
-                          amount:"",
-                          loaderBarColor:"#4ab3f5",
-                          loaderBarStatusText:"Waiting for bridge...",
-                          loaderBarClick:()=>{
-                            alert(i18n.t('exchange.idk'))
-                          }
-                        })
+                        if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                          metaReceiptTracker[receipt.transactionHash] = true
+                          this.setState({
+                            amount:"",
+                            loaderBarColor:"#4ab3f5",
+                            loaderBarStatusText:"Waiting for bridge...",
+                            loaderBarClick:()=>{
+                              alert(i18n.t('exchange.idk'))
+                            }
+                          })
+                        }
                       }).on('error', (err)=>{
                         console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                        this.props.changeAlert({type: 'danger',message: err.toString()});
                       }).then(console.log)
                   });
 
@@ -1507,47 +1526,49 @@ export default class Exchange extends React.Component {
                           console.log("========= >>> SIGNED",signed)
                             this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', async (receipt)=>{
                               console.log("META RECEIPT",receipt)
-                              this.setState({
-                                loaderBarColor:"#4ab3f5",
-                                loaderBarStatusText:"Waiting for 🦄 exchange...",
-                                ethBalanceAtStart:this.props.ethBalance,
-                                ethBalanceShouldBe:eventualEthBalance,
-                              })
+                              if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                                metaReceiptTracker[receipt.transactionHash] = true
+                                this.setState({
+                                  loaderBarColor:"#4ab3f5",
+                                  loaderBarStatusText:"Waiting for 🦄 exchange...",
+                                  ethBalanceAtStart:this.props.ethBalance,
+                                  ethBalanceShouldBe:eventualEthBalance,
+                                })
 
+                                let manualNonce = await this.state.mainnetweb3.eth.getTransactionCount(this.state.daiAddress)
+                                console.log("manually grabbed nonce as ",manualNonce)
+                                paramsObject = {
+                                  nonce: manualNonce,
+                                  from: this.state.daiAddress,
+                                  value: 0,
+                                  gas: 240000,
+                                  gasPrice: Math.round(gwei * 1000000000)
+                                }
+                                console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
+                                paramsObject.to = uniswapContract._address
+                                paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
 
-                              let manualNonce = await this.state.mainnetweb3.eth.getTransactionCount(this.state.daiAddress)
-                              console.log("manually grabbed nonce as ",manualNonce)
-                              paramsObject = {
-                                nonce: manualNonce,
-                                from: this.state.daiAddress,
-                                value: 0,
-                                gas: 240000,
-                                gasPrice: Math.round(gwei * 1000000000)
+                                console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+                                this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+                                  console.log("========= >>> SIGNED",signed)
+                                    this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                                      console.log("META RECEIPT",receipt)
+                                      if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                                        metaReceiptTracker[receipt.transactionHash] = true
+                                        this.setState({
+                                          amount:"",
+                                        })
+                                      }
+                                    }).on('error', (err)=>{
+                                      console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                                      this.props.changeAlert({type: 'danger',message: err.toString()});
+                                    }).then(console.log)
+                                });
                               }
-                              console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
-
-                              paramsObject.to = uniswapContract._address
-                              paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
-
-                              console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
-
-                              this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
-                                console.log("========= >>> SIGNED",signed)
-                                  this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                                    console.log("META RECEIPT",receipt)
-                                    this.setState({
-                                      amount:"",
-
-                                    })
-                                  }).on('error', (err)=>{
-                                    console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                                  }).then(console.log)
-                              });
-
-
-
                             }).on('error', (err)=>{
+                              this.props.changeAlert({type: 'danger',message: err.toString()});
                               console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
                             }).then(console.log)
                         });
@@ -1577,13 +1598,16 @@ export default class Exchange extends React.Component {
                           console.log("========= >>> SIGNED",signed)
                             this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                               console.log("META RECEIPT",receipt)
-                              this.setState({
-                                amount:"",
-                                loaderBarColor:"#4ab3f5",
-
-                              })
+                              if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                                metaReceiptTracker[receipt.transactionHash] = true
+                                this.setState({
+                                  amount:"",
+                                  loaderBarColor:"#4ab3f5",
+                                })
+                              }
                             }).on('error', (err)=>{
                               console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                              this.props.changeAlert({type: 'danger',message: err.toString()});
                             }).then(console.log)
                         });
 
