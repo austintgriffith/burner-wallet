@@ -32,6 +32,7 @@
     "qrcode.react": "^0.8.0",
     "react": "^16.6.0",
     "react-blockies": "^1.4.0",
+    "react-cookies": "^0.1.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.6.0",
     "react-emoji-render": "^0.5.0",

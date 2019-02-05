@@ -1410,7 +1410,7 @@ render() {
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                    <NavCard title={title} goBack={this.goBack.bind(this)} />
+                    <NavCard title={url} goBack={this.goBack.bind(this)} />
                     <Share
                       title={url}
                       url={url}

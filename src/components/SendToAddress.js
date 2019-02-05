@@ -1,6 +1,7 @@
 import React from 'react';
 import Ruler from "./Ruler";
 import Balance from "./Balance";
+import cookie from 'react-cookies'
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
@@ -11,10 +12,14 @@ export default class SendToAddress extends React.Component {
 
   constructor(props) {
     super(props);
+    let startAmount = props.amount
+    if(!startAmount) startAmount = cookie.load('sendToStartAmount')
+    let startMessage= props.message
+    if(!startMessage) startMessage = cookie.load('sendToStartMessage')
     let initialState = {
-      amount: props.amount,
-      message: props.message,
-      toAddress: "",
+      amount: startAmount,
+      message: startMessage,
+      toAddress: cookie.load('sendToAddress'),
       fromEns: "",
       canSend: false,
     }
@@ -49,7 +54,15 @@ export default class SendToAddress extends React.Component {
   }
 
   updateState = async (key, value) => {
-
+    if(key=="amount"){
+      cookie.save('sendToStartAmount', value, { path: '/', maxAge: 60 })
+    }
+    else if(key=="message"){
+      cookie.save('sendToStartMessage', value, { path: '/', maxAge: 60 })
+    }
+    else if(key=="toAddress"){
+      cookie.save('sendToAddress', value, { path: '/', maxAge: 60 })
+    }
     this.setState({ [key]: value },()=>{
       this.setState({ canSend: this.canSend() },()=>{
         if(key!="message"){
@@ -150,10 +163,10 @@ export default class SendToAddress extends React.Component {
         if(!ERC20TOKEN && parseFloat(amount)-parseFloat(this.props.balance)<=.01){
           extraHint = "(gas costs)"
         }
-        this.props.changeAlert({type: 'warning', message: '$'+Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100+' '+extraHint})
+        this.props.changeAlert({type: 'warning', message: 'Not enough funds: $'+Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100+' '+extraHint})
       }else if((ERC20TOKEN && (parseFloat(this.props.balance)<parseFloat(amount)))){
         console.log("SO THE BALANCE IS LESS!")
-        this.props.changeAlert({type: 'warning', message: '$'+parseFloat(this.props.balance)})
+        this.props.changeAlert({type: 'warning', message: 'Not enough tokens: $'+parseFloat(this.props.balance)})
       }else{
         console.log("SWITCH TO LOADER VIEW...",amount)
         this.props.changeView('loader')
@@ -170,6 +183,10 @@ export default class SendToAddress extends React.Component {
         if(amount){
           value=amount
         }
+
+        cookie.remove('sendToStartAmount', { path: '/' })
+        cookie.remove('sendToStartMessage', { path: '/' })
+        cookie.remove('sendToAddress', { path: '/' })
 
         this.props.send(toAddress, value, 120000, txData, (result) => {
           if(result && result.transactionHash){
