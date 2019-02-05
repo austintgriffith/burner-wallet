@@ -859,7 +859,10 @@ render() {
   let networkOverlay = ""
   if(web3 && !this.checkNetwork() && view!="exchange"){
     networkOverlay = (
-      <img style={{zIndex:12,position:'absolute',opacity:0.95,right:0,top:0,maxHeight:370}} src={customRPCHint} />
+      <div>
+        <input style={{zIndex:13,position:'absolute',opacity:0.95,right:48,top:192,width:194}} value="https://dai.poa.network" />
+        <img style={{zIndex:12,position:'absolute',opacity:0.95,right:0,top:0,maxHeight:370}} src={customRPCHint} />
+      </div>
     )
   }
 
