@@ -1,7 +1,7 @@
 import React from 'react';
 import { Scaler, Blockie } from "dapparatus";
 import burnerloader from '../burnerloader.gif';
-export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
+export  default ({network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
 
 
   let sendButtonOpacity = 1.0
@@ -30,9 +30,14 @@ export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balan
       </div>
     )
   }else{
-    moneyDisplay = (
+    /*moneyDisplay = (
       <div>
         ${dollarDisplay(total)}
+      </div>
+    )*/
+    moneyDisplay = (
+      <div style={{opacity:0.4,fontSize:22,paddingTop:18}}>
+        {network}
       </div>
     )
     blockieDisplay = (

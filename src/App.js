@@ -29,6 +29,7 @@ import Vendors from './components/Vendors';
 import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
+import burnerlogo from './burnerwallet.png';
 import BurnWallet from './components/BurnWallet'
 import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
@@ -56,7 +57,8 @@ let ERC20TOKEN
 let ERC20VENDOR
 let ERC20IMAGE
 let ERC20NAME
-let HARDCODEVIEW// = "receipt"
+let LOADERIMAGE = burnerlogo
+let HARDCODEVIEW// = "loader"// = "receipt"
 
 let mainStyle = {
   width:"100%",
@@ -78,7 +80,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://10.0.0.107:8545"
   WEB3_PROVIDER = "http://10.0.0.107:8545";
   CLAIM_RELAY = 'http://10.0.0.107:18462'
-  if(false){
+  if(true){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
@@ -121,6 +123,7 @@ else if (window.location.hostname.indexOf("buffidai") >= 0) {
   ERC20VENDOR = 'VendingMachine'
   ERC20TOKEN = 'ERC20Vendable'
   ERC20IMAGE = bufficorn
+  LOADERIMAGE = bufficorn
 }
 else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
@@ -129,6 +132,7 @@ else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   ERC20VENDOR = 'BurnerVendor'
   ERC20TOKEN = 'Burner'
   ERC20IMAGE = cypherpunk
+  LOADERIMAGE = cypherpunk
 }
 
 
@@ -933,6 +937,7 @@ render() {
   if(web3){
     header = (
       <Header
+        network={this.state.network}
         total={totalBalance}
         ens={this.state.ens}
         title={this.state.title}
@@ -1373,7 +1378,9 @@ render() {
                   <NavCard title={i18n.t('request_funds_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <RequestFunds
+                    view={this.state.view}
                     mainStyle={mainStyle}
+                    buttonStyle={buttonStyle}
                     balance={balance}
                     address={account}
                     send={send}
@@ -1381,6 +1388,10 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
+                    transactionsByAddress={this.state.transactionsByAddress}
+                    fullTransactionsByAddress={this.state.fullTransactionsByAddress}
+                    fullRecentTxs={this.state.fullRecentTxs}
+                    recentTxs={this.state.recentTxs}
                   />
                 </div>
                 <Bottom
@@ -1580,31 +1591,31 @@ render() {
             case 'loader':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+                <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
 
-                  <NavCard title={"Sending..."} goBack={this.goBack.bind(this)}/>
+                  <NavCard title={"Sending..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                 </div>
-              <Loader mainStyle={mainStyle}/>
+                <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
               </div>
             );
             case 'reader':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+                <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
 
-                  <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)}/>
+                  <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                 </div>
-                <Loader mainStyle={mainStyle}/>
+                <Loader loaderImage={LOADERIMAGE}  mainStyle={mainStyle}/>
               </div>
             );
             case 'claimer':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+                <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
 
-                  <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)}/>
+                  <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                 </div>
-              <Loader mainStyle={mainStyle}/>
+              <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
               </div>
             );
             default:
@@ -1616,7 +1627,7 @@ render() {
         })()}
         { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
           <div>
-            <Loader mainStyle={mainStyle}/>
+            <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
           </div>
         }
         { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
