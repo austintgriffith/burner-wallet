@@ -66,7 +66,7 @@ export default class SendWithLink extends React.Component {
               <div className="input-group-prepend">
                 <div className="input-group-text">$</div>
               </div>
-              <input type="text" className="form-control" placeholder="0.00"
+              <input type="number" step="0.1" className="form-control" placeholder="0.00"
                 ref={(input) => { this.amountInput = input; }}
                      onChange={event => this.updateState('amount', event.target.value)} />
             </div>

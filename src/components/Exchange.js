@@ -640,7 +640,7 @@ export default class Exchange extends React.Component {
                   <div className="input-group-prepend">
                     <div className="input-group-text">$</div>
                   </div>
-                  <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
+                  <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
                          onChange={event => this.updateState('amount', event.target.value)} />
                 </div>
                 </Scaler>
@@ -764,7 +764,7 @@ export default class Exchange extends React.Component {
                     <div className="input-group-prepend">
                       <div className="input-group-text">$</div>
                     </div>
-                    <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
+                    <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
                            onChange={event => this.updateState('amount', event.target.value)} />
                   </div>
                   </Scaler>
@@ -965,7 +965,7 @@ export default class Exchange extends React.Component {
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
                 </div>
-                <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
+                <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
                  <div className="input-group-append" onClick={() => {
                     this.setState({amount: Math.floor(this.props.daiBalance*100)/100 })
@@ -1048,7 +1048,7 @@ export default class Exchange extends React.Component {
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
                 </div>
-                <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
+                <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
                    <div className="input-group-append" onClick={() => {
                       this.setState({amount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 })
@@ -1230,7 +1230,7 @@ export default class Exchange extends React.Component {
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
                 </div>
-                <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
+                <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
                  <div className="input-group-append" onClick={() => {
 
@@ -1395,7 +1395,7 @@ export default class Exchange extends React.Component {
                 <div className="input-group-prepend">
                   <div className="input-group-text">$</div>
                 </div>
-                <input type="text" className="form-control" placeholder="0.00" value={this.state.amount}
+                <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
                <div className="input-group-append" onClick={() => {
                   this.setState({amount: Math.floor((this.props.daiBalance)*100)/100 })
@@ -1748,7 +1748,7 @@ export default class Exchange extends React.Component {
               <div className="input-group-prepend">
                 <div className="input-group-text">$</div>
               </div>
-              <input type="text" className="form-control" placeholder="0.00" value={this.state.daiSendAmount}
+              <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.daiSendAmount}
                      onChange={event => this.updateState('daiSendAmount', event.target.value)} />
                <div className="input-group-append" onClick={() => {
                   this.setState({daiSendAmount: Math.floor((this.props.daiBalance)*100)/100 })
@@ -1809,7 +1809,7 @@ export default class Exchange extends React.Component {
               <div className="input-group-prepend">
                 <div className="input-group-text">$</div>
               </div>
-              <input type="text" className="form-control" placeholder="0.00" value={this.state.ethSendAmount}
+              <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.ethSendAmount}
                      onChange={event => this.updateState('ethSendAmount', event.target.value)} />
                      <div className="input-group-append" onClick={() => {
 

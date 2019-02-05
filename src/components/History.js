@@ -400,16 +400,16 @@ export default class History extends React.Component {
               }}>
                 <div className="input-group-text">$</div>
               </div>
-              <input type="text" onKeyDown={this.onKeyDown} className="form-control" placeholder="0.00" value={this.state.newChatAmount}
+              <input type="number" step="0.1" onKeyDown={this.onKeyDown} className="form-control" placeholder="0.00" value={this.state.newChatAmount}
                 ref={(input) => { this.amountInput = input; }}
                      onChange={event => this.setState({newChatAmount:event.target.value})}
               />
             </div>
           </div>
-          <div className="col-7 p-1">
+          <div className="col-6 p-1">
             {chatInput}
           </div>
-          <div className="col-1 p-1">
+          <div className="col-2 p-1">
             {sendChatButton}
           </div>
         </div>
@@ -417,7 +417,7 @@ export default class History extends React.Component {
     }else{
       sendForm = (
         <div className="content ops row">
-          <div className="col-1 p-1">
+          <div className="col-2 p-1">
             <button className="btn btn-large w-100" style={buttonStyle.secondary}
               onClick={()=>{
                 this.setState({sendingFunds:true},()=>{
@@ -431,10 +431,10 @@ export default class History extends React.Component {
               </Scaler>
             </button>
           </div>
-          <div className="col-10 p-1">
+          <div className="col-8 p-1">
            {chatInput}
           </div>
-          <div className="col-1 p-1">
+          <div className="col-2 p-1">
             {sendChatButton}
           </div>
         </div>

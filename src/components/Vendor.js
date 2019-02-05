@@ -165,7 +165,7 @@ export default class Advanced extends React.Component {
             <div className="input-group-prepend">
               <div className="input-group-text">$</div>
             </div>
-            <input type="text" className="form-control" placeholder="0.00" value={this.state.newProductAmount}
+            <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.newProductAmount}
               onChange={event => this.setState({newProductAmount:event.target.value})} />
           </div>
           </div>
