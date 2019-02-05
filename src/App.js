@@ -441,16 +441,24 @@ class App extends Component {
   async dealWithPossibleNewPrivateKey(){
     //this happens as page load and you need to wait until
     if(this.state && this.state.hasUpdateOnce){
-      if(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 ){
-        this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
-          this.changeView('withdraw_from_private')
-        })
+      if(this.state.metaAccount && this.state.metaAccount.privateKey.replace("0x","") == this.state.possibleNewPrivateKey.replace("0x","")){
+        this.setState({possibleNewPrivateKey:false})
+        this.changeAlert({
+          type: 'warning',
+          message: 'Imported identical private key.',
+        });
       }else{
-        this.setState({possibleNewPrivateKey:false,newPrivateKey:this.state.possibleNewPrivateKey})
-        localStorage.setItem(this.state.account+"loadedBlocksTop","")
-        localStorage.setItem(this.state.account+"recentTxs","")
-        localStorage.setItem(this.state.account+"transactionsByAddress","")
-        this.setState({recentTxs:[],transactionsByAddress:{},fullRecentTxs:[],fullTransactionsByAddress:{}})
+        if(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 ){
+          this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
+            this.changeView('withdraw_from_private')
+          })
+        }else{
+          this.setState({possibleNewPrivateKey:false,newPrivateKey:this.state.possibleNewPrivateKey})
+          localStorage.setItem(this.state.account+"loadedBlocksTop","")
+          localStorage.setItem(this.state.account+"recentTxs","")
+          localStorage.setItem(this.state.account+"transactionsByAddress","")
+          this.setState({recentTxs:[],transactionsByAddress:{},fullRecentTxs:[],fullTransactionsByAddress:{}})
+        }
       }
     }else{
       setTimeout(this.dealWithPossibleNewPrivateKey.bind(this),500)
