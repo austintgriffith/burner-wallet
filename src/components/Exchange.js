@@ -52,7 +52,7 @@ export default class Exchange extends React.Component {
 
     let xdaiweb3 = this.props.xdaiweb3
     //make it easier for local debugging...
-    if(true && window.location.hostname.indexOf("localhost")>=0){
+    if(false && window.location.hostname.indexOf("localhost")>=0){
       console.log("WARNING, USING LOCAL RPC")
       xdaiweb3 = new Web3(new Web3.providers.HttpProvider("http://0.0.0.0:8545"))
     }
@@ -88,6 +88,7 @@ export default class Exchange extends React.Component {
     }
 
     this.state = {
+      extraGasUpDisplay: "",
       daiAddress: daiAddress,
       xdaiAddress: xdaiAddress,
       wyreBalance: 0,
@@ -106,7 +107,8 @@ export default class Exchange extends React.Component {
       loaderBarColor: "#aaaaaa",
       gwei: 5,
       maxWithdrawlAmount: 0.00,
-      withdrawalExplanation: i18n.t('exchange.withdrawal_explanation')
+      withdrawalExplanation: i18n.t('exchange.withdrawal_explanation'),
+      gettingGas:false
     }
   }
   updateState = (key, value) => {
@@ -129,6 +131,134 @@ export default class Exchange extends React.Component {
         this.setState({daiBalance})
       }
     }*/
+
+
+    if(this.state.gettingGas){
+      if(this.state.ethBalanceShouldBe){
+        console.log("ethBalanceShouldBe:",parseFloat(this.state.ethBalanceShouldBe)," needs to be less than ",parseFloat(this.props.ethBalance))
+        if(parseFloat(this.state.ethBalanceShouldBe)<parseFloat(this.props.ethBalance)){
+          this.setState({gettingGas:false,ethBalanceShouldBe:false})
+        }
+      }
+    }
+
+    //console.log("checking extraGasUpDisplay",parseFloat(this.props.daiBalance),parseFloat(this.props.ethBalance),parseFloat(this.props.xdaiBalance))
+    if(false || parseFloat(this.props.daiBalance)>0 && parseFloat(this.props.ethBalance)<=0.001 && parseFloat(this.props.xdaiBalance) > 0 ){
+      let getGasText = (
+        <div>
+          ⛽ xDai -> ETH
+        </div>
+      )
+      if(this.state.gettingGas){
+        getGasText = (
+          <div>
+            ⛽ <i className="fas fa-cog fa-spin"></i>
+          </div>
+        )
+      }
+
+
+      let extraGasUpDisplay = (
+        <div style={{padding:10,width:"100%",textAlign:'center',backgroundColor:"#ffdddd"}}>
+          <div style={{padding:10}}>You have DAI but no ETH for gas:</div>
+          <button style={this.props.buttonStyle.secondary}
+            className="btn btn-large"
+            onClick={()=>{
+              if(this.state.gettingGas){
+                this.props.changeAlert({type: 'warning',message: "Already trying to fuel up via xDai->ETH"});
+              }else if(this.props.network!="xDai"&&this.props.network!="Unknown"){
+                this.props.changeAlert({type: 'warning',message: "You must be on the xDai network to fuel xDai->ETH"});
+              }else{
+                this.setState({gettingGas:true,ethBalanceShouldBe:parseFloat(this.props.ethBalance)+0.001})
+                axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
+                .catch((err)=>{
+                  console.log("Error getting gas price",err)
+                })
+                .then((response)=>{
+                  if(response && response.data.average>0&&response.data.average<200){
+                    console.log("gas prices",response.data.average)
+                    let gwei = Math.round(response.data.average*100)/1000
+                    console.log("gwei:",gwei)
+                    let AMOUNTNEEDEDFORACOUPLETXS = Math.round(gwei*(1111000000*10) * 201000) // idk maybe enough for a couple transactions?
+
+                    console.log("let's move ",AMOUNTNEEDEDFORACOUPLETXS,"from",this.props.xdaiBalance,"to",this.props.ethBalance)
+
+                    let gasInEth = this.props.web3.utils.fromWei(""+AMOUNTNEEDEDFORACOUPLETXS,'ether')
+                    console.log("gasInEth",gasInEth)
+                    let gasInXDai = Math.floor(this.props.ethprice*gasInEth*100)/100
+
+                    if(gasInXDai>0.5) gasInXDai = 0.5
+                    if(this.props.xdaiBalance < gasInXDai) gasInXDai = this.props.xdaiBalance-0.005
+
+                    console.log("gasInXDai",gasInXDai)
+
+                    let gasEmitterContract = new this.props.web3.eth.Contract(require("../contracts/Emitter.abi.js"),require("../contracts/Emitter.address.js"))
+
+                    let amountInWei = this.props.web3.utils.toWei(""+gasInXDai,'ether')
+
+                    if(this.state.xdaiMetaAccount){
+                      //send funds using metaaccount on mainnet
+
+                      let paramsObject = {
+                        from: this.state.daiAddress,
+                        value: amountInWei,
+                        gas: 120000,
+                        gasPrice: Math.round(1.1 * 1000000000)
+                      }
+                      console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+                      paramsObject.to = gasEmitterContract._address
+                      paramsObject.data = gasEmitterContract.methods.goToETH().encodeABI()
+
+                      console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+
+                      this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
+                        console.log("========= >>> SIGNED",signed)
+                          this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                            console.log("META RECEIPT",receipt)
+                            if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                              metaReceiptTracker[receipt.transactionHash] = true
+                              //actually, let's wait for the eth balance to change
+                              //this.setState({gettingGas:false})
+                            }
+                          }).on('error', (err)=>{
+                            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                            this.props.changeAlert({type: 'danger',message: err.toString()});
+                            this.setState({gettingGas:false})
+                          }).then(console.log)
+                      });
+
+                    }else{
+                      console.log("Use MetaMask to go xDai to ETH")
+                      this.props.tx(
+                        gasEmitterContract.methods.goToETH()
+                      ,120000,0,amountInWei,(receipt)=>{
+                        if(receipt){
+                          console.log("GAS UP COMPLETE?!?",receipt)
+                          //this.setState({gettingGas:false})
+                          //window.location = "/"+receipt.contractAddress
+                        }
+                      })
+                    }
+                  }
+                })
+              }
+
+
+
+            }}
+          >
+           {getGasText}
+          </button>
+        </div>
+
+      )
+      this.setState({extraGasUpDisplay})
+    }
+
+
+
     if(this.props.ERC20TOKEN&&dendaiContract){
       let denDaiBalance = await dendaiContract.methods.balanceOf(this.state.daiAddress).call()
       denDaiBalance = mainnetweb3.utils.fromWei(denDaiBalance,"ether")
@@ -1968,7 +2098,7 @@ export default class Exchange extends React.Component {
             </div>
           </div>
           {sendEthRow}
-
+          {this.state.extraGasUpDisplay}
 
 
 

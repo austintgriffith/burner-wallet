@@ -77,7 +77,7 @@ let titleImage = (
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "http://10.0.0.107:8545"
+  XDAI_PROVIDER = "https://dai.poa.network"
   WEB3_PROVIDER = "http://10.0.0.107:8545";
   CLAIM_RELAY = 'http://10.0.0.107:18462'
   if(true){
