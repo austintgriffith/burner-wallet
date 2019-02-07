@@ -78,10 +78,10 @@ let titleImage = (
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "http://10.0.0.107:8545"
-  WEB3_PROVIDER = "http://10.0.0.107:8545";
-  CLAIM_RELAY = 'http://10.0.0.107:18462'
-  if(false){
+  XDAI_PROVIDER = "http://localhost:8545"
+  WEB3_PROVIDER = "http://localhost:8545";
+  CLAIM_RELAY = 'http://localhost:18462'
+  if(true){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
@@ -90,8 +90,8 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
     ERC20IMAGE = cypherpunk
-    XDAI_PROVIDER = "http://10.0.0.107:8545"
-    WEB3_PROVIDER = "http://10.0.0.107:8545";
+    XDAI_PROVIDER = "http://localhost:8545"
+    WEB3_PROVIDER = "http://localhost:8545";
     LOADERIMAGE = cypherpunk
   }
 
