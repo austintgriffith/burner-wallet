@@ -138,7 +138,7 @@ else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
 }
 
 
-if(ERC20TOKEN=="ERC20Vendable"){
+if(ERC20NAME=="BUFF"){
   mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
   mainStyle.backgroundColor = "#20012d"
   mainStyle.mainColor = "#b6299e"
@@ -152,7 +152,7 @@ if(ERC20TOKEN=="ERC20Vendable"){
       marginTop:-10
     }}/>
   )
-} else if(ERC20TOKEN=="Burner"){
+} else if(ERC20NAME=="BURN"){
   mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
   mainStyle.backgroundColor = "#6c0664"
   mainStyle.mainColor = "#e72da3"
@@ -173,6 +173,7 @@ let innerStyle = {
   maxWidth:740,
   margin:'0 auto',
   textAlign:'left',
+  overflow:'hidden'
 }
 
 let buttonStyle = {
