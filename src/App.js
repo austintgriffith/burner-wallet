@@ -18,6 +18,7 @@ import ShareLink from './components/ShareLink'
 import Balance from "./components/Balance";
 import Ruler from "./components/Ruler";
 import Receipt from "./components/Receipt";
+import CashOut from "./components/CashOut";
 import MainCard from './components/MainCard';
 import History from './components/History';
 import Advanced from './components/Advanced';
@@ -77,10 +78,10 @@ let titleImage = (
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "https://dai.poa.network"
+  XDAI_PROVIDER = "http://10.0.0.107:8545"
   WEB3_PROVIDER = "http://10.0.0.107:8545";
   CLAIM_RELAY = 'http://10.0.0.107:18462'
-  if(true){
+  if(false){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
@@ -91,6 +92,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
     ERC20IMAGE = cypherpunk
     XDAI_PROVIDER = "http://10.0.0.107:8545"
     WEB3_PROVIDER = "http://10.0.0.107:8545";
+    LOADERIMAGE = cypherpunk
   }
 
 }
@@ -349,10 +351,10 @@ class App extends Component {
     //console.log(">>>>>>> <<< >>>>>> Looking into iframe...")
     //console.log(document.getElementById('galleassFrame').contentWindow['web3'])
 
-    if(ERC20TOKEN&&this.state.contracts&&this.state.network=="xDai"){
+    if(ERC20TOKEN&&this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown")){
       let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
       gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
-      //console.log("Getting balanceOf "+this.state.account+" in contract ",this.state.contracts[ERC20TOKEN])
+      console.log("Getting balanceOf "+this.state.account+" in contract ",this.state.contracts[ERC20TOKEN])
       let tokenBalance = await this.state.contracts[ERC20TOKEN].balanceOf(this.state.account).call()
       //console.log("balance is ",tokenBalance)
       tokenBalance = this.state.web3.utils.fromWei(""+tokenBalance,'ether')
@@ -985,6 +987,7 @@ render() {
             <MoreButtons
               buttonStyle={buttonStyle}
               changeView={this.changeView}
+              isVendor={this.state.isVendor&&this.state.isVendor.isAllowed}
             />
           )
 
@@ -1017,6 +1020,7 @@ render() {
                   <MoreButtons
                     buttonStyle={buttonStyle}
                     changeView={this.changeView}
+                    isVendor={false}
                   />
                 </div>
               )
@@ -1039,6 +1043,7 @@ render() {
                   <MoreButtons
                     buttonStyle={buttonStyle}
                     changeView={this.changeView}
+                    isVendor={true}
                   />
                 </div>
               )
@@ -1048,6 +1053,7 @@ render() {
                   <MoreButtons
                     buttonStyle={buttonStyle}
                     changeView={this.changeView}
+                    isVendor={false}
                   />
                 </div>
               )
@@ -1233,6 +1239,7 @@ render() {
 
                   <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
                   <Advanced
+                    isVendor={false}
                     buttonStyle={buttonStyle}
                     address={account}
                     balance={balance}
@@ -1529,6 +1536,28 @@ render() {
                 />
               </div>
             );
+            case 'cash_out':
+            return (
+              <div>
+                <div className="main-card card w-100" style={{zIndex:1}}>
+
+                  <NavCard title={"Cash Out"} goBack={this.goBack.bind(this)}/>
+                  {defaultBalanceDisplay}
+                  <CashOut
+                    buttonStyle={buttonStyle}
+                    changeView={this.changeView}
+                    address={account}
+                    balance={balance}
+                    goBack={this.goBack.bind(this)}
+                    dollarDisplay={dollarDisplay}
+                  />
+                </div>
+                <Bottom
+                  action={this.goBack.bind(this)}
+                />
+              </div>
+            );
+
             case 'exchange':
             return (
               <div>

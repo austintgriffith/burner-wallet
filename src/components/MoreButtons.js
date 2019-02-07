@@ -7,7 +7,33 @@ import i18n from '../i18n';
 
 
 
-export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
+export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
+
+  let exchangeButton
+
+  if(!isVendor){
+    exchangeButton  = (
+      <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
+        changeView('exchange')}
+      }>
+        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+          <i className="fa fa-random"></i> {i18n.t('more_buttons.exchange')}
+        </Scaler>
+      </button>
+    )
+  }else{
+    exchangeButton  = (
+      <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
+        changeView('cash_out')}
+      }>
+        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+          <i className="fa fa-credit-card"></i> {"Cash Out"}
+        </Scaler>
+      </button>
+    )
+  }
+
+
   return (
     <div className="content bridge row">
       <div className="col-6 p-1">
@@ -20,13 +46,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
         </button>
       </div>
       <div className="col-6 p-1">
-        <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
-          changeView('exchange')}
-        }>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fa fa-random"></i> {i18n.t('more_buttons.exchange')}
-          </Scaler>
-        </button>
+        {exchangeButton}
       </div>
     </div>
   )

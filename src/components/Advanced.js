@@ -16,7 +16,7 @@ export default class Advanced extends React.Component {
     }
   }
   render(){
-    let {balance, address, privateKey, changeAlert, changeView, goBack, setPossibleNewPrivateKey} = this.props
+    let {isVendor, balance, address, privateKey, changeAlert, changeView, goBack, setPossibleNewPrivateKey} = this.props
 
     let url = window.location.protocol+"//"+window.location.hostname
     if(window.location.port&&window.location.port!=80&&window.location.port!=443){
@@ -168,7 +168,7 @@ export default class Advanced extends React.Component {
 
 
 
-        {privateKey &&
+        {privateKey && !isVendor &&
         <div>
                     <div style={{width:"100%",textAlign:"center"}}><h5>Private Key</h5></div>
           <div className="content ops row" style={{marginBottom:10}}>
@@ -202,7 +202,7 @@ export default class Advanced extends React.Component {
         </div>
         }
 
-        {privateKey &&
+        {privateKey && !isVendor && 
         <div>
           <div className="content ops row" >
             <div className="col-12 p-1">
