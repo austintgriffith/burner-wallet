@@ -157,7 +157,7 @@ if(ERC20TOKEN=="BuffiDai"){
   mainStyle.backgroundColor = "#6c0664"
   mainStyle.mainColor = "#e72da3"
   mainStyle.mainColorAlt = "#f948b8"
-  title = "Burner Wallet"
+  title = "Burner"
   titleImage = (
     <img src={cypherpunk} style={{
       maxWidth:50,
