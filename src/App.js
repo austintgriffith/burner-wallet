@@ -132,13 +132,13 @@ else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20NAME = 'BURN'
   ERC20VENDOR = 'BurnerVendor'
-  ERC20TOKEN = 'Burner'
+  ERC20TOKEN = ''
   ERC20IMAGE = cypherpunk
   LOADERIMAGE = cypherpunk
 }
 
 
-if(ERC20TOKEN=="BuffiDai"){
+if(ERC20TOKEN=="ERC20Vendable"){
   mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
   mainStyle.backgroundColor = "#20012d"
   mainStyle.mainColor = "#b6299e"
@@ -152,7 +152,7 @@ if(ERC20TOKEN=="BuffiDai"){
       marginTop:-10
     }}/>
   )
-} else if(ERC20TOKEN=="ERC20Vendable"){
+} else if(ERC20TOKEN=="Burner"){
   mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
   mainStyle.backgroundColor = "#6c0664"
   mainStyle.mainColor = "#e72da3"
