@@ -24,8 +24,8 @@
     "request": "Demande",
     "vendors": "Vendeurs",
     "main_card": {
-      "receive": "Receive",
-      "send": "Recevoir",
+      "receive": "Recevoir",
+      "send": "Envoyer",
       "share": "Partager",
       "link": "Lien",
       "vendors": "Vendeurs"
