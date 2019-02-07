@@ -172,8 +172,7 @@ if(ERC20NAME=="BUFF"){
 let innerStyle = {
   maxWidth:740,
   margin:'0 auto',
-  textAlign:'left',
-  overflow:'hidden'
+  textAlign:'left'
 }
 
 let buttonStyle = {
