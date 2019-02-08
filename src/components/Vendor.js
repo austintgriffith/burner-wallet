@@ -7,6 +7,7 @@ import i18n from '../i18n';
 const QRCode = require('qrcode.react');
 
 let interval
+let metaReceiptTracker = {}
 
 export default class Advanced extends React.Component {
 
@@ -177,11 +178,13 @@ export default class Advanced extends React.Component {
               //addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable)
               let nextId = this.props.products.length
               this.setState({addingProduct:true})
-              tx(contracts[this.props.ERC20VENDOR].addProduct(nextId,web3.utils.utf8ToHex(this.state.newProductName),web3.utils.toWei(""+this.state.newProductAmount, 'ether'),true),240000,0,0,(result)=>{
-                console.log("PRODUCT ADDED",result)
-                this.setState({addingProduct:false,newProductAmount:"",newProductName:""})
-                setTimeout(this.poll.bind(this),100)
-
+              tx(contracts[this.props.ERC20VENDOR].addProduct(nextId,web3.utils.utf8ToHex(this.state.newProductName),web3.utils.toWei(""+this.state.newProductAmount, 'ether'),true),240000,0,0,(receipt)=>{
+                console.log("PRODUCT ADDED",receipt)
+                if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                  metaReceiptTracker[receipt.transactionHash] = true
+                  this.setState({addingProduct:false,newProductAmount:"",newProductName:""})
+                  setTimeout(this.poll.bind(this),100)
+                }
               })
             }
 
