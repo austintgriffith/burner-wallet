@@ -91,6 +91,7 @@ export default class Exchange extends React.Component {
       extraGasUpDisplay: "",
       daiAddress: daiAddress,
       xdaiAddress: xdaiAddress,
+      xdaiSendToAddress: "",
       wyreBalance: 0,
       denDaiBalance:0,
       mainnetweb3: mainnetweb3,
@@ -113,11 +114,11 @@ export default class Exchange extends React.Component {
   }
   updateState = (key, value) => {
     this.setState({ [key]: value },()=>{
-      this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth() })
+      this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
     });
   };
   async componentDidMount(){
-    this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth() })
+    this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
     interval = setInterval(this.poll.bind(this),1500)
     setTimeout(this.poll.bind(this),250)
   }
@@ -563,6 +564,61 @@ export default class Exchange extends React.Component {
       }
     })
   }
+  sendXdai(){
+    if(parseFloat(this.props.xdaiBalance)<parseFloat(this.state.xdaiSendAmount)){
+      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.insufficient_funds')});
+    }else if(!this.state.xdaiSendToAddress || !this.state.xdaiSendToAddress.length === 42){
+      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_address')});
+    }else if(!(parseFloat(this.state.xdaiSendAmount) > 0)){
+      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_amount')});
+    }else{
+      this.setState({
+        xdaiToDendaiMode:"sending",
+        xdaiBalanceAtStart:this.props.xdaiBalance,
+        xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)-parseFloat(this.state.xdaiSendAmount),
+        loaderBarColor:"#f5eb4a",
+        loaderBarStatusText: "Sending $"+this.state.xdaiSendAmount+" to "+this.state.xdaiSendToAddress,
+        loaderBarPercent:0,
+        loaderBarStartTime: Date.now(),
+        loaderBarClick:()=>{
+          alert(i18n.t('exchange.go_to_etherscan'))
+        }
+      })
+      this.setState({sendXdai:false})
+      this.props.nativeSend(this.state.xdaiSendToAddress, this.state.xdaiSendAmount, 120000, "0x0", (result) => {
+        if(result && result.transactionHash){
+          this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_transferred'),loaderBarColor:"#62f54a"})
+          setTimeout(()=>{
+            this.setState({
+              xdaiToDendaiMode:false,
+              xdaiSendAmount:"",
+              xdaiSendToAddress:"",
+              loaderBarColor:"#FFFFFF",
+              loaderBarStatusText:"",
+            })
+          },3500)
+
+        }
+      })
+      /*
+      this.transferDai(this.state.daiSendToAddress,this.state.daiSendAmount,"Sending "+this.state.daiSendAmount+" DAI to "+this.state.daiSendToAddress+"...",()=>{
+        this.props.changeAlert({type: 'success',message: "Sent "+this.state.daiSendAmount+" DAI to "+this.state.daiSendToAddress});
+        this.setState({
+          daiToXdaiMode:false,
+          daiSendAmount:"",
+          daiSendToAddress:"",
+          loaderBarColor:"#FFFFFF",
+          loaderBarStatusText:"",
+        })
+      })*/
+
+    }
+  }
+  canSendXdai() {
+    console.log("canSendXdai",this.state.xdaiSendToAddress,this.state.xdaiSendToAddress.length,parseFloat(this.state.xdaiSendAmount),parseFloat(this.props.xdaiBalance))
+    return (this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length === 42 && parseFloat(this.state.xdaiSendAmount)>0 && parseFloat(this.state.xdaiSendAmount) <= parseFloat(this.props.xdaiBalance))
+  }
+
   sendEth(){
 
     let actualEthSendAmount = parseFloat(this.state.ethSendAmount)/parseFloat(this.props.ethprice)
@@ -1874,6 +1930,8 @@ export default class Exchange extends React.Component {
     }
 
 
+
+
     let sendDaiButton = (
       <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} disabled={buttonsDisabled} onClick={()=>{
         this.setState({sendDai:true})
@@ -2020,9 +2078,74 @@ export default class Exchange extends React.Component {
       )
     }
 
+    let sendXdaiButton
+
+    if(this.props.ERC20TOKEN){
+      sendXdaiButton = (
+        <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={()=>{this.setState({sendXdai:true})}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+            <i className="fas fa-arrow-right"></i>
+          </Scaler>
+        </button>
+      )
+    }else{
+      sendXdaiButton = (
+        <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={this.props.goBack}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+            <i className="fas fa-arrow-right"></i>
+          </Scaler>
+        </button>
+      )
+    }
+
+    let sendXdaiRow = ""
+    if(this.state.sendXdai){
+      sendXdaiRow = (
+        <div className="send-to-address card w-100" style={{marginTop:20}}>
+        <div className="content ops row">
+          <div className="form-group w-100">
+            <div className="form-group w-100">
+              <label htmlFor="amount_input">To Address</label>
+              <input type="text" className="form-control" placeholder="0x..." value={this.state.xdaiSendToAddress}
+                     onChange={event => this.updateState('xdaiSendToAddress', event.target.value)} />
+            </div>
+            <div>  { this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length==42 && <Blockies seed={this.state.xdaiSendToAddress.toLowerCase()} scale={10} /> }</div>
+            <label htmlFor="amount_input">Send Amount</label>
+            <div className="input-group">
+              <div className="input-group-prepend">
+                <div className="input-group-text">$</div>
+              </div>
+              <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.xdaiSendAmount}
+                     onChange={event => this.updateState('xdaiSendAmount', event.target.value)} />
+                     <div className="input-group-append" onClick={() => {
+                           this.setState({xdaiSendAmount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 })
+                         }
+                       }>
+                       <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
+                         max
+                       </span>
+                     </div>
+            </div>
+            <button style={this.props.buttonStyle.primary} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendXdai ? '' : 'disabled'}`}
+                    onClick={this.sendXdai.bind(this)}>
+              Send
+            </button>
+          </div>
+        </div>
+        </div>
+      )
+      sendXdaiButton = (
+        <button className="btn btn-large w-100" style={{backgroundColor:"#888888",whiteSpace:"nowrap"}} onClick={()=>{
+          this.setState({sendXdai:false})
+        }}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+            <i className="fas fa-times"></i>
+          </Scaler>
+        </button>
+      )
+    }
 
     //console.log("eth price ",this.props.ethBalance,this.props.ethprice)
-
     return (
       <div style={{marginTop:30}}>
 
@@ -2042,14 +2165,11 @@ export default class Exchange extends React.Component {
                 </Scaler>
             </div>
             <div className="col-2 p-1" style={{marginTop:8}}>
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={this.props.goBack}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-arrow-right"></i>
-                </Scaler>
-              </button>
+              {sendXdaiButton}
             </div>
 
           </div>
+          {sendXdaiRow}
 
         <div className="main-card card w-100">
           {daiToXdaiDisplay}
@@ -2099,15 +2219,6 @@ export default class Exchange extends React.Component {
           </div>
           {sendEthRow}
           {this.state.extraGasUpDisplay}
-
-
-
-
-
-
-
-
-
 
       </div>
     )
