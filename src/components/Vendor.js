@@ -111,7 +111,7 @@ export default class Advanced extends React.Component {
     }else{
       venderButtonText = (
         <div>
-          <i className="fas fa-window-close"></i> {i18n.t('vendor.closed')}
+          <i className="fas fa-thumbs-down"></i> {i18n.t('vendor.closed')}
         </div>
       )
     }
