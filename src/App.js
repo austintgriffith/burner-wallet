@@ -124,6 +124,12 @@ else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   ERC20TOKEN = 'ERC20Vendable'
   ERC20IMAGE = cypherpunk
 }
+else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
+  WEB3_PROVIDER = "https://dai.poa.network";
+  ERC20NAME = false
+  ERC20TOKEN = false
+  ERC20IMAGE = false
+}
 
 
 if(ERC20TOKEN=="BuffiDai"){
@@ -546,6 +552,10 @@ class App extends Component {
 
           this.setState({sending: true})
         let relayClient = new gasless.RelayClient(this.state.web3);
+
+        if(this.state.metaAccount && this.state.metaAccount.privateKey){
+          relayClient.useKeypairForSigning(this.state.metaAccount)
+        }
         let claimData = this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account).encodeABI()
         let options = {
           from: this.state.account,
