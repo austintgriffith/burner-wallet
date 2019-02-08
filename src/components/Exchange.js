@@ -585,7 +585,7 @@ export default class Exchange extends React.Component {
         }
       })
       this.setState({sendXdai:false})
-      this.props.nativeSend(this.state.xdaiSendToAddress, this.state.xdaiSendAmount, 120000, "0x0", (result) => {
+      this.props.nativeSend(this.state.xdaiSendToAddress, this.state.xdaiSendAmount, 120000, "", (result) => {
         if(result && result.transactionHash){
           this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_transferred'),loaderBarColor:"#62f54a"})
           setTimeout(()=>{
