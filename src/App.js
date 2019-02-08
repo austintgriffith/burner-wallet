@@ -354,16 +354,16 @@ class App extends Component {
     if(ERC20TOKEN&&this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown")){
       let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
       gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
-      console.log("Getting balanceOf "+this.state.account+" in contract ",this.state.contracts[ERC20TOKEN])
+      //console.log("Getting balanceOf "+this.state.account+" in contract ",this.state.contracts[ERC20TOKEN])
       let tokenBalance = await this.state.contracts[ERC20TOKEN].balanceOf(this.state.account).call()
       //console.log("balance is ",tokenBalance)
       tokenBalance = this.state.web3.utils.fromWei(""+tokenBalance,'ether')
 
       //console.log("Getting admin from ",this.state.contracts[ERC20VENDOR])
       let isAdmin = await this.state.contracts[ERC20VENDOR].isAdmin(this.state.account).call()
-      console.log("ISADMIN",this.state.account,isAdmin)
+      //console.log("ISADMIN",this.state.account,isAdmin)
       let isVendor = await this.state.contracts[ERC20VENDOR].vendors(this.state.account).call()
-      console.log("isVendor",isVendor)
+      //console.log("isVendor",isVendor)
 
       let vendorObject = this.state.vendorObject
       let products = []//this.state.products
