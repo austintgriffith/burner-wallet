@@ -52,7 +52,9 @@ class SendByScan extends Component {
         dataAfterColon = data
       }
       console.log("SCAN",data)
+      dataAfterColon=dataAfterColon.replace("#","")
     }
+    console.log("dataAfterColon:",dataAfterColon)
     if (dataAfterColon) {
       this.stopRecording();
       this.props.changeView('reader')

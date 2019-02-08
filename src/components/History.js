@@ -289,14 +289,14 @@ export default class History extends React.Component {
     if(this.state.sendingChat){
       sendChatButton = (
         <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:"#666666"}}>
-          <Scaler config={{startZoomAt:700,origin:"-5px 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-cog fa-spin"></i>
           </Scaler>
         </button>
       )
       sendFundsButton = (
         <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:"#666666"}}>
-          <Scaler config={{startZoomAt:700,origin:"-5px 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-cog fa-spin"></i>
           </Scaler>
         </button>
@@ -305,7 +305,7 @@ export default class History extends React.Component {
       sendChatButton = (
         <button className="btn btn-large w-100" style={buttonStyle.primary}
                 onClick={this.sendChat.bind(this)}>
-          <Scaler config={{startZoomAt:700,origin:"-10px 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-comment"/>
           </Scaler>
         </button>
@@ -313,7 +313,7 @@ export default class History extends React.Component {
       sendFundsButton = (
         <button className="btn btn-large w-100" style={buttonStyle.secondary}
                 onClick={this.sendChat.bind(this)}>
-          <Scaler config={{startZoomAt:700,origin:"-10px 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-comment"/>
           </Scaler>
         </button>
@@ -325,7 +325,7 @@ export default class History extends React.Component {
     if(this.state.waving){
       waveButton = (
         <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:"#666666"}}>
-          <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-cog fa-spin"></i>
           </Scaler>
         </button>
@@ -341,7 +341,7 @@ export default class History extends React.Component {
                     }
                   })
                 }}>
-          <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-handshake"/> {i18next.t('history.wave')}
           </Scaler>
         </button>
@@ -352,7 +352,7 @@ export default class History extends React.Component {
                 onClick={()=>{
                   this.props.changeAlert({type: 'warning', message: i18next.t('history.metamask_error')})
                 }}>
-          <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-handshake"/> {i18next.t('history.wave')}
           </Scaler>
         </button>
@@ -426,7 +426,7 @@ export default class History extends React.Component {
                   },250)
                 })
               }}>
-              <Scaler config={{startZoomAt:700,origin:"-12px 50%"}}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-money-bill-wave"/>
               </Scaler>
             </button>

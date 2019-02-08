@@ -202,7 +202,7 @@ export default class Advanced extends React.Component {
         </div>
         }
 
-        {privateKey && !isVendor && 
+        {privateKey && 
         <div>
           <div className="content ops row" >
             <div className="col-12 p-1">
