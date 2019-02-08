@@ -86,13 +86,13 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
     ERC20TOKEN = false
     ERC20IMAGE = false
   }else{
-    ERC20NAME = 'BURN'
+    ERC20NAME = 'BUFF'
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
-    ERC20IMAGE = cypherpunk
+    ERC20IMAGE = bufficorn
     XDAI_PROVIDER = "http://localhost:8545"
     WEB3_PROVIDER = "http://localhost:8545";
-    LOADERIMAGE = cypherpunk
+    LOADERIMAGE = bufficorn
   }
 
 }
@@ -1239,7 +1239,7 @@ render() {
 
                   <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
                   <Advanced
-                    isVendor={false}
+                    isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
                     buttonStyle={buttonStyle}
                     address={account}
                     balance={balance}
