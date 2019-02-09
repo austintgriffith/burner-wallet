@@ -31,3 +31,158 @@ a:visited {
     -o-transform: scale(4,1) rotate(90deg) ;
     -ms-transform: scale(4,1) rotate(90deg) ;
 }
+
+
+
+.coin__container {
+    margin: 0 auto;
+    height: 80px;
+    width: 80px;
+    transition: all 1s ease;
+}
+
+.is-stacked .coin__container {
+    height: 10px;
+}
+
+.coin {
+    height: 80px;
+    width: 80px;
+    position: absolute;
+    transform-style: preserve-3d;
+    transform-origin: 50%;
+}
+
+.is-slam .coin__container {
+    height: 80px;
+    position: absolute;
+    transition: all 0.6s ease;
+}
+
+.is-slam .coin {
+    animation: spin 0.4s infinite;
+    animation-timing-function: linear;
+    transform: rotateX(75deg);
+}
+
+.is-flip .coin {
+    animation: spin 0.6s infinite;
+    animation-timing-function: linear;
+}
+
+.is-slowroll .coin {
+    animation: spin 3s infinite;
+    animation-timing-function: linear;
+}
+
+.is-creeproll .coin {
+    animation: spin 11s infinite;
+    animation-timing-function: linear;
+}
+
+.coin .coin__front,
+.coin .coin__back {
+    position: absolute;
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    background-size: cover;
+}
+
+.coin .coin__front {
+    transform: translateZ(5px);
+}
+
+.coin .coin__back {
+    transform: translateZ(-5px) rotateY(180deg);
+}
+
+.coin .coin__side {
+    transform: translateX(35px);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+.coin .coin__side .coin__c {
+    height: 80px;
+    width: 10px;
+    position: absolute;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+.coin .coin__side .coin__c:before,
+.coin .coin__side .coin__c:after {
+    content: "";
+    display: block;
+    height: 7.841371226px;
+    width: 10px;
+    position: absolute;
+    transform: rotateX(84.375deg);
+    background: #999999;
+}
+
+.coin .coin__side .coin__c:before {
+    transform-origin: top center;
+}
+.coin .coin__side .coin__c:after {
+    bottom: 0;
+    transform-origin: center bottom;
+}
+.coin .coin__side .coin__c:nth-child(16) {
+    transform: rotateY(90deg) rotateX(180deg);
+}
+.coin .coin__side .coin__c:nth-child(15) {
+    transform: rotateY(90deg) rotateX(168.75deg);
+}
+.coin .coin__side .coin__c:nth-child(14) {
+    transform: rotateY(90deg) rotateX(157.5deg);
+}
+.coin .coin__side .coin__c:nth-child(13) {
+    transform: rotateY(90deg) rotateX(146.25deg);
+}
+.coin .coin__side .coin__c:nth-child(12) {
+    transform: rotateY(90deg) rotateX(135deg);
+}
+.coin .coin__side .coin__c:nth-child(11) {
+    transform: rotateY(90deg) rotateX(123.75deg);
+}
+.coin .coin__side .coin__c:nth-child(10) {
+    transform: rotateY(90deg) rotateX(112.5deg);
+}
+.coin .coin__side .coin__c:nth-child(9) {
+    transform: rotateY(90deg) rotateX(101.25deg);
+}
+.coin .coin__side .coin__c:nth-child(8) {
+    transform: rotateY(90deg) rotateX(90deg);
+}
+.coin .coin__side .coin__c:nth-child(7) {
+    transform: rotateY(90deg) rotateX(78.75deg);
+}
+.coin .coin__side .coin__c:nth-child(6) {
+    transform: rotateY(90deg) rotateX(67.5deg);
+}
+.coin .coin__side .coin__c:nth-child(5) {
+    transform: rotateY(90deg) rotateX(56.25deg);
+}
+.coin .coin__side .coin__c:nth-child(4) {
+    transform: rotateY(90deg) rotateX(45deg);
+}
+.coin .coin__side .coin__c:nth-child(3) {
+    transform: rotateY(90deg) rotateX(33.75deg);
+}
+.coin .coin__side .coin__c:nth-child(2) {
+    transform: rotateY(90deg) rotateX(22.5deg);
+}
+.coin .coin__side .coin__c:nth-child(1) {
+    transform: rotateY(90deg) rotateX(11.25deg);
+}
+
+.coin .coin__front {
+    background-color: #dddddd;
+    background-position: center center;
+}
+
+.coin .coin__back {
+    background-color: #cccccc;
+}

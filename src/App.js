@@ -16,6 +16,7 @@ import Receive from './components/Receive'
 import Share from './components/Share'
 import ShareLink from './components/ShareLink'
 import Balance from "./components/Balance";
+import Badges from "./components/Badges";
 import Ruler from "./components/Ruler";
 import Receipt from "./components/Receipt";
 import CashOut from "./components/CashOut";
@@ -81,7 +82,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(false){
+  if(true){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
@@ -240,7 +241,8 @@ class App extends Component {
       balance: 0.00,
       vendors: {},
       ethprice: 0.00,
-      hasUpdateOnce: false
+      hasUpdateOnce: false,
+      badges: {},
     };
     this.alertTimeout = null;
 
@@ -348,6 +350,36 @@ class App extends Component {
   }
   async poll() {
 
+    let badgeBalance = 0
+    if(this.state.contracts && this.state.contracts.Badges){
+      //check for badges for this user
+      badgeBalance = await this.state.contracts.Badges.balanceOf(this.state.account).call()
+      if(badgeBalance>0){
+        let update = false
+        for(let b = 0;b<badgeBalance;b++){
+          let thisBadgeId = await this.state.contracts.Badges.tokenOfOwnerByIndex(this.state.account,b).call()
+          if(!this.state.badges[thisBadgeId]){
+            let thisBadgeData = await this.state.contracts.Badges.tokenURI(thisBadgeId).call()
+            console.log("BADGE",b,thisBadgeId,thisBadgeData)
+            if(!this.state.badges[thisBadgeId]){
+              let response = await axios.get(thisBadgeData)
+              if(response && response.data){
+                this.state.badges[thisBadgeId] = response.data
+                update=true
+              }
+            }
+          }
+        }
+        if(update){
+          console.log("Saving badges state...")
+          this.setState({badges:this.state.badges})
+        }
+
+      }
+
+    }
+
+
     //console.log(">>>>>>> <<< >>>>>> Looking into iframe...")
     //console.log(document.getElementById('galleassFrame').contentWindow['web3'])
 
@@ -425,7 +457,7 @@ class App extends Component {
         xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
       }
 
-      this.setState({ethBalance,daiBalance,xdaiBalance})
+      this.setState({ethBalance,daiBalance,xdaiBalance,badgeBalance})
     }
   }
   longPoll() {
@@ -1185,6 +1217,16 @@ render() {
             defaultBalanceDisplay = extraTokens
           }
 
+          let badgeDisplay = ""
+          if(this.state.badgeBalance>0){
+            badgeDisplay = (
+              <div>
+                <Badges badges={this.state.badges} address={account} />
+                <Ruler/>
+              </div>
+            )
+          }
+
           switch(view) {
             case 'main':
             return (
@@ -1200,6 +1242,7 @@ render() {
                   <Ruler/>
                   <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
+                  {badgeDisplay}
 
                   <MainCard
                     subBalanceDisplay={subBalanceDisplay}
