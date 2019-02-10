@@ -18,9 +18,10 @@ export  default ({id,angle,image,selectBadge,large}) => {
                 transform:"rotateX("+displayAngle+"deg)"
             }}>
                 <div className="coin__front_large" style={{
-                    backgroundImage: 'url("'+image+'")',
-                    backgroundSize: 100,
-                    backgroundRepeat: 'no-repeat'
+                  backgroundImage: 'url("'+image+'")',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
                 }}></div>
                 <div className="coin__back_large"></div>
                 <div className="coin__side_large">
@@ -55,8 +56,9 @@ export  default ({id,angle,image,selectBadge,large}) => {
             }}>
                 <div className="coin__front" style={{
                     backgroundImage: 'url("'+image+'")',
-                    backgroundSize: 50,
-                    backgroundRepeat: 'no-repeat'
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
                 }}></div>
                 <div className="coin__back"></div>
                 <div className="coin__side">
