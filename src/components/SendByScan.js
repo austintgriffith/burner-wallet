@@ -57,11 +57,15 @@ class SendByScan extends Component {
     console.log("dataAfterColon:",dataAfterColon)
     if (dataAfterColon) {
       this.stopRecording();
-      this.props.changeView('reader')
-      setTimeout(()=>{
-        //maybe they just scanned an address?
-        window.location = "/"+dataAfterColon
-      },100)
+      console.log("this.props.returnToState:",this.props.returnToState)
+      this.props.returnToState({toAddress:dataAfterColon})
+      /*else{
+        this.props.changeView('reader')
+        setTimeout(()=>{
+          //maybe they just scanned an address?
+          window.location = "/"+dataAfterColon
+        },100)
+      }*/
     }
   };
   chooseDeviceId = (a,b) => {

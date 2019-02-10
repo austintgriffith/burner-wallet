@@ -9,6 +9,7 @@ import Header from './components/Header';
 import NavCard from './components/NavCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
+import SendBadge from './components/SendBadge';
 import WithdrawFromPrivate from './components/WithdrawFromPrivate';
 import RequestFunds from './components/RequestFunds';
 import SendWithLink from './components/SendWithLink';
@@ -82,7 +83,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(true){
+  if(false){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
@@ -243,6 +244,7 @@ class App extends Component {
       ethprice: 0.00,
       hasUpdateOnce: false,
       badges: {},
+      selectedBadge: false,
     };
     this.alertTimeout = null;
 
@@ -262,6 +264,24 @@ class App extends Component {
       })
     }catch(e){console.log(e)}
 
+  }
+  selectBadge(id){
+    this.setState({selectedBadge:id},()=>{
+      this.changeView('send_badge')
+    })
+  }
+  openScanner(returnState){
+    this.setState({returnState:returnState,view:"send_by_scan"})
+  }
+  returnToState(scannerState){
+    let updateState = Object.assign({scannerState:scannerState}, this.state.returnState);
+    updateState.returnState = false
+    this.setState(updateState)
+  }
+  clearBadges() {
+    this.setState({badges:{}},()=>{
+      console.log("BADGES CLEARED",this.state.badges)
+    })
   }
   updateDimensions() {
     //force it to rerender when the window is resized to make sure qr fits etc
@@ -360,18 +380,19 @@ class App extends Component {
           let thisBadgeId = await this.state.contracts.Badges.tokenOfOwnerByIndex(this.state.account,b).call()
           if(!this.state.badges[thisBadgeId]){
             let thisBadgeData = await this.state.contracts.Badges.tokenURI(thisBadgeId).call()
-            console.log("BADGE",b,thisBadgeId,thisBadgeData)
+            //console.log("BADGE",b,thisBadgeId,thisBadgeData)
             if(!this.state.badges[thisBadgeId]){
               let response = await axios.get(thisBadgeData)
               if(response && response.data){
                 this.state.badges[thisBadgeId] = response.data
+                this.state.badges[thisBadgeId].id = thisBadgeId
                 update=true
               }
             }
           }
         }
         if(update){
-          console.log("Saving badges state...")
+          //console.log("Saving badges state...")
           this.setState({badges:this.state.badges})
         }
 
@@ -663,7 +684,7 @@ class App extends Component {
 */
 this.changeAlert(null);
 console.log("Setting state",view)
-this.setState({ view },cb);
+this.setState({ view, scannerState:false },cb);
 };
 changeAlert = (alert, hide=true) => {
   clearTimeout(this.alertTimeout);
@@ -984,6 +1005,7 @@ render() {
   if(web3){
     header = (
       <Header
+        openScanner={this.openScanner.bind(this)}
         network={this.state.network}
         total={totalBalance}
         ens={this.state.ens}
@@ -1221,7 +1243,11 @@ render() {
           if(this.state.badgeBalance>0){
             badgeDisplay = (
               <div>
-                <Badges badges={this.state.badges} address={account} />
+                <Badges
+                  badges={this.state.badges}
+                  address={account}
+                  selectBadge={this.selectBadge.bind(this)}
+                />
                 <Ruler/>
               </div>
             )
@@ -1303,12 +1329,13 @@ render() {
             case 'send_by_scan':
             return (
               <SendByScan
-              mainStyle={mainStyle}
-              goBack={this.goBack.bind(this)}
-              changeView={this.changeView}
-              onError={(error) =>{
-                this.changeAlert("danger",error)
-              }}
+                returnToState={this.returnToState.bind(this)}
+                mainStyle={mainStyle}
+                goBack={this.goBack.bind(this)}
+                changeView={this.changeView}
+                onError={(error) =>{
+                  this.changeAlert("danger",error)
+                }}
               />
             );
             case 'withdraw_from_private':
@@ -1342,6 +1369,37 @@ render() {
                   />
                 </div>
               );
+            case 'send_badge':
+            return (
+              <div>
+                <div className="send-to-address card w-100" style={{zIndex:1}}>
+                  <NavCard title={this.state.badges[this.state.selectedBadge].name} titleLink={this.state.badges[this.state.selectedBadge].external_url} goBack={this.goBack.bind(this)}/>
+                  <SendBadge
+                    changeView={this.changeView}
+                    ensLookup={this.ensLookup.bind(this)}
+                    ERC20TOKEN={ERC20TOKEN}
+                    buttonStyle={buttonStyle}
+                    balance={balance}
+                    web3={this.state.web3}
+                    contracts={this.state.contracts}
+                    address={account}
+                    scannerState={this.state.scannerState}
+                    tx={this.state.tx}
+                    goBack={this.goBack.bind(this)}
+                    openScanner={this.openScanner.bind(this)}
+                    setReceipt={this.setReceipt}
+                    changeAlert={this.changeAlert}
+                    dollarDisplay={dollarDisplay}
+                    badge={this.state.badges[this.state.selectedBadge]}
+                    clearBadges={this.clearBadges.bind(this)}
+                  />
+                </div>
+                <Bottom
+                  text={i18n.t('done')}
+                  action={this.goBack.bind(this)}
+                />
+              </div>
+            )
             case 'send_to_address':
             return (
               <div>
@@ -1349,6 +1407,8 @@ render() {
                   <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <SendToAddress
+                    openScanner={this.openScanner.bind(this)}
+                    scannerState={this.state.scannerState}
                     ensLookup={this.ensLookup.bind(this)}
                     ERC20TOKEN={ERC20TOKEN}
                     buttonStyle={buttonStyle}

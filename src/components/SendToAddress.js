@@ -16,10 +16,17 @@ export default class SendToAddress extends React.Component {
     if(!startAmount) startAmount = cookie.load('sendToStartAmount')
     let startMessage= props.message
     if(!startMessage) startMessage = cookie.load('sendToStartMessage')
+    let toAddress = ""
+    if(props.scannerState) toAddress = props.scannerState.toAddress
+    if(!toAddress) {
+      toAddress = cookie.load('sendToAddress')
+    }else{
+      cookie.save('sendToAddress', toAddress, { path: '/', maxAge: 60 })
+    }
     let initialState = {
       amount: startAmount,
       message: startMessage,
-      toAddress: cookie.load('sendToAddress'),
+      toAddress: toAddress,
       fromEns: "",
       canSend: false,
     }
@@ -72,9 +79,9 @@ export default class SendToAddress extends React.Component {
     });
     if(key=="toAddress"){
       this.setState({fromEns:""})
-      setTimeout(()=>{
-        this.scrollToBottom()
-      },30)
+      //setTimeout(()=>{
+      //  this.scrollToBottom()
+      //},30)
     }
     if(key=="toAddress"&&value.indexOf(".eth")>=0){
       console.log("Attempting to look up ",value)
@@ -103,23 +110,11 @@ export default class SendToAddress extends React.Component {
         this.amountInput.focus();
       }else if(this.messageInput){
         this.messageInput.focus();
+        setTimeout(()=>{
+          this.scrollToBottom()
+        },30)
       }
-      setTimeout(()=>{
-        this.scrollToBottom()
-      },30)
     },350)
-    /*
-    setTimeout(()=>{
-      if(this.props.balance<=0){
-        console.log("No Funds, redirect back home...")
-        this.props.goBack();
-        window.history.pushState({},"", "/");
-        this.props.changeAlert({
-          type: 'warning',
-          message: 'No funds to send.',
-        });
-      }
-    },2500)*/
   }
 
   canSend() {
@@ -237,8 +232,10 @@ export default class SendToAddress extends React.Component {
                 <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
                   ref={(input) => { this.addressInput = input; }}
                        onChange={event => this.updateState('toAddress', event.target.value)} />
-                <div class="input-group-append" onClick={() => this.props.changeView('send_by_scan')}>
-                  <span class="input-group-text" id="basic-addon2" style={this.props.buttonStyle.primary}>
+                <div className="input-group-append" onClick={() => {
+                  this.props.openScanner({view:"send_to_address"})
+                }}>
+                  <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.primary}>
                     <i style={{color:"#FFFFFF"}} className="fas fa-qrcode" />
                   </span>
                 </div>
@@ -268,7 +265,7 @@ export default class SendToAddress extends React.Component {
                      onChange={event => this.updateState('message', event.target.value)} />
             </div>
           </div>
-          <button className={`btn btn-lg w-100 ${canSend ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}
+          <button name="theVeryBottom" className={`btn btn-lg w-100 ${canSend ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}
                   onClick={this.send}>
             Send
           </button>
