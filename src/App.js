@@ -269,8 +269,10 @@ class App extends Component {
     let parts = path.split(";")
     //console.log("PARTS",parts)
     let state = {}
-    if(parts.length>=2){
+    if(parts.length>0){
       state.toAddress = parts[0].replace("/","")
+    }
+    if(parts.length>=2){
       state.amount = parts[1]
     }
     if(parts.length>2){

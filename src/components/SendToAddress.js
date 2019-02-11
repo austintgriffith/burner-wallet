@@ -37,6 +37,7 @@ export default class SendToAddress extends React.Component {
     }else{
       cookie.save('sendToAddress', toAddress, { path: '/', maxAge: 60 })
     }
+
     let initialState = {
       amount: startAmount,
       message: startMessage,
@@ -45,10 +46,7 @@ export default class SendToAddress extends React.Component {
       fromEns: "",
       canSend: false,
     }
-    /*if(props.balance<=0){
-      this.props.goBack();
-      window.history.pushState({},"", "/");
-    }*/
+
     let startingAmount = 0.15
     if(props.amount){
       startingAmount = props.amount
@@ -56,12 +54,14 @@ export default class SendToAddress extends React.Component {
     if(window.location.pathname){
       if(window.location.pathname.length==43){
         initialState.toAddress = window.location.pathname.substring(1)
-      }else{
+      }else if(window.location.pathname.length>40) {
+      //    console.log("window.location.pathname",window.location.pathname)
       //  console.log("parseAndCleanPath...")
         initialState = Object.assign(initialState,this.props.parseAndCleanPath(window.location.pathname))
       //  console.log("parseAndCleanPath:",initialState)
       }
     }
+
     this.state = initialState
   //  console.log("SendToAddress constructor",this.state)
     window.history.pushState({},"", "/");

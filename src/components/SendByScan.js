@@ -56,10 +56,9 @@ class SendByScan extends Component {
     console.log("dataAfterColon:",dataAfterColon)
     if (dataAfterColon) {
       this.stopRecording();
-      //console.log("this.props.returnToState:",this.props.returnToState)
-      //console.log("PARSEANDCLEAN",dataAfterColon)
-      this.props.returnToState(this.props.parseAndCleanPath(dataAfterColon))
-
+      let returnState = this.props.parseAndCleanPath(dataAfterColon)
+      this.props.returnToState(returnState)
+      console.log("return state",returnState)
     }
   };
   chooseDeviceId = (a,b) => {
