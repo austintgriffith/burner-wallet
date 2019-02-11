@@ -83,7 +83,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(false){
+  if(true){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
@@ -264,6 +264,23 @@ class App extends Component {
       })
     }catch(e){console.log(e)}
 
+  }
+  parseAndCleanPath(path){
+    let parts = path.split(";")
+    //console.log("PARTS",parts)
+    let state = {}
+    if(parts.length>=2){
+      state.toAddress = parts[0].replace("/","")
+      state.amount = parts[1]
+    }
+    if(parts.length>2){
+      state.message = decodeURI(parts[2]).replaceAll("%23","#").replaceAll("%3B",";").replaceAll("%3A",":").replaceAll("%2F","/")
+    }
+    if(parts.length>3){
+      state.extraMessage = decodeURI(parts[3]).replaceAll("%23","#").replaceAll("%3B",";").replaceAll("%3A",":").replaceAll("%2F","/")
+    }
+    //console.log("STATE",state)
+    return state;
   }
   selectBadge(id){
     this.setState({selectedBadge:id},()=>{
@@ -1329,6 +1346,7 @@ render() {
             case 'send_by_scan':
             return (
               <SendByScan
+                parseAndCleanPath={this.parseAndCleanPath.bind(this)}
                 returnToState={this.returnToState.bind(this)}
                 mainStyle={mainStyle}
                 goBack={this.goBack.bind(this)}
@@ -1407,6 +1425,7 @@ render() {
                   <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <SendToAddress
+                    parseAndCleanPath={this.parseAndCleanPath.bind(this)}
                     openScanner={this.openScanner.bind(this)}
                     scannerState={this.state.scannerState}
                     ensLookup={this.ensLookup.bind(this)}

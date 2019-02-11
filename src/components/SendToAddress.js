@@ -13,9 +13,23 @@ export default class SendToAddress extends React.Component {
   constructor(props) {
     super(props);
     let startAmount = props.amount
-    if(!startAmount) startAmount = cookie.load('sendToStartAmount')
+    if(props.scannerState) startAmount = props.scannerState.amount
+    if(!startAmount) {
+      startAmount = cookie.load('sendToStartAmount')
+    }else{
+      cookie.save('sendToStartAmount', startAmount, { path: '/', maxAge: 60 })
+    }
     let startMessage= props.message
-    if(!startMessage) startMessage = cookie.load('sendToStartMessage')
+    if(props.scannerState) startMessage = props.scannerState.message
+    if(!startMessage) {
+      startMessage = cookie.load('sendToStartMessage')
+    }else{
+      cookie.save('sendToStartMessage', startMessage, { path: '/', maxAge: 60 })
+    }
+
+    let extraMessage = props.extraMessage
+    if(props.scannerState) extraMessage = props.scannerState.extraMessage
+
     let toAddress = ""
     if(props.scannerState) toAddress = props.scannerState.toAddress
     if(!toAddress) {
@@ -27,6 +41,7 @@ export default class SendToAddress extends React.Component {
       amount: startAmount,
       message: startMessage,
       toAddress: toAddress,
+      extraMessage: extraMessage,
       fromEns: "",
       canSend: false,
     }
@@ -42,21 +57,13 @@ export default class SendToAddress extends React.Component {
       if(window.location.pathname.length==43){
         initialState.toAddress = window.location.pathname.substring(1)
       }else{
-        let parts = window.location.pathname.split(";")
-        if(parts.length>=2){
-          initialState.toAddress = parts[0].replace("/","")
-          initialState.amount = parts[1]
-        }
-        if(parts.length>2){
-          initialState.message = decodeURI(parts[2]).replaceAll("%23","#").replaceAll("%3B",";").replaceAll("%3A",":").replaceAll("%2F","/")
-        }
-        if(parts.length>3){
-          initialState.extraMessage = decodeURI(parts[3]).replaceAll("%23","#").replaceAll("%3B",";").replaceAll("%3A",":").replaceAll("%2F","/")
-        }
+      //  console.log("parseAndCleanPath...")
+        initialState = Object.assign(initialState,this.props.parseAndCleanPath(window.location.pathname))
+      //  console.log("parseAndCleanPath:",initialState)
       }
     }
     this.state = initialState
-    console.log("SendToAddress constructor",this.state)
+  //  console.log("SendToAddress constructor",this.state)
     window.history.pushState({},"", "/");
   }
 
