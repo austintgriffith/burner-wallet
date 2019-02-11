@@ -126,8 +126,10 @@ export default class SendBadge extends React.Component {
     let angle = Math.round(-28 + 75*percent/100)
     return (
       <div>
-        <div className="content row">
-          <Badge large={true} angle={angle} key={"b"+this.props.badge.id} id={this.props.badge.id} image={this.props.badge.image}/>
+        <div className="content row" onClick={()=>{
+          window.open(this.props.badge.external_url,'_blank')
+        }}>
+            <Badge large={true} angle={angle} key={"b"+this.props.badge.id} id={this.props.badge.id} image={this.props.badge.image}/>
         </div>
         <div style={{fontSize:14,width:"100%",textAlign:"center"}}>
           {this.props.badge.description}

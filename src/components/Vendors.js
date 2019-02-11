@@ -1,6 +1,5 @@
 import React from 'react';
 import { Scaler, Events } from "dapparatus";
-import ReactLoading from 'react-loading';
 import Blockies from 'react-blockies';
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
@@ -214,22 +213,11 @@ export default class Advanced extends React.Component {
       }
     }
 
-    let loader = ""
-    if(this.state.loading){
-      loader = (
-        <div>
-          <div style={{position:"relative",width:"70%",margin:'auto',marginTop:-50}}>
-            <ReactLoading type="cylon" color={"#FFFFFF"} width={"100%"} />
-          </div>
-        </div>
-      )
-    }
 
 
     return (
       <div>
 
-          {loader}
           {vendorDisplay}
           {products}
 

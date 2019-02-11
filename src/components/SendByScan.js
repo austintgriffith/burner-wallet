@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import QrReader from "react-qr-reader";
-import ReactLoading from 'react-loading';
 import FileReaderInput from 'react-file-reader-input';
 import QrCode from 'qrcode-reader';
 import qrimage from '../qrcode.png';
@@ -143,14 +142,6 @@ class SendByScan extends Component {
       )
     }
 
-    let loader = ""
-    if(this.state.isLoading){
-      loader = (
-        <div style={{position:'absolute',left:0,top:"-25%",zIndex:98,fontSize:24,color:"#FF0000",backgroundColor:"#333333",opacity:0.9,width:"100%",height:1,fontWeight:'bold'}}>
-          <ReactLoading type="cylon" color={"#FFFFFF"} width={"100%"}  />
-        </div>
-      )
-    }
 
     let failMessage = ""
     if(this.state.scanFail){
@@ -219,7 +210,6 @@ class SendByScan extends Component {
         </div>
         {displayedImage}
         {failMessage}
-        {loader}
       </div>
     );
   }
