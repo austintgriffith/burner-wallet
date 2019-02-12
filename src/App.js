@@ -52,7 +52,9 @@ import xdai from './xdai.jpg';
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
 
-let XDAI_PROVIDER = "https://dai.poa.network"
+const POA_XDAI_NODE = "https://dai-b.poa.network"
+
+let XDAI_PROVIDER = POA_XDAI_NODE
 
 let WEB3_PROVIDER
 let CLAIM_RELAY
@@ -99,7 +101,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
 
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
+  WEB3_PROVIDER = POA_XDAI_NODE;
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = false//'Burner'
 }
@@ -116,12 +118,12 @@ else if (window.location.hostname.indexOf("qreth") >= 0) {
   ERC20TOKEN = false
 }
 else if (window.location.hostname.indexOf("xdai") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
+  WEB3_PROVIDER = POA_XDAI_NODE;
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = false
 }
 else if (window.location.hostname.indexOf("buffidai") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
+  WEB3_PROVIDER = POA_XDAI_NODE;
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20NAME = 'BUFF'
   ERC20VENDOR = 'VendingMachine'
@@ -130,7 +132,7 @@ else if (window.location.hostname.indexOf("buffidai") >= 0) {
   LOADERIMAGE = bufficorn
 }
 else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
+  WEB3_PROVIDER = POA_XDAI_NODE;
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20NAME = 'BURN'
   ERC20VENDOR = 'BurnerVendor'
