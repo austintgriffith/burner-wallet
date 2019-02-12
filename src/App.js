@@ -297,6 +297,7 @@ class App extends Component {
   returnToState(scannerState){
     let updateState = Object.assign({scannerState:scannerState}, this.state.returnState);
     updateState.returnState = false
+    console.log("UPDATE FROM RETURN STATE",updateState)
     this.setState(updateState)
   }
   clearBadges() {

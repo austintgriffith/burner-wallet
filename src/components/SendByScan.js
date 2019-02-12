@@ -37,28 +37,44 @@ class SendByScan extends Component {
   handleScan = data => {
     console.log("DATA")
     console.log(data)
-    let dataAfterColon
-    if(data){
-      dataAfterColon = data
-      let colonAt = dataAfterColon.lastIndexOf(":")
-      if(colonAt>=0) dataAfterColon = dataAfterColon.substring(colonAt+1)
-      if(!dataAfterColon){
-        dataAfterColon = data
+
+    //detect and respect status deep links...
+    if(data && data.indexOf("get.status.im")>=0){
+      let paymentLocation = data.indexOf("payment/")
+      let paymentParts = data.substring(paymentLocation)
+      let paymentPartsArray = paymentParts.split("/")
+      console.log("Status Deep Link paymentParts",paymentParts,paymentPartsArray)
+
+      if(paymentPartsArray.length>=4){
+        let toAddress = paymentPartsArray[1]
+        let amount = paymentPartsArray[2]
+        let orderId = paymentPartsArray[3]
+        this.props.returnToState({toAddress,amount,daiposOrderId:orderId,message:"Ching Order: "+orderId})
       }
-      let slashAt = dataAfterColon.lastIndexOf("/")
-      if(slashAt>=0) dataAfterColon = dataAfterColon.substring(slashAt+1)
-      if(!dataAfterColon){
+    }else{
+      let dataAfterColon
+      if(data){
         dataAfterColon = data
+        let colonAt = dataAfterColon.lastIndexOf(":")
+        if(colonAt>=0) dataAfterColon = dataAfterColon.substring(colonAt+1)
+        if(!dataAfterColon){
+          dataAfterColon = data
+        }
+        let slashAt = dataAfterColon.lastIndexOf("/")
+        if(slashAt>=0) dataAfterColon = dataAfterColon.substring(slashAt+1)
+        if(!dataAfterColon){
+          dataAfterColon = data
+        }
+        console.log("SCAN",data)
+        dataAfterColon=dataAfterColon.replace("#","")
       }
-      console.log("SCAN",data)
-      dataAfterColon=dataAfterColon.replace("#","")
-    }
-    console.log("dataAfterColon:",dataAfterColon)
-    if (dataAfterColon) {
-      this.stopRecording();
-      let returnState = this.props.parseAndCleanPath(dataAfterColon)
-      this.props.returnToState(returnState)
-      console.log("return state",returnState)
+      console.log("dataAfterColon:",dataAfterColon)
+      if (dataAfterColon) {
+        this.stopRecording();
+        let returnState = this.props.parseAndCleanPath(dataAfterColon)
+        this.props.returnToState(returnState)
+        console.log("return state",returnState)
+      }
     }
   };
   chooseDeviceId = (a,b) => {

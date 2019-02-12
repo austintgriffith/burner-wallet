@@ -199,7 +199,16 @@ export default class SendToAddress extends React.Component {
               type: 'success',
               message: 'Sent! '+result.transactionHash,
             });*/
-            this.props.setReceipt({to:toAddress,from:result.from,amount:parseFloat(amount),message:this.state.message,result:result})
+
+            let receiptObj = {to:toAddress,from:result.from,amount:parseFloat(amount),message:this.state.message,result:result}
+
+          //  console.log("CHECKING SCANNER STATE FOR ORDER ID",this.props.scannerState)
+            if(this.props.scannerState&&this.props.scannerState.daiposOrderId){
+              receiptObj.daiposOrderId = this.props.scannerState.daiposOrderId
+            }
+
+            //console.log("SETTING RECEPITE STATE",receiptObj)
+            this.props.setReceipt(receiptObj)
             this.props.changeView("receipt");
           }
         })

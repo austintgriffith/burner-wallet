@@ -7,6 +7,7 @@ import { Blockie } from "dapparatus";
 import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
+import axios from 'axios';
 const QRCode = require('qrcode.react');
 
 
@@ -17,6 +18,19 @@ export default class Receive extends React.Component {
   constructor(props) {
     super(props);
     let initialState = {
+    }
+  }
+  componentDidMount(){
+    console.log("RECEIPT LOADED",this.props)
+    if(this.props.receipt && this.props.receipt.daiposOrderId){
+      console.log("This was a daipos Order... ping their server for them...")
+      // https://us-central1-daipos.cloudfunctions.net/transactionBuffer?orderId=0JFmycULnk9kAboK5ESg&txHash=0x8c831cd5cbc8786982817e43a0a77627ad0b12eaa92feff97fb3b7e91c263b1c&networkId=100
+      let url = "https://us-central1-daipos.cloudfunctions.net/transactionBuffer?orderId="+this.props.receipt.daiposOrderId+"&txHash="+this.props.receipt.result.transactionHash+"&networkId=100"
+      console.log("url:",url)
+      axios.get(url)
+       .then((response)=>{
+         console.log("Finished hitting the Ching servers:",response)
+       })
     }
   }
   render() {
