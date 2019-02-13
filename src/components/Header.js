@@ -5,7 +5,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
 
 
   let sendButtonOpacity = 1.0
-  if(view=="receive"){
+  if(view=="receive" || view=="send_badge"){
     sendButtonOpacity = 0
   }
 

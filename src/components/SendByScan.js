@@ -6,7 +6,7 @@ import qrimage from '../qrcode.png';
 import RNMessageChannel from 'react-native-webview-messaging';
 import i18n from "../i18n";
 var Jimp = require("jimp");
-
+let interval
 class SendByScan extends Component {
   constructor(props){
     super(props)
@@ -19,7 +19,8 @@ class SendByScan extends Component {
       browser: "",
       legacyMode: defaultToLegacyMode,
       scanFail: false,
-      isLoading: false
+      isLoading: false,
+      percent: 5,
     };
     this.handleScan = this.handleScan.bind(this)
 
@@ -92,11 +93,17 @@ class SendByScan extends Component {
     this.stopRecording();
     this.props.goBack();
   };
-  //componentDidMount(){
-  //  this.setState({scanFail:"TEST"})
-  //}
+  componentDidMount(){
+    interval = setInterval(this.loadMore.bind(this),750)
+  }
   componentWillUnmount() {
+    clearInterval(interval)
     this.stopRecording();
+  }
+  loadMore(){
+    let newPercent = this.state.percent+3
+    if(newPercent>100) newPercent=5
+    this.setState({percent:newPercent})
   }
   legacyHandleChange(e, results){
     //this.props.changeView('reader')
@@ -152,6 +159,22 @@ class SendByScan extends Component {
       )
     }
 
+    let loaderDisplay = ""
+    if(this.state.isLoading){
+      let shadowAmount = 100
+      let shadowColor = this.props.mainStyle.mainColor
+      loaderDisplay = (
+          <div style={{textAlign:'center'}}>
+            <div style={{width:"100%",paddingTop:"5%",paddingBottom:"10%"}}>
+              <img src ={this.props.loaderImage} style={{maxWidth:"25%",paddingBottom:"5%"}}/>
+            </div>
+            <div style={{width:"80%",height:1,backgroundColor:"#444444",marginLeft:"10%"}}>
+              <div style={{width:this.state.percent+"%",height:1,backgroundColor:this.props.mainStyle.mainColorAlt,boxShadow:"0 0 "+shadowAmount/40+"px "+shadowColor+", 0 0 "+shadowAmount/30+"px "+shadowColor+", 0 0 "+shadowAmount/20+"px "+shadowColor+", 0 0 "+shadowAmount/10+"px #ffffff, 0 0 "+shadowAmount/5+"px "+shadowColor+", 0 0 "+shadowAmount/3+"px "+shadowColor+", 0 0 "+shadowAmount/1+"px "+shadowColor+""}}>
+              </div>
+            </div>
+          </div>
+      )
+    }
 
     let failMessage = ""
     if(this.state.scanFail){
@@ -192,7 +215,8 @@ class SendByScan extends Component {
             <div style={{marginBottom:20}}><i className="fas fa-camera"></i></div>
             <img src={qrimage} style={{position:"absolute",left:"36%",top:"25%",padding:4,border:"1px solid #888888",opacity:0.25,maxWidth:"30%",maxHight:"30%"}} />
           </div>
-          <div style={{textAlign:"center",paddingTop:"45%"}}>
+          <div style={{textAlign:"center",paddingTop:"35%"}}>
+            {loaderDisplay}
             <div>{i18n.t('send_by_scan.capture')}</div>
               <div className="main-card card w-100" style={{backgroundColor:"#000000"}}>
                 <div className="content ops row" style={{paddingLeft:"12%",paddingRight:"12%",paddingTop:10}}>
@@ -202,7 +226,11 @@ class SendByScan extends Component {
                 </div>
               </div>
             </div>
+            <div style={{textAlign:"center",paddingTop:"5%"}}>
+              Lay QR flat and take a picture of it from a distance.
+            </div>
         </div>
+
         </FileReaderInput>
         </div>
       )

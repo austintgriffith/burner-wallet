@@ -192,55 +192,62 @@ export default class Exchange extends React.Component {
                     if(this.props.xdaiBalance < gasInXDai) gasInXDai = this.props.xdaiBalance-0.005
 
                     console.log("gasInXDai",gasInXDai)
-
-                    let gasEmitterContract = new this.props.web3.eth.Contract(require("../contracts/Emitter.abi.js"),require("../contracts/Emitter.address.js"))
-
-                    let amountInWei = this.props.web3.utils.toWei(""+gasInXDai,'ether')
-
-                    if(this.state.xdaiMetaAccount){
-                      //send funds using metaaccount on mainnet
-
-                      let paramsObject = {
-                        from: this.state.daiAddress,
-                        value: amountInWei,
-                        gas: 120000,
-                        gasPrice: Math.round(1.1 * 1000000000)
+                    let gasEmitterContract
+                    if(this.props.network=="xDai"){
+                      try{
+                        gasEmitterContract = new this.props.web3.eth.Contract(require("../contracts/Emitter.abi.js"),require("../contracts/Emitter.address.js"))
+                      }catch(e){
+                        console.log("ERROR LOADING dendaiContract Contract",e)
                       }
-                      console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+                    }
+                    if(gasEmitterContract){
+                      let amountInWei = this.props.web3.utils.toWei(""+gasInXDai,'ether')
 
-                      paramsObject.to = gasEmitterContract._address
-                      paramsObject.data = gasEmitterContract.methods.goToETH().encodeABI()
+                      if(this.state.xdaiMetaAccount){
+                        //send funds using metaaccount on mainnet
 
-                      console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
-
-
-                      this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
-                        console.log("========= >>> SIGNED",signed)
-                          this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                            console.log("META RECEIPT",receipt)
-                            if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                              metaReceiptTracker[receipt.transactionHash] = true
-                              //actually, let's wait for the eth balance to change
-                              //this.setState({gettingGas:false})
-                            }
-                          }).on('error', (err)=>{
-                            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                            this.props.changeAlert({type: 'danger',message: err.toString()});
-                            this.setState({gettingGas:false})
-                          }).then(console.log)
-                      });
-
-                    }else{
-                      console.log("Use MetaMask to go xDai to ETH")
-                      this.props.tx(
-                        gasEmitterContract.methods.goToETH()
-                      ,120000,0,amountInWei,(receipt)=>{
-                        if(receipt){
-                          console.log("GAS UP COMPLETE?!?",receipt)
-                          //this.setState({gettingGas:false})
-                          //window.location = "/"+receipt.contractAddress
+                        let paramsObject = {
+                          from: this.state.daiAddress,
+                          value: amountInWei,
+                          gas: 120000,
+                          gasPrice: Math.round(1.1 * 1000000000)
                         }
-                      })
+                        console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+                        paramsObject.to = gasEmitterContract._address
+                        paramsObject.data = gasEmitterContract.methods.goToETH().encodeABI()
+
+                        console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+
+                        this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
+                          console.log("========= >>> SIGNED",signed)
+                            this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                              console.log("META RECEIPT",receipt)
+                              if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                                metaReceiptTracker[receipt.transactionHash] = true
+                                //actually, let's wait for the eth balance to change
+                                //this.setState({gettingGas:false})
+                              }
+                            }).on('error', (err)=>{
+                              console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                              this.props.changeAlert({type: 'danger',message: err.toString()});
+                              this.setState({gettingGas:false})
+                            }).then(console.log)
+                        });
+
+                      }else{
+                        console.log("Use MetaMask to go xDai to ETH")
+                        this.props.tx(
+                          gasEmitterContract.methods.goToETH()
+                        ,120000,0,amountInWei,(receipt)=>{
+                          if(receipt){
+                            console.log("GAS UP COMPLETE?!?",receipt)
+                            //this.setState({gettingGas:false})
+                            //window.location = "/"+receipt.contractAddress
+                          }
+                        })
+                      }
                     }
                   }
                 })

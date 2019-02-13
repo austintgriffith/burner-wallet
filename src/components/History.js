@@ -457,17 +457,17 @@ export default class History extends React.Component {
               </a>
             </div>
 
-            <div className="col-2 p-1">
+            <div className="col-4 p-1">
               <CopyToClipboard text={target}>
                 <button className="btn btn-large w-100" style={buttonStyle.secondary}
                   onClick={() => this.props.changeAlert({type: 'success', message: target+' copied to clipboard'})}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-save"/>
+                    <i className="fas fa-save"/> Copy
                   </Scaler>
                 </button>
               </CopyToClipboard>
             </div>
-            <div className="col-4 p-1">
+            <div className="col-2 p-1">
             </div>
             <div className="col-4 p-1">
               {waveButton}
