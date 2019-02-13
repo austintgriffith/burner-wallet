@@ -71,10 +71,18 @@ class SendByScan extends Component {
       }
       console.log("dataAfterColon:",dataAfterColon)
       if (dataAfterColon) {
+        /*
         this.stopRecording();
         let returnState = this.props.parseAndCleanPath(dataAfterColon)
         this.props.returnToState(returnState)
         console.log("return state",returnState)
+        */
+        this.stopRecording();
+         this.props.changeView('reader')
+         setTimeout(()=>{
+           //maybe they just scanned an address?
+           window.location = "/"+dataAfterColon
+         },100)
       }
     }
   };

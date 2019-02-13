@@ -526,6 +526,15 @@ class App extends Component {
           message: 'Imported identical private key.',
         });
       }else{
+        /*
+        console.log("Checking on pk import...")
+        console.log("this.state.balance",this.state.balance)
+        console.log("this.state.metaAccount",this.state.metaAccount)
+        console.log("this.state.xdaiBalance",this.state.xdaiBalance)
+        console.log("this.state.daiBalance",this.state.daiBalance)
+        console.log("this.state.isVendor",this.state.isVendor)
+        */
+
         if(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed)){
           this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
             this.changeView('withdraw_from_private')
