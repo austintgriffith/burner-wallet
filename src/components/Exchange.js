@@ -197,7 +197,7 @@ export default class Exchange extends React.Component {
                       try{
                         gasEmitterContract = new this.props.web3.eth.Contract(require("../contracts/Emitter.abi.js"),require("../contracts/Emitter.address.js"))
                       }catch(e){
-                        console.log("ERROR LOADING dendaiContract Contract",e)
+                        console.log("ERROR LOADING Emitter Contract",e)
                       }
                     }
                     if(gasEmitterContract){
