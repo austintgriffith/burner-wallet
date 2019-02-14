@@ -67,13 +67,18 @@ class SendByScan extends Component {
           dataAfterColon = data
         }
         console.log("SCAN",data)
-        //dataAfterColon=dataAfterColon.replace("#","")//had to pull this to get PKs to load in right
+        if(data.indexOf("/pk")>=0){
+          //don't mess with it
+        }else{
+          dataAfterColon=dataAfterColon.replace("#","")//had to pull this to get PKs to load in right
+        }
+
       }
       console.log("dataAfterColon:",dataAfterColon)
       if (dataAfterColon) {
         this.stopRecording();
         console.log("RETURN STATE:",this.props.returnState)
-        if(this.props.returnState){
+        if(this.props.returnState && this.props.returnState.view!="send_to_address"){
           let returnState = this.props.parseAndCleanPath(dataAfterColon)
           this.props.returnToState(returnState)
           console.log("return state",returnState)
