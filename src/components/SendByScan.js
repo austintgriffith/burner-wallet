@@ -67,7 +67,7 @@ class SendByScan extends Component {
           dataAfterColon = data
         }
         console.log("SCAN",data)
-        //dataAfterColon=dataAfterColon.replace("#","")
+        //dataAfterColon=dataAfterColon.replace("#","")//had to pull this to get PKs to load in right 
       }
       console.log("dataAfterColon:",dataAfterColon)
       if (dataAfterColon) {
