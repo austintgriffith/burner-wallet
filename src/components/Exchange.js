@@ -3,9 +3,9 @@ import Ruler from "./Ruler";
 import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
 
-import wyre from '../wyre.jpg';
-import coinbase from '../coinbase.jpg';
-import localeth from '../localeth.png';
+//import wyre from '../wyre.jpg';
+//import coinbase from '../coinbase.jpg';
+//import localeth from '../localeth.png';
 
 import Web3 from 'web3';
 import axios from "axios"
