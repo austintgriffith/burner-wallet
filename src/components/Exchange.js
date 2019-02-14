@@ -650,8 +650,12 @@ export default class Exchange extends React.Component {
         }
       })
       this.setState({sendEth:false})
-      actualEthSendAmount = this.state.mainnetweb3.utils.toWei(""+Math.round(actualEthSendAmount*10000)/10000,'ether')
-      this.transferEth(this.state.ethSendToAddress,false,actualEthSendAmount,"Sending $"+this.state.ethSendAmount+" ("+actualEthSendAmount+" wei) of ETH to "+this.state.ethSendToAddress+"...",()=>{
+      //i think without inject meta mask this needs to be adjusted?!?!
+      if(this.state.mainnetMetaAccount){
+        actualEthSendAmount = this.state.mainnetweb3.utils.toWei(""+Math.round(actualEthSendAmount*10000)/10000,'ether')
+      }
+      ////for some reason I needed this in and now I dont?!?!?
+      this.transferEth(this.state.ethSendToAddress,false,actualEthSendAmount,"Sending $"+this.state.ethSendAmount+" of ETH to "+this.state.ethSendToAddress+"...",()=>{
         this.props.changeAlert({type: 'success',message: "Sent $"+this.state.ethSendAmount+" of ETH to "+this.state.ethSendToAddress});
         this.setState({
           ethToDaiMode:false,
@@ -1177,7 +1181,9 @@ export default class Exchange extends React.Component {
                 <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
                  <div className="input-group-append" onClick={() => {
-                    this.setState({amount: Math.floor(this.props.daiBalance*100)/100 })
+                    this.setState({amount: Math.floor(this.props.daiBalance*100)/100 },()=>{
+                      this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                    })
                  }}>
                    <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
                      max
@@ -1260,7 +1266,9 @@ export default class Exchange extends React.Component {
                 <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
                    <div className="input-group-append" onClick={() => {
-                      this.setState({amount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 })
+                      this.setState({amount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 },()=>{
+                        this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                      })
                    }}>
                      <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
                        max
@@ -1470,7 +1478,9 @@ export default class Exchange extends React.Component {
                        let adjustedEthBalance = (parseFloat(this.props.ethBalance) - parseFloat(gasInEth))
                        console.log(adjustedEthBalance)
 
-                       this.setState({amount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 })
+                       this.setState({amount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 },()=>{
+                         this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                       })
 
                      }
                    })
@@ -1611,7 +1621,9 @@ export default class Exchange extends React.Component {
                 <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
                <div className="input-group-append" onClick={() => {
-                  this.setState({amount: Math.floor((this.props.daiBalance)*100)/100 })
+                  this.setState({amount: Math.floor((this.props.daiBalance)*100)/100 },()=>{
+                    this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                  })
                }}>
                  <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
                    max
@@ -1971,7 +1983,9 @@ export default class Exchange extends React.Component {
               <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.daiSendAmount}
                      onChange={event => this.updateState('daiSendAmount', event.target.value)} />
                <div className="input-group-append" onClick={() => {
-                  this.setState({daiSendAmount: Math.floor((this.props.daiBalance)*100)/100 })
+                  this.setState({daiSendAmount: Math.floor((this.props.daiBalance)*100)/100 },()=>{
+                    this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                  })
                }}>
                  <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
                    max
@@ -2056,7 +2070,9 @@ export default class Exchange extends React.Component {
                            let adjustedEthBalance = (parseFloat(this.props.ethBalance) - parseFloat(gasInEth))
                            console.log(adjustedEthBalance)
 
-                           this.setState({ethSendAmount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 })
+                           this.setState({ethSendAmount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 },()=>{
+                             this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                           })
 
                          }
                        })
@@ -2126,7 +2142,9 @@ export default class Exchange extends React.Component {
               <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.xdaiSendAmount}
                      onChange={event => this.updateState('xdaiSendAmount', event.target.value)} />
                      <div className="input-group-append" onClick={() => {
-                           this.setState({xdaiSendAmount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 })
+                           this.setState({xdaiSendAmount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 },()=>{
+                             this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                           })
                          }
                        }>
                        <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
