@@ -394,7 +394,7 @@ class App extends Component {
   async poll() {
 
     let badgeBalance = 0
-    if(this.state.contracts && this.state.contracts.Badges){
+    if(ERC20TOKEN&&this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown") && this.state.contracts.Badges){
       //check for badges for this user
       badgeBalance = await this.state.contracts.Badges.balanceOf(this.state.account).call()
       if(badgeBalance>0){
