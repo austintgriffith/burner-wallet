@@ -1363,6 +1363,7 @@ render() {
               <SendByScan
                 parseAndCleanPath={this.parseAndCleanPath.bind(this)}
                 returnToState={this.returnToState.bind(this)}
+                returnState={this.state.returnState}
                 mainStyle={mainStyle}
                 goBack={this.goBack.bind(this)}
                 changeView={this.changeView}
