@@ -650,7 +650,8 @@ export default class Exchange extends React.Component {
         }
       })
       this.setState({sendEth:false})
-      this.transferEth(this.state.ethSendToAddress,false,actualEthSendAmount,"Sending $"+this.state.ethSendAmount+" of ETH to "+this.state.ethSendToAddress+"...",()=>{
+      actualEthSendAmount = this.state.mainnetweb3.utils.toWei(""+Math.round(actualEthSendAmount*10000)/10000,'ether')
+      this.transferEth(this.state.ethSendToAddress,false,actualEthSendAmount,"Sending $"+this.state.ethSendAmount+" ("+actualEthSendAmount+" wei) of ETH to "+this.state.ethSendToAddress+"...",()=>{
         this.props.changeAlert({type: 'success',message: "Sent $"+this.state.ethSendAmount+" of ETH to "+this.state.ethSendToAddress});
         this.setState({
           ethToDaiMode:false,
@@ -697,7 +698,7 @@ export default class Exchange extends React.Component {
           if(call){
             paramsObject.data = call.encodeABI()
           }else{
-            paramsObject.data = "0x0"
+            paramsObject.data = "0x00"
           }
 
           console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
