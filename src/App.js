@@ -4,6 +4,7 @@ import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
+import gasless from 'tabookey-gasless';
 import './App.scss';
 import Header from './components/Header';
 import NavCard from './components/NavCard';
@@ -140,6 +141,12 @@ else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   ERC20TOKEN = 'Burner'
   ERC20IMAGE = cypherpunk
   LOADERIMAGE = cypherpunk
+}
+else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
+  WEB3_PROVIDER = "https://dai.poa.network";
+  ERC20NAME = false
+  ERC20TOKEN = false
+  ERC20IMAGE = false
 }
 
 
@@ -658,19 +665,20 @@ class App extends Component {
           console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
 
           this.setState({sending: true})
-          let postData = {
-            id: this.state.claimId,
-            sig: sig,
-            claimHash: claimHash,
-            dest: this.state.account,
-          }
-          console.log("CLAIM_RELAY:", CLAIM_RELAY," POSTDATA:",postData)
-          axios.post(CLAIM_RELAY + "/link", postData, {
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          }).then((response) => {
-            console.log("TX RESULT", response.data.transactionHash)
+        let relayClient = new gasless.RelayClient(this.state.web3);
+
+        if(this.state.metaAccount && this.state.metaAccount.privateKey){
+          relayClient.useKeypairForSigning(this.state.metaAccount)
+        }
+        let claimData = this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account).encodeABI()
+        let options = {
+          from: this.state.account,
+          to: this.state.contracts.Links._address,
+          txfee: 12,
+          gas_limit: 150000
+        }
+        relayClient.relayTransaction(claimData, options).then((transaction) => {
+            console.log("TX REALYED: ", transaction)
             this.setState({claimed: true})
             setTimeout(() => {
               this.setState({sending: false}, () => {
@@ -679,15 +687,10 @@ class App extends Component {
               })
             }, 2000)
           })
-          .catch((error) => {
-            console.log(error); //axios promise
-          });
-
-
       //})
       //.catch((error) => {
       //  console.log(error); //Get Gas price promise
-      //});
+      //});  
     }else{
       console.log("Fund is not valid yet, trying again....")
       setTimeout(this.relayClaim,2000)
