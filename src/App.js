@@ -680,7 +680,8 @@ class App extends Component {
           from: this.state.account,
           to: this.state.contracts.Links._address,
           txfee: 12,
-          gas_limit: 150000
+          gas_limit: 150000,
+          gas_price: 10000000
         }
         relayClient.relayTransaction(claimData, options).then((transaction) => {
             console.log("TX REALYED: ", transaction)
