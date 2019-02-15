@@ -238,6 +238,20 @@ export default class SendToAddress extends React.Component {
       messageText = this.state.extraMessage
     }
 
+
+    let amountInputDisplay = (
+      <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
+          ref={(input) => { this.amountInput = input; }}
+             onChange={event => this.updateState('amount', event.target.value)} />
+    )
+    if(this.props.scannerState&&this.props.scannerState.daiposOrderId){
+      amountInputDisplay = (
+        <input type="number" readOnly className="form-control" placeholder="0.00" value={this.state.amount}
+            ref={(input) => { this.amountInput = input; }}
+               onChange={event => this.updateState('amount', event.target.value)} />
+      )
+    }
+
     return (
       <div>
         <div className="content row">
@@ -270,9 +284,7 @@ export default class SendToAddress extends React.Component {
               <div className="input-group-prepend">
                 <div className="input-group-text">$</div>
               </div>
-              <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
-                  ref={(input) => { this.amountInput = input; }}
-                     onChange={event => this.updateState('amount', event.target.value)} />
+              {amountInputDisplay}
             </div>
             <div className="form-group w-100" style={{marginTop:20}}>
               <label htmlFor="amount_input">{messageText}</label>
