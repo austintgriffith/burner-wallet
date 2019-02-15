@@ -400,35 +400,6 @@ class App extends Component {
   }
   async poll() {
 
-    let badgeBalance = 0
-    if(this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown") && this.state.contracts.Badges){
-      //check for badges for this user
-      badgeBalance = await this.state.contracts.Badges.balanceOf(this.state.account).call()
-      if(badgeBalance>0){
-        let update = false
-        for(let b = 0;b<badgeBalance;b++){
-          let thisBadgeId = await this.state.contracts.Badges.tokenOfOwnerByIndex(this.state.account,b).call()
-          if(!this.state.badges[thisBadgeId]){
-            let thisBadgeData = await this.state.contracts.Badges.tokenURI(thisBadgeId).call()
-            //console.log("BADGE",b,thisBadgeId,thisBadgeData)
-            if(!this.state.badges[thisBadgeId]){
-              let response = await axios.get(thisBadgeData)
-              if(response && response.data){
-                this.state.badges[thisBadgeId] = response.data
-                this.state.badges[thisBadgeId].id = thisBadgeId
-                update=true
-              }
-            }
-          }
-        }
-        if(update){
-          //console.log("Saving badges state...")
-          this.setState({badges:this.state.badges})
-        }
-
-      }
-
-    }
 
 
     //console.log(">>>>>>> <<< >>>>>> Looking into iframe...")
@@ -507,6 +478,42 @@ class App extends Component {
       }
 
       this.setState({ethBalance,daiBalance,xdaiBalance,badgeBalance,hasUpdateOnce:true})
+    }
+
+    let badgeBalance = 0
+    if(this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown") && this.state.contracts.Badges){
+      //check for badges for this user
+
+      badgeBalance = await this.state.contracts.Badges.balanceOf(this.state.account).call()
+      if(badgeBalance>0){
+        let update = false
+        for(let b = 0;b<badgeBalance;b++){
+          let thisBadgeId = await this.state.contracts.Badges.tokenOfOwnerByIndex(this.state.account,b).call()
+          if(!this.state.badges[thisBadgeId]){
+            try{
+              let thisBadgeData = await this.state.contracts.Badges.tokenURI(thisBadgeId).call()
+              //console.log("BADGE",b,thisBadgeId,thisBadgeData)
+              if(!this.state.badges[thisBadgeId]){
+                let response = await axios.get(thisBadgeData)
+                if(response && response.data){
+                  this.state.badges[thisBadgeId] = response.data
+                  this.state.badges[thisBadgeId].id = thisBadgeId
+                  update=true
+                }
+              }
+            }catch(e){
+              console.log(e)
+            }
+
+          }
+        }
+        if(update){
+          //console.log("Saving badges state...")
+          this.setState({badges:this.state.badges})
+        }
+
+      }
+
     }
 
 
@@ -690,7 +697,7 @@ class App extends Component {
       //})
       //.catch((error) => {
       //  console.log(error); //Get Gas price promise
-      //});  
+      //});
     }else{
       console.log("Fund is not valid yet, trying again....")
       setTimeout(this.relayClaim,2000)
