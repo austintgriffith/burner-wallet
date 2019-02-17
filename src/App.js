@@ -1630,7 +1630,7 @@ render() {
                       let randomWallet = this.state.web3.eth.accounts.create()
                       let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
                       console.log("STATE",this.state,this.state.contracts)
-                      this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature),140000,false,amount*10**18,async (receipt)=>{
+                      this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,0),220000,false,amount*10**18,async (receipt)=>{
                         this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
                           console.log("STATE SAVED",this.state)
                         })
