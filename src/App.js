@@ -53,8 +53,8 @@ import xdai from './xdai.jpg';
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
 
-const POA_XDAI_NODE = "https://dai-b.poa.network"
-//const POA_XDAI_NODE = "https://dai.poa.network"
+//const POA_XDAI_NODE = "https://dai-b.poa.network"
+const POA_XDAI_NODE = "https://dai.poa.network"
 
 let XDAI_PROVIDER = POA_XDAI_NODE
 
