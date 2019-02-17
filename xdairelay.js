@@ -87,7 +87,7 @@ app.post('/link', async (req, res) => {
     res.end(JSON.stringify({invalid:"claim"}));
   }else{
     console.log("CLAIM IS VALID...")
-    contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.claimHash,req.body.dest,1000000000000000)
+    contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.claimHash,req.body.dest)
     .send({from: accounts[DESKTOPMINERACCOUNT],gas: 240000,gasPrice: 1010101010},
       (error, transactionHash)=>{
         console.log("TX CALLBACK",error,transactionHash)

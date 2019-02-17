@@ -221,9 +221,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
     /// @param _destination Destination address.
     function executeClaim(
         bytes32 _id, 
-        bytes memory _signature, 
-        address _token,
-        uint256 _amount,
+        bytes memory _signature,
         bytes32 _claimHash, 
         address _destination
     ) 
@@ -233,6 +231,8 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         require(isClaimValid(_id,_signature,_claimHash,_destination),"Links::executeClaim, invalid claim.");
         bool status = false;
         uint256 nonce = funds[_id].nonce;
+        address token = funds[_id].token;
+        uint256 amount = funds[_id].amount;
         assert(nonce < contractNonce);
 
         // validate mutex/flag status
@@ -244,11 +244,11 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
             // expired funds can only be claimed back by original sender.
             if(isClaimExpired(_id,_signature,_claimHash,_destination)){
                 require(msg.sender == funds[_id].sender,"Links::executeClaim, not original sender");
-                require(_transfer(_token, msg.sender, _amount),"Links::executeClaim, could not transfer to sender");
+                require(_transfer(token, msg.sender, amount),"Links::executeClaim, could not transfer to sender");
                 delete funds[_id];
                 status = true;
             }else{
-                status = _transfer(_token, _destination, _amount);
+                status = _transfer(token, _destination, amount);
                 // update mutex with correct status
                 funds[_id].claimed = status;
                 // update fund
@@ -263,7 +263,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
             status = true;
         }
         // send out events for frontend parsing
-        emit Claimed(_id,msg.sender,msgVal,_destination,nonce,status);
+        emit Claimed(_id,msg.sender,_amount,_destination,nonce,status);
         return status;
     }
 
