@@ -27,7 +27,7 @@ npx clevis init
 (You'll need to hit enter a few times to specify some config directories.)
 
 
-install burner: 
+install burner:
 ```
 npm i
 ```
@@ -43,6 +43,11 @@ in a new terminal start the app:
 npm start
 ```
 
+in a new terminal start the decentralized metatx relayer from Tabookey:
+```
+startLocalRelay.sh
+```
+
 you probably want to have a bin alias for clevis in your .bashrc or .profile as mentioned in the [clevis docs](https://github.com/austintgriffith/clevis):
 ```
 alias clevis='./node_modules/clevis/bin.js'
@@ -53,7 +58,7 @@ in a new terminal compile and deploy all contracts:
 clevis test full
 ```
 
-Take a look at `tests/clevis.js`, the `metamask()` function in particular, to give your MetaMask accounts some ETH when you run the full test. 
+Take a look at `tests/clevis.js`, the `metamask()` function in particular, to give your MetaMask accounts some ETH when you run the full test.
 
 
 
@@ -145,7 +150,7 @@ Your frontend should automatically reload and your account should have xDai:
 
 
 
-Are you a developer or designer that would like to help build the next iteration of the 🔥👛Burner Wallet👛🔥? Here is a short intro video to explain how to get started: 
+Are you a developer or designer that would like to help build the next iteration of the 🔥👛Burner Wallet👛🔥? Here is a short intro video to explain how to get started:
 
 [![onrampscreencast](https://user-images.githubusercontent.com/2653167/48449772-ee8e9b00-e760-11e8-93dd-ab2105a1c28d.png)](https://youtu.be/bAHluAuyLqo)
 
@@ -156,4 +161,3 @@ To learn more about Clevis and Dapparatus check out some of the following articl
 [https://medium.com/@austin_48503/buidlguidl-0x0-clevis-dapparatus-533936a8236a](https://medium.com/@austin_48503/buidlguidl-0x0-clevis-dapparatus-533936a8236a)
 [https://medium.com/@austin_48503/buidlguidl-0x1-guidlcoin-3be30c6ac76f](https://medium.com/@austin_48503/buidlguidl-0x1-guidlcoin-3be30c6ac76f)
 [https://medium.com/@austin_48503/%EF%B8%8Fclevis-blockchain-orchestration-682d2396aeef](https://medium.com/@austin_48503/%EF%B8%8Fclevis-blockchain-orchestration-682d2396aeef)
-
