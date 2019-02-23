@@ -41,7 +41,7 @@ contract Vault{
     /// @param _value Amount of tokens being transferred
     /* solium-disable-next-line function-order */
     function _vTransfer(address _token, address _to, uint256 _value) private returns(bool status) {
-        require(_value > 0, ERROR_TRANSFER_VALUE_ZERO);
+        require(_value > 0, "Vault::_vTransfer, invalid transfer");
 
         status = false;
         if (_token == ETH) {

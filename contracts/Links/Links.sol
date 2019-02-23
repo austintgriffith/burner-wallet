@@ -1,13 +1,11 @@
 pragma solidity 0.4.25;
-/* solium-disable security/no-send */
-/* solium-disable security/no-block-members */
 
 import "tabookey-gasless/contracts/RelayRecipient.sol";
 import "tabookey-gasless/contracts/RecipientUtils.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
-import "Vault.sol";
+import "../Vault/Vault.sol";
 
 /// @title Send xDai/Eth with a link.
 /// @notice Funds have an adjustable expiration time.
@@ -49,17 +47,17 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
 
     /// @dev Verifies if it is a valid Id.
     modifier ifValidId(bytes32 Id){
-        require(isFundValid(Id),"Links::ifValidId, Id does NOT exists.");
+        require(isFundValid(Id),"Links::ifValidId - Id does NOT exists.");
         _;
     }
     /// @dev Verifies if the Id exists.
     modifier ifNotValidId(bytes32 Id){
-        require(!isFundValid(Id),"Links::ifNotValidId, Id exists.");
+        require(!isFundValid(Id),"Links::ifNotValidId - Id exists.");
         _;
     }
     /// @dev Verifies if it is a valid Signature lenght.
     modifier ifValidSig(bytes memory Signature){
-        require(Signature.length == 65,"Links::ifValidSig, invalid signature lenght");
+        require(Signature.length == 65,"Links::ifValidSig - Invalid signature lenght");
         _;
     }
 
@@ -84,13 +82,12 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         payable
         returns (bool)
     {
-        require(msg.value >= 1000000000000000,"Links::send, needs to be at least 0.001 xDai/Eth to pay relay reward");
-        require(_expirationDays >= uint256(0),"Links::send, invalid expiration days");
+        require(_expirationDays >= uint256(0),"Links::send - Invalid expiration days");
         // !isContract - Preventive measure against deployed contracts. 
-        require(!msg.sender.isContract(),"Links::send, sender should not be a contract");
+        require(!msg.sender.isContract(),"Links::send - Sender should not be a contract");
         
         address signer = ECDSA.recover(_id.toEthSignedMessageHash(),_signature);
-        require(signer != address(0),"Links::send, invalid signer");
+        require(signer != address(0),"Links::send - Invalid signer");
         
         uint256 nonce = contractNonce;
         contractNonce = contractNonce.add(uint256(1));
@@ -113,7 +110,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
             claimed: false
         });
 
-        require(isFundValid(_id),"Links::send, invalid fund");
+        require(isFundValid(_id),"Links::send - Invalid fund");
         //send out events for frontend parsing
         emit Sent(_id,msg.sender,msg.value,nonce,true);
         return true;
@@ -228,7 +225,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         private
         returns (bool)
     {
-        require(isClaimValid(_id,_signature,_claimHash,_destination),"Links::executeClaim, invalid claim.");
+        require(isClaimValid(_id,_signature,_claimHash,_destination),"Links::executeClaim - Invalid claim.");
         bool status = false;
         uint256 nonce = funds[_id].nonce;
         address token = funds[_id].token;
@@ -238,13 +235,13 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         // validate mutex/flag status
         if(funds[_id].claimed == false){
             // !isContract - Preventive measure against deployed contracts. 
-            require(!msg.sender.isContract(),"Links::executeClaim, sender should not be a contract");
+            require(!msg.sender.isContract(),"Links::executeClaim - Sender should not be a contract");
             // mutex activation
             funds[_id].claimed = true;
             // expired funds can only be claimed back by original sender.
             if(isClaimExpired(_id,_signature,_claimHash,_destination)){
-                require(msg.sender == funds[_id].sender,"Links::executeClaim, not original sender");
-                require(_transfer(token, msg.sender, amount),"Links::executeClaim, could not transfer to sender");
+                require(msg.sender == funds[_id].sender,"Links::executeClaim - Not original sender");
+                require(_transfer(token, msg.sender, amount),"Links::executeClaim - Could not transfer to sender");
                 delete funds[_id];
                 status = true;
             }else{
@@ -255,7 +252,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
                 if(status == true){
                     delete funds[_id];
                 }
-                require(msg.sender.send(0),"Links::executeClaim, unsuccessful transaction");
+                require(msg.sender.send(0),"Links::executeClaim - Unsuccessful transaction");
             }
         } else{
             // DESTROY object so it can't be claimed again and free storage space.
@@ -263,7 +260,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
             status = true;
         }
         // send out events for frontend parsing
-        emit Claimed(_id,msg.sender,_amount,_destination,nonce,status);
+        emit Claimed(_id,msg.sender,amount,_destination,nonce,status);
         return status;
     }
 
@@ -324,6 +321,5 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         public 
     {
     }
-    /// @dev set the Relay Hub address that we trust
 
 }

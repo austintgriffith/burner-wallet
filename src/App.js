@@ -606,14 +606,14 @@ class App extends Component {
 
     let fund = await contracts.Links.funds(this.state.claimId).call()
     console.log("FUND FOR "+this.state.claimId+" IS: ", fund)
-    if (fund&&parseInt(fund.nonce)>0) {
+    if (parseInt(fund[5].toString())>0) {
       this.setState({fund: fund})
 
 
       let claimHash = this.state.web3.utils.soliditySha3(
         {type: 'bytes32', value: this.state.claimId}, // fund id
         {type: 'address', value: this.state.account}, // destination address
-        {type: 'uint256', value: fund[3]}, // nonce
+        {type: 'uint256', value: fund[5]}, // nonce
         {type: 'address', value: contracts.Links._address} // contract address
       )
       console.log("claimHash", claimHash)
@@ -649,14 +649,14 @@ class App extends Component {
   async relayClaim() {
     console.log("DOING CLAIM THROUGH RELAY")
     let fund = await this.state.contracts.Links.funds(this.state.claimId).call()
-      if (fund&&parseInt(fund.nonce)>0) {
+      if (parseInt(fund[5].toString())>0) {
         this.setState({fund: fund})
         console.log("FUND: ", fund)
 
         let claimHash = this.state.web3.utils.soliditySha3(
           {type: 'bytes32', value: this.state.claimId}, // fund id
           {type: 'address', value: this.state.account}, // destination address
-          {type: 'uint256', value: fund[3]}, // nonce
+          {type: 'uint256', value: fund[5]}, // nonce
           {type: 'address', value: this.state.contracts.Links._address} // contract address
         )
         console.log("claimHash", claimHash)
