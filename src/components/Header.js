@@ -1,11 +1,11 @@
 import React from 'react';
 import { Scaler, Blockie } from "dapparatus";
 import burnerloader from '../burnerloader.gif';
-export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
+export  default ({openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
 
 
   let sendButtonOpacity = 1.0
-  if(view=="receive"){
+  if(view=="receive" || view=="send_badge"){
     sendButtonOpacity = 0
   }
 
@@ -30,9 +30,14 @@ export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balan
       </div>
     )
   }else{
-    moneyDisplay = (
+    /*moneyDisplay = (
       <div>
         ${dollarDisplay(total)}
+      </div>
+    )*/
+    moneyDisplay = (
+      <div style={{opacity:0.4,fontSize:22,paddingTop:18}}>
+        {network}
       </div>
     )
     blockieDisplay = (
@@ -60,7 +65,9 @@ export  default ({total, dollarDisplay, ens, title, titleImage, mainStyle, balan
   }
 
   let bottomRight = (
-    <div style={scanButtonStyle} onClick={() => changeView('send_by_scan')} >
+    <div style={scanButtonStyle} onClick={() => {
+      openScanner({view:"send_to_address"})
+    }} >
       <div style={{position:'relative',backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",backgroundColor:mainStyle.mainColor,borderRadius:"50%",width:89,height:89,boxShadow: "0.5px 0.5px 5px #000000"}}>
         <a href="#" style={{color:'#FFFFFF',position:'absolute',left:30,top:28}}>
           <i className="fas fa-qrcode" />

@@ -1,0 +1,109 @@
+{
+  "ro": {
+    "app_name": "Burner",
+    "about": "Despre",
+    "code": "Cod",
+    "burn": "Distruge PK",
+    "show": "Arată PK",
+    "copy": "Copiază PK",
+    "create": "Creează",
+    "receive_title": "Primește",
+    "receipt_title": "Raport",
+    "send_to_address_title": "Trimite spre Adresă",
+    "advance": "Avansat",
+    "advance_title": "Avansat",
+    "loading": "Se Încarcă...",
+    "cancel": "Anulează",
+    "done": "Gata",
+    "exchange_title": "Schimbă",
+    "amount": "Sumă",
+    "send": "Trimite",
+    "withdraw": "Retrage",
+    "history_chat": "Istoric și Conversații",
+    "request_funds_title": "Solicită fonduri",
+    "request": "Solicită",
+    "vendors": "Furnizori",
+    "main_card": {
+      "receive": "Primește",
+      "send": "Trimite",
+      "share": "Share",
+      "link": "Link",
+      "vendors": "Furnizori"
+    },
+    "send_with_link": {
+      "error": "Te rog setează o sumă corectă"
+    },
+    "share": {
+      "copied": "Link copiat în clipboard"
+    },
+    "vendor": {
+      "updating": "Se Actualizează",
+      "open": "Deschide",
+      "closed": "Închide",
+      "add_product": "Adaugă Produs",
+      "adding": "Se Adaugă"
+    },
+    "withdraw_from_private": {
+      "from_address": "Retrage de la Adresă",
+      "amount": "Retrage Sumă",
+      "withdraw": "Retrage",
+      "error": "Te rog setează o sumă de retragere validă"
+    },
+    "send_to_address": {
+      "to_address": "Spre Adresă",
+      "send_amount": "Trimite Sumă",
+      "notice": "Poți să trimiți doar ",
+      "error": "Te rog setează o adresă validă sau un cont ENS."
+    },
+    "send_by_scan": {
+      "try_again": "Te rog încearcă din nou",
+      "take_photo": "Fă o Poză",
+      "capture": "Capturează Codul QR:"
+    },
+    "more_buttons": {
+      "request": "Solicită",
+      "exchange": "Schimbă"
+    },
+    "receive": {
+      "address_copied": "Adresă copiată în clipboard"
+    },
+    "history": {
+      "metamask_error": "Mesajele criptate nu sunt disponibile în MetaMask",
+      "wave": "Grafic"
+    },
+    "exchange": {
+      "withdrawal_explanation": "Doar furnizorii pot retrage mai mult decât au depozitat",
+      "funds_transferred": "Fonduri Transferate!",
+      "funds_bridged": "Fonduri Schimbate",
+      "insufficient_funds": "Fonduri Insuficiente",
+      "invalid_to_address": "Te rog setează o adresă validă pentru transfer",
+      "invalid_to_amount": "Te rog setează o sumă validă pentru transfer",
+      "calculate_gas_price": "Se calculează cel mai bun preț de gas...",
+      "go_to_etherscan": "deschidem etherscan?",
+      "idk": "nu știi unde să mergi de aici? cauți ceva care să explice acest bridge?"
+    },
+    "request_funds": {
+      "item_message": "Item sau Mesaj",
+      "button": "Solicită",
+      "amount": "Solicită Sumă"
+    },
+    "admin": {
+      "add_admin": "Adaugă Admin",
+      "adding": "Se Adaugă",
+      "add_vendor": "Adaugă Furnizor"
+    },
+    "advanced": {
+      "to_qr": "Spre QR"
+    },
+    "balance_display": {
+      "waiting_for_api": "Așteptăm răspuns de la API",
+      "no_currency_api": "Niciun API pentru Valută Disponibil"
+    },
+    "burn_wallet": {
+      "burn_private_key_question": "Ești sigur că vrei să distrugi această parolă?",
+      "disclaimer": "Nu o face! Vei pierde toate fondurile!",
+      "cancel": "Nu, Anulează",
+      "burn": "Distruge-o!"
+    }
+  }
+}

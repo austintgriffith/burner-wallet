@@ -1,0 +1,109 @@
+{
+  "de": {
+    "app_name": "Burner",
+    "about": "Über",
+    "code": "Code",
+    "burn": "PK verbrennen",
+    "show": "PK anzeigen",
+    "copy": "PK kopieren",
+    "create": "Erstellen",
+    "receive_title": "Empfangen",
+    "receipt_title": "Beleg",
+    "send_to_address_title": "An Adresse senden",
+    "advance": "Erweitert",
+    "advance_title": "Erweitert",
+    "loading": "Lade...",
+    "cancel": "Abbrechen",
+    "done": "Fertig",
+    "exchange_title": "Börse",
+    "amount": "Betrag",
+    "send": "Senden",
+    "withdraw": "Abheben",
+    "history_chat": "Verlauf & Chat",
+    "request_funds_title": "Mittel anfordern",
+    "request": "Anfrage",
+    "vendors": "Verkäufer",
+    "main_card": {
+      "receive": "Empfangen",
+      "send": "Senden",
+      "share": "Teilen",
+      "link": "Link",
+      "vendors": "Verkäufer"
+    },
+    "send_with_link": {
+      "error": "Bitte einen güligen Betrag eingeben"
+    },
+    "share": {
+      "copied": "URL wurde in die Zwischenablage kopiert"
+    },
+    "vendor": {
+      "updating": "Aktualisiere",
+      "open": "Offen",
+      "closed": "Geschlossen",
+      "add_product": "Produkt hinzufügen",
+      "adding": "Füge hinzu"
+    },
+    "withdraw_from_private": {
+      "from_address": "Von Adresse abheben",
+      "amount": "Abhebebetrag",
+      "withdraw": "Abheben",
+      "error": "Bitte einen gültigen Betrag für die Abhebung eingeben"
+    },
+    "send_to_address": {
+      "to_address": "An Adresse",
+      "send_amount": "Betrag senden",
+      "notice": "Du kannst nur folgenden Betrag senden: ",
+      "error": "Bitte eine gültige Adresse oder ENS eingeben."
+    },
+    "send_by_scan": {
+      "try_again": "Bitte versuchen Sie es erneut",
+      "take_photo": "Foto machen",
+      "capture": "QR-Code erfassen:"
+    },
+    "more_buttons": {
+      "request": "Anfrage",
+      "exchange": "Börse"
+    },
+    "receive": {
+      "address_copied": "Adresse wurde in die Zwischenablage kopiert"
+    },
+    "history": {
+      "metamask_error": "Verschlüsselter Nachrichtenversand ist mit MetaMask nicht verfügbar",
+      "wave": "Winken"
+    },
+    "exchange": {
+      "withdrawal_explanation": "Nur Verkäufer können mehr abheben, als sie eingezahlt haben",
+      "funds_transferred": "Mittel übertragen!",
+      "funds_bridged": "Mittel ausgetauscht",
+      "insufficient_funds": "Nicht genug Mittel",
+      "invalid_to_address": "Bitte eine gültige Adresse eingeben",
+      "invalid_to_amount": "Bitte einen gültige Betrag eingeben",
+      "calculate_gas_price": "Berechne den besten Gas-Preis...",
+      "go_to_etherscan": "Auf Etherscan gehen?",
+      "idk": "ich weiß nicht wie es hier weitergeht? vielleicht irgendetwas was die bridge erklärt?"
+    },
+    "request_funds": {
+      "item_message": "Gegenstand oder Nachricht",
+      "button": "Anfragen",
+      "amount": "Anzufragender Betrag"
+    },
+    "admin": {
+      "add_admin": "Admin hinzufügen",
+      "adding": "Füge hinzu",
+      "add_vendor": "Verkäufer hinzufügen"
+    },
+    "advanced": {
+      "to_qr": "Zu QR-Code"
+    },
+    "balance_display": {
+      "waiting_for_api": "Warte auf API",
+      "no_currency_api": "Keine Währungs-API-Daten verfügbar"
+    },
+    "burn_wallet": {
+      "burn_private_key_question": "Sind Sie sich sicher, dass Sie diesen privaten Schlüssel verbrennen wollen?",
+      "disclaimer": "Tun Sie das nicht! Sie werden all ihr Guthaben verlieren!",
+      "cancel": "Nein, abbrechen",
+      "burn": "Verbrenn ihn!"
+    }
+  }
+}

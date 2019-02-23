@@ -7,6 +7,7 @@ import i18n from '../i18n';
 const QRCode = require('qrcode.react');
 
 let interval
+let metaReceiptTracker = {}
 
 export default class Advanced extends React.Component {
 
@@ -111,7 +112,7 @@ export default class Advanced extends React.Component {
     }else{
       venderButtonText = (
         <div>
-          <i className="fas fa-window-close"></i> {i18n.t('vendor.closed')}
+          <i className="fas fa-thumbs-down"></i> {i18n.t('vendor.closed')}
         </div>
       )
     }
@@ -165,7 +166,7 @@ export default class Advanced extends React.Component {
             <div className="input-group-prepend">
               <div className="input-group-text">$</div>
             </div>
-            <input type="text" className="form-control" placeholder="0.00" value={this.state.newProductAmount}
+            <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.newProductAmount}
               onChange={event => this.setState({newProductAmount:event.target.value})} />
           </div>
           </div>
@@ -177,11 +178,13 @@ export default class Advanced extends React.Component {
               //addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable)
               let nextId = this.props.products.length
               this.setState({addingProduct:true})
-              tx(contracts[this.props.ERC20VENDOR].addProduct(nextId,web3.utils.utf8ToHex(this.state.newProductName),web3.utils.toWei(""+this.state.newProductAmount, 'ether'),true),240000,0,0,(result)=>{
-                console.log("PRODUCT ADDED",result)
-                this.setState({addingProduct:false,newProductAmount:"",newProductName:""})
-                setTimeout(this.poll.bind(this),100)
-
+              tx(contracts[this.props.ERC20VENDOR].addProduct(nextId,web3.utils.utf8ToHex(this.state.newProductName),web3.utils.toWei(""+this.state.newProductAmount, 'ether'),true),240000,0,0,(receipt)=>{
+                console.log("PRODUCT ADDED",receipt)
+                if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                  metaReceiptTracker[receipt.transactionHash] = true
+                  this.setState({addingProduct:false,newProductAmount:"",newProductName:""})
+                  setTimeout(this.poll.bind(this),100)
+                }
               })
             }
 

@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import { fr, en, es } from "./locales";
+import { fr, en, es, ca, de, ro } from "./locales";
 
 const i18n = i18next;
 const options = {
@@ -19,7 +19,16 @@ const options = {
     },
     es: {
       common: es.es
-    }
+    },
+    ca: {
+      common: ca.ca
+    },
+    de: {
+      common: de.de
+    },
+    ro: {
+      common: ro.ro
+    },
   },
 
   fallbackLng: "en",

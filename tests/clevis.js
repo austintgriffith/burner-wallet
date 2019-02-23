@@ -136,6 +136,32 @@ module.exports = {
         result = await clevis("send","0.10","0","0x3baa2f6302ce57eb2ad94c9571b19e1073b079be")///<<<-------- change this to your metamask accounts
         printTxResult(result)
 
+        result = await clevis("send","0.10","0","0x3606affd391d37a0f413c261bd3caf573c6360e1")///<<<-------- change this to your metamask accounts
+        printTxResult(result)
+
+
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/burner.json")
+        printTxResult(result)
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/burner.json")
+        printTxResult(result)
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffidai.json")
+        printTxResult(result)
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffidai.json")
+        printTxResult(result)
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffidai.json")
+        printTxResult(result)
+
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa0ddb01deab4f240cf6dad304e50b58085055372","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
+        printTxResult(result)
+
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa0ddb01deab4f240cf6dad304e50b58085055372","https://badges.xdai.io/ethdenver/v1/json/gitcoin.json")
+        printTxResult(result)
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa0ddb01deab4f240cf6dad304e50b58085055372","https://badges.xdai.io/ethdenver/v1/json/consensys.json")
+        printTxResult(result)
+
+
+                result = await clevis("send","0.10","0","0xa0ddb01deab4f240cf6dad304e50b58085055372")///<<<-------- change this to your metamask accounts
+                printTxResult(result)
 
 
       });
@@ -184,6 +210,19 @@ module.exports = {
         assert(result==0,"fast ERRORS")
       });
     });
+    describe(bigHeader('RELAY HUB'), function(){
+      it('should set Relay Hub address to Relay Recepient and provide it with a deposit', async function(){
+        const Web3 = require('web3')
+        const web3ForStake = new Web3(new Web3.providers.HttpProvider(clevisConfig.provider))
+        let relayHubAddress = "0x9C57C0F1965D225951FE1B2618C92Eefd687654F"///<<<-------- Stable if using tbk docker. Change this to your deployed Relay Hub address
+        let linksAddress = localContractAddress("Links")
+        let linksAbi = localContractAbi("Links")
+        const accounts = await web3ForStake.eth.getAccounts()
+        let links = new web3ForStake.eth.Contract(linksAbi, linksAddress, ({from: accounts[0]}))
+        await links.methods.set_hub(relayHubAddress).send()
+        await links.methods.deposit_to_relay_hub().send({value: web3ForStake.utils.toWei("0.5", "ether")})
+      });
+    })
   },
 
   fast:()=>{

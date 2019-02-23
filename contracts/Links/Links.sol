@@ -2,16 +2,17 @@ pragma solidity 0.4.25;
 /* solium-disable security/no-send */
 /* solium-disable security/no-block-members */
 
+import "tabookey-gasless/contracts/RelayRecipient.sol";
+import "tabookey-gasless/contracts/RecipientUtils.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
+import "../Vault/Vault.sol";
 
 /// @title Send xDai/Eth with a link.
-/// @author Austin Griffith  - <austin@gitcoin.co>
-/// @author Ricardo Rius  - <ricardo@rius.info>
 /// @notice Funds have an adjustable expiration time.
 /// After a fund expires it can only be claimed by the original sender.
-contract Links {
+contract Links is Vault, RelayRecipient, RecipientUtils {
     using SafeMath for uint256;
     using Address for address;
     using ECDSA for bytes32;
@@ -19,7 +20,9 @@ contract Links {
     struct Fund {
         address sender;
         address signer;
-        uint256 value;
+        address token;
+        uint256 amount;
+        uint256 msgVal;
         uint256 nonce;
         uint256 creationTime;
         uint256 expirationTime;
@@ -46,17 +49,17 @@ contract Links {
 
     /// @dev Verifies if it is a valid Id.
     modifier ifValidId(bytes32 Id){
-        require(isFundValid(Id),"Links::ifValidId, Id does NOT exists.");
+        require(isFundValid(Id),"Links::ifValidId - Id does NOT exists.");
         _;
     }
     /// @dev Verifies if the Id exists.
     modifier ifNotValidId(bytes32 Id){
-        require(!isFundValid(Id),"Links::ifNotValidId, Id exists.");
+        require(!isFundValid(Id),"Links::ifNotValidId - Id exists.");
         _;
     }
     /// @dev Verifies if it is a valid Signature lenght.
     modifier ifValidSig(bytes memory Signature){
-        require(Signature.length == 65,"Links::ifValidSig, invalid signature lenght");
+        require(Signature.length == 65,"Links::ifValidSig - Invalid signature lenght");
         _;
     }
 
@@ -71,6 +74,8 @@ contract Links {
     function send(
         bytes32 _id, 
         bytes memory _signature,
+        address _token,
+        uint256 _amount,
         uint256 _expirationDays
     )   
         public 
@@ -79,30 +84,35 @@ contract Links {
         payable
         returns (bool)
     {
-        require(msg.value >= 1000000000000000,"Links::send, needs to be at least 0.001 xDai/Eth to pay relay reward");
-        require(_expirationDays >= uint256(0),"Links::send, invalid expiration days");
+        require(_expirationDays >= uint256(0),"Links::send - Invalid expiration days");
         // !isContract - Preventive measure against deployed contracts. 
-        require(!msg.sender.isContract(),"Links::send, sender should not be a contract");
+        require(!msg.sender.isContract(),"Links::send - Sender should not be a contract");
+        
         address signer = ECDSA.recover(_id.toEthSignedMessageHash(),_signature);
-        require(signer != address(0),"Links::send, invalid signer");
-        // defaulting to 6 months expiration
-        uint256 expiration = block.timestamp.add(26 weeks);
+        require(signer != address(0),"Links::send - Invalid signer");
+        
         uint256 nonce = contractNonce;
         contractNonce = contractNonce.add(uint256(1));
-        if (_expirationDays >= 1){
-            expiration = block.timestamp.add(_expirationDays.mul(1 days));
+        
+        uint256 expiration = now.add(1 days);
+        if (_expirationDays > 1){
+            expiration = now.add(_expirationDays.mul(1 days));
         }
         assert(nonce < contractNonce);
+        _deposit(_token,_amount);
         funds[_id] = Fund({
             sender: msg.sender,
             signer: signer,
-            value: msg.value,
+            token: _token,
+            amount: _amount,
+            msgVal: msg.value,
             nonce: nonce,
-            creationTime: block.timestamp,
+            creationTime: now,
             expirationTime: expiration,
             claimed: false
         });
-        require(isFundValid(_id) && funds[_id].value == msg.value,"Links::send, invalid fund");
+
+        require(isFundValid(_id),"Links::send - Invalid fund");
         //send out events for frontend parsing
         emit Sent(_id,msg.sender,msg.value,nonce,true);
         return true;
@@ -116,16 +126,13 @@ contract Links {
         bytes32 _id, 
         bytes memory _signature, 
         bytes32 _claimHash, 
-        address _destination,
-        uint256 _gasReward
+        address _destination
     ) 
         public 
         ifValidId(_id)
         returns (bool)
     {
-        require(_gasReward <= funds[_id].value,"Links::claim, gas reward is greater than the fund value");
-        require(_gasReward <= 1000000000000000, "Links::claim, cannot reward more than 0.001 xDai/Eth");
-        return executeClaim(_id,_signature,_claimHash,_destination,_gasReward);
+        return executeClaim(_id,_signature,_claimHash,_destination);
     }
   
     /// @dev Off chain relayer can validate the claim before submitting.
@@ -202,7 +209,7 @@ contract Links {
         returns (bool)
     {
         if(isClaimValid(_id,_signature,_claimHash,_destination)){
-            return (funds[_id].expirationTime < block.timestamp);
+            return (funds[_id].expirationTime < now);
         }else{
             return true;
         }
@@ -213,47 +220,41 @@ contract Links {
     /// @param _destination Destination address.
     function executeClaim(
         bytes32 _id, 
-        bytes memory _signature, 
+        bytes memory _signature,
         bytes32 _claimHash, 
-        address _destination,
-        uint256 _gasReward
+        address _destination
     ) 
         private
         returns (bool)
     {
-        require(isClaimValid(_id,_signature,_claimHash,_destination),"Links::executeClaim, invalid claim.");
+        require(isClaimValid(_id,_signature,_claimHash,_destination),"Links::executeClaim - Invalid claim.");
         bool status = false;
-        uint256 residual = uint256(0);
-        bool claimed = funds[_id].claimed;
-        uint256 value = funds[_id].value;
         uint256 nonce = funds[_id].nonce;
-
+        address token = funds[_id].token;
+        uint256 amount = funds[_id].amount;
         assert(nonce < contractNonce);
+
         // validate mutex/flag status
-        if(claimed == false){
+        if(funds[_id].claimed == false){
             // !isContract - Preventive measure against deployed contracts. 
-            require(!msg.sender.isContract(),"Links::executeClaim, sender should not be a contract");
+            require(!msg.sender.isContract(),"Links::executeClaim - Sender should not be a contract");
             // mutex activation
             funds[_id].claimed = true;
             // expired funds can only be claimed back by original sender.
             if(isClaimExpired(_id,_signature,_claimHash,_destination)){
-                require(msg.sender == funds[_id].sender,"Links::executeClaim, not original sender");
-                msg.sender.transfer(value);
+                require(msg.sender == funds[_id].sender,"Links::executeClaim - Not original sender");
+                require(_transfer(token, msg.sender, amount),"Links::executeClaim - Could not transfer to sender");
                 delete funds[_id];
                 status = true;
             }else{
-                residual = value.sub(_gasReward);
-                // address.send() restricts to 2300 gas units
-                status = _destination.send(residual);
+                status = _transfer(token, _destination, amount);
                 // update mutex with correct status
                 funds[_id].claimed = status;
                 // update fund
                 if(status == true){
                     delete funds[_id];
-                } else{
-                    funds[_id].value = residual;
                 }
-                require(msg.sender.send(_gasReward),"Links::executeClaim, could not pay sender");
+                require(msg.sender.send(0),"Links::executeClaim - Unsuccessful transaction");
             }
         } else{
             // DESTROY object so it can't be claimed again and free storage space.
@@ -261,7 +262,66 @@ contract Links {
             status = true;
         }
         // send out events for frontend parsing
-        emit Claimed(_id,msg.sender,value,_destination,nonce,status);
+        emit Claimed(_id,msg.sender,amount,_destination,nonce,status);
         return status;
     }
+
+
+    function set_hub(
+        RelayHub rhub
+    ) 
+        public 
+    {
+        init_relay_hub(rhub);
+    }
+
+    function deposit_to_relay_hub()
+        public
+        payable
+    {
+        RelayHub(get_hub_addr()).depositFor.value(msg.value)(this);
+    }
+
+    /// @dev decide whether this call should be allowed to called by a relay
+    /// @param encoded_function raw bytes of the transaction being relayed
+    /// @return fsdgf
+    function accept_relayed_call(
+        address /* relay */,
+        address /* from */,
+        bytes memory encoded_function,
+        uint /* gas_price */,
+        uint /* transaction_fee */
+    )
+        public 
+        view 
+        returns(uint32)
+    {
+        bytes4 claimFunctionIdentifier = RecipientUtils.sig("claim(bytes32,bytes,bytes32,address)");
+        bool is_call_to_claim = RecipientUtils.getMethodSig(encoded_function) == claimFunctionIdentifier;
+        if (!is_call_to_claim){
+            return 4;
+        }
+        bytes32 id = bytes32(RecipientUtils.getParam(encoded_function, 0));
+        bytes memory signature = RecipientUtils.getBytesParam(encoded_function, 1);
+        bytes32 claimHash = bytes32(RecipientUtils.getParam(encoded_function, 2));
+        address destination = address(RecipientUtils.getParam(encoded_function, 3));
+        bool is_claim_valid = isClaimValid(id, signature, claimHash, destination);
+        if (!is_claim_valid) {
+            return 5;
+        }
+        return 0;
+    }
+
+    function post_relayed_call(
+        address /* relay */,
+        address /* from */,
+        bytes memory/* encoded_function */,
+        bool /* success */,
+        uint /* used_gas */,
+        uint /* transaction_fee */
+    )
+        public 
+    {
+    }
+
 }

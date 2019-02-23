@@ -4,6 +4,7 @@ import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18n from '../i18n';
+import RecentTransactions from './RecentTransactions';
 const QRCode = require('qrcode.react');
 
 export default class RequestFunds extends React.Component {
@@ -35,6 +36,7 @@ export default class RequestFunds extends React.Component {
 
   render() {
     let { canRequest, message, amount, requested } = this.state;
+    let {view,buttonStyle,ERC20TOKEN,address, changeView} = this.props
     if(requested){
 
       let url = window.location.protocol+"//"+window.location.hostname
@@ -71,6 +73,17 @@ export default class RequestFunds extends React.Component {
 
             </div>
           </CopyToClipboard>
+          <RecentTransactions
+            view={view}
+            max={5}
+            buttonStyle={buttonStyle}
+            ERC20TOKEN={ERC20TOKEN}
+            transactionsByAddress={ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
+            changeView={changeView}
+            address={address}
+            block={this.props.block}
+            recentTxs={ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
+          />
         </div>
       )
     }else{
@@ -97,6 +110,7 @@ export default class RequestFunds extends React.Component {
               {i18n.t('request_funds.button')}
             </button>
           </div>
+
         </div>
       )
     }

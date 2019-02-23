@@ -16,7 +16,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
   y = w.innerHeight|| e.clientHeight|| g.clientHeight;
 
   let pushDownWithWhiteSpace = 0
-  if(y){
+  /*if(y){
     if(ERC20TOKEN){
       pushDownWithWhiteSpace = y-443
     }else{
@@ -26,7 +26,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
   }
   if(pushDownWithWhiteSpace>230){
     pushDownWithWhiteSpace=230
-  }
+  }*/
   let sendButtons = (
     <div>
       <div className="content ops row">

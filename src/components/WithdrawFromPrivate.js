@@ -7,6 +7,7 @@ import Blockies from 'react-blockies';
 import i18n from '../i18n';
 
 let pollInterval
+let metaReceiptTracker = {}
 
 export default class SendToAddress extends React.Component {
 
@@ -95,12 +96,16 @@ export default class SendToAddress extends React.Component {
         this.props.web3.eth.accounts.signTransaction(tx, metaAccount.privateKey).then(signed => {
             this.props.web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
               console.log("META RECEIPT",receipt)
-              this.props.goBack();
-              window.history.pushState({},"", "/");
-              this.props.changeAlert({
-                type: 'success',
-                message: 'Withdrawn! '+receipt.transactionHash,
-              });
+              if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                metaReceiptTracker[receipt.transactionHash] = true
+                this.props.goBack();
+                window.history.pushState({},"", "/");
+                this.props.changeAlert({
+                  type: 'success',
+                  message: 'Withdrawn! '+receipt.transactionHash,
+                });
+              }
+
             })
         });
 

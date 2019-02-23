@@ -4,6 +4,6 @@
 */
 
 module.exports = [
-  "Burner",
-  "BURN"
+  "buffiDai",
+  "BUFF"
 ]

@@ -15,7 +15,7 @@ export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
   }
 
   return (
-    <div className="balance content row" style={{opacity,paddingBottom:0}}>
+    <div className="balance row" style={{opacity,paddingBottom:0,paddingLeft:20}}>
       <div className="avatar col p-0">
         <img src={icon} style={{maxWidth:50,maxHeight:50}}/>
         <div style={{position:'absolute',left:60,top:12,fontSize:14,opacity:0.77}}>

@@ -15,7 +15,7 @@
       integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
       crossorigin="anonymous"
     />
-    <title>🔥 Wallet</title>
+    <title>Burner</title>
     <meta name="description" content="Trasfer xDai quickly then burn your private key." />
     <meta
       name="keywords"
@@ -23,18 +23,18 @@
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@austingriffith" />
-    <meta name="twitter:title" content="🔥 Wallet" />
+    <meta name="twitter:title" content="Burner" />
     <meta name="twitter:description" content="Trasfer xDai quickly then burn your private key." />
     <meta
       name="twitter:img:src"
       content="https://xdai.io/burner-wallet-banner.png"
     />
-    <meta name="og:title" content="🔥 Wallet" />
+    <meta name="og:title" content="Burner" />
     <meta name="og:type" content="website" />
     <meta name="og:url" content="https://xdai.io" />
-    <meta name="og:image" content="https://xdai.io/burnercard.jpg" />
+    <meta name="og:image" content="https://xdai.io/burnercard2.jpg" />
     <meta name="og:description" content="Trasfer xDai quickly then burn your private key." />
-    <meta name="og:site_name" content="🔥 Wallet" />
+    <meta name="og:site_name" content="Burner" />
     <link
       href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed"
       rel="stylesheet"
@@ -45,8 +45,10 @@
     <noscript> You need to enable JavaScript to run this app. </noscript>
     <div id="root">
       <div style="padding-top:60px;text-align:center;width:100%">
+
         <div>
-          <div style="text-align: center;padding-top:20%;width:100%;padding-left:20%">
+          <img src="whiteburn.png" style="max-width:25%;padding-bottom:5%"/>
+          <div style="text-align: center;padding-top:5%;width:100%;padding-left:20%">
             <div style="width: 75%; height: 1px; background-color: rgb(68, 68, 68);">
               <div id="firstLoaderBar" style="width: 5%; height: 1px; background-color: rgb(255, 255, 255); box-shadow: rgb(255, 255, 255) 0px 0px 2px, rgb(255, 255, 255) 0px 0px 2.66667px, rgb(255, 255, 255) 0px 0px 4px, rgb(255, 255, 255) 0px 0px 8px, rgb(255, 255, 255) 0px 0px 16px, rgb(255, 255, 255) 0px 0px 26.6667px, rgb(255, 255, 255) 0px 0px 80px;">
               </div>
@@ -55,7 +57,31 @@
         </div>
       </div>
     </div>
+    <div id="log" style="position:absolute;left:0px;top:0px;z-index:99;color:#ffffff;background-color:#000000;opacity:0.5;">
+    </div>
     <script>
+      //uncomment to move logs to html for debugging devices
+      /*
+      (function () {
+          var old = console.log;
+          var logger = document.getElementById('log');
+          console.log = function (message) {
+              if (typeof message == 'object') {
+                  logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
+              } else {
+                  logger.innerHTML += message + '<br />';
+              }
+          }
+          console.error = function (message) {
+              if (typeof message == 'object') {
+                  logger.innerHTML += "ERRRRR;;"+(JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
+              } else {
+                  logger.innerHTML += "ERRRRR;;"+message + '<br />';
+              }
+          }
+      })();
+      */
+
       var currentFirstLoaderValue = 15
       var moveLoader = function(){
         var firstLoader = document.getElementById('firstLoaderBar')
