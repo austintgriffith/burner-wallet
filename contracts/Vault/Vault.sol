@@ -23,7 +23,7 @@ contract Vault{
     /// @notice vaultDeposit `_value` `_token` to the vault
     /// @param _token Address of the token being transferred
     /// @param _value Amount of tokens being transferred
-    function _deposit(address _token, uint256 _value) public payable {
+    function _deposit(address _token, uint256 _value) internal {
         _vDeposit(_token, _value);
     }
 
@@ -41,7 +41,7 @@ contract Vault{
     /// @param _value Amount of tokens being transferred
     /* solium-disable-next-line function-order */
     function _vTransfer(address _token, address _to, uint256 _value) private returns(bool status) {
-        require(_value > 0, "Vault::_vTransfer, invalid transfer");
+        require(_value > 0, "Vault::_vTransfer - Invalid transfer");
 
         status = false;
         if (_token == ETH) {
@@ -57,13 +57,13 @@ contract Vault{
     /// @param _token Address of the token being transferred
     /// @param _value Amount of tokens being transferred
     function _vDeposit(address _token, uint256 _value) private {
-        require(_value > 0, "Vault::_vDeposit, invalid deposit");
+        require(_value > 0, "Vault::_vDeposit - Invalid deposit");
 
         if (_token == ETH) {
             // Deposit is implicit in this case
-            require(msg.value == _value, "Vault::_vDeposit, value mismatch");
+            require(msg.value == _value, "Vault::_vDeposit - Value mismatch");
         } else {
-            require(ERC20(_token).transferFrom(msg.sender, this, _value), "Vault::_vDeposit, reverted token transfer");
+            require(ERC20(_token).transferFrom(msg.sender, this, _value), "Vault::_vDeposit - Reverted token transfer");
         }
 
         emit VaultDeposit(_token, msg.sender, _value, true);

@@ -1,6 +1,4 @@
 pragma solidity 0.4.25;
-/* solium-disable security/no-send */
-/* solium-disable security/no-block-members */
 
 import "tabookey-gasless/contracts/RelayRecipient.sol";
 import "tabookey-gasless/contracts/RecipientUtils.sol";
@@ -10,6 +8,8 @@ import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 import "../Vault/Vault.sol";
 
 /// @title Send xDai/Eth with a link.
+/// @author Ricardo Rius  - <ricardo@rius.info>
+/// @author TabooKey Team  - <info@tabookey.com>
 /// @notice Funds have an adjustable expiration time.
 /// After a fund expires it can only be claimed by the original sender.
 contract Links is Vault, RelayRecipient, RecipientUtils {
@@ -94,6 +94,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         uint256 nonce = contractNonce;
         contractNonce = contractNonce.add(uint256(1));
         
+        // Default expiration time
         uint256 expiration = now.add(1 days);
         if (_expirationDays > 1){
             expiration = now.add(_expirationDays.mul(1 days));
@@ -266,6 +267,8 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         return status;
     }
 
+
+    /// TabooKey Team - MetaTX Relay Section
 
     function set_hub(
         RelayHub rhub
