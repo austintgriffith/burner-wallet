@@ -3,7 +3,6 @@ module.exports = {
   'openzeppelin-solidity/contracts/math/SafeMath.sol': fs.readFileSync('./node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol', 'utf8'),
   'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol': fs.readFileSync('./node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol', 'utf8'),
   'openzeppelin-solidity/contracts/token/ERC20/IERC20.sol': fs.readFileSync('./node_modules/openzeppelin-solidity/contracts/token/ERC20/IERC20.sol', 'utf8'),
-  'openzeppelin-solidity/contracts/utils/Address.sol': fs.readFileSync('./node_modules/openzeppelin-solidity/contracts/utils/Address.sol', 'utf8'),
   'openzeppelin-solidity/contracts/cryptography/ECDSA.sol': fs.readFileSync('./node_modules/openzeppelin-solidity/contracts/cryptography/ECDSA.sol', 'utf8'),
   'tabookey-gasless/contracts/RelayRecipientApi.sol': fs.readFileSync('./node_modules/tabookey-gasless/contracts/RelayRecipientApi.sol', 'utf8'),
   'tabookey-gasless/contracts/RelayRecipient.sol': fs.readFileSync('./node_modules/tabookey-gasless/contracts/RelayRecipient.sol', 'utf8'),

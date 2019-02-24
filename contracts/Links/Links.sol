@@ -3,7 +3,6 @@ pragma solidity 0.4.25;
 import "tabookey-gasless/contracts/RelayRecipient.sol";
 import "tabookey-gasless/contracts/RecipientUtils.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 import "../Vault/Vault.sol";
 
@@ -14,7 +13,6 @@ import "../Vault/Vault.sol";
 /// After a fund expires it can only be claimed by the original sender.
 contract Links is Vault, RelayRecipient, RecipientUtils {
     using SafeMath for uint256;
-    using Address for address;
     using ECDSA for bytes32;
 
     struct Fund {
@@ -85,8 +83,6 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         returns (bool)
     {
         require(_expirationDays >= uint256(0),"Links::send - Invalid expiration days");
-        // !isContract - Preventive measure against deployed contracts. 
-        require(!msg.sender.isContract(),"Links::send - Sender should not be a contract");
         
         address signer = ECDSA.recover(_id.toEthSignedMessageHash(),_signature);
         require(signer != address(0),"Links::send - Invalid signer");
@@ -237,8 +233,6 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
 
         // validate mutex/flag status
         if(funds[_id].claimed == false){
-            // !isContract - Preventive measure against deployed contracts. 
-            require(!msg.sender.isContract(),"Links::executeClaim - Sender should not be a contract");
             // mutex activation
             funds[_id].claimed = true;
             // expired funds can only be claimed back by original sender.
