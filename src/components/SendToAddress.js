@@ -45,6 +45,8 @@ export default class SendToAddress extends React.Component {
       extraMessage: extraMessage,
       fromEns: "",
       canSend: false,
+      totalAmount: startAmount,
+      tipSelectedOption:"0"
     }
 
     let startingAmount = 0.15
@@ -103,6 +105,31 @@ export default class SendToAddress extends React.Component {
       }
     }
   };
+  // Handler for change in tip radio buttons
+  updateRadioButtons = (changeEvent) =>{
+    let factor = changeEvent.target.value; // get percentage factor from radio button
+    let tipAmount = (this.state.amount * factor); // calculate tip amount
+    let totalAmount = parseFloat(this.state.amount) + tipAmount
+    console.log(totalAmount)
+    
+    this.setState({
+      tipSelectedOption: changeEvent.target.value,
+      totalAmount: tipAmount + this.state.amount
+    })
+    console.log(this.state)
+  }
+// Function to create the dynamic tip label when there is a state change
+  getTip = (percentage) =>{
+    if(this.state.amount == undefined || this.state.amount == 0){
+      return percentage + '%';
+    }
+    let factor = percentage / 100;
+    let tipAmount = this.state.amount * factor;
+    let label = `${percentage}% ($ ${tipAmount.toFixed(2)})`;
+    return label;
+  }
+
+  
   bounceToAmountIfReady(){
     if(this.state.toAddress && this.state.toAddress.length === 42){
       this.amountInput.focus();
@@ -145,7 +172,7 @@ export default class SendToAddress extends React.Component {
   }
 
   send = async () => {
-    let { toAddress, amount } = this.state;
+    let { toAddress, totalAmount } = this.state;
     let {ERC20TOKEN} = this.props
 
 
@@ -155,22 +182,22 @@ export default class SendToAddress extends React.Component {
       }else{
         console.log("this is not a token")
       }
-      console.log("ERC20TOKEN",ERC20TOKEN,"this.props.balance",parseFloat(this.props.balance),"amount",parseFloat(amount))
+      console.log("ERC20TOKEN",ERC20TOKEN,"this.props.balance",parseFloat(this.props.balance),"amount",parseFloat(totalAmount))
 
       if(!ERC20TOKEN && parseFloat(this.props.balance) <= 0){
         console.log("No funds!?!",ERC20TOKEN,parseFloat(this.props.balance))
         this.props.changeAlert({type: 'warning', message: "No Funds."})
-      }else if(!ERC20TOKEN && parseFloat(this.props.balance)-0.0001<=parseFloat(amount)){
+      }else if(!ERC20TOKEN && parseFloat(this.props.balance)-0.0001<=parseFloat(totalAmount)){
         let extraHint = ""
-        if(!ERC20TOKEN && parseFloat(amount)-parseFloat(this.props.balance)<=.01){
+        if(!ERC20TOKEN && parseFloat(totalAmount)-parseFloat(this.props.balance)<=.01){
           extraHint = "(gas costs)"
         }
         this.props.changeAlert({type: 'warning', message: 'Not enough funds: $'+Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100+' '+extraHint})
-      }else if((ERC20TOKEN && (parseFloat(this.props.balance)<parseFloat(amount)))){
+      }else if((ERC20TOKEN && (parseFloat(this.props.balance)<parseFloat(totalAmount)))){
         console.log("SO THE BALANCE IS LESS!")
         this.props.changeAlert({type: 'warning', message: 'Not enough tokens: $'+parseFloat(this.props.balance)})
       }else{
-        console.log("SWITCH TO LOADER VIEW...",amount)
+        console.log("SWITCH TO LOADER VIEW...",totalAmount)
         this.props.changeView('loader')
         setTimeout(()=>{window.scrollTo(0,0)},60)
 
@@ -181,9 +208,9 @@ export default class SendToAddress extends React.Component {
         }
         console.log("txData",txData)
         let value = 0
-        console.log("amount",amount)
-        if(amount){
-          value=amount
+        console.log("amount",totalAmount)
+        if(totalAmount){
+          value=totalAmount
         }
 
         cookie.remove('sendToStartAmount', { path: '/' })
@@ -200,7 +227,7 @@ export default class SendToAddress extends React.Component {
               message: 'Sent! '+result.transactionHash,
             });*/
 
-            let receiptObj = {to:toAddress,from:result.from,amount:parseFloat(amount),message:this.state.message,result:result}
+            let receiptObj = {to:toAddress,from:result.from,amount:parseFloat(totalAmount),message:this.state.message,result:result}
 
           //  console.log("CHECKING SCANNER STATE FOR ORDER ID",this.props.scannerState)
             if(this.props.scannerState&&this.props.scannerState.daiposOrderId){
@@ -234,6 +261,7 @@ export default class SendToAddress extends React.Component {
     }*/
 
     let messageText = "Message"
+    let tipMessage = "Tip"
     if(this.state.extraMessage){
       messageText = this.state.extraMessage
     }
@@ -292,6 +320,25 @@ export default class SendToAddress extends React.Component {
                 ref={(input) => { this.messageInput = input; }}
                      onChange={event => this.updateState('message', event.target.value)} />
             </div>
+            <label htmlFor="amount_input">{tipMessage}</label>
+
+            <div className="btn-group d-flex flex-column flex-md-row" data-toggle="buttons">
+              <label className={`btn ${this.state.tipSelectedOption === "0" ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}>
+                <input hidden={true} type="radio" checked={this.state.tipSelectedOption === "0"} onChange={this.updateRadioButtons} value="0"/> No Tip
+              </label>
+              <label className={`btn ${this.state.tipSelectedOption === "0.1" ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}>
+                <input hidden={true} type="radio" checked={this.state.tipSelectedOption === "0.1"} onChange={this.updateRadioButtons} value="0.1"/>
+                 {this.getTip("10")}
+              </label>
+              <label className={`btn ${this.state.tipSelectedOption === "0.15" ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}>
+                <input hidden={true} type="radio" checked={this.state.tipSelectedOption === "0.15"} onChange={this.updateRadioButtons} value="0.15"/>
+                {this.getTip("15")}
+              </label>
+              <label className={`btn ${this.state.tipSelectedOption === "0.20" ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}>
+                <input hidden={true} type="radio" checked={this.state.tipSelectedOption === "0.20"} onChange={this.updateRadioButtons} value="0.20"/>
+                {this.getTip("20")}
+              </label>
+          </div>
           </div>
           <button name="theVeryBottom" className={`btn btn-lg w-100 ${canSend ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}
                   onClick={this.send}>
