@@ -606,14 +606,14 @@ class App extends Component {
 
     let fund = await contracts.Links.funds(this.state.claimId).call()
     console.log("FUND FOR "+this.state.claimId+" IS: ", fund)
-    if (fund&&parseInt(fund.nonce)>0) {
+    if (parseInt(fund[5].toString())>0) {
       this.setState({fund: fund})
 
 
       let claimHash = this.state.web3.utils.soliditySha3(
         {type: 'bytes32', value: this.state.claimId}, // fund id
         {type: 'address', value: this.state.account}, // destination address
-        {type: 'uint256', value: fund[3]}, // nonce
+        {type: 'uint256', value: fund[5]}, // nonce
         {type: 'address', value: contracts.Links._address} // contract address
       )
       console.log("claimHash", claimHash)
@@ -622,7 +622,7 @@ class App extends Component {
       sig = sig.signature;
 
       console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
-      tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account), 240000, false, 0, (result) => {
+      tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account), 250000, false, 0, (result) => {
         if (result) {
           console.log("CLAIMED!!!", result)
           this.setState({claimed: true})
@@ -635,7 +635,7 @@ class App extends Component {
         }
       })
       .catch((error) => {
-        console.log(error); //Estimate Gas promise
+        console.log(error);
       });
     }else{
       console.log("FUND IS NOT READY YET, WAITING...")
@@ -649,14 +649,14 @@ class App extends Component {
   async relayClaim() {
     console.log("DOING CLAIM THROUGH RELAY")
     let fund = await this.state.contracts.Links.funds(this.state.claimId).call()
-      if (fund&&parseInt(fund.nonce)>0) {
+      if (parseInt(fund[5].toString())>0) {
         this.setState({fund: fund})
         console.log("FUND: ", fund)
 
         let claimHash = this.state.web3.utils.soliditySha3(
           {type: 'bytes32', value: this.state.claimId}, // fund id
           {type: 'address', value: this.state.account}, // destination address
-          {type: 'uint256', value: fund[3]}, // nonce
+          {type: 'uint256', value: fund[5]}, // nonce
           {type: 'address', value: this.state.contracts.Links._address} // contract address
         )
         console.log("claimHash", claimHash)
@@ -1630,7 +1630,7 @@ render() {
                       let randomWallet = this.state.web3.eth.accounts.create()
                       let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
                       console.log("STATE",this.state,this.state.contracts)
-                      this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature),140000,false,amount*10**18,async (receipt)=>{
+                      this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,0,amount*10**18,7),250000,false,amount*10**18,async (receipt)=>{
                         this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
                           console.log("STATE SAVED",this.state)
                         })

@@ -79,56 +79,38 @@ app.post('/link', async (req, res) => {
   console.log("/link",req.body)
 
 
-  let validClaim = await contracts.Links.methods.isClaimValid(req.body.id,req.body.sig,req.body.claimHash,req.body.dest).call()
+  let expiredClaim = await contracts.Links.methods.isClaimExpired(req.body.id,req.body.sig,req.body.claimHash,req.body.dest).call()
 
-  if(!validClaim){
+  if(expiredClaim){
     console.log("INVALID CLAIM!!!!")
     res.set('Content-Type', 'application/json');
     res.end(JSON.stringify({invalid:"claim"}));
   }else{
     console.log("CLAIM IS VALID...")
-
-    //console.log("dApp reward estimation: ",req.body.reward)
-    //web3.eth.getGasPrice()
-  //  .then((gasPrice) => {
-    //  gasPrice = gasPrice < 500000000 ? 1000000000 : gasPrice; // Fix for xDai 0 Txs avg
-
-  //    console.log("Relay gas estimation: ",gasAmount)
-    //  console.log("PARAMS",{from: accounts[DESKTOPMINERACCOUNT],gas: parseInt(gasAmount)+10000,gasPrice: parseInt(gasPrice)+500000000})
-      /// OLD CODE BUT REVERTING FOR NOW, (gasAmount+10000)*(gasPrice+500000000)
-      contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.claimHash,req.body.dest)
-      .send({from: accounts[DESKTOPMINERACCOUNT],gas: 240000,gasPrice: 1010101010},
-        (error, transactionHash)=>{
-          console.log("TX CALLBACK",error,transactionHash)
-          res.set('Content-Type', 'application/json');
-          res.end(JSON.stringify({transactionHash:transactionHash}));
-        }
-      )
-      .on('error',(err,receiptMaybe)=>{
-        console.log("TX ERROR",err,receiptMaybe)
-      })
-      .on('transactionHash',(transactionHash)=>{
-        console.log("TX HASH",transactionHash)
-      })
-      .on('receipt',(receipt)=>{
-        console.log("TX RECEIPT",receipt)
-      })
-      .then((receipt)=>{
-        console.log("TX THEN",receipt)
-      })
-      .catch((error) => {
-        console.log(error); //Tx promise
-      });
-
-    /*})
+    contracts.Links.methods.claim(req.body.id,req.body.sig,req.body.claimHash,req.body.dest)
+    .send({from: accounts[DESKTOPMINERACCOUNT],gas: 240000,gasPrice: 1010101010},
+      (error, transactionHash)=>{
+        console.log("TX CALLBACK",error,transactionHash)
+        res.set('Content-Type', 'application/json');
+        res.end(JSON.stringify({transactionHash:transactionHash}));
+      }
+    )
+    .on('error',(err,receiptMaybe)=>{
+      console.log("TX ERROR",err,receiptMaybe)
+    })
+    .on('transactionHash',(transactionHash)=>{
+      console.log("TX HASH",transactionHash)
+    })
+    .on('receipt',(receipt)=>{
+      console.log("TX RECEIPT",receipt)
+    })
+    .then((receipt)=>{
+      console.log("TX THEN",receipt)
+    })
     .catch((error) => {
-      console.log(error); //Get Gas price promise
-    });*/
+      console.log(error); //Tx promise
+    });
   }
-
-
-
-
 });
 
 app.listen(18462);
