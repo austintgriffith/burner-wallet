@@ -1,7 +1,5 @@
 pragma solidity 0.4.25;
 
-import "tabookey-gasless/contracts/RelayRecipient.sol";
-import "tabookey-gasless/contracts/RecipientUtils.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 import "../Vault/Vault.sol";
@@ -11,7 +9,7 @@ import "../Vault/Vault.sol";
 /// @author TabooKey Team  - <info@tabookey.com>
 /// @notice Funds have an adjustable expiration time.
 /// After a fund expires it can only be claimed by the original sender.
-contract Links is Vault, RelayRecipient, RecipientUtils {
+contract Links is Vault {
     using SafeMath for uint256;
     using ECDSA for bytes32;
 
