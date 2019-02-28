@@ -44,7 +44,9 @@
     "react-scripts": "^2.1.3",
     "react-scroll": "^1.7.10",
     "react-stack-grid": "^0.7.1",
+    "rimble-ui": "^0.4.2",
     "s3": "^4.4.0",
+    "styled-components": "^4.1.3",
     "tabookey-gasless": "0.3.3",
     "web3": "1.0.0-beta.33"
   },
