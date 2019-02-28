@@ -1,21 +1,27 @@
-import React from 'react';
+import React from "react";
 import { Scaler } from "dapparatus";
-import {CopyToClipboard} from "react-copy-to-clipboard";
-import i18next from 'i18next';
+import { Flex, Button, Icon, OutlineButton, Box } from "rimble-ui";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import i18next from "i18next";
 
-
-
-export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
-
-
+export default ({
+  buttonStyle,
+  ERC20TOKEN,
+  address,
+  balance,
+  changeAlert,
+  changeView,
+  dollarDisplay,
+  subBalanceDisplay
+}) => {
   var w = window,
-  d = document,
-  e = d.documentElement,
-  g = d.getElementsByTagName('body')[0],
-  x = w.innerWidth || e.clientWidth || g.clientWidth,
-  y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName("body")[0],
+    x = w.innerWidth || e.clientWidth || g.clientWidth,
+    y = w.innerHeight || e.clientHeight || g.clientHeight;
 
-  let pushDownWithWhiteSpace = 0
+  let pushDownWithWhiteSpace = 0;
   /*if(y){
     if(ERC20TOKEN){
       pushDownWithWhiteSpace = y-443
@@ -29,90 +35,95 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
   }*/
   let sendButtons = (
     <div>
-      <div className="content ops row">
-        <div className="col-12 p-1" onClick={() => changeView('mint')}>
-          <button className="btn btn-large w-100" style={buttonStyle.primary}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-plus"  /> {i18next.t('main_card.mint')}
-            </Scaler>
-          </button>
-        </div>
-      </div>
-      <div className="content ops row">
-        <div className="col-6 p-1" onClick={() => changeView('receive')}>
-          <button className="btn btn-large w-100" style={buttonStyle.primary}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              {/* <i className="fas fa-qrcode"  /> Receive */}
-              <i className="fas fa-qrcode"  /> {i18next.t('main_card.receive')}
-            </Scaler>
-          </button>
-        </div>
-        <div className="col-6 p-1">
-          <button className="btn btn-large w-100" onClick={() => changeView('send_to_address')} style={buttonStyle.primary}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              {/* <i className="fas fa-paper-plane"/> Send */}
-              <i className="fas fa-paper-plane"/> {i18next.t('main_card.send')}
-            </Scaler>
-          </button>
-        </div>
-      </div>
-      <div className="content ops row">
-        {/* <div className="col-6 p-1" onClick={() => changeView('send_with_link')}>
-          <button className="btn btn-large w-100" style={buttonStyle.secondary}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-money-bill-alt"  /> {i18next.t('main_card.link')}
-            </Scaler>
-          </button>
-        </div> */}
-      </div>
+      <Flex px={2}>
+        <Box width={[1, 1/2, 1/2]} m={2}>
+          <Button fullWidth onClick={() => changeView("receive")}>
+            <Flex alignItems="center">
+              <Icon name="CenterFocusWeak" />
+              {i18next.t("main_card.receive")}
+            </Flex>
+          </Button>
+        </Box>
+        <Box width={[1, 1/2, 1/2]} m={2}>
+          <Button fullWidth onClick={() => changeView("send_to_address")}>
+            <Flex alignItems="center">
+              <Icon name="Send" />
+              {i18next.t("main_card.send")}
+            </Flex>
+          </Button>
+        </Box>
+      </Flex>
+      <Flex px={2}>
+        <Box width={[1, 1/2, 1/2]} m={2}>
+          <OutlineButton fullWidth onClick={() => changeView("share")}>
+            <Flex alignItems="center">
+              <Icon name="Share" />
+              {i18next.t("main_card.share")}
+            </Flex>
+          </OutlineButton>
+        </Box>
+        <Box width={[1, 1/2, 1/2]} m={2}>
+          <OutlineButton fullWidth onClick={() => changeView("send_with_link")}>
+            <Flex alignItems="center">
+              <Icon name="AttachMoney" />
+              {i18next.t("main_card.link")}
+            </Flex>
+          </OutlineButton>
+        </Box>
+      </Flex>
     </div>
-  )
+  );
 
-  if(ERC20TOKEN){
+  if (ERC20TOKEN) {
     sendButtons = (
       <div>
         <div className="content ops row">
-          <div className="col-6 p-1" onClick={() => changeView('receive')}>
-            <button className="btn btn-large w-100" style={buttonStyle.primary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-qrcode"  /> {i18next.t('main_card.receive')}
-              </Scaler>
-            </button>
+          <div className="col-6 p-1">
+            AttachMoney
+            <OutlineButton fullWidth onClick={() => changeView("receive")}>
+              <Flex alignItems="center">
+                <Icon name="CenterFocusWeak" />
+                {i18next.t("main_card.receive")}
+              </Flex>
+            </OutlineButton>
           </div>
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" onClick={() => changeView('send_to_address')} style={buttonStyle.primary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-paper-plane"/> {i18next.t('main_card.send')}
-              </Scaler>
-            </button>
+            <OutlineButton
+              fullWidth
+              onClick={() => changeView("send_to_address")}
+            >
+              <Flex alignItems="center">
+                <Icon name="Send" />
+                {i18next.t("main_card.send")}
+              </Flex>
+            </OutlineButton>
           </div>
         </div>
         <div className="content ops row">
-          <div className="col-6 p-1" onClick={() => changeView('share')}>
-            <button className="btn btn-large w-100" onClick={() => changeView('share')} style={buttonStyle.secondary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-share"/> {i18next.t('main_card.share')}
-              </Scaler>
-            </button>
+          <div className="col-6 p-1">
+            <OutlineButton fullWidth onClick={() => changeView("share")}>
+              <Flex alignItems="center">
+                <Icon name="Share" />
+                {i18next.t("main_card.share")}
+              </Flex>
+            </OutlineButton>
           </div>
-          <div className="col-6 p-1" onClick={() => changeView('vendors')}>
-            <button className="btn btn-large w-100" style={buttonStyle.secondary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-money-bill-alt"  /> {i18next.t('main_card.vendors')}
-              </Scaler>
-            </button>
+          <div className="col-6 p-1">
+            <OutlineButton fullWidth onClick={() => changeView("vendors")}>
+              <Flex alignItems="center">
+                <Icon name="Money" />
+                {i18next.t("main_card.vendors")}
+              </Flex>
+            </OutlineButton>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
-
   return (
-    <div style={{paddingTop:pushDownWithWhiteSpace}}>
-      <div>
-        {sendButtons}
-      </div>
+    <div style={{ paddingTop: pushDownWithWhiteSpace }}>
+      <div>{sendButtons}</div>
     </div>
-  )
-}
+  );
+};
