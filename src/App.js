@@ -1704,18 +1704,19 @@ class App extends Component {
                       text={i18n.t('cancel')}
                       action={this.goBack.bind(this)}
                     />
-                  </div>
-                );
-                case 'cash_out':
-                return (
-                  <div>
-                    {this.state.scannerOpen ? sendByScan : null}
-                    <Card p={3}>
-                      <NavCard title={"Cash Out"} goBack={this.goBack.bind(this)}/>
-                      {defaultBalanceDisplay}
-                      <CashOut
-                        buttonStyle={buttonStyle}
-                        changeView={this.changeView}
+                </div>
+              );
+            case 'share-link':
+              return (
+                <div>
+                  {this.state.scannerOpen ? sendByScan : null}
+                  <Card>
+
+                    <NavCard title={'Share Link'} goBack={this.goBack.bind(this)} />
+                      <ShareLink
+                        sendKey={this.state.sendKey}
+                        sendLink={this.state.sendLink}
+                        balance={balance}
                         address={account}
                         balance={balance}
                         goBack={this.goBack.bind(this)}

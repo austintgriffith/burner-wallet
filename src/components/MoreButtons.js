@@ -1,10 +1,9 @@
 import React from "react";
+import Ruler from "./Ruler";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import Balance from "./Balance";
 import i18n from "../i18n";
-import {
-  OutlineButton,
-  Flex,
-  Box
-} from "rimble-ui";
+import { OutlineButton, Flex, Icon, Box } from "rimble-ui";
 
 export default ({
   isVendor,
@@ -21,28 +20,49 @@ export default ({
 
   if (!isVendor) {
     exchangeButton = (
-      <OutlineButton icon={'Shuffle'} width={1} onClick={() => {changeView("exchange");}}>
-        {i18n.t("more_buttons.exchange")}
-      </OutlineButton>
+      <OutlineButton
+        fullWidth
+        onClick={() => {
+          changeView("exchange");
+        }}
+      >
+        <Flex alignItems="center">
+          <Icon name="Shuffle" />
+          {i18n.t("more_buttons.exchange")}
+        </Flex>
     );
   } else {
     exchangeButton = (
-      <OutlineButton icon={'CreditCard'} width={1} onClick={() => {changeView("cash_out");}}>
-        {"Cash Out"}
+      <OutlineButton
+        fullWidth
+        onClick={() => {
+          changeView("cash_out");
+        }}
+      >
+        <Flex alignItems="center">
+          <Icon name="CreditCard" />
+          {"Cash Out"}
+        </Flex>
       </OutlineButton>
     );
   }
 
   return (
-    <Flex>
-      <Box width={1/2} mr={3}>
-        <OutlineButton icon={'AttachMoney'} width={1} onClick={() => {changeView("request_funds");}}>
-          {i18n.t("more_buttons.request")}
+    <Flex px={2}>
+      <Box width={[1, 1/2, 1/2]} m={2}>
+        <OutlineButton
+          fullWidth
+          onClick={() => {
+            changeView("request_funds");
+          }}
+        >
+          <Flex alignItems="center">
+            <Icon name="AttachMoney" />
+            {i18n.t("more_buttons.request")}
+          </Flex>
         </OutlineButton>
       </Box>
-      <Box width={1/2}>
-        {exchangeButton}
-      </Box>
+      <Box width={[1, 1/2, 1/2]} m={2}>{exchangeButton}</Box>
     </Flex>
   );
 };

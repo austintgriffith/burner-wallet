@@ -15,7 +15,11 @@ export default class Receive extends React.Component {
       <div name="theVeryBottom" className="text-center bottom-text" style={{marginBottom:20}}>
         <Button onClick={()=>{action()}}>
           <Flex alignItems="center">
+<<<<<<< HEAD
             <Icon name={icon} mr={2} />
+=======
+            <Icon name={icon} />
+>>>>>>> Adding rimble and starting to swap out components.
             {text}
           </Flex>
         </Button>
