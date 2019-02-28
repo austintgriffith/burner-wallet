@@ -676,12 +676,17 @@ class App extends Component {
           relayClient.useKeypairForSigning(this.state.metaAccount)
         }
         let claimData = this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account).encodeABI()
+        let network_gas_price = await this.state.web3.eth.getGasPrice();
+        // Sometimes, xDai network returns '0'
+        if (!network_gas_price || network_gas_price == 0) {
+          network_gas_price = 222222222222; // 222.(2) gwei
+        }
         let options = {
           from: this.state.account,
           to: this.state.contracts.Links._address,
           txfee: 12,
           gas_limit: 150000,
-          gas_price: 2222222222
+          gas_price: Math.trunc(network_gas_price * 1.3)
         }
         relayClient.relayTransaction(claimData, options).then((transaction) => {
             console.log("TX REALYED: ", transaction)

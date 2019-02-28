@@ -1,11 +1,14 @@
 pragma solidity 0.4.25;
 
+
+import "tabookey-gasless/contracts/RelayRecipient.sol";
+import "tabookey-gasless/contracts/RecipientUtils.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 /// @title Storage vault to send with a link.
 /// @author Ricardo Rius  - <ricardo@rius.info>
 /// @notice Based on ARAGON VAULT.
-contract Vault{
+contract Vault is RelayRecipient, RecipientUtils {
 
     address internal constant ETH = address(0);
 
@@ -63,9 +66,9 @@ contract Vault{
             // Deposit is implicit in this case
             require(msg.value == _value, "Vault::_vDeposit - Value mismatch");
         } else {
-            require(ERC20(_token).transferFrom(msg.sender, this, _value), "Vault::_vDeposit - Reverted token transfer");
+            require(ERC20(_token).transferFrom(get_sender(), this, _value), "Vault::_vDeposit - Reverted token transfer");
         }
 
-        emit VaultDeposit(_token, msg.sender, _value, true);
+        emit VaultDeposit(_token, get_sender(), _value, true);
     }
 }

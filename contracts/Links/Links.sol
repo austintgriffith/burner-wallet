@@ -1,7 +1,5 @@
 pragma solidity 0.4.25;
 
-import "tabookey-gasless/contracts/RelayRecipient.sol";
-import "tabookey-gasless/contracts/RecipientUtils.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 import "../Vault/Vault.sol";
@@ -11,7 +9,7 @@ import "../Vault/Vault.sol";
 /// @author TabooKey Team  - <info@tabookey.com>
 /// @notice Funds have an adjustable expiration time.
 /// After a fund expires it can only be claimed by the original sender.
-contract Links is Vault, RelayRecipient, RecipientUtils {
+contract Links is Vault {
     using SafeMath for uint256;
     using ECDSA for bytes32;
 
@@ -98,7 +96,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         assert(nonce < contractNonce);
         _deposit(_token,_amount);
         funds[_id] = Fund({
-            sender: msg.sender,
+            sender: get_sender(),
             signer: signer,
             token: _token,
             amount: _amount,
@@ -111,7 +109,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
 
         require(isFundValid(_id),"Links::send - Invalid fund");
         //send out events for frontend parsing
-        emit Sent(_id,msg.sender,msg.value,nonce,true);
+        emit Sent(_id,get_sender(),msg.value,nonce,true);
         return true;
     }
 
@@ -237,8 +235,8 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
             funds[_id].claimed = true;
             // expired funds can only be claimed back by original sender.
             if(isClaimExpired(_id,_signature,_claimHash,_destination)){
-                require(msg.sender == funds[_id].sender,"Links::executeClaim - Not original sender");
-                require(_transfer(token, msg.sender, amount),"Links::executeClaim - Could not transfer to sender");
+                require(get_sender() == funds[_id].sender,"Links::executeClaim - Not original sender");
+                require(_transfer(token, get_sender(), amount),"Links::executeClaim - Could not transfer to sender");
                 delete funds[_id];
                 status = true;
             }else{
@@ -249,7 +247,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
                 if(status == true){
                     delete funds[_id];
                 }
-                require(msg.sender.send(0),"Links::executeClaim - Unsuccessful transaction");
+                require(get_sender().send(0),"Links::executeClaim - Unsuccessful transaction");
             }
         } else{
             // DESTROY object so it can't be claimed again and free storage space.
@@ -257,7 +255,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
             status = true;
         }
         // send out events for frontend parsing
-        emit Claimed(_id,msg.sender,amount,_destination,nonce,status);
+        emit Claimed(_id,get_sender(),amount,_destination,nonce,status);
         return status;
     }
 
