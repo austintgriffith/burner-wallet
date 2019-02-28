@@ -107,16 +107,15 @@ export default class SendToAddress extends React.Component {
   };
   // Handler for change in tip radio buttons
   updateRadioButtons = (changeEvent) =>{
-    let factor = changeEvent.target.value; // get percentage factor from radio button
-    let tipAmount = (this.state.amount * factor); // calculate tip amount
+    let factor = parseFloat(changeEvent.target.value); // get percentage factor from radio button
+    let tipAmount = (parseFloat(this.state.amount) * factor); // calculate tip amount
     let totalAmount = parseFloat(this.state.amount) + tipAmount
-    console.log(totalAmount)
+    console.log("New total amount:" ,totalAmount)
     
     this.setState({
       tipSelectedOption: changeEvent.target.value,
-      totalAmount: tipAmount + this.state.amount
+      totalAmount: totalAmount
     })
-    console.log(this.state)
   }
 // Function to create the dynamic tip label when there is a state change
   getTip = (percentage) =>{
