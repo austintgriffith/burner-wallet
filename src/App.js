@@ -675,6 +675,7 @@ class App extends Component {
         if(this.state.metaAccount && this.state.metaAccount.privateKey){
           relayClient.useKeypairForSigning(this.state.metaAccount)
         }
+        console.log("Calling encodeABU on Links.claim() ",this.state.claimId, sig, claimHash, this.state.account)
         let claimData = this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account).encodeABI()
         let network_gas_price = await this.state.web3.eth.getGasPrice();
         // Sometimes, xDai network returns '0'
@@ -688,6 +689,7 @@ class App extends Component {
           gas_limit: 150000,
           gas_price: Math.trunc(network_gas_price * 1.3)
         }
+        console.log("Hitting relayClient with relayTransaction()",claimData, options)
         relayClient.relayTransaction(claimData, options).then((transaction) => {
             console.log("TX REALYED: ", transaction)
             this.setState({claimed: true})

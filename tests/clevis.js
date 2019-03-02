@@ -109,7 +109,46 @@ module.exports = {
     });
   },
 
+  gsn:()=>{
+    describe(bigHeader('RELAY HUB GSN '), function(){
+      it('should set Relay Hub address to Relay Recepient and provide it with a deposit', async function(){
+        this.timeout(600000)
 
+
+        /*
+        const Web3 = require('web3')
+        const web3ForStake = new Web3(new Web3.providers.HttpProvider(clevisConfig.provider))
+        let relayHubAddress = "0x49a984490a7762B0e5d775f0FfA608899Ebe2ee8"///<<<-------- Stable if using tbk docker. Change this to your deployed Relay Hub address
+        let linksAddress = localContractAddress("Links")
+        console.log("linksAddress",linksAddress)
+        let linksAbi = localContractAbi("Links")
+        let accounts = await web3ForStake.eth.getAccounts()
+        console.log("accounts",accounts)
+        if(!accounts||accounts.length<=0){
+          accounts = await clevis("accounts")
+          console.log(accounts)
+        }
+        let links = new web3ForStake.eth.Contract(linksAbi, linksAddress, ({from: accounts[0]}))
+        await links.methods.set_hub(relayHubAddress).send()
+        await links.methods.deposit_to_relay_hub().send({value: web3ForStake.utils.toWei("0.5", "ether")})
+        */
+
+
+        let relayHubAddress = "0x49a984490a7762B0e5d775f0FfA608899Ebe2ee8" //<----- RELAY HUB FOR xDAI!!!!!
+
+        //update relay hub in Links contract:
+        result = await clevis("contract","set_hub","Links","0",relayHubAddress)///<<<-------- change this to the xDai relay hub!
+        printTxResult(result)
+        let hubAddress = await clevis("contract","get_hub_addr","Links")///<<<-------- change this to the xDai relay hub!
+        console.log("\t\t\thubAddress:",hubAddress.green)
+
+        //deposit funds as Links contract
+        result = await clevis("contract","deposit_to_relay_hub","Links","0","500000000000000000")///<<<-------- change this to the xDai relay hub!
+        printTxResult(result)
+
+      });
+    })
+  },
 
   metamask:()=>{
     describe('#transfer() ', function() {
@@ -125,7 +164,7 @@ module.exports = {
         printTxResult(result)
 
         result = await clevis("send","0.10","0","0x34aa3f359a9d614239015126635ce7732c18fdf3")///<<<-------- change this to your metamask accounts
-       printTxResult(result)
+         printTxResult(result)
 
 
 
