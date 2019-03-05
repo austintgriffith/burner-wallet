@@ -11,6 +11,7 @@ import Web3 from 'web3';
 import axios from "axios"
 import i18n from '../i18n';
 
+import Wyre from '../services/wyre';
 import wyrelogo from '../sendwyre.png';
 
 import InputRange from 'react-input-range';
@@ -2045,7 +2046,12 @@ export default class Exchange extends React.Component {
             })
         }
         onClick={()=>{
-            alert('display widget');
+          Wyre.displayWidget(
+              this.props.address,
+              this.state.wyreFundAmount,
+              () => { alert('An error occured or widget was closed prematurely.') },
+              () => { alert('Fund should show up shortly!') }
+          );
         }}
       >
         <div style={{paddingRight: '10px', flex: '0 0 30px'}}>
