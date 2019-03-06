@@ -289,7 +289,7 @@ export default class SendToAddress extends React.Component {
                      onChange={event => this.updateState('message', event.target.value)} />
             </div>
           </div>
-          <Button disabled={canSend} onClick={this.send} >
+          <Button disabled={canSend} onClick={this.send} fullWidth>
             Send
           </Button>
         </div>
