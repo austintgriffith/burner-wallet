@@ -6,6 +6,7 @@ import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
+import { Card, Button, Input, Text, Box, Flex } from 'rimble-ui';
 
 
 export default class SendToAddress extends React.Component {
@@ -293,10 +294,9 @@ export default class SendToAddress extends React.Component {
                      onChange={event => this.updateState('message', event.target.value)} />
             </div>
           </div>
-          <button name="theVeryBottom" className={`btn btn-lg w-100 ${canSend ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}
-                  onClick={this.send}>
+          <Button disabled={canSend} onClick={this.send} >
             Send
-          </button>
+          </Button>
         </div>
       </div>
     )
