@@ -1,6 +1,7 @@
 import React from 'react';
 import Ruler from "./Ruler";
 import { Scaler } from "dapparatus";
+import { Text, Flex, Button, Link } from "rimble-ui";
 
 export  default ({title,titleLink, goBack, darkMode}) => {
 
@@ -8,15 +9,15 @@ export  default ({title,titleLink, goBack, darkMode}) => {
 
   if(titleLink){
     titleDisplay = (
-      <a href={titleLink} target="_blank">
+      <Link href={titleLink} target="_blank" textAlign="center" fontSize={[3,3,3]}>
         {title}
-      </a>
+      </Link>
     )
   }else{
     titleDisplay = (
-      <div>
+      <Text textAlign="center" fontSize={[3,3,3]}>
         {title}
-      </div>
+      </Text>
     )
   }
 
