@@ -1,6 +1,6 @@
 import React from "react";
 import { Scaler } from "dapparatus";
-import { Flex, Button, Icon, OutlineButton, Box } from "rimble-ui";
+import { Flex, Button, Icon, OutlineButton, Box, Text } from "rimble-ui";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import i18next from "i18next";
 
@@ -34,12 +34,12 @@ export default ({
     pushDownWithWhiteSpace=230
   }*/
   let sendButtons = (
-    <div>
-      <Flex px={2}>
+    <Box>
+      <Flex mx={-2}>
         <Box width={[1, 1/2, 1/2]} m={2}>
           <Button fullWidth onClick={() => changeView("receive")}>
             <Flex alignItems="center">
-              <Icon name="CenterFocusWeak" />
+              <Icon name="CenterFocusWeak" mr={2} />
               {i18next.t("main_card.receive")}
             </Flex>
           </Button>
@@ -47,17 +47,17 @@ export default ({
         <Box width={[1, 1/2, 1/2]} m={2}>
           <Button fullWidth onClick={() => changeView("send_to_address")}>
             <Flex alignItems="center">
-              <Icon name="Send" />
+              <Icon name="Send" mr={2} />
               {i18next.t("main_card.send")}
             </Flex>
           </Button>
         </Box>
       </Flex>
-      <Flex px={2}>
+      <Flex mx={-2}>
         <Box width={[1, 1/2, 1/2]} m={2}>
           <OutlineButton fullWidth onClick={() => changeView("share")}>
             <Flex alignItems="center">
-              <Icon name="Share" />
+              <Icon name="Share" mr={2} />
               {i18next.t("main_card.share")}
             </Flex>
           </OutlineButton>
@@ -65,65 +65,65 @@ export default ({
         <Box width={[1, 1/2, 1/2]} m={2}>
           <OutlineButton fullWidth onClick={() => changeView("send_with_link")}>
             <Flex alignItems="center">
-              <Icon name="AttachMoney" />
+              <Icon name="AttachMoney" mr={2} />
               {i18next.t("main_card.link")}
             </Flex>
           </OutlineButton>
         </Box>
       </Flex>
-    </div>
+    </Box>
   );
 
   if (ERC20TOKEN) {
     sendButtons = (
-      <div>
-        <div className="content ops row">
-          <div className="col-6 p-1">
+      <Box>
+        <Flex mx={-2}>
+          <Box width={[1, 1/2, 1/2]} m={2}>
             AttachMoney
             <OutlineButton fullWidth onClick={() => changeView("receive")}>
               <Flex alignItems="center">
-                <Icon name="CenterFocusWeak" />
-                {i18next.t("main_card.receive")}
+                <Icon name="CenterFocusWeak" mr={2} />
+                <Text>{i18next.t("main_card.receive")}</Text>
               </Flex>
             </OutlineButton>
-          </div>
-          <div className="col-6 p-1">
+          </Box>
+          <Box width={[1, 1/2, 1/2]} m={2}>
             <OutlineButton
               fullWidth
               onClick={() => changeView("send_to_address")}
             >
               <Flex alignItems="center">
-                <Icon name="Send" />
-                {i18next.t("main_card.send")}
+                <Icon name="Send" mr={2} />
+                <Text>{i18next.t("main_card.send")}</Text>
               </Flex>
             </OutlineButton>
-          </div>
-        </div>
-        <div className="content ops row">
-          <div className="col-6 p-1">
+          </Box>
+        </Flex>
+        <Flex mx={-2}>
+          <Box width={[1, 1/2, 1/2]} m={2}>
             <OutlineButton fullWidth onClick={() => changeView("share")}>
               <Flex alignItems="center">
-                <Icon name="Share" />
-                {i18next.t("main_card.share")}
+                <Icon name="Share" mr={2} />
+                <Text>{i18next.t("main_card.share")}</Text>
               </Flex>
             </OutlineButton>
-          </div>
-          <div className="col-6 p-1">
+          </Box>
+          <Box width={[1, 1/2, 1/2]} m={2}>
             <OutlineButton fullWidth onClick={() => changeView("vendors")}>
               <Flex alignItems="center">
-                <Icon name="Money" />
-                {i18next.t("main_card.vendors")}
+                <Icon name="Money" mr={2} />
+                <Text>{i18next.t("main_card.vendors")}</Text>
               </Flex>
             </OutlineButton>
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Flex>
+      </Box>
     );
   }
 
   return (
-    <div style={{ paddingTop: pushDownWithWhiteSpace }}>
-      <div>{sendButtons}</div>
-    </div>
+    <Box>
+      {sendButtons}
+    </Box>
   );
 };

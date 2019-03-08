@@ -6,7 +6,7 @@ import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
-const queryString = require('query-string');
+import queryString from 'query-string';
 import { Card, Button, Input, Text, Box, Flex } from 'rimble-ui';
 
 export default class SendToAddress extends React.Component {
