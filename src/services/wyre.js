@@ -33,8 +33,8 @@ class WyreWrapper {
             operation: {
                 type: 'debitcard',
                 destCurrency: 'eth',
-                dest: `${destinationAddress}`,
-                destAmount: destinationAmount,
+                dest: `ethereum:${destinationAddress}`,
+                sourceAmount: parseInt(destinationAmount, 10),
             }
         });
 
@@ -42,7 +42,7 @@ class WyreWrapper {
         widget.on('error', onError);
         widget.on('ready', () => {
             widget.open();
-        });
+        })
     }
 }
 
