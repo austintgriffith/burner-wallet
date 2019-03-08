@@ -2,6 +2,7 @@ import React from 'react';
 import { Blockie } from "dapparatus";
 import Ruler from "./Ruler";
 import { Scaler } from "dapparatus";
+import { Flex, Text, Image } from "rimble-ui";
 
 export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
   let txns = []
