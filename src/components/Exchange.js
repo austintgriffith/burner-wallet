@@ -116,7 +116,7 @@ export default class Exchange extends React.Component {
       maxWithdrawlAmount: 0.00,
       withdrawalExplanation: i18n.t('exchange.withdrawal_explanation'),
       gettingGas:false,
-      wyreFundAmount: 1,
+      wyreFundAmount: 5,
     }
   }
   updateState = (key, value) => {
@@ -2322,7 +2322,7 @@ export default class Exchange extends React.Component {
                 <div style={{paddingRight: '20px', display: 'flex', alignItems: 'center', height: '100%',}}>
                 <InputRange
                     maxValue={25}
-                    minValue={1}
+                    minValue={5}
                     value={this.state.wyreFundAmount}
                     formatLabel={value => `$${value}`}
                     step={1}
