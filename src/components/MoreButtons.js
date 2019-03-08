@@ -27,9 +27,10 @@ export default ({
         }}
       >
         <Flex alignItems="center">
-          <Icon name="Shuffle" />
+          <Icon name="Shuffle" mr={2} />
           {i18n.t("more_buttons.exchange")}
         </Flex>
+      </OutlineButton>
     );
   } else {
     exchangeButton = (
@@ -40,7 +41,7 @@ export default ({
         }}
       >
         <Flex alignItems="center">
-          <Icon name="CreditCard" />
+          <Icon name="CreditCard" mr={2} />
           {"Cash Out"}
         </Flex>
       </OutlineButton>
@@ -48,7 +49,7 @@ export default ({
   }
 
   return (
-    <Flex px={2}>
+    <Flex mx={-2}>
       <Box width={[1, 1/2, 1/2]} m={2}>
         <OutlineButton
           fullWidth
@@ -57,7 +58,7 @@ export default ({
           }}
         >
           <Flex alignItems="center">
-            <Icon name="AttachMoney" />
+            <Icon name="AttachMoney" mr={2} />
             {i18n.t("more_buttons.request")}
           </Flex>
         </OutlineButton>

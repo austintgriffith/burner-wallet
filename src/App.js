@@ -1717,6 +1717,8 @@ class App extends Component {
                         sendKey={this.state.sendKey}
                         sendLink={this.state.sendLink}
                         balance={balance}
+                        web3={this.state.web3}
+                        contracts={this.state.contracts}
                         address={account}
                         balance={balance}
                         goBack={this.goBack.bind(this)}
@@ -1865,15 +1867,19 @@ class App extends Component {
                   <div>unknown view</div>
                 )
               }
-        })()}
-        { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
-          <div>
-            <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-          </div>
-        }
-        { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
-        </div>
-        <Dapparatus
+
+            })()}
+            { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
+              <div>
+                <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+              </div>
+            }
+            { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
+            </div>
+
+
+
+            <Dapparatus
             config={{
               DEBUG: false,
               hide: true,
