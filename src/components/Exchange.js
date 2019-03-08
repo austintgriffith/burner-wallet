@@ -2038,7 +2038,8 @@ export default class Exchange extends React.Component {
         disabled={buttonsDisabled}
         style={
             Object.assign({}, this.props.buttonStyle.secondary, {
-                color: '#0055ff',
+                color: '#fff',
+                backgroundColor: '#0055ff',
                 border: '2px solid #0055ff',
                 display: 'flex',
                 justifyContent: 'center',
@@ -2054,12 +2055,9 @@ export default class Exchange extends React.Component {
           );
         }}
       >
-        <div style={{paddingRight: '10px', flex: '0 0 30px'}}>
-            ${this.state.wyreFundAmount}
+        <div style={{flex: '0 0 30px', textAlign: 'center'}}>
+            Buy ${this.state.wyreFundAmount}
         </div>
-        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-          <i className="fas fa-arrow-up"></i>
-        </Scaler>
       </button>
     )
 
@@ -2282,28 +2280,8 @@ export default class Exchange extends React.Component {
             </div>
           </div>
 
-          <hr style={{
-              color: 'rgb(223, 223, 223)',
-              opacity: '0.5',
-              marginTop: '10px',
-              marginBottom: '10px',
-              width: '100%',
-          }}/>
-
-          <div className="content ops row" style={{paddingBottom:20}}>
-            <div className="col-3 p-1">
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '60px',
-                }}>
-                    <img src={wyrelogo} style={{
-                        maxWidth: '80px',
-                    }}/>
-                </div>
-            </div>
-            <div className="col-7 p-1" style={{marginTop:10,whiteSpace:"nowrap"}}>
+          <div className="content ops row">
+            <div className="col-10 p-1" style={{whiteSpace:"nowrap"}}>
                 {/*<div className="input-group">
                     <div className="input-group-prepend">
                         <div className="input-group-text">$</div>
@@ -2319,7 +2297,7 @@ export default class Exchange extends React.Component {
                         }
                     />
                 </div>*/}
-                <div style={{paddingRight: '20px', display: 'flex', alignItems: 'center', height: '100%',}}>
+                <div style={{padding: '0 20px', display: 'flex', alignItems: 'center', paddingTop: '15px',}}>
                 <InputRange
                     maxValue={25}
                     minValue={5}
@@ -2334,7 +2312,34 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-2 p-1" style={{marginTop:8}}>
               {fundByWyreButton}
+              <div style={{
+                  textAlign: 'center',
+                  letterSpacing: '.2px',
+                  fontSize: '12px',
+                  color: '#7E7E7E',
+                  marginTop: '5px',
+              }}>
+                (Daily limit of $25)
+              </div>
             </div>
+          </div>
+          <div className="content ops row" style={{paddingBottom:20}}>
+              <div className="col-12 p-1" style={{marginTop:8}}>
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        letterSpacing: '.2px',
+                        fontSize: '12px',
+                        color: '#7E7E7E',
+                    }}>
+                          Powered By
+                        <img src={wyrelogo} style={{
+                            paddingLeft: '5px',
+                            maxWidth: '50px',
+                        }}/>
+                    </div>
+              </div>
           </div>
           {sendEthRow}
           {this.state.extraGasUpDisplay}
