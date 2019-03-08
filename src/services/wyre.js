@@ -27,7 +27,7 @@ class WyreWrapper {
             env: 'prod',
             accountId: 'AC-396YDETRHDJ',
             auth: {
-                type: 'secretkey',
+                type: 'secretKey',
                 secretKey: deviceToken
             },
             operation: {
