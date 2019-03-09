@@ -11,6 +11,12 @@ import Web3 from 'web3';
 import axios from "axios"
 import i18n from '../i18n';
 
+import Wyre from '../services/wyre';
+import wyrelogo from '../sendwyre.png';
+
+import InputRange from 'react-input-range';
+import 'react-input-range/lib/css/index.css';
+
 const GASBOOSTPRICE = 0.25
 
 const logoStyle = {
@@ -109,7 +115,8 @@ export default class Exchange extends React.Component {
       gwei: 5,
       maxWithdrawlAmount: 0.00,
       withdrawalExplanation: i18n.t('exchange.withdrawal_explanation'),
-      gettingGas:false
+      gettingGas:false,
+      wyreFundAmount: 5,
     }
   }
   updateState = (key, value) => {
@@ -2025,6 +2032,35 @@ export default class Exchange extends React.Component {
       </button>
     )
 
+    let fundByWyreButton = (
+      <button
+        className="btn btn-large w-100"
+        disabled={buttonsDisabled}
+        style={
+            Object.assign({}, this.props.buttonStyle.secondary, {
+                color: '#fff',
+                backgroundColor: '#0055ff',
+                border: '2px solid #0055ff',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            })
+        }
+        onClick={()=>{
+          Wyre.displayWidget(
+              this.props.address,
+              this.state.wyreFundAmount,
+              () => { alert('An error occured or widget was closed prematurely.') },
+              () => { alert('Fund should show up shortly!') }
+          );
+        }}
+      >
+        <div style={{flex: '0 0 30px', textAlign: 'center'}}>
+            Buy ${this.state.wyreFundAmount}
+        </div>
+      </button>
+    )
+
 
     let sendEthRow = ""
     if(this.state.sendEth){
@@ -2242,6 +2278,68 @@ export default class Exchange extends React.Component {
             <div className="col-2 p-1" style={{marginTop:8}}>
               {sendEthButton}
             </div>
+          </div>
+
+          <div className="content ops row">
+            <div className="col-10 p-1" style={{whiteSpace:"nowrap"}}>
+                {/*<div className="input-group">
+                    <div className="input-group-prepend">
+                        <div className="input-group-text">$</div>
+                    </div>
+                    <input
+                        type="number"
+                        step="0.1"
+                        className="form-control"
+                        placeholder="0.00"
+                        value={this.state.wyreFundAmount}
+                        onChange={event =>
+                            this.updateState('wyreFundAmount', event.target.value)
+                        }
+                    />
+                </div>*/}
+                <div style={{padding: '0 20px', display: 'flex', alignItems: 'center', paddingTop: '15px',}}>
+                <InputRange
+                    maxValue={25}
+                    minValue={5}
+                    value={this.state.wyreFundAmount}
+                    formatLabel={value => `$${value}`}
+                    step={1}
+                    onChange={value =>
+                        this.updateState('wyreFundAmount', value)
+                    }
+                />
+                </div>
+            </div>
+            <div className="col-2 p-1" style={{marginTop:8}}>
+              {fundByWyreButton}
+              <div style={{
+                  textAlign: 'center',
+                  letterSpacing: '.2px',
+                  fontSize: '12px',
+                  color: '#7E7E7E',
+                  marginTop: '5px',
+              }}>
+                (Daily limit of $25)
+              </div>
+            </div>
+          </div>
+          <div className="content ops row" style={{paddingBottom:20}}>
+              <div className="col-12 p-1" style={{marginTop:8}}>
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        letterSpacing: '.2px',
+                        fontSize: '12px',
+                        color: '#7E7E7E',
+                    }}>
+                          Powered By
+                        <img src={wyrelogo} style={{
+                            paddingLeft: '5px',
+                            maxWidth: '50px',
+                        }}/>
+                    </div>
+              </div>
           </div>
           {sendEthRow}
           {this.state.extraGasUpDisplay}
