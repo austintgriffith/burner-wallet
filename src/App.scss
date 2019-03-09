@@ -146,3 +146,18 @@ i.fas {
     margin: 10px;
   }
 }
+
+/** SLIDER STYLE OVERRIDES **/
+.input-range__label--max {
+    padding-right: 12px;
+}
+
+.input-range__label {
+    font-size: 16px!important;
+    font-weight: normal!important;
+    letter-spacing: .1px!important;
+}
+
+.input-range__label--value {
+    display: none!important;
+}
