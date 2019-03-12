@@ -2280,67 +2280,74 @@ export default class Exchange extends React.Component {
             </div>
           </div>
 
-          <div className="content ops row">
-            <div className="col-10 p-1" style={{whiteSpace:"nowrap"}}>
-                {/*<div className="input-group">
-                    <div className="input-group-prepend">
-                        <div className="input-group-text">$</div>
-                    </div>
-                    <input
-                        type="number"
-                        step="0.1"
-                        className="form-control"
-                        placeholder="0.00"
+
+          { (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("wyre.xdai.io") >= 0) && (
+            <div>
+              <div className="content ops row">
+                <div className="col-10 p-1" style={{whiteSpace:"nowrap"}}>
+                    {/*<div className="input-group">
+                        <div className="input-group-prepend">
+                            <div className="input-group-text">$</div>
+                        </div>
+                        <input
+                            type="number"
+                            step="0.1"
+                            className="form-control"
+                            placeholder="0.00"
+                            value={this.state.wyreFundAmount}
+                            onChange={event =>
+                                this.updateState('wyreFundAmount', event.target.value)
+                            }
+                        />
+                    </div>*/}
+                    <div style={{padding: '0 20px', display: 'flex', alignItems: 'center', paddingTop: '15px',}}>
+                    <InputRange
+                        maxValue={25}
+                        minValue={5}
                         value={this.state.wyreFundAmount}
-                        onChange={event =>
-                            this.updateState('wyreFundAmount', event.target.value)
+                        formatLabel={value => `$${value}`}
+                        step={1}
+                        onChange={value =>
+                            this.updateState('wyreFundAmount', value)
                         }
                     />
-                </div>*/}
-                <div style={{padding: '0 20px', display: 'flex', alignItems: 'center', paddingTop: '15px',}}>
-                <InputRange
-                    maxValue={25}
-                    minValue={5}
-                    value={this.state.wyreFundAmount}
-                    formatLabel={value => `$${value}`}
-                    step={1}
-                    onChange={value =>
-                        this.updateState('wyreFundAmount', value)
-                    }
-                />
-                </div>
-            </div>
-            <div className="col-2 p-1" style={{marginTop:8}}>
-              {fundByWyreButton}
-              <div style={{
-                  textAlign: 'center',
-                  letterSpacing: '.2px',
-                  fontSize: '12px',
-                  color: '#7E7E7E',
-                  marginTop: '5px',
-              }}>
-                (Daily limit of $25)
-              </div>
-            </div>
-          </div>
-          <div className="content ops row" style={{paddingBottom:20}}>
-              <div className="col-12 p-1" style={{marginTop:8}}>
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        letterSpacing: '.2px',
-                        fontSize: '12px',
-                        color: '#7E7E7E',
-                    }}>
-                          Powered By
-                        <img src={wyrelogo} style={{
-                            paddingLeft: '5px',
-                            maxWidth: '50px',
-                        }}/>
                     </div>
+                </div>
+                <div className="col-2 p-1" style={{marginTop:8}}>
+                  {fundByWyreButton}
+                  <div style={{
+                      textAlign: 'center',
+                      letterSpacing: '.2px',
+                      fontSize: '12px',
+                      color: '#7E7E7E',
+                      marginTop: '5px',
+                  }}>
+                    (Daily limit of $25)
+                  </div>
+                </div>
               </div>
-          </div>
+              <div className="content ops row" style={{paddingBottom:20}}>
+                  <div className="col-12 p-1" style={{marginTop:8}}>
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            letterSpacing: '.2px',
+                            fontSize: '12px',
+                            color: '#7E7E7E',
+                        }}>
+                              Powered By
+                            <img src={wyrelogo} style={{
+                                paddingLeft: '5px',
+                                maxWidth: '50px',
+                            }}/>
+                        </div>
+                  </div>
+              </div>
+            </div>
+          )}
+
+
           {sendEthRow}
           {this.state.extraGasUpDisplay}
 

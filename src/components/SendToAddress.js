@@ -6,12 +6,17 @@ import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
-
+const queryString = require('query-string');
 
 export default class SendToAddress extends React.Component {
 
   constructor(props) {
     super(props);
+
+
+
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!! window.location.search",window.location.search,parsed)
+
     let startAmount = props.amount
     if(props.scannerState) startAmount = props.scannerState.amount
     if(!startAmount) {
@@ -62,9 +67,17 @@ export default class SendToAddress extends React.Component {
       }
     }
 
+    const parsed = queryString.parse(window.location.search);
+    if(parsed){
+      initialState.params = parsed
+    }
+
     this.state = initialState
   //  console.log("SendToAddress constructor",this.state)
     window.history.pushState({},"", "/");
+
+
+
   }
 
   updateState = async (key, value) => {
@@ -201,6 +214,11 @@ export default class SendToAddress extends React.Component {
             });*/
 
             let receiptObj = {to:toAddress,from:result.from,amount:parseFloat(amount),message:this.state.message,result:result}
+
+
+            if(this.state.params){
+              receiptObj.params = this.state.params
+            }
 
           //  console.log("CHECKING SCANNER STATE FOR ORDER ID",this.props.scannerState)
             if(this.props.scannerState&&this.props.scannerState.daiposOrderId){

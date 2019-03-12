@@ -30,6 +30,7 @@
     "path": "^0.12.7",
     "qrcode-reader": "^1.0.4",
     "qrcode.react": "^0.8.0",
+    "query-string": "^6.3.0",
     "react": "^16.6.0",
     "react-blockies": "^1.4.0",
     "react-cookies": "^0.1.0",
