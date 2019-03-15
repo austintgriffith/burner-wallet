@@ -157,6 +157,11 @@ i.fas {
     font-size: 16px!important;
     font-weight: normal!important;
     letter-spacing: .1px!important;
+    
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .wyre-slider .input-range__label--value {
