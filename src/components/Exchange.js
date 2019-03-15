@@ -2034,7 +2034,7 @@ export default class Exchange extends React.Component {
 
     let fundByWyreButton = (
       <button
-        className="btn btn-large w-100"
+        className="btn btn-large w-100 wyre-button--font-size"
         disabled={buttonsDisabled}
         style={
             Object.assign({}, this.props.buttonStyle.secondary, {
