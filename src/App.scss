@@ -161,3 +161,15 @@ i.fas {
 .input-range__label--value {
     display: none!important;
 }
+
+
+/** Wyre **/
+.wyre-sublabel--font-size {
+    font-size: 12px;
+}
+
+@media only screen and (max-width: 450px) {
+    .wyre-sublabel--font-size {
+        font-size: 10px;
+    }
+}

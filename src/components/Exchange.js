@@ -2315,14 +2315,13 @@ export default class Exchange extends React.Component {
                 </div>
                 <div className="col-2 p-1" style={{marginTop:8}}>
                   {fundByWyreButton}
-                  <div style={{
+                  <div className="wyre-sublabel--font-size" style={{
                       textAlign: 'center',
                       letterSpacing: '.2px',
-                      fontSize: '12px',
                       color: '#7E7E7E',
                       marginTop: '5px',
                   }}>
-                    (Daily limit of $25)
+                    Daily Limit: $25
                   </div>
                 </div>
               </div>
