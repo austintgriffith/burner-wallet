@@ -2221,12 +2221,12 @@ export default class Exchange extends React.Component {
             <div className="col-3 p-1" style={{marginTop:8}}>
               xDai
             </div>
-            <div className="col-5 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
+            <div className="col-4 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   ${this.props.dollarDisplay(this.props.xdaiBalance)}
                 </Scaler>
             </div>
-            <div className="col-2 p-1" style={{marginTop:8}}>
+            <div className="col-3 p-1" style={{marginTop:8}}>
               {sendXdaiButton}
             </div>
 
@@ -2246,12 +2246,12 @@ export default class Exchange extends React.Component {
             <div className="col-3 p-1" style={{marginTop:9}}>
               DAI
             </div>
-            <div className="col-5 p-1" style={{marginTop:9,whiteSpace:"nowrap"}}>
+            <div className="col-4 p-1" style={{marginTop:9,whiteSpace:"nowrap"}}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 ${this.props.dollarDisplay(this.props.daiBalance)}
               </Scaler>
             </div>
-            <div className="col-2 p-1" style={{marginTop:8}}>
+            <div className="col-3 p-1" style={{marginTop:8}}>
               {sendDaiButton}
             </div>
           </div>
@@ -2270,12 +2270,12 @@ export default class Exchange extends React.Component {
             <div className="col-3 p-1" style={{marginTop:10}}>
               ETH
             </div>
-            <div className="col-5 p-1" style={{marginTop:10,whiteSpace:"nowrap"}}>
+            <div className="col-4 p-1" style={{marginTop:10,whiteSpace:"nowrap"}}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 ${this.props.dollarDisplay(this.props.ethBalance*this.props.ethprice)}
               </Scaler>
             </div>
-            <div className="col-2 p-1" style={{marginTop:8}}>
+            <div className="col-3 p-1" style={{marginTop:8}}>
               {sendEthButton}
             </div>
           </div>
@@ -2284,7 +2284,7 @@ export default class Exchange extends React.Component {
           { (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("wyre.xdai.io") >= 0) && (
             <div>
               <div className="content ops row">
-                <div className="col-10 p-1" style={{whiteSpace:"nowrap"}}>
+                <div className="col-9 p-1" style={{whiteSpace:"nowrap"}}>
                     {/*<div className="input-group">
                         <div className="input-group-prepend">
                             <div className="input-group-text">$</div>
@@ -2300,7 +2300,7 @@ export default class Exchange extends React.Component {
                             }
                         />
                     </div>*/}
-                    <div style={{padding: '0 20px', display: 'flex', alignItems: 'center', paddingTop: '15px',}}>
+                    <div className="wyre-slider" style={{padding: '0 20px', display: 'flex', alignItems: 'center', paddingTop: '15px',}}>
                     <InputRange
                         maxValue={25}
                         minValue={5}
@@ -2313,7 +2313,7 @@ export default class Exchange extends React.Component {
                     />
                     </div>
                 </div>
-                <div className="col-2 p-1" style={{marginTop:8}}>
+                <div className="col-3 p-1" style={{marginTop:8}}>
                   {fundByWyreButton}
                   <div className="wyre-sublabel--font-size" style={{
                       textAlign: 'center',

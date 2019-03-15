@@ -148,17 +148,18 @@ i.fas {
 }
 
 /** SLIDER STYLE OVERRIDES **/
-.input-range__label--max {
-    padding-right: 12px;
+.wyre-slider .input-range__label--min,
+.wyre-slider .input-range__label--max {
+    bottom: -1.8rem;
 }
 
-.input-range__label {
+.wyre-slider .input-range__label {
     font-size: 16px!important;
     font-weight: normal!important;
     letter-spacing: .1px!important;
 }
 
-.input-range__label--value {
+.wyre-slider .input-range__label--value {
     display: none!important;
 }
 
