@@ -14,6 +14,10 @@ export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
     opacity=0.25
   }
 
+  if(opacity<0.9 && parseFloat(amount)<=0.0){
+    opacity=0.05
+  }
+
   return (
     <div className="balance row" style={{opacity,paddingBottom:0,paddingLeft:20}}>
       <div className="avatar col p-0">

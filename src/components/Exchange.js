@@ -12,7 +12,7 @@ import axios from "axios"
 import i18n from '../i18n';
 
 import Wyre from '../services/wyre';
-import wyrelogo from '../sendwyre.png';
+import wyrelogo from '../wyre.png';
 
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
@@ -2054,10 +2054,11 @@ export default class Exchange extends React.Component {
               () => { alert('Fund should show up shortly!') }
           );
         }}
-      >
+      ><Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
         <div style={{flex: '0 0 30px', textAlign: 'center'}}>
             Buy ${this.state.wyreFundAmount}
         </div>
+        </Scaler>
       </button>
     )
 
@@ -2281,10 +2282,16 @@ export default class Exchange extends React.Component {
           </div>
 
 
-          { (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("wyre.xdai.io") >= 0) && (
-            <div>
+          { (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("wyre.xdai.io") >= 0 || window.location.hostname.indexOf("s.xdai.io") >= 0) && (
+            <div className="send-to-address card w-100" style={{marginTop:20,borderBottom:0,paddingTop:50}}>
               <div className="content ops row">
-                <div className="col-9 p-1" style={{whiteSpace:"nowrap"}}>
+                <div className="col-2 p-1">
+                  <img style={logoStyle} src={wyrelogo} />
+                </div>
+                <div className="col-2 p-1" style={{marginTop:10}}>
+                  Wyre
+                </div>
+                <div className="col-5 p-1" style={{whiteSpace:"nowrap"}}>
                     {/*<div className="input-group">
                         <div className="input-group-prepend">
                             <div className="input-group-text">$</div>
@@ -2315,33 +2322,7 @@ export default class Exchange extends React.Component {
                 </div>
                 <div className="col-3 p-1" style={{marginTop:8}}>
                   {fundByWyreButton}
-                  <div className="wyre-sublabel--font-size" style={{
-                      textAlign: 'center',
-                      letterSpacing: '.2px',
-                      color: '#7E7E7E',
-                      marginTop: '5px',
-                  }}>
-                    Daily Limit: $25
-                  </div>
                 </div>
-              </div>
-              <div className="content ops row" style={{paddingBottom:20}}>
-                  <div className="col-12 p-1" style={{marginTop:8}}>
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            letterSpacing: '.2px',
-                            fontSize: '12px',
-                            color: '#7E7E7E',
-                        }}>
-                              Powered By
-                            <img src={wyrelogo} style={{
-                                paddingLeft: '5px',
-                                maxWidth: '50px',
-                            }}/>
-                        </div>
-                  </div>
               </div>
             </div>
           )}
