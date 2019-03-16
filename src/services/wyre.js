@@ -18,7 +18,7 @@ class WyreWrapper {
     displayWidget(
         destinationAddress,
         destinationAmount,
-        onError = () => {},
+        onClose = () => {},
         onComplete = () => {}
     ) {
         const deviceToken = localStorage.getItem(DEVICE_TOKEN__KEY);
@@ -39,7 +39,7 @@ class WyreWrapper {
         });
 
         widget.on('complete', onComplete);
-        widget.on('error', onError);
+        widget.on('close', onClose);
         widget.on('ready', () => {
             widget.open();
         })
