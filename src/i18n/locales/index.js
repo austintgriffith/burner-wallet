@@ -4,6 +4,8 @@ import es from "./es.json";
 import ca from "./ca.json";
 import de from "./de.json";
 import ro from "./ro.json";
+import he from "./he.json";
+import ru from "./ru.json";
 
 
-export { en, fr, es, ca, de, ro };
+export { en, fr, es, ca, de, ro, he, ru };
