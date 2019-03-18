@@ -117,6 +117,7 @@ export default class Exchange extends React.Component {
       withdrawalExplanation: i18n.t('exchange.withdrawal_explanation'),
       gettingGas:false,
       wyreFundAmount: 5,
+      wyreWidgetOpen: false,
     }
   }
   updateState = (key, value) => {
@@ -2047,16 +2048,22 @@ export default class Exchange extends React.Component {
             })
         }
         onClick={()=>{
+          this.setState({ wyreWidgetOpen: true });
           Wyre.displayWidget(
               this.props.address,
               this.state.wyreFundAmount,
-              () => { alert('An error occured or widget was closed prematurely.') },
-              () => { alert('Fund should show up shortly!') }
+              () => { this.setState({ wyreWidgetOpen: false }); }
           );
         }}
       ><Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
         <div style={{flex: '0 0 30px', textAlign: 'center'}}>
-            Buy ${this.state.wyreFundAmount}
+            {this.state.wyreWidgetOpen ? (
+                <>
+                    <span style={{paddingRight: '10px'}}>
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                    <span>Loading...</span>
+                </>) : `Buy $${this.state.wyreFundAmount}`}
         </div>
         </Scaler>
       </button>
