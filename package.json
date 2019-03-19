@@ -26,6 +26,8 @@
     "i18next": "^13.1.5",
     "i18next-browser-languagedetector": "^2.2.4",
     "jimp": "^0.6.0",
+    "jsbi-utils": "^1.0.0",
+    "leap-core": "^0.28.2",
     "node-sass": "^4.11.0",
     "path": "^0.12.7",
     "qrcode-reader": "^1.0.4",

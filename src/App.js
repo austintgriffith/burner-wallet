@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
+import { helpers, Tx, Input, Output } from 'leap-core';
+import { equal, bi } from 'jsbi-utils';
 import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
@@ -86,21 +88,13 @@ let titleImage = (
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "http://localhost:8545"
-  WEB3_PROVIDER = "http://localhost:8545";
-  CLAIM_RELAY = 'http://localhost:18462'
+  XDAI_PROVIDER = "http://18.218.2.145:8645";
+  WEB3_PROVIDER = "http://18.218.2.145:1000";
+  CLAIM_RELAY = false;
   if(true){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
-  }else{
-    ERC20NAME = 'BUFF'
-    ERC20VENDOR = 'VendingMachine'
-    ERC20TOKEN = 'ERC20Vendable'
-    ERC20IMAGE = bufficorn
-    XDAI_PROVIDER = "http://localhost:8545"
-    WEB3_PROVIDER = "http://localhost:8545";
-    LOADERIMAGE = bufficorn
   }
 
 }
@@ -150,7 +144,6 @@ else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
   ERC20TOKEN = false
   ERC20IMAGE = false
 }
-
 
 if(ERC20NAME=="BUFF"){
   mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
@@ -388,16 +381,22 @@ class App extends Component {
     intervalLong = setInterval(this.longPoll.bind(this),45000)
     setTimeout(this.longPoll.bind(this),150)
 
-    let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
+    let mainnetweb3 = new Web3(new Web3.providers.HttpProvider(WEB3_PROVIDER))
     let ensContract = new mainnetweb3.eth.Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
     let daiContract
     try{
-      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359")
+      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x72560b830ced423fbb9ec1ae8d01b41f015a5f21")
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
-    let xdaiweb3 = new Web3(new Web3.providers.HttpProvider(XDAI_PROVIDER))
-    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract})
+    let xdaiweb3 = helpers.extendWeb3(new Web3(new Web3.providers.HttpProvider(XDAI_PROVIDER)));
+    let pdaiContract
+    try{
+      pdaiContract = new xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x72560b830ced423fbb9ec1ae8d01b41f015a5f21")
+    }catch(e){
+      console.log("ERROR LOADING DAI Stablecoin Contract",e)
+    }
+    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract, pdaiContract})
   }
   componentWillUnmount() {
     clearInterval(interval)
@@ -513,11 +512,11 @@ class App extends Component {
 
       }
       if(this.state.xdaiweb3){
-        xdaiBalance = await this.state.xdaiweb3.eth.getBalance(this.state.account)
+        xdaiBalance = await this.state.pdaiContract.methods.balanceOf(this.state.account).call();
         xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
       }
 
-      this.setState({ethBalance,daiBalance,xdaiBalance,badgeBalance,hasUpdateOnce:true})
+      this.setState({ethBalance,daiBalance,xdaiBalance,balance:xdaiBalance,badgeBalance,hasUpdateOnce:true})
     }
 
 
@@ -1033,11 +1032,9 @@ render() {
       metaAccount={metaAccount}
       onReady={(state) => {
         console.log("Transactions component is ready:", state);
-        if(ERC20TOKEN){
-          state.nativeSend = state.send
-          //delete state.send
-          state.send = tokenSend.bind(this)
-        }
+        state.nativeSend = tokenSend.bind(this)
+        //delete state.send
+        state.send = tokenSend.bind(this)
         console.log(state)
         this.setState(state)
 
@@ -1332,7 +1329,7 @@ render() {
 
                   {extraTokens}
 
-                  <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance icon={xdai} selected={selected} text={"pDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
                   <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
@@ -1960,7 +1957,8 @@ render() {
 }
 
 //<iframe id="galleassFrame" style={{zIndex:99,position:"absolute",left:0,top:0,width:800,height:600}} src="https://galleass.io" />
-
+const NFT_COLOR_BASE = 32769; // 2^15 + 1
+const isNFT = (color: Number): boolean => color >= NFT_COLOR_BASE;
 
 async function tokenSend(to,value,gasLimit,txData,cb){
   let {account,web3} = this.state
@@ -1985,68 +1983,66 @@ async function tokenSend(to,value,gasLimit,txData,cb){
 
   console.log("DAPPARATUS TOKEN SENDING WITH GAS LIMIT",setGasLimit)
 
-  let result
-  if(this.state.metaAccount){
-    console.log("sending with meta account:",this.state.metaAccount.address)
+  const color = 1;
+  let result;
 
-    let tx={
-      to:this.state.contracts[ERC20TOKEN]._address,
-      value: 0,
-      gas: setGasLimit,
-      gasPrice: Math.round(this.state.gwei * 1010101010)
-    }
-    if(data){
-      tx.data = this.state.contracts[ERC20TOKEN].transferWithData(to,weiValue,data).encodeABI()
-    }else{
-      tx.data = this.state.contracts[ERC20TOKEN].transfer(to,weiValue).encodeABI()
-    }
-    console.log("TX SIGNED TO METAMASK:",tx)
-    this.state.web3.eth.accounts.signTransaction(tx, this.state.metaAccount.privateKey).then(signed => {
-      console.log("SIGNED:",signed)
-      this.state.web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-        console.log("META RECEIPT",receipt)
-        if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-          metaReceiptTracker[receipt.transactionHash] = true
-          cb(receipt)
+  this.state.xdaiweb3
+    .getUnspent(this.state.account)
+    .then(unspent => {
+      if (isNFT(color)) {
+        const { outpoint } = unspent.find(
+          ({ output }) =>
+            Number(output.color) === Number(color) &&
+            equal(bi(output.value), bi(weiValue))
+        );
+        const inputs = [new Input(outpoint)];
+        const outputs = [new Output(weiValue, to, color)];
+        return Tx.transfer(inputs, outputs);
+      }
+
+      const inputs = helpers.calcInputs(
+        unspent,
+        this.state.account,
+        weiValue,
+        color
+      );
+      const outputs = helpers.calcOutputs(
+        unspent,
+        inputs,
+        this.state.account,
+        to,
+        weiValue,
+        color
+      );
+      return Tx.transfer(inputs, outputs);
+    })
+    .then(tx => {
+      if(this.state.metaAccount){
+        const privs = [];
+        for(const input of tx.inputs){
+          privs.push(this.state.metaAccount.privateKey);
         }
-      }).on('error',(error)=>{
-        console.log("ERRROROROROROR",error)
-        let errorString = error.toString()
-        if(errorString.indexOf("have enough funds")>=0){
-          this.changeAlert({type: 'danger', message: 'Not enough funds to send message.'})
-        }else{
-          this.changeAlert({type: 'danger', message: errorString})
-        }
-      })
+        return tx.sign(privs);
+      } else {
+        return tx.signWeb3(web3);
+      }
+    })
+    .then(
+      signedTx => {
+        return {
+          futureReceipt: this.state.xdaiweb3.eth.sendSignedTransaction(
+            signedTx.hex()
+          ),
+        };
+      },
+      err => {
+        console.log(err);
+      }
+    )
+    .then(receipt => {
+      console.log('RES: ', receipt);      
+      cb(result)
     });
-
-  }else{
-    let data = false
-    if(typeof txData == "function"){
-      cb = txData
-    }else{
-      data = txData
-    }
-    let txObject = {
-      from:this.state.account,
-      to:this.state.contracts[ERC20TOKEN]._address,
-      value: 0,
-      gas: setGasLimit,
-      gasPrice: Math.round(this.state.gwei * 1010101010)
-    }
-
-    if(data){
-      txObject.data = this.state.contracts[ERC20TOKEN].transferWithData(to,weiValue,data).encodeABI()
-    }else{
-      txObject.data = this.state.contracts[ERC20TOKEN].transfer(to,weiValue).encodeABI()
-    }
-
-    console.log("sending with injected web3 account",txObject)
-    result = await this.state.web3.eth.sendTransaction(txObject)
-
-    console.log("RES",result)
-    cb(result)
-  }
 
 }
 
