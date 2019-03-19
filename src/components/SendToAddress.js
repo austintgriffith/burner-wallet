@@ -272,6 +272,10 @@ export default class SendToAddress extends React.Component {
 
     return (
       <div>
+        <form onSubmit={(event)=>{
+          event.preventDefault();
+          this.send();
+        }}>
         <div className="content row">
           <div className="form-group w-100">
             <div className="form-group w-100">
@@ -311,11 +315,12 @@ export default class SendToAddress extends React.Component {
                      onChange={event => this.updateState('message', event.target.value)} />
             </div>
           </div>
-          <button name="theVeryBottom" className={`btn btn-lg w-100 ${canSend ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}
+          <button type="submit" name="theVeryBottom" className={`btn btn-lg w-100 ${canSend ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}
                   onClick={this.send}>
             Send
           </button>
         </div>
+        </form>
       </div>
     )
   }
