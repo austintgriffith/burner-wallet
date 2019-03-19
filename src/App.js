@@ -514,7 +514,7 @@ export default class App extends Component {
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
-    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract, pdaiContract})
+    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract, pdaiContract, bridgeContract})
   }
   componentWillUnmount() {
     clearInterval(interval)
