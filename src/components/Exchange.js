@@ -530,9 +530,10 @@ export default class Exchange extends React.Component {
           console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
           paramsObject.to = this.props.daiContract._address
-          paramsObject.data = this.props.daiContract.methods.transfer(
-            destination,
-            this.state.mainnetweb3.utils.toWei(""+amount,"ether")
+          paramsObject.data = this.props.bridgeContract.methods.deposit(
+            this.state.daiAddress,
+            this.state.mainnetweb3.utils.toWei(""+amount,"ether"),
+            1
           ).encodeABI()
 
           console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
@@ -560,13 +561,14 @@ export default class Exchange extends React.Component {
             loaderBarStatusText:message,
           })
 
-          let metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
-          console.log("CURRENT DAI CONTRACT YOU NEED TO GET ABI FROM:",this.props.daiContract)
-          this.props.tx(metaMaskDaiContract.methods.transfer(
-            destination,
-            this.state.mainnetweb3.utils.toWei(""+amount,"ether")
+          let bridgeContract = new this.props.web3.eth.Contract(this.props.bridgeContract._jsonInterface,this.props.bridgeContract._address)
+          console.log("CURRENT BRIDGE CONTRACT YOU NEED TO GET ABI FROM:",this.props.bridgeContract, this.state.daiAddress)
+          this.props.tx(bridgeContract.methods.deposit(
+            this.state.daiAddress,
+            this.state.mainnetweb3.utils.toWei(""+amount,"ether"),
+            1
             ///TODO LET ME PASS IN A CERTAIN AMOUNT OF GAS INSTEAD OF LEANING BACK ON THE <GAS> COMPONENT!!!!!
-          ),120000,0,0,(receipt)=>{
+          ),150000,0,0,(receipt)=>{
             if(receipt){
               console.log("SESSION WITHDRAWN:",receipt)
               cb(receipt)

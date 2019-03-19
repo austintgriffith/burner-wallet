@@ -383,9 +383,11 @@ class App extends Component {
 
     let mainnetweb3 = new Web3(new Web3.providers.HttpProvider(WEB3_PROVIDER))
     let ensContract = new mainnetweb3.eth.Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
-    let daiContract
+    let daiContract;
+    let bridgeContract;
     try{
       daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x72560b830ced423fbb9ec1ae8d01b41f015a5f21")
+      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), "0xd3Bf77460d06cdEEfa1e82115038C5E07A60f951")
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
@@ -396,7 +398,7 @@ class App extends Component {
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
-    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract, pdaiContract})
+    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract, pdaiContract, bridgeContract})
   }
   componentWillUnmount() {
     clearInterval(interval)
@@ -1753,6 +1755,7 @@ render() {
                     xdaiweb3={this.state.xdaiweb3}
                     daiContract={this.state.daiContract}
                     ensContract={this.state.ensContract}
+                    bridgeContract={this.state.bridgeContract}
                     isVendor={this.state.isVendor}
                     isAdmin={this.state.isAdmin}
                     contracts={this.state.contracts}
