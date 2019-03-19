@@ -2074,8 +2074,8 @@ render() {
         let fullOpacity = 0.05
 
         let loaderOverlay = (
-          <div style={{position:"absolute",left:0,top:0,paddingTop:"5%",width:"100%",height:"100%",zIndex:10,opacity:0.95}}>
-            <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+          <div style={{position:"absolute",left:0,top:0,paddingTop:"45%",width:"100%",height:"100%",zIndex:10,opacity:0.95}}>
+            <Loader loaderImage={false} mainStyle={mainStyle}/>
           </div>
         )
 
@@ -2098,7 +2098,11 @@ render() {
 
             {loaderOverlay}
 
+
             <div className="section" style={{backgroundImage:"linear-gradient(#191919, #393939)"}}>
+
+              <img style={{position:'absolute',left:"-5%",bottom:"-5%",opacity:0.1,width:"70%",filter:"grayscale(70%)"}} src={LOADERIMAGE} />
+
               <div style={{opacity:fullOpacity, position:"absolute",left:"10%",top:"10%"}}>
                 <Scaler config={{startZoomAt:1000,origin:"0% 0%"}}>
                   <Blockie
