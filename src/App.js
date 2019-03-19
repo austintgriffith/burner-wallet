@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
+import ReactFullpage from '@fullpage/react-fullpage'
+import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events, Blockie, Scaler} from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
@@ -53,7 +54,7 @@ import Wyre from './services/wyre';
 
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
-
+const QRCode = require('qrcode.react');
 //const POA_XDAI_NODE = "https://dai-b.poa.network"
 const POA_XDAI_NODE = "https://dai.poa.network"
 
@@ -72,7 +73,34 @@ let FAILCOUNT = 0
 let mainStyle = {
   width:"100%",
   height:"100%",
-  backgroundImage:"linear-gradient(#292929, #191919)",
+  backgroundImage:"linear-gradient(#191919, #393939)",
+  backgroundColor:"#191919",
+  hotColor:"#F69E4D",
+  mainColorAlt:"#fa7d36",
+  mainColor:"#F76B1C",
+}
+let mainStyle2 = {
+  width:"100%",
+  height:"100%",
+  backgroundImage:"linear-gradient(#393939, #494949)",
+  backgroundColor:"#191919",
+  hotColor:"#F69E4D",
+  mainColorAlt:"#fa7d36",
+  mainColor:"#F76B1C",
+}
+let mainStyle3 = {
+  width:"100%",
+  height:"100%",
+  backgroundImage:"linear-gradient(#494949, #595959)",
+  backgroundColor:"#191919",
+  hotColor:"#F69E4D",
+  mainColorAlt:"#fa7d36",
+  mainColor:"#F76B1C",
+}
+let mainStyle4 = {
+  width:"100%",
+  height:"100%",
+  backgroundImage:"linear-gradient(#595959, #696969)",
   backgroundColor:"#191919",
   hotColor:"#F69E4D",
   mainColorAlt:"#fa7d36",
@@ -186,7 +214,8 @@ if(ERC20NAME=="BUFF"){
 let innerStyle = {
   maxWidth:740,
   margin:'0 auto',
-  textAlign:'left'
+  textAlign:'left',
+  height:"100%"
 }
 
 let buttonStyle = {
@@ -1091,15 +1120,20 @@ render() {
     )
   }
 
-  return (
-    <I18nextProvider i18n={i18n}>
+
+  let advanced = ""
+
+  let mainbody = (
     <div style={mainStyle}>
       <div style={innerStyle}>
+
+
+
         {extraHead}
         {networkOverlay}
         {web3_setup}
 
-        <div>
+        <div style={{height:"100%"}}>
           {header}
 
 
@@ -1323,11 +1357,15 @@ render() {
             )
           }
 
+          //<iframe src="http://cryptogs.xdai.io" width="740" height="580"/>
+
           switch(view) {
             case 'main':
             return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+              <div style={{height:"100%"}}>
+                <div className="main-card card w-100" style={{zIndex:1,height:"90%"}}>
+
+
 
 
                   {extraTokens}
@@ -1340,62 +1378,49 @@ render() {
                   <Ruler/>
                   {badgeDisplay}
 
-                  <MainCard
-                    subBalanceDisplay={subBalanceDisplay}
-                    buttonStyle={buttonStyle}
-                    address={account}
-                    balance={balance}
-                    changeAlert={this.changeAlert}
-                    changeView={this.changeView}
-                    dollarDisplay={dollarDisplay}
-                    ERC20TOKEN={ERC20TOKEN}
-                  />
-                  {moreButtons}
-                  <RecentTransactions
-                    view={this.state.view}
-                    buttonStyle={buttonStyle}
-                    ERC20TOKEN={ERC20TOKEN}
-                    transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
-                    changeView={this.changeView}
-                    address={account}
-                    block={this.state.block}
-                    recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
-                  />
+                  <div style={{position:"absolute",bottom:20,width:"100%"}}>
+                    <MainCard
+                      subBalanceDisplay={subBalanceDisplay}
+                      buttonStyle={buttonStyle}
+                      address={account}
+                      balance={balance}
+                      changeAlert={this.changeAlert}
+                      changeView={this.changeView}
+                      dollarDisplay={dollarDisplay}
+                      ERC20TOKEN={ERC20TOKEN}
+                    />
+                  </div>
+
                 </div>
-                <Bottom
-                  icon={"wrench"}
-                  text={i18n.t('advance_title')}
-                  action={()=>{
-                    this.changeView('advanced')
-                  }}
-                />
+
               </div>
             );
             case 'advanced':
-            return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+              advanced = (
+                <div>
+                  <div className="main-card card w-100" style={{zIndex:1}}>
 
-                  <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
-                  <Advanced
-                    isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
-                    buttonStyle={buttonStyle}
-                    address={account}
-                    balance={balance}
-                    changeView={this.changeView}
-                    privateKey={metaAccount.privateKey}
-                    changeAlert={this.changeAlert}
-                    goBack={this.goBack.bind(this)}
-                    setPossibleNewPrivateKey={this.setPossibleNewPrivateKey.bind(this)}
+                    <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
+                    <Advanced
+                      isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
+                      buttonStyle={buttonStyle}
+                      address={account}
+                      balance={balance}
+                      changeView={this.changeView}
+                      privateKey={metaAccount.privateKey}
+                      changeAlert={this.changeAlert}
+                      goBack={this.goBack.bind(this)}
+                      setPossibleNewPrivateKey={this.setPossibleNewPrivateKey.bind(this)}
+                    />
+                  </div>
+                  <Bottom
+                    action={()=>{
+                      this.changeView('main')
+                    }}
                   />
                 </div>
-                <Bottom
-                  action={()=>{
-                    this.changeView('main')
-                  }}
-                />
-              </div>
-            )
+              )
+              return advanced
             case 'send_by_scan':
             return (
               <SendByScan
@@ -1954,8 +1979,173 @@ render() {
         {eventParser}
       </div>
     </div>
-    </I18nextProvider>
   )
+
+  let sendButtons = (
+    <div>
+      <div className="content ops row">
+        <div className="col-6 p-1" onClick={() => this.changeView('share')}>
+          <button className="btn btn-large w-100" onClick={() => this.changeView('share')} style={buttonStyle.secondary}>
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              <i className="fas fa-share"/> Share
+            </Scaler>
+          </button>
+        </div>
+        <div className="col-6 p-1" onClick={() => this.changeView('send_with_link')}>
+          <button className="btn btn-large w-100" style={buttonStyle.secondary}>
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              <i className="fas fa-money-bill-alt"  /> Link
+            </Scaler>
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+
+  if(ERC20TOKEN){
+    sendButtons = (
+      <div>
+        <div className="content ops row">
+          <div className="col-6 p-1" onClick={() => this.changeView('share')}>
+            <button className="btn btn-large w-100" onClick={() => this.changeView('share')} style={buttonStyle.secondary}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fas fa-share"/> Share
+              </Scaler>
+            </button>
+          </div>
+          <div className="col-6 p-1" onClick={() => this.changeView('vendors')}>
+            <button className="btn btn-large w-100" style={buttonStyle.secondary}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fas fa-money-bill-alt"  /> Vendors
+              </Scaler>
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+
+
+  let fullpager = (
+    <I18nextProvider i18n={i18n}>
+    <ReactFullpage
+      render={({ state, fullpageApi }) => {
+
+
+        let fulldollaamount = ""
+
+        if(web3 && !this.checkNetwork()){
+          fulldollaamount = (
+            <div style={{fontSize:60,paddingLeft:"20%"}}>
+              Wrong Network
+              <div>
+                <input style={{fontSize:16,zIndex:13,position:'absolute',right:48,top:192,width:194}} value="https://dai.poa.network" />
+                <img style={{zIndex:12,position:'absolute',right:0,top:0,maxHeight:370}} src={customRPCHint} />
+              </div>
+            </div>
+          )
+        }
+        else if(this.state.balance){
+          fulldollaamount = (
+            <div style={{position:"absolute",top:"70%",left:"50%",color:"#FFFFFF"}} onClick={() => fullpageApi.moveSectionDown()}>
+              <div style={{transform:"scale(8)"}}>
+                <Scaler config={{startZoomAt:1000,origin:"0% 50%"}}>
+                  ${dollarDisplay(this.state.balance)}
+                </Scaler>
+              </div>
+            </div>
+          )
+        }else{
+          fulldollaamount = (
+            <div style={{position:"absolute",top:"70%",left:"50%",color:"#FFFFFF"}} onClick={() => fullpageApi.moveSectionDown()}>
+              <div style={{transform:"scale(8)"}}>
+                <Loader loaderImage={false} mainStyle={mainStyle}/>
+              </div>
+            </div>
+
+          )
+        }
+
+        //{networkOverlay}
+        return (
+          <ReactFullpage.Wrapper>
+            <div className="section">
+
+
+
+
+              <div style={{position:"absolute",left:"10%",top:"10%"}}>
+                <Scaler config={{startZoomAt:1000,origin:"0% 0%"}}>
+                  <Blockie
+                      address={this.state.account}
+                      config={{size:44}}>
+                  </Blockie>
+                </Scaler>
+              </div>
+
+              <div style={{position:'absolute',right:"10%",top:"10%"}}>
+                <Scaler config={{startZoomAt:1000,origin:"0% 0%"}}>
+                  <div style={{position:"absolute",right:"0%",top:0,backgroundColor:"#FFFFFF",padding:13,paddingBottom:6}}>
+                    <QRCode value={this.state.account} size={325}/>
+                  </div>
+                </Scaler>
+              </div>
+
+              <div>
+                {fulldollaamount}
+              </div>
+              <div style={{position:"absolute",top:"90%",transform:"scale(3)",left:"50%",color:"#FFFFFF"}} onClick={() => fullpageApi.moveSectionDown()}>
+                <div style={{opacity:0.25}}>
+                  <i className="fa fa-angle-double-down"></i>
+                </div>
+              </div>
+            </div>
+            <div className="section">
+              {mainbody}
+            </div>
+            <div className="section">
+              <div style={mainStyle2}>
+                <div style={innerStyle}>
+                  <div className="main-card card w-100" style={{zIndex:1}}>
+
+                    {sendButtons}
+
+                    <MoreButtons
+                      buttonStyle={buttonStyle}
+                      changeView={this.changeView}
+                      isVendor={state.isVendor&&state.isVendor.isAllowed}
+                    />
+                    <RecentTransactions
+                      view={state.view}
+                      buttonStyle={buttonStyle}
+                      ERC20TOKEN={ERC20TOKEN}
+                      transactionsByAddress={ERC20TOKEN?state.fullTransactionsByAddress:state.transactionsByAddress}
+                      changeView={this.changeView}
+                      address={account}
+                      block={state.block}
+                      recentTxs={ERC20TOKEN?state.fullRecentTxs:state.recentTxs}
+                    />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div className="section">
+              <div style={mainStyle3}>
+                <div style={innerStyle}>
+                  <div style={{color:"#FFFFFF",fontSize:40,textAlign:"center",width:"100%"}}>
+                    <i className="fas fa-wrench"/>  Advanced
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactFullpage.Wrapper>
+        );
+      }}
+    /></I18nextProvider>
+  )
+  return fullpager
 }
 }
 

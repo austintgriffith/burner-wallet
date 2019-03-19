@@ -50,11 +50,12 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
 
   let scanButtonStyle = {
     opacity:sendButtonOpacity,
-    position:"fixed",
+    position:"absolute",
     right:20,
-    bottom:20,
+    top:-200,
     zIndex:2,
-    cursor:"pointer"
+    cursor:"pointer",
+    transform:"scale(2)",
   }
 
   if(view=="send_to_address"){
