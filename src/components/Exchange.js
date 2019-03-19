@@ -600,10 +600,16 @@ export default class Exchange extends React.Component {
           }
         }
 
-        this.setState({
-          loaderBarColor:"#f5eb4a",
-          loaderBarStatusText:message,
-        })
+          this.setState({
+            loaderBarColor:"#f5eb4a",
+            loaderBarStatusText:message,
+          })
+          paramsObject.to = this.props.daiContract._address
+          paramsObject.data = this.props.bridgeContract.methods.deposit(
+            this.state.daiAddress,
+            this.state.mainnetweb3.utils.toWei(""+amount,"ether"),
+            1
+          ).encodeABI()
 
         paramsObject = {
           from: this.state.daiAddress,
