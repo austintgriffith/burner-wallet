@@ -10,7 +10,6 @@ export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recent
   for(let r in recentTxs){
     let thisValue = parseFloat(recentTxs[r].value)
     if(thisValue>0.0){
-
       let extraUp = 0
       if(view=="receive"){
         extraUp=-10

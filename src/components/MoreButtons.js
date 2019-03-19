@@ -7,13 +7,14 @@ import i18n from '../i18n';
 
 
 
-export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
+export default ({fullpageApi, isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
 
   let exchangeButton
 
   if(!isVendor){
     exchangeButton  = (
       <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
+        if(fullpageApi) fullpageApi.moveSectionUp()
         changeView('exchange')}
       }>
         <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
@@ -24,6 +25,7 @@ export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert,
   }else{
     exchangeButton  = (
       <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
+        if(fullpageApi) fullpageApi.moveSectionUp()
         changeView('cash_out')}
       }>
         <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
@@ -38,6 +40,7 @@ export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert,
     <div className="content bridge row">
       <div className="col-6 p-1">
         <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
+          if(fullpageApi) fullpageApi.moveSectionUp()
           changeView('request_funds')}
         }>
           <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>

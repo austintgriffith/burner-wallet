@@ -52,7 +52,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     opacity:sendButtonOpacity,
     position:"absolute",
     right:20,
-    top:-200,
+    top:-290,
     zIndex:2,
     cursor:"pointer",
     transform:"scale(2)",
