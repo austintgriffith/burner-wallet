@@ -2114,7 +2114,7 @@ render() {
 
               <div style={{opacity:fullOpacity, position:'absolute',right:"10%",top:"10%"}}>
                 <Scaler config={{startZoomAt:1000,origin:"0% 0%"}}>
-                  <div style={{position:"absolute",right:"0%",top:0,backgroundColor:"#FFFFFF",padding:13,paddingBottom:6}}>
+                  <div style={{position:"absolute",right:"0%",top:0,backgroundColor:"#FFFFFF",padding:14,paddingBottom:7}}>
                     {actualQR}
                   </div>
                 </Scaler>

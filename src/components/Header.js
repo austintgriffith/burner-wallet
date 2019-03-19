@@ -52,10 +52,10 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     opacity:sendButtonOpacity,
     position:"absolute",
     right:20,
-    top:-290,
+    top:-180,
     zIndex:2,
     cursor:"pointer",
-    transform:"scale(2)",
+    transform:"scale(1.5)",
   }
 
   if(view=="send_to_address"){
