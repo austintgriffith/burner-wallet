@@ -49,6 +49,7 @@ import cypherpunk from './cypherpunk.png';
 import eth from './ethereum.png';
 import dai from './dai.jpg';
 import xdai from './xdai.jpg';
+import Wyre from './services/wyre';
 
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
@@ -66,6 +67,7 @@ let ERC20IMAGE
 let ERC20NAME
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
+let FAILCOUNT = 0
 
 let mainStyle = {
   width:"100%",
@@ -357,6 +359,10 @@ class App extends Component {
     this.setState(update)
   }
   componentDidMount(){
+
+    Wyre.configure();
+
+
     document.body.style.backgroundColor = mainStyle.backgroundColor
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
@@ -675,6 +681,15 @@ class App extends Component {
       });
     }else{
       console.log("FUND IS NOT READY YET, WAITING...")
+      if(FAILCOUNT++>1){
+        this.changeAlert({type: 'danger', message: 'Sorry. Failed to claim. Already claimed?'})
+        setTimeout(() => {
+          this.setState({sending: false}, () => {
+            //alert("DONE")
+            window.location = "/"
+          })
+        }, 2000)
+      }
       setTimeout(()=>{
         this.chainClaim(tx, contracts)
       },3000)
@@ -713,17 +728,17 @@ class App extends Component {
         }
         console.log("Calling encodeABU on Links.claim() ",this.state.claimId, sig, claimHash, this.state.account)
         let claimData = this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account).encodeABI()
-        let network_gas_price = await this.state.web3.eth.getGasPrice();
+        //let network_gas_price = await this.state.web3.eth.getGasPrice();
         // Sometimes, xDai network returns '0'
-        if (!network_gas_price || network_gas_price == 0) {
-          network_gas_price = 222222222222; // 222.(2) gwei
-        }
+        //if (!network_gas_price || network_gas_price == 0) {
+        //  network_gas_price = 222222222222; // 222.(2) gwei
+        //}
         let options = {
           from: this.state.account,
           to: this.state.contracts.Links._address,
           txfee: 12,
           gas_limit: 150000,
-          gas_price: Math.trunc(network_gas_price * 1.3)
+          gas_price: Math.trunc(1000000000 * 1.3)
         }
         console.log("Hitting relayClient with relayTransaction()",claimData, options)
         relayClient.relayTransaction(claimData, options).then((transaction) => {
@@ -741,6 +756,13 @@ class App extends Component {
       //  console.log(error); //Get Gas price promise
       //});
     }else{
+      this.changeAlert({type: 'danger', message: 'Sorry. Failed to claim. Already claimed?'})
+      setTimeout(() => {
+        this.setState({sending: false}, () => {
+          //alert("DONE")
+          window.location = "/"
+        })
+      }, 2000)
       console.log("Fund is not valid yet, trying again....")
       setTimeout(this.relayClaim,2000)
     }

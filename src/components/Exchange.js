@@ -11,6 +11,12 @@ import Web3 from 'web3';
 import axios from "axios"
 import i18n from '../i18n';
 
+import Wyre from '../services/wyre';
+import wyrelogo from '../wyre.png';
+
+import InputRange from 'react-input-range';
+import 'react-input-range/lib/css/index.css';
+
 const GASBOOSTPRICE = 0.25
 
 const logoStyle = {
@@ -109,7 +115,9 @@ export default class Exchange extends React.Component {
       gwei: 5,
       maxWithdrawlAmount: 0.00,
       withdrawalExplanation: i18n.t('exchange.withdrawal_explanation'),
-      gettingGas:false
+      gettingGas:false,
+      wyreFundAmount: 5,
+      wyreWidgetOpen: false,
     }
   }
   updateState = (key, value) => {
@@ -2025,6 +2033,42 @@ export default class Exchange extends React.Component {
       </button>
     )
 
+    let fundByWyreButton = (
+      <button
+        className="btn btn-large w-100 wyre-button--font-size"
+        disabled={buttonsDisabled}
+        style={
+            Object.assign({}, this.props.buttonStyle.secondary, {
+                color: '#fff',
+                backgroundColor: '#0055ff',
+                border: '2px solid #0055ff',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            })
+        }
+        onClick={()=>{
+          this.setState({ wyreWidgetOpen: true });
+          Wyre.displayWidget(
+              this.props.address,
+              this.state.wyreFundAmount,
+              () => { this.setState({ wyreWidgetOpen: false }); }
+          );
+        }}
+      ><Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+        <div style={{flex: '0 0 30px', textAlign: 'center'}}>
+            {this.state.wyreWidgetOpen ? (
+                <>
+                    <span style={{paddingRight: '10px'}}>
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                    <span>Loading...</span>
+                </>) : `Buy $${this.state.wyreFundAmount}`}
+        </div>
+        </Scaler>
+      </button>
+    )
+
 
     let sendEthRow = ""
     if(this.state.sendEth){
@@ -2185,12 +2229,12 @@ export default class Exchange extends React.Component {
             <div className="col-3 p-1" style={{marginTop:8}}>
               xDai
             </div>
-            <div className="col-5 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
+            <div className="col-4 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   ${this.props.dollarDisplay(this.props.xdaiBalance)}
                 </Scaler>
             </div>
-            <div className="col-2 p-1" style={{marginTop:8}}>
+            <div className="col-3 p-1" style={{marginTop:8}}>
               {sendXdaiButton}
             </div>
 
@@ -2210,12 +2254,12 @@ export default class Exchange extends React.Component {
             <div className="col-3 p-1" style={{marginTop:9}}>
               DAI
             </div>
-            <div className="col-5 p-1" style={{marginTop:9,whiteSpace:"nowrap"}}>
+            <div className="col-4 p-1" style={{marginTop:9,whiteSpace:"nowrap"}}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 ${this.props.dollarDisplay(this.props.daiBalance)}
               </Scaler>
             </div>
-            <div className="col-2 p-1" style={{marginTop:8}}>
+            <div className="col-3 p-1" style={{marginTop:8}}>
               {sendDaiButton}
             </div>
           </div>
@@ -2234,15 +2278,63 @@ export default class Exchange extends React.Component {
             <div className="col-3 p-1" style={{marginTop:10}}>
               ETH
             </div>
-            <div className="col-5 p-1" style={{marginTop:10,whiteSpace:"nowrap"}}>
+            <div className="col-4 p-1" style={{marginTop:10,whiteSpace:"nowrap"}}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 ${this.props.dollarDisplay(this.props.ethBalance*this.props.ethprice)}
               </Scaler>
             </div>
-            <div className="col-2 p-1" style={{marginTop:8}}>
+            <div className="col-3 p-1" style={{marginTop:8}}>
               {sendEthButton}
             </div>
           </div>
+
+
+          { (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("wyre.xdai.io") >= 0 || window.location.hostname.indexOf("s.xdai.io") >= 0) && (
+            <div className="send-to-address card w-100" style={{marginTop:20,borderBottom:0,paddingTop:50}}>
+              <div className="content ops row">
+                <div className="col-2 p-1">
+                  <img style={logoStyle} src={wyrelogo} />
+                </div>
+                <div className="col-2 p-1" style={{marginTop:10}}>
+                  Wyre
+                </div>
+                <div className="col-5 p-1" style={{whiteSpace:"nowrap"}}>
+                    {/*<div className="input-group">
+                        <div className="input-group-prepend">
+                            <div className="input-group-text">$</div>
+                        </div>
+                        <input
+                            type="number"
+                            step="0.1"
+                            className="form-control"
+                            placeholder="0.00"
+                            value={this.state.wyreFundAmount}
+                            onChange={event =>
+                                this.updateState('wyreFundAmount', event.target.value)
+                            }
+                        />
+                    </div>*/}
+                    <div className="wyre-slider" style={{padding: '0 20px', display: 'flex', alignItems: 'center', paddingTop: '15px',}}>
+                    <InputRange
+                        maxValue={25}
+                        minValue={5}
+                        value={this.state.wyreFundAmount}
+                        formatLabel={value => `$${value}`}
+                        step={1}
+                        onChange={value =>
+                            this.updateState('wyreFundAmount', value)
+                        }
+                    />
+                    </div>
+                </div>
+                <div className="col-3 p-1" style={{marginTop:8}}>
+                  {fundByWyreButton}
+                </div>
+              </div>
+            </div>
+          )}
+
+
           {sendEthRow}
           {this.state.extraGasUpDisplay}
 
