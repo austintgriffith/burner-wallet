@@ -32,6 +32,22 @@ export default class Receive extends React.Component {
          console.log("Finished hitting the Ching servers:",response)
        })
     }
+    console.log("CHECKING PARAMS:",this.props.receipt.params)
+    if(this.props.receipt && this.props.receipt.params && this.props.receipt.params.callback){
+      console.log("Redirecting to ",this.props.receipt.params.callback,"with data:",this.props.receipt)
+      let returnObject = {
+        to: this.props.receipt.to,
+        from: this.props.receipt.from,
+        amount: this.props.receipt.amount,
+        transactionHash: this.props.receipt.result.transactionHash,
+        status: this.props.receipt.result.status,
+        data: this.props.receipt.result.v,
+      }
+      console.log("returnObject",returnObject)
+      setTimeout(()=>{
+        window.location = this.props.receipt.params.callback+"?receipt="+(encodeURI(JSON.stringify(returnObject)))
+      },2500)
+    }
   }
   render() {
     let {receipt,buttonStyle,ERC20TOKEN,address, balance, changeView, dollarDisplay,account} = this.props
