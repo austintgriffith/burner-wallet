@@ -86,9 +86,9 @@ let titleImage = (
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "http://localhost:8545"
-  WEB3_PROVIDER = "http://localhost:8545";
-  CLAIM_RELAY = 'http://localhost:18462'
+  WEB3_PROVIDER = POA_XDAI_NODE;
+  CLAIM_RELAY = 'https://x.xdai.io'
+  ERC20TOKEN = false//'Burner'
   if(true){
     ERC20NAME = false
     ERC20TOKEN = false
@@ -145,6 +145,11 @@ else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   LOADERIMAGE = cypherpunk
 }
 else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
+  WEB3_PROVIDER = "https://dai.poa.network";
+  ERC20NAME = false
+  ERC20TOKEN = false
+  ERC20IMAGE = false
+} else {
   WEB3_PROVIDER = "https://dai.poa.network";
   ERC20NAME = false
   ERC20TOKEN = false
