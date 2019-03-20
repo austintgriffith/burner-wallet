@@ -302,7 +302,7 @@ class App extends Component {
     window.addEventListener('message', (message) => {
       if(message.data == 'burn'){
         JSON.parse(message.data)
-        conosole.log('Got newPK')
+        console.log('Got newPK')
       }
     })
 
@@ -1705,8 +1705,8 @@ render() {
                   dollarDisplay={dollarDisplay}
                   burnWallet={()=>{
                     burnMetaAccount()
-                    if(RNMessageChannel){
-                      RNMessageChannel.send("burn")
+                    if(window.isReactNative) {
+                      window.ReactNativeWebView.postMessage("burn")
                     }
                     if(localStorage&&typeof localStorage.setItem == "function"){
                       localStorage.setItem(this.state.account+"loadedBlocksTop","")
