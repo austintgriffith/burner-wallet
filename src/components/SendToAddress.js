@@ -75,9 +75,9 @@ export default class SendToAddress extends React.Component {
     this.state = initialState
   //  console.log("SendToAddress constructor",this.state)
     window.history.pushState({},"", "/");
-
-
-
+    window.updateToAddress = (dest) => {
+      this.state.toAddress = dest
+    } 
   }
 
   updateState = async (key, value) => {
@@ -281,7 +281,11 @@ export default class SendToAddress extends React.Component {
                   ref={(input) => { this.addressInput = input; }}
                        onChange={event => this.updateState('toAddress', event.target.value)} />
                 <div className="input-group-append" onClick={() => {
-                  this.props.openScanner({view:"send_to_address"})
+                    if(window.isReactNative) {
+                      window.ReactNativeWebView.postMessage("update_qr")
+                    } else {
+                      this.props.openScanner({view:"send_to_address"})
+                    }
                 }}>
                   <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.primary}>
                     <i style={{color:"#FFFFFF"}} className="fas fa-qrcode" />

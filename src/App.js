@@ -84,6 +84,25 @@ let titleImage = (
   <span style={{paddingRight:20,paddingLeft:16}}><i className="fas fa-fire" /></span>
 )
 
+
+WEB3_PROVIDER = POA_XDAI_NODE;
+CLAIM_RELAY = 'https://x.xdai.io'
+ERC20TOKEN = false//'Burner'
+if(true){
+  ERC20NAME = false
+  ERC20TOKEN = false
+  ERC20IMAGE = false
+}else{
+  ERC20NAME = 'BUFF'
+  ERC20VENDOR = 'VendingMachine'
+  ERC20TOKEN = 'ERC20Vendable'
+  ERC20IMAGE = bufficorn
+  XDAI_PROVIDER = POA_XDAI_NODE
+  WEB3_PROVIDER = POA_XDAI_NODE;
+  CLAIM_RELAY = 'https://x.xdai.io'
+}
+
+
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
   WEB3_PROVIDER = POA_XDAI_NODE;
@@ -98,8 +117,8 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
     ERC20IMAGE = bufficorn
-    XDAI_PROVIDER = "http://localhost:8545"
-    WEB3_PROVIDER = "http://localhost:8545";
+    XDAI_PROVIDER = POA_XDAI_NODE
+    WEB3_PROVIDER = POA_XDAI_NODE;
     LOADERIMAGE = bufficorn
   }
 
@@ -145,11 +164,6 @@ else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   LOADERIMAGE = cypherpunk
 }
 else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
-  ERC20NAME = false
-  ERC20TOKEN = false
-  ERC20IMAGE = false
-} else {
   WEB3_PROVIDER = "https://dai.poa.network";
   ERC20NAME = false
   ERC20TOKEN = false
@@ -231,9 +245,8 @@ let interval
 let intervalLong
 
 class App extends Component {
+
   constructor(props) {
-
-
     console.log("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[["+title+"]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
     let view = 'main'
     let cachedView = localStorage.getItem("view")
@@ -242,6 +255,14 @@ class App extends Component {
       view = HARDCODEVIEW
     }else if(cachedViewSetAge < 300000 && cachedView&&cachedView!=0){
       view = cachedView
+    }
+    // function to be called by ReactNative webview once it decodes a QR code
+    window.sendToAddress = (dest) => { 
+      this.setState({
+        scannerState: {toAddress: dest},
+        view: "send_to_address"
+      })
+      // this.returnToState({toAddress:dest}) // set the dest address received by QR code reader
     }
     console.log("CACHED VIEW",view)
     super(props);
@@ -264,7 +285,6 @@ class App extends Component {
       selectedBadge: false,
     };
     this.alertTimeout = null;
-
     try{
       RNMessageChannel.on('json', update => {
         try{
@@ -280,6 +300,13 @@ class App extends Component {
         }catch(e){console.log(e)}
       })
     }catch(e){console.log(e)}
+
+    window.addEventListener('message', (message) => {
+      if(message.data == 'burn'){
+        JSON.parse(message.data)
+        console.log('Got newPK')
+      }
+    })
 
   }
   parseAndCleanPath(path){
@@ -307,7 +334,11 @@ class App extends Component {
     })
   }
   openScanner(returnState){
-    this.setState({returnState:returnState,view:"send_by_scan"})
+    if(window.isReactNative) {
+      window.ReactNativeWebView.postMessage("qr")
+    } else {
+      this.setState({returnState:returnState,view:"send_by_scan"})
+    }
   }
   returnToState(scannerState){
     let updateState = Object.assign({scannerState:scannerState}, this.state.returnState);
@@ -1402,22 +1433,20 @@ render() {
               </div>
             )
             case 'send_by_scan':
-            return (
-              <SendByScan
-                parseAndCleanPath={this.parseAndCleanPath.bind(this)}
-                returnToState={this.returnToState.bind(this)}
-                returnState={this.state.returnState}
-                mainStyle={mainStyle}
-                goBack={this.goBack.bind(this)}
-                changeView={this.changeView}
-                onError={(error) =>{
-                  this.changeAlert("danger",error)
-                }}
-              />
-            );
+              return (
+                <SendByScan
+                  parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                  returnToState={this.returnToState.bind(this)}
+                  returnState={this.state.returnState}
+                  mainStyle={mainStyle}
+                  goBack={this.goBack.bind(this)}
+                  changeView={this.changeView}
+                  onError={(error) =>{
+                    this.changeAlert("danger",error)
+                  }}
+                />
+              );
             case 'withdraw_from_private':
-
-
               return (
                 <div>
                   <div className="send-to-address card w-100" style={{zIndex:1}}>
@@ -1447,68 +1476,68 @@ render() {
                 </div>
               );
             case 'send_badge':
-            return (
-              <div>
-                <div className="send-to-address card w-100" style={{zIndex:1}}>
-                  <NavCard title={this.state.badges[this.state.selectedBadge].name} titleLink={this.state.badges[this.state.selectedBadge].external_url} goBack={this.goBack.bind(this)}/>
-                  <SendBadge
-                    changeView={this.changeView}
-                    ensLookup={this.ensLookup.bind(this)}
-                    ERC20TOKEN={ERC20TOKEN}
-                    buttonStyle={buttonStyle}
-                    balance={balance}
-                    web3={this.state.web3}
-                    contracts={this.state.contracts}
-                    address={account}
-                    scannerState={this.state.scannerState}
-                    tx={this.state.tx}
-                    goBack={this.goBack.bind(this)}
-                    openScanner={this.openScanner.bind(this)}
-                    setReceipt={this.setReceipt}
-                    changeAlert={this.changeAlert}
-                    dollarDisplay={dollarDisplay}
-                    badge={this.state.badges[this.state.selectedBadge]}
-                    clearBadges={this.clearBadges.bind(this)}
+              return (
+                <div>
+                  <div className="send-to-address card w-100" style={{zIndex:1}}>
+                    <NavCard title={this.state.badges[this.state.selectedBadge].name} titleLink={this.state.badges[this.state.selectedBadge].external_url} goBack={this.goBack.bind(this)}/>
+                    <SendBadge
+                      changeView={this.changeView}
+                      ensLookup={this.ensLookup.bind(this)}
+                      ERC20TOKEN={ERC20TOKEN}
+                      buttonStyle={buttonStyle}
+                      balance={balance}
+                      web3={this.state.web3}
+                      contracts={this.state.contracts}
+                      address={account}
+                      scannerState={this.state.scannerState}
+                      tx={this.state.tx}
+                      goBack={this.goBack.bind(this)}
+                      openScanner={this.openScanner.bind(this)}
+                      setReceipt={this.setReceipt}
+                      changeAlert={this.changeAlert}
+                      dollarDisplay={dollarDisplay}
+                      badge={this.state.badges[this.state.selectedBadge]}
+                      clearBadges={this.clearBadges.bind(this)}
+                    />
+                  </div>
+                  <Bottom
+                    text={i18n.t('done')}
+                    action={this.goBack.bind(this)}
                   />
                 </div>
-                <Bottom
-                  text={i18n.t('done')}
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            )
+              )
             case 'send_to_address':
-            return (
-              <div>
-                <div className="send-to-address card w-100" style={{zIndex:1}}>
-                  <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
-                  {defaultBalanceDisplay}
-                  <SendToAddress
-                    parseAndCleanPath={this.parseAndCleanPath.bind(this)}
-                    openScanner={this.openScanner.bind(this)}
-                    scannerState={this.state.scannerState}
-                    ensLookup={this.ensLookup.bind(this)}
-                    ERC20TOKEN={ERC20TOKEN}
-                    buttonStyle={buttonStyle}
-                    balance={balance}
-                    web3={this.state.web3}
-                    address={account}
-                    send={send}
-                    goBack={this.goBack.bind(this)}
-                    changeView={this.changeView}
-                    setReceipt={this.setReceipt}
-                    changeAlert={this.changeAlert}
-                    dollarDisplay={dollarDisplay}
+              return (
+                <div>
+                  <div className="send-to-address card w-100" style={{zIndex:1}}>
+                    <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
+                    {defaultBalanceDisplay}
+                    <SendToAddress
+                      parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                      openScanner={this.openScanner.bind(this)}
+                      scannerState={this.state.scannerState}
+                      ensLookup={this.ensLookup.bind(this)}
+                      ERC20TOKEN={ERC20TOKEN}
+                      buttonStyle={buttonStyle}
+                      balance={balance}
+                      web3={this.state.web3}
+                      address={account}
+                      send={send}
+                      goBack={this.goBack.bind(this)}
+                      changeView={this.changeView}
+                      setReceipt={this.setReceipt}
+                      changeAlert={this.changeAlert}
+                      dollarDisplay={dollarDisplay}                   
+                    />
+                  </div>
+                  <Bottom
+                    text={i18n.t('cancel')}
+                    action={this.goBack.bind(this)}
                   />
                 </div>
-                <Bottom
-                  text={i18n.t('cancel')}
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            );
+              );
             case 'receipt':
-            return (
+              return (
               <div>
                 <div className="main-card card w-100" style={{zIndex:1}}>
 
@@ -1538,7 +1567,7 @@ render() {
                   action={this.goBack.bind(this)}
                 />
               </div>
-            );
+              );  
             case 'receive':
             return (
               <div>
@@ -1698,8 +1727,8 @@ render() {
                   dollarDisplay={dollarDisplay}
                   burnWallet={()=>{
                     burnMetaAccount()
-                    if(RNMessageChannel){
-                      RNMessageChannel.send("burn")
+                    if(window.isReactNative) {
+                      window.ReactNativeWebView.postMessage("burn")
                     }
                     if(localStorage&&typeof localStorage.setItem == "function"){
                       localStorage.setItem(this.state.account+"loadedBlocksTop","")
