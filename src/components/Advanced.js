@@ -3,7 +3,12 @@ import { Scaler } from "dapparatus";
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18n from '../i18n';
-import { QR as QRCode } from 'rimble-ui'
+import {
+  Button,
+  OutlineButton,
+  Input,
+  QR as QRCode
+} from 'rimble-ui'
 
 export default class Advanced extends React.Component {
 
@@ -53,9 +58,9 @@ export default class Advanced extends React.Component {
     if(this.state.newPrivateKey){
       inputPrivateEyeButton = (
         <div className="col-2 p-1">
-          <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{this.setState({privateKeyHidden:!this.state.privateKeyHidden})}}>
+          <Button onClick={()=>{this.setState({privateKeyHidden:!this.state.privateKeyHidden})}}>
             <i className="fas fa-eye"></i>
-          </button>
+          </Button>
         </div>
       )
     }else{
@@ -65,13 +70,19 @@ export default class Advanced extends React.Component {
     let inputPrivateKeyRow = (
       <div className="content ops row">
         <div className={inputPrivateSize}>
-            <input type={this.state.privateKeyHidden?"password":"text"}  autocorrect="off" autocapitalize="none"  autocorrect="off" autocapitalize="none" className="form-control" placeholder="private key" value={this.state.newPrivateKey}
-                   onChange={event => this.setState({newPrivateKey:event.target.value})} />
+          <Input
+            type={this.state.privateKeyHidden?"password":"text"}
+            autocorrect="off"
+            autocapitalize="none"
+            className="form-control"
+            placeholder="private key"
+            value={this.state.newPrivateKey}
+            onChange={event => this.setState({newPrivateKey:event.target.value})}
+          />
         </div>
         {inputPrivateEyeButton}
         <div className="col-6 p-1">
-          <button className="btn btn-large w-100" style={this.props.buttonStyle.primary}
-                  onClick={()=>{
+          <Button width={1} onClick={()=>{
                     console.log(this.state.newPrivateKey)
                     if(this.state && this.state.newPrivateKey && this.state.newPrivateKey.length>=64&&this.state.newPrivateKey.length<=66){
                       //let pkutils = require("ethereum-mnemonic-privatekey-utils")
@@ -89,7 +100,7 @@ export default class Advanced extends React.Component {
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <i className="fas fa-plus-square"/> {i18n.t('create')}
             </Scaler>
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -101,9 +112,9 @@ export default class Advanced extends React.Component {
     if(this.state.newSeedPhrase){
       inputSeedEyeButton = (
         <div className="col-2 p-1">
-          <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{this.setState({seedPhraseHidden:!this.state.seedPhraseHidden})}}>
+          <Button width={1} onClick={()=>{this.setState({seedPhraseHidden:!this.state.seedPhraseHidden})}}>
             <i className="fas fa-eye"></i>
-          </button>
+          </Button>
         </div>
       )
     }else{
@@ -113,13 +124,19 @@ export default class Advanced extends React.Component {
     let inputSeedRow = (
       <div className="content ops row" style={{paddingTop:10}}>
         <div className={inputSeedSize}>
-        <input type={this.state.seedPhraseHidden?"password":"text"}  autocorrect="off" autocapitalize="none" className="form-control" placeholder="seed phrase" value={this.state.newSeedPhrase}
-               onChange={event => this.setState({newSeedPhrase:event.target.value})} />
+          <Input
+            type={this.state.seedPhraseHidden?"password":"text"}
+            autocorrect="off"
+            autocapitalize="none"
+            className="form-control"
+            placeholder="seed phrase"
+            value={this.state.newSeedPhrase}
+            onChange={event => this.setState({newSeedPhrase:event.target.value})}
+          />
         </div>
         {inputSeedEyeButton}
         <div className="col-6 p-1">
-          <button className="btn btn-large w-100" style={this.props.buttonStyle.primary}
-                  onClick={()=>{
+          <Button width={1} onClick={()=>{
                     if(!this.state.newSeedPhrase){
                       changeAlert({type: 'warning', message: 'Invalid seed phrase.'})
                     }else{
@@ -132,7 +149,7 @@ export default class Advanced extends React.Component {
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <i className="fas fa-plus-square"/> {i18n.t('create')}
             </Scaler>
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -145,20 +162,20 @@ export default class Advanced extends React.Component {
         <div className="content ops row" style={{marginBottom:10}}>
           <div className="col-6 p-1">
             <a href="https://github.com/austintgriffith/burner-wallet" style={{color:"#FFFFFF"}} target="_blank">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}>
+              <OutlineButton width={1}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-code"/> {i18n.t('code')}
                 </Scaler>
-              </button>
+              </OutlineButton>
             </a>
           </div>
           <div className="col-6 p-1">
             <a href="https://medium.com/gitcoin/ethereum-in-emerging-economies-b235f8dac2f2" style={{color:"#FFFFFF"}} target="_blank">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}>
+              <OutlineButton width={1}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-info"/> {i18n.t('about')}
                 </Scaler>
-              </button>
+              </OutlineButton>
             </a>
           </div>
         </div>
@@ -174,23 +191,23 @@ export default class Advanced extends React.Component {
           <div className="content ops row" style={{marginBottom:10}}>
 
             <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
+            <Button width={1} onClick={()=>{
               this.setState({privateKeyQr:!this.state.privateKeyQr})
             }}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-key"/> {i18n.t('show')}
               </Scaler>
-            </button>
+            </Button>
             </div>
 
             <CopyToClipboard text={privateKey}>
               <div className="col-6 p-1"
                    onClick={() => changeAlert({type: 'success', message: 'Private Key copied to clipboard'})}>
-                <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}>
+                <Button width={1}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                     <i className="fas fa-key"/> {i18n.t('copy')}
                   </Scaler>
-                </button>
+                </Button>
               </div>
             </CopyToClipboard>
 
@@ -206,15 +223,14 @@ export default class Advanced extends React.Component {
         <div>
           <div className="content ops row" >
             <div className="col-12 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.primary}
-                      onClick={()=>{
-                        console.log("BALANCE",balance)
-                        changeView('burn-wallet')
-                      }}>
+              <Button width={1} onClick={()=>{
+                console.log("BALANCE",balance)
+                changeView('burn-wallet')
+              }}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-fire"/> {i18n.t('burn')}
                 </Scaler>
-              </button>
+              </Button>
             </div>
           </div>
           <hr style={{paddingTop:20}}/>
@@ -232,18 +248,24 @@ export default class Advanced extends React.Component {
 
         <div className="content ops row">
           <div className="col-6 p-1">
-              <input type="text" autocorrect="off" autocapitalize="none" className="form-control" placeholder="any text to encode" value={this.state.newQr}
-                     onChange={event => this.setState({newQr:event.target.value})} />
+            <Input
+              type="text"
+              autocorrect="off"
+              autocapitalize="none"
+              className="form-control"
+              placeholder="any text to encode"
+              value={this.state.newQr}
+              onChange={event => this.setState({newQr:event.target.value})}
+            />
           </div>
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}
-                    onClick={()=>{
-                      this.setState({showingQr:this.state.newQr})
-                    }}>
+            <Button width={1} onClick={()=>{
+              this.setState({showingQr:this.state.newQr})
+            }}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-qrcode"/> {i18n.t('advanced.to_qr')}
               </Scaler>
-            </button>
+            </Button>
           </div>
         </div>
         {showingQr}
@@ -251,15 +273,14 @@ export default class Advanced extends React.Component {
         {isVendor &&
         <div>
           <div className="content ops row" style={{marginBottom:10}}>
-
             <div className="col-12 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-              this.props.changeView("exchange")
-            }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-key"/> {"Exchange"}
-              </Scaler>
-            </button>
+              <Button width={1} onClick={()=>{
+                this.props.changeView("exchange")
+              }}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  <i className="fas fa-key"/> {"Exchange"}
+                </Scaler>
+              </Button>
             </div>
           </div>
         </div>
