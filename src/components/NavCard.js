@@ -1,44 +1,52 @@
 import React from 'react';
-import Ruler from "./Ruler";
-import { Scaler } from "dapparatus";
-import { Text, Flex, Button, Link, TextButton, Box } from "rimble-ui";
-import theme from "../theme.js";
+import {
+  Text,
+  Link,
+  Icon,
+  Flex
+} from "rimble-ui";
 
-export  default ({title,titleLink, goBack, darkMode}) => {
+export default ({title, titleLink, goBack, darkMode}) => {
 
   let titleDisplay = ""
 
-  if(titleLink){
+  if (titleLink){
     titleDisplay = (
-      <Link href={titleLink} target="_blank" textAlign="center" fontSize={[3,3,3]}>
+      <Link href={titleLink} target="_blank" textAlign={'center'} fontSize={3}>
         {title}
       </Link>
     )
-  }else{
+  } else {
     titleDisplay = (
-      <Text textAlign="center" fontSize={[3,3,3]}>
+      <Text textAlign={'center'} fontSize={3}>
         {title}
       </Text>
     )
   }
 
   return (
-      <Box borderBottom={1} borderColor={"#E8E8E8"} mb={2} pb={3}>
-        <TextButton
-          icononly
-          icon={'Close'}
-          color={'moon-gray'}
-          position={'absolute'}
-          top={0}
-          right={0}
-          mt={3}
-          mr={3}
-          zIndex={99}
-          onClick={()=>{console.log("CLICKED");goBack()}}
-        />
-
-        {titleDisplay}
-
-      </Box>
+    <Flex
+      position={'relative'}
+      alignItems={'center'}
+      justifyContent={'center'}
+      borderBottom={1}
+      borderColor={'moon-gray'}
+      height={'3rem'}
+      mb={3}
+      pb={3}
+    >
+      {titleDisplay}
+      <Flex
+        position={'absolute'}
+        alignItems={'center'}
+        justifyContent={'center'}
+        color={'moon-gray'}
+        size={'3rem'}
+        right={'-0.5rem'}
+        onClick={()=>{console.log("CLICKED");goBack()}}
+      >
+        <Icon name={'Close'} />
+      </Flex>
+    </Flex>
   )
 };
