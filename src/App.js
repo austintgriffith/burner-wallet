@@ -1412,7 +1412,6 @@ class App extends Component {
                           dollarDisplay={dollarDisplay}
                         />
                       </Card>
-  
                       <Bottom
                         action={()=>{
                           this.changeView('main')
@@ -1472,19 +1471,14 @@ class App extends Component {
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card p={3}>
-                        {extraTokens}
-  
-                        <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
-  
-                        <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
-  
-                        <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
-  
-                        {badgeDisplay}
-  
-                        <MainCard
-                          subBalanceDisplay={subBalanceDisplay}
-                          buttonStyle={buttonStyle}
+                        <NavCard title={url} goBack={this.goBack.bind(this)} />
+                        <Share
+                          title={url}
+                          url={url}
+                          mainStyle={mainStyle}
+                          sendKey={this.state.sendKey}
+                          sendLink={this.state.sendLink}
+                          balance={balance}
                           address={account}
                           balance={balance}
                           changeAlert={this.changeAlert}
