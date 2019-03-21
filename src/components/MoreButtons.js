@@ -1,10 +1,10 @@
 import React from "react";
-import { Scaler } from "dapparatus";
-import Ruler from "./Ruler";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import Balance from "./Balance";
 import i18n from "../i18n";
-import { OutlineButton, Flex, Icon, Box } from "rimble-ui";
+import {
+  OutlineButton,
+  Flex,
+  Box
+} from "rimble-ui";
 
 export default ({
   isVendor,
@@ -21,50 +21,28 @@ export default ({
 
   if (!isVendor) {
     exchangeButton = (
-      <OutlineButton
-        fullWidth
-        onClick={() => {
-          changeView("exchange");
-        }}
-      >
-        <Flex alignItems="center">
-          <Icon name="Shuffle" mr={2} />
-          {i18n.t("more_buttons.exchange")}
-        </Flex>
+      <OutlineButton icon={'Shuffle'} width={1} onClick={() => {changeView("exchange");}}>
+        {i18n.t("more_buttons.exchange")}
       </OutlineButton>
     );
   } else {
     exchangeButton = (
-      <OutlineButton
-        fullWidth
-        onClick={() => {
-          changeView("cash_out");
-        }}
-      >
-        <Flex alignItems="center">
-          <Icon name="CreditCard" mr={2} />
-          {"Cash Out"}
-        </Flex>
+      <OutlineButton icon={'CreditCard'} width={1} onClick={() => {changeView("cash_out");}}>
+        {"Cash Out"}
       </OutlineButton>
     );
   }
 
   return (
-    <Flex mx={-2}>
-      <Box width={[1, 1/2, 1/2]} m={2}>
-        <OutlineButton
-          fullWidth
-          onClick={() => {
-            changeView("request_funds");
-          }}
-        >
-          <Flex alignItems="center">
-            <Icon name="AttachMoney" mr={2} />
-            {i18n.t("more_buttons.request")}
-          </Flex>
+    <Flex>
+      <Box width={1/2} mr={3}>
+        <OutlineButton icon={'AttachMoney'} width={1} onClick={() => {changeView("request_funds");}}>
+          {i18n.t("more_buttons.request")}
         </OutlineButton>
       </Box>
-      <Box width={[1, 1/2, 1/2]} m={2}>{exchangeButton}</Box>
+      <Box width={1/2}>
+        {exchangeButton}
+      </Box>
     </Flex>
   );
 };
