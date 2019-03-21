@@ -3,7 +3,7 @@ import { Scaler } from "dapparatus";
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18n from '../i18n';
-const QRCode = require('qrcode.react');
+import { QR as QRCode } from 'rimble-ui'
 
 export default class Advanced extends React.Component {
 
