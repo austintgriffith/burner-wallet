@@ -1531,57 +1531,58 @@ export default class App extends Component {
               )
   
               switch(view) {
-                  case 'main':
-                  return (
-                    <div>
-                      {this.state.scannerOpen ? sendByScan : null}
-                      <Card p={3}>
-  
-                            {extraTokens}
-  
-                            <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
-                            
-                            <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
-                            
-                            <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
-                            
-                            {badgeDisplay}
-  
-                            <MainCard
-                              subBalanceDisplay={subBalanceDisplay}
-                              buttonStyle={buttonStyle}
-                              address={account}
-                              balance={balance}
-                              changeAlert={this.changeAlert}
-                              changeView={this.changeView}
-                              dollarDisplay={dollarDisplay}
-                              ERC20TOKEN={ERC20TOKEN}
-                            />
-                            <Box>
-                              {moreButtons}
-                            </Box>
-                            
-                            <RecentTransactions
-                              view={this.state.view}
-                              buttonStyle={buttonStyle}
-                              ERC20TOKEN={ERC20TOKEN}
-                              transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
-                              changeView={this.changeView}
-                              address={account}
-                              block={this.state.block}
-                              recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
-                            />
-  
-                          </Card>
-                          <Bottom
-                            icon={"Settings"}
-                            text={i18n.t('advance_title')}
-                            action={()=>{
-                              this.changeView('advanced')
-                            }}
-                          />
-                        </div>
-                      );
+                case 'main':
+                return (
+                  <div>
+                    {this.state.scannerOpen ? sendByScan : null}
+                    <Card p={3}>
+                      {extraTokens}
+
+                      <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+
+                      <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
+
+                      <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
+
+                      {badgeDisplay}
+
+                      <MainCard
+                        subBalanceDisplay={subBalanceDisplay}
+                        buttonStyle={buttonStyle}
+                        address={account}
+                        balance={balance}
+                        changeAlert={this.changeAlert}
+                        changeView={this.changeView}
+                        dollarDisplay={dollarDisplay}
+                        ERC20TOKEN={ERC20TOKEN}
+                      />
+                      
+                      <Box>
+                        {moreButtons}
+                      </Box>
+
+                      <RecentTransactions
+                        dollarDisplay={dollarDisplay}
+                        view={this.state.view}
+                        buttonStyle={buttonStyle}
+                        ERC20TOKEN={ERC20TOKEN}
+                        transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                        changeView={this.changeView}
+                        address={account}
+                        block={this.state.block}
+                        recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
+                      />
+
+                    </Card>
+                    <Bottom
+                      icon={"Settings"}
+                      text={i18n.t('advance_title')}
+                      action={()=>{
+                        this.changeView('advanced')
+                      }}
+                    />
+                  </div>
+                );
                 case 'advanced':
                 return (
                   <div>
