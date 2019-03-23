@@ -3,7 +3,7 @@ import { Blockie } from "dapparatus";
 import Ruler from "./Ruler";
 import { Scaler } from "dapparatus";
 
-export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
+export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
   let txns = []
   let count=0
   if(!max) max=9999
@@ -43,21 +43,22 @@ export default ({view, max, buttonStyle, ERC20TOKEN, vendorName, address, recent
         if(recentTxs[r].token){
           dollarView = (
             <span>
-              <span style={{opacity:0.33}}>-</span>${parseFloat(recentTxs[r].value).toFixed(2)}<span style={{opacity:0.33}}>-></span>
+              <span style={{opacity:0.33}}>-</span>{dollarDisplay(recentTxs[r].value)}<span style={{opacity:0.33}}>-></span>
             </span>
           )
         }else{
           dollarView = (
             <span style={{opacity:0.5,fontSize:14}}>
-              {parseFloat(recentTxs[r].value).toFixed(2)}
+              {dollarDisplay(recentTxs[r].value)}
             </span>
           )
         }
 
       } else {
+        //dollarDisplay
         dollarView = (
           <span>
-            <span style={{opacity:0.33}}>-</span>${parseFloat(recentTxs[r].value).toFixed(2)}<span style={{opacity:0.33}}>-></span>
+            <span style={{opacity:0.33}}>-</span>{dollarDisplay(recentTxs[r].value)}<span style={{opacity:0.33}}>-></span>
           </span>
         )
       }

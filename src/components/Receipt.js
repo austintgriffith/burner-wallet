@@ -64,7 +64,7 @@ export default class Receive extends React.Component {
     }else{
       sendAmount = (
         <div>
-          <span style={{opacity:0.15}}>-</span>${parseFloat(receipt.amount).toFixed(2)}<span style={{opacity:0.15}}>-></span>
+          <span style={{opacity:0.15}}>-</span>{dollarDisplay(receipt.amount)}<span style={{opacity:0.15}}>-></span>
         </div>
       )
     }

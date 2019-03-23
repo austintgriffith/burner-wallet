@@ -16,7 +16,7 @@ export default class Receive extends React.Component {
     }
   }
   render() {
-    let {view,buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay,account} = this.props
+    let {dollarDisplay,view,buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, subBalanceDisplay,account} = this.props
 
 
     let qrSize = Math.min(document.documentElement.clientWidth,512)-90
@@ -39,6 +39,7 @@ export default class Receive extends React.Component {
             </div>
           </CopyToClipboard>
           <RecentTransactions
+            dollarDisplay={dollarDisplay}
             view={view}
             max={5}
             buttonStyle={buttonStyle}

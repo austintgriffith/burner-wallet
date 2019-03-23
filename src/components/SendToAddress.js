@@ -159,8 +159,10 @@ export default class SendToAddress extends React.Component {
 
   send = async () => {
     let { toAddress, amount } = this.state;
-    let {ERC20TOKEN} = this.props
+    let {ERC20TOKEN, dollarDisplay, convertToDollar} = this.props
 
+    amount = convertToDollar(amount)
+    console.log("CONVERTED TO DOLLAR AMOUNT",amount)
 
     if(this.state.canSend){
       if(ERC20TOKEN){
@@ -178,7 +180,7 @@ export default class SendToAddress extends React.Component {
         if(!ERC20TOKEN && parseFloat(amount)-parseFloat(this.props.balance)<=.01){
           extraHint = "(gas costs)"
         }
-        this.props.changeAlert({type: 'warning', message: 'Not enough funds: $'+Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100+' '+extraHint})
+        this.props.changeAlert({type: 'warning', message: 'Not enough funds: '+dollarDisplay(Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100)+' '+extraHint})
       }else if((ERC20TOKEN && (parseFloat(this.props.balance)<parseFloat(amount)))){
         console.log("SO THE BALANCE IS LESS!")
         this.props.changeAlert({type: 'warning', message: 'Not enough tokens: $'+parseFloat(this.props.balance)})
@@ -238,6 +240,7 @@ export default class SendToAddress extends React.Component {
 
   render() {
     let { canSend, toAddress } = this.state;
+    let {dollarSymbol} = this.props
 
     /*let sendMessage = ""
     if(this.state.message){
@@ -300,7 +303,7 @@ export default class SendToAddress extends React.Component {
             <label htmlFor="amount_input">{i18n.t('send_to_address.send_amount')}</label>
             <div className="input-group">
               <div className="input-group-prepend">
-                <div className="input-group-text">$</div>
+                <div className="input-group-text">{dollarSymbol}</div>
               </div>
               {amountInputDisplay}
             </div>

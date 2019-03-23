@@ -216,10 +216,17 @@ let metaReceiptTracker = {}
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
 
+let dollarSymbol = "€"
+let convertToDollar = (amount)=>{
+  return (parseFloat(amount)/0.88)
+}
+let convertFromDollar = (amount)=>{
+  return (parseFloat(amount)*0.88)
+}
 let dollarDisplay = (amount)=>{
   let floatAmount = parseFloat(amount)
   amount = Math.floor(amount*100)/100
-  return amount.toFixed(2)
+  return dollarSymbol+convertFromDollar(amount).toFixed(2)
 }
 
 let interval
@@ -1352,6 +1359,7 @@ render() {
                   />
                   {moreButtons}
                   <RecentTransactions
+                    dollarDisplay={dollarDisplay}
                     view={this.state.view}
                     buttonStyle={buttonStyle}
                     ERC20TOKEN={ERC20TOKEN}
@@ -1479,6 +1487,8 @@ render() {
                   <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <SendToAddress
+                    convertToDollar={convertToDollar}
+                    dollarSymbol={dollarSymbol}
                     parseAndCleanPath={this.parseAndCleanPath.bind(this)}
                     openScanner={this.openScanner.bind(this)}
                     scannerState={this.state.scannerState}
@@ -1542,6 +1552,7 @@ render() {
                   <NavCard title={i18n.t('receive_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <Receive
+                    dollarDisplay={dollarDisplay}
                     view={this.state.view}
                     block={this.state.block}
                     ensLookup={this.ensLookup.bind(this)}
@@ -1584,6 +1595,7 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
+                    dollarSymbol={dollarSymbol}
                     transactionsByAddress={this.state.transactionsByAddress}
                     fullTransactionsByAddress={this.state.fullTransactionsByAddress}
                     fullRecentTxs={this.state.fullRecentTxs}
@@ -1670,6 +1682,8 @@ render() {
                     changeView={this.changeView}
                     goBack={this.goBack.bind(this)}
                     dollarDisplay={dollarDisplay}
+                    convertToDollar={convertToDollar}
+                    dollarSymbol={dollarSymbol}
                   />
                 </div>
                 <Bottom
