@@ -237,6 +237,7 @@ let intervalLong
 
 class App extends Component {
   constructor(props) {
+    document.body.style.opacity = 0.6
 
 
     console.log("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[["+title+"]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
@@ -333,6 +334,8 @@ class App extends Component {
     this.setState(update)
   }
   componentDidMount(){
+    document.body.style.opacity = 0.8
+
 
     Wyre.configure();
 
@@ -407,7 +410,9 @@ class App extends Component {
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
     let xdaiweb3 = new Web3(new Web3.providers.HttpProvider(XDAI_PROVIDER))
-    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract})
+    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract},()=>{
+      document.body.style.opacity = 1
+    })
   }
   componentWillUnmount() {
     clearInterval(interval)

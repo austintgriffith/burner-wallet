@@ -32,7 +32,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
   }else{
     /*moneyDisplay = (
       <div>
-        {dollarDisplay(total)}
+        ${dollarDisplay(total)}
       </div>
     )*/
     moneyDisplay = (
@@ -51,8 +51,8 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
   let scanButtonStyle = {
     opacity:sendButtonOpacity,
     position:"fixed",
-    right:20,
-    bottom:20,
+    right:-8,
+    bottom:63,
     zIndex:2,
     cursor:"pointer"
   }

@@ -3,8 +3,6 @@ import { Scaler } from "dapparatus";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18next from 'i18next';
 
-
-
 export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
 
 
@@ -16,15 +14,15 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
   y = w.innerHeight|| e.clientHeight|| g.clientHeight;
 
   let pushDownWithWhiteSpace = 0
-  /*if(y){
-    if(ERC20TOKEN){
-      pushDownWithWhiteSpace = y-443
-    }else{
-      pushDownWithWhiteSpace = y-370
-    }
+  if(y){
+    //if(ERC20TOKEN){
+      pushDownWithWhiteSpace = y-100
+    //}else{
+      //pushDownWithWhiteSpace = y
+    //}
 
   }
-  if(pushDownWithWhiteSpace>230){
+  /*if(pushDownWithWhiteSpace>230){
     pushDownWithWhiteSpace=230
   }*/
   let sendButtons = (
@@ -105,9 +103,24 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
     )
   }
 
+  var rect = document.getElementById("maincardHeader")
+  if(rect && (rect = rect.getBoundingClientRect()))
+  console.log(rect.top, rect.right, rect.bottom, rect.left);
+
+  let topPad = 0
+  if(rect && rect.top){
+    console.log(rect.top,y)
+    topPad = y-rect.top-60
+    if(window.pageYOffset>0){
+      topPad=0
+    }
+  }
+
 
   return (
-    <div style={{paddingTop:pushDownWithWhiteSpace}}>
+    <div>
+      <div id="maincardHeader" style={{height:topPad}}>
+      </div>
       <div>
         {sendButtons}
       </div>
