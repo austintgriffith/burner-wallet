@@ -784,6 +784,7 @@ class App extends Component {
       localStorage.setItem("view",view)//some pages should be sticky because of metamask reloads
       localStorage.setItem("viewSetTime",Date.now())
     }
+    if(this.state.scrollMode=="splash") this.setState({scrollMode:"full"})
     /*if (view.startsWith('send_with_link')||view.startsWith('send_to_address')) {
     console.log("This is a send...")
     console.log("BALANCE",this.state.balance)
