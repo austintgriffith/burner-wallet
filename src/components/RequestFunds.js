@@ -90,6 +90,10 @@ export default class RequestFunds extends React.Component {
     }else{
       return (
         <div>
+          <form onSubmit={(event)=>{
+            event.preventDefault();
+            this.request();
+          }}>
           <div className="content row">
             <div className="form-group w-100">
               <label htmlFor="amount_input">{i18n.t('request_funds.amount')}</label>
@@ -106,12 +110,12 @@ export default class RequestFunds extends React.Component {
               <input type="text" className="form-control" placeholder="Hot Dogs" value={this.state.message}
                      onChange={event => this.updateState('message', event.target.value)} />
             </div>
-            <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canRequest ? '' : 'disabled'}`}
+            <button type="submit" style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canRequest ? '' : 'disabled'}`}
                     onClick={this.request}>
               {i18n.t('request_funds.button')}
             </button>
           </div>
-
+          </form>
         </div>
       )
     }
