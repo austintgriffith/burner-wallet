@@ -1242,7 +1242,7 @@ render() {
                      <Scaler config={{startZoomAt:1000,origin:"0% 10%"}}>
                         <div style={{position:"absolute",top:"0",left:"0",fontSize:128}}>
                          {dollarDisplay(this.state.balance)}
-                         <div style={{fontSize:48,opacity:0.5,marginTop:-20}}>
+                         <div style={{textAlign:"right",paddingRight:12,fontSize:48,opacity:0.5,marginTop:-20}}>
                            {this.state.network}
                          </div>
                         </div>

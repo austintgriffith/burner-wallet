@@ -62,6 +62,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
   if(splash){
     scanButtonStyle.transform = "scale(1.5)"
     scanButtonStyle.top="70%"
+    scanButtonStyle.right=10
   }else{
 
     const headerHeight = window.innerHeight
