@@ -57,9 +57,19 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     cursor:"pointer"
   }
 
+  let headSpacer = ""
+
   if(splash){
     scanButtonStyle.transform = "scale(1.5)"
     scanButtonStyle.top="70%"
+  }else{
+
+    const headerHeight = window.innerHeight
+
+    /*headSpacer= (
+      <div style={{height:Math.round(headerHeight*0.09)}}>
+      </div>
+    )*/
   }
 
   if(view=="send_to_address"){
@@ -105,17 +115,19 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
   }
 
   let topRight = (
-    <div style={{zIndex:-2,position:"absolute",right:28,top:-4,zIndex:1,fontSize:46,opacity:0.9}}  >
+    <div style={{zIndex:-2,position:"absolute",right:28,bottom:14,zIndex:1,fontSize:46,opacity:0.9}}  >
       {moneyDisplay}
     </div>
   )
 
 
   return (
-    <div className="header" style={{opacity}}>
-      {topLeft}
-      {topRight}
-      {bottomRight}
+    <div>
+      <div className="header" style={{opacity}}>
+        {topLeft}
+        {topRight}
+        {bottomRight}
+      </div>
     </div>
   )
 };

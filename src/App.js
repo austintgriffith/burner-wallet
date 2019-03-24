@@ -317,7 +317,7 @@ class App extends Component {
     })
   }
   openScanner(returnState){
-    this.setState({returnState:returnState,view:"send_by_scan"})
+    this.setState({scrollMode:"full",returnState:returnState,view:"send_by_scan"})
   }
   returnToState(scannerState){
     let updateState = Object.assign({scannerState:scannerState}, this.state.returnState);
@@ -338,11 +338,26 @@ class App extends Component {
     this.setState(update)
   }
   listenToScroll = () => {
+    const winScroll =
+       document.body.scrollTop || document.documentElement.scrollTop
+
+     const height =
+       document.documentElement.scrollHeight -
+       document.documentElement.clientHeight
+
+     const scrolled = Math.abs(winScroll / height)
+
+     if(this.state.scrollMode=="full" && scrolled<=0){
+       console.log("--SETTING TO splash with delay",scrolled)
+       setTimeout(()=>{
+         this.setState({scrollMode:"splash"})
+       },250)
+
+     }
 
   }
   componentDidMount(){
     document.body.style.opacity = 0.8
-
 
 
     Wyre.configure();
@@ -1032,32 +1047,45 @@ render() {
   }
 
   let scrollFunction = ()=>{
-    console.log("WHEEL splash=>full")
+
+    const winScroll =
+      document.body.scrollTop || document.documentElement.scrollTop
+
+    const height =
+      document.documentElement.scrollHeight -
+      document.documentElement.clientHeight
+
+    const scrolled = Math.abs(winScroll / height)
+
+
+    console.log("WHEEL splash=>full",scrolled)
+    console.log("this.state.scrollMode",this.state.scrollMode)
     if(this.state.scrollMode=="splash"){
-      this.setState({scrollMode:"full"})
+      console.log("SETTING MODE TO FULL")
+      this.setState({scrollMode:"full"},()=>{
+        //setTimeout(()=>{
+          console.log("SCROLLING TO CORRECT")
+           window.scrollTo({
+             top: 1,
+             behavior: 'smooth',
+           })
+        //},100)
+
+      })
     }
     else{
-      const winScroll =
-        document.body.scrollTop || document.documentElement.scrollTop
-
-      const height =
-        document.documentElement.scrollHeight -
-        document.documentElement.clientHeight
-
-      const scrolled = winScroll / height
+      /*
 
       console.log(winScroll,height,"SCROLLED:",scrolled)
-      if(scrolled>0.01 && this.state.scrollMode=="splash" ){
-        console.log("setting mode to FULL")
-        window.scrollTo({
-          top: 20,
-          behavior: 'smooth',
+      if(scrolled>0.2 && this.state.scrollMode=="splash" ){
+        console.log("+++setting mode to FULL")
+        this.setState({scrollMode:"full"},()=>{
+
         })
-        this.setState({scrollMode:"full"})
-      }else if(scrolled<=0.01 && this.state.scrollMode=="full" ){
-        console.log("setting mode to SPLASH")
+      }else if(scrolled<=0.2 && this.state.scrollMode=="full" ){
+        console.log("+++setting mode to SPLASH")
         setTimeout(()=>{this.setState({scrollMode:"splash"})},1000)
-      }
+      }*/
     }
 
 
@@ -1178,39 +1206,66 @@ render() {
 
           let fulldollaamount = ""
 
-         if(web3 && !this.checkNetwork()){
-          fulldollaamount = (
-            <div style={{fontSize:60,paddingLeft:"20%"}}>
-              Wrong Network
+          if(false){
+            fulldollaamount = (
               <div>
-                <input style={{fontSize:16,zIndex:13,position:'absolute',right:48,top:192,width:194}} value="https://dai.poa.network" />
-                <img style={{zIndex:12,position:'absolute',right:0,top:0,maxHeight:370}} src={customRPCHint} />
-              </div>
-            </div>
-          )
-        }
-        else if(typeof(this.state.balance)=="number"){
-          fulldollaamount = (
-            <div>
-              <div style={{position:"absolute",top:"70%",left:"50%",color:"#FFFFFF"}} onClick={() => console.log("BALANCE CLICK")}>
-                <div style={{transform:"scale(8)"}}>
-                  <Scaler config={{startZoomAt:1000,origin:"0% 50%"}}>
-                    {dollarDisplay(this.state.balance)}
-                  </Scaler>
+                <div style={{position:"absolute",top:"70%",left:"10%",color:"#FFFFFF"}} onClick={() => console.log("BALANCE CLICK")}>
+                  <div style={{fontSize:128}}>
+                    <Scaler config={{startZoomAt:1000,origin:"0% 10%"}}>
+                      {99999.99}
+                    </Scaler>
+                  </div>
                 </div>
               </div>
-            </div>
-          )
-        }else{
-          fulldollaamount = (
-            <div style={{position:"absolute",top:"70%",left:"50%",color:"#FFFFFF"}} onClick={() => console.log("LOADER? CLICK")}>
-              <div style={{transform:"scale(8)"}}>
-                <Loader loaderImage={false} mainStyle={mainStyle}/>
-              </div>
-            </div>
+            )
+          }else{
+            if(web3 && !this.checkNetwork()){
+             fulldollaamount = (
+               <div style={{fontSize:60,paddingLeft:"20%"}}>
+                 Wrong Network
+                 <div>
+                   <input style={{fontSize:16,zIndex:13,position:'absolute',right:48,top:192,width:194}} value="https://dai.poa.network" />
+                   <img style={{zIndex:12,position:'absolute',right:0,top:0,maxHeight:370}} src={customRPCHint} />
+                 </div>
+               </div>
+             )
+           }
+           else if(true || typeof(this.state.balance)=="number"){
 
-           )
-        }
+
+             fulldollaamount = (
+               <div>
+                 <div style={{position:"absolute",top:"60%",left:"9%",color:"#FFFFFF"}} onClick={() => console.log("BALANCE CLICK")}>
+
+
+
+                     <Scaler config={{startZoomAt:1000,origin:"0% 10%"}}>
+                        <div style={{position:"absolute",top:"0",left:"0",fontSize:128}}>
+                         {dollarDisplay(this.state.balance)}
+                         <div style={{fontSize:48,opacity:0.5,marginTop:-20}}>
+                           {this.state.network}
+                         </div>
+                        </div>
+
+                     </Scaler>
+
+
+                 </div>
+               </div>
+             )
+           }else{
+             fulldollaamount = (
+               <div style={{position:"absolute",top:"70%",left:"50%",color:"#FFFFFF"}} onClick={() => console.log("LOADER? CLICK")}>
+                 <div style={{transform:"scale(8)"}}>
+                   <Loader loaderImage={false} mainStyle={mainStyle}/>
+                 </div>
+               </div>
+
+              )
+           }
+          }
+
+
 
 
           //console.log("VIEW:",view)
@@ -1229,21 +1284,21 @@ render() {
                       <div style={mainStyle}>
                       <div style={{position:'absolute',right:"10%",top:"10%"}}>
                           <Scaler config={{startZoomAt:1000,origin:"100% 0%"}}>
-                            <Blockie
-                                address={this.state.account}
-                                config={{size:44}}>
-                            </Blockie>
+                            <div style={{backgroundColor:"#FFFFFF",padding:13,paddingBottom:6}}>
+                            <QRCode value={this.state.account} size={325}/>
+                            </div>
                           </Scaler>
                         </div>
                         <div style={{position:"absolute",left:"10%",top:"10%"}}>
                          <Scaler config={{startZoomAt:1000,origin:"0% 0%"}}>
-                           <div style={{backgroundColor:"#FFFFFF",padding:13,paddingBottom:6}}>
-                           <QRCode value={this.state.account} size={325}/>
-                           </div>
+                           <Blockie
+                               address={this.state.account}
+                               config={{size:44}}>
+                           </Blockie>
                          </Scaler>
                        </div>
 
-                       <div>
+                       <div style={{zIndex:299}}>
                         {fulldollaamount}
                        </div>
 
