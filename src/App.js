@@ -401,6 +401,9 @@ class App extends Component {
     intervalLong = setInterval(this.longPoll.bind(this),45000)
     setTimeout(this.longPoll.bind(this),150)
 
+    this.loadExtraWeb3()
+  }
+  loadExtraWeb3() {
     let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
     let ensContract = new mainnetweb3.eth.Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
     let daiContract
@@ -522,6 +525,7 @@ class App extends Component {
           }
         }catch(e){
           console.log(e)
+          this.loadExtraWeb3()
         }
 
 
