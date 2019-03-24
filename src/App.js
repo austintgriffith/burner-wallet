@@ -1067,7 +1067,7 @@ render() {
         //setTimeout(()=>{
           console.log("SCROLLING TO CORRECT")
            window.scrollTo({
-             top: 1,
+             top: 120,
              behavior: 'smooth',
            })
         //},100)

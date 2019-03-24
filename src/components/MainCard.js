@@ -110,7 +110,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
   let topPad = 1000
   if(rect && rect.top){
     console.log(rect.top,y)
-    topPad = y-rect.top-60-window.pageYOffset
+    topPad = y-rect.top+60-window.pageYOffset
     /*if(window.pageYOffset>0){
       topPad=0
     }*/

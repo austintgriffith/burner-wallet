@@ -67,10 +67,10 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
 
     const headerHeight = window.innerHeight
 
-    /*headSpacer= (
-      <div style={{height:Math.round(headerHeight*0.09)}}>
+    headSpacer= (
+      <div style={{height:130}}>
       </div>
-    )*/
+    )
   }
 
   if(view=="send_to_address"){
@@ -124,6 +124,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
 
   return (
     <div>
+      {headSpacer}
       <div className="header" style={{opacity}}>
         {topLeft}
         {topRight}
