@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
+import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events, Blockie, Scaler} from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
@@ -39,6 +39,8 @@ import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
+import ReactScrollWheelHandler from "react-scroll-wheel-handler";
+
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
@@ -53,6 +55,7 @@ import Wyre from './services/wyre';
 
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
+const QRCode = require('qrcode.react');
 
 //const POA_XDAI_NODE = "https://dai-b.poa.network"
 const POA_XDAI_NODE = "https://dai.poa.network"
@@ -268,6 +271,7 @@ class App extends Component {
       hasUpdateOnce: false,
       badges: {},
       selectedBadge: false,
+      scrollMode: "splash",
     };
     this.alertTimeout = null;
 
@@ -333,8 +337,12 @@ class App extends Component {
   saveKey(update){
     this.setState(update)
   }
+  listenToScroll = () => {
+
+  }
   componentDidMount(){
     document.body.style.opacity = 0.8
+
 
 
     Wyre.configure();
@@ -343,6 +351,7 @@ class App extends Component {
     document.body.style.backgroundColor = mainStyle.backgroundColor
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
+    window.addEventListener('scroll', this.listenToScroll.bind(this))
     if(window.location.pathname){
       console.log("PATH",window.location.pathname,window.location.pathname.length,window.location.hash)
       if(window.location.pathname.indexOf("/pk")>=0){
@@ -418,9 +427,11 @@ class App extends Component {
     })
   }
   componentWillUnmount() {
+
     clearInterval(interval)
     clearInterval(intervalLong)
     window.removeEventListener("resize", this.updateDimensions.bind(this));
+    window.removeEventListener('scroll', this.listenToScroll.bind(this))
   }
   async poll() {
 
@@ -1020,6 +1031,45 @@ render() {
     )
   }
 
+  let scrollFunction = ()=>{
+    console.log("WHEEL splash=>full")
+    if(this.state.scrollMode=="splash"){
+      this.setState({scrollMode:"full"})
+    }
+    else{
+      const winScroll =
+        document.body.scrollTop || document.documentElement.scrollTop
+
+      const height =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight
+
+      const scrolled = winScroll / height
+
+      console.log(winScroll,height,"SCROLLED:",scrolled)
+      if(scrolled>0.01 && this.state.scrollMode=="splash" ){
+        console.log("setting mode to FULL")
+        window.scrollTo({
+          top: 20,
+          behavior: 'smooth',
+        })
+        this.setState({scrollMode:"full"})
+      }else if(scrolled<=0.01 && this.state.scrollMode=="full" ){
+        console.log("setting mode to SPLASH")
+        setTimeout(()=>{this.setState({scrollMode:"splash"})},1000)
+      }
+    }
+
+
+  }
+
+  /*
+  <iframe src={"https://min.xdai.io"} style={{width:"100%",height:"100%"}}>
+  </iframe>
+   */
+
+
+
 
   let web3_setup = ""
   if(web3){
@@ -1094,6 +1144,7 @@ render() {
   if(web3){
     header = (
       <Header
+        splash={this.state.scrollMode=="splash"}
         openScanner={this.openScanner.bind(this)}
         network={this.state.network}
         total={totalBalance}
@@ -1124,7 +1175,97 @@ render() {
 
 
         {web3 /*&& this.checkNetwork()*/ && (() => {
+
+          let fulldollaamount = ""
+
+         if(web3 && !this.checkNetwork()){
+          fulldollaamount = (
+            <div style={{fontSize:60,paddingLeft:"20%"}}>
+              Wrong Network
+              <div>
+                <input style={{fontSize:16,zIndex:13,position:'absolute',right:48,top:192,width:194}} value="https://dai.poa.network" />
+                <img style={{zIndex:12,position:'absolute',right:0,top:0,maxHeight:370}} src={customRPCHint} />
+              </div>
+            </div>
+          )
+        }
+        else if(typeof(this.state.balance)=="number"){
+          fulldollaamount = (
+            <div>
+              <div style={{position:"absolute",top:"70%",left:"50%",color:"#FFFFFF"}} onClick={() => console.log("BALANCE CLICK")}>
+                <div style={{transform:"scale(8)"}}>
+                  <Scaler config={{startZoomAt:1000,origin:"0% 50%"}}>
+                    {dollarDisplay(this.state.balance)}
+                  </Scaler>
+                </div>
+              </div>
+            </div>
+          )
+        }else{
+          fulldollaamount = (
+            <div style={{position:"absolute",top:"70%",left:"50%",color:"#FFFFFF"}} onClick={() => console.log("LOADER? CLICK")}>
+              <div style={{transform:"scale(8)"}}>
+                <Loader loaderImage={false} mainStyle={mainStyle}/>
+              </div>
+            </div>
+
+           )
+        }
+
+
           //console.log("VIEW:",view)
+
+          if(this.state && this.state.scrollMode=="splash"){
+            return (
+              <div style={{height:"110%"}}>
+                <ReactScrollWheelHandler
+                upHandler={scrollFunction}
+        downHandler={scrollFunction}
+                >
+                  <div>
+                    <div style={{zIndex:256,position:"absolute",left:0,top:0,width:"100%",height:"101%",backgroundColor:"#000000"}}>
+                    <img style={{position:'absolute',left:"-5%",bottom:"-5%",opacity:0.1,width:"87%",filter:"grayscale(50%) blur(8px)"}} src={LOADERIMAGE} />
+
+                      <div style={mainStyle}>
+                      <div style={{position:'absolute',right:"10%",top:"10%"}}>
+                          <Scaler config={{startZoomAt:1000,origin:"100% 0%"}}>
+                            <Blockie
+                                address={this.state.account}
+                                config={{size:44}}>
+                            </Blockie>
+                          </Scaler>
+                        </div>
+                        <div style={{position:"absolute",left:"10%",top:"10%"}}>
+                         <Scaler config={{startZoomAt:1000,origin:"0% 0%"}}>
+                           <div style={{backgroundColor:"#FFFFFF",padding:13,paddingBottom:6}}>
+                           <QRCode value={this.state.account} size={325}/>
+                           </div>
+                         </Scaler>
+                       </div>
+
+                       <div>
+                        {fulldollaamount}
+                       </div>
+
+                       <div style={{position:"absolute",top:"90%",transform:"scale(3)",left:"50%",color:"#FFFFFF"}}
+                         onClick={() => console.log("ARROWS? CLICK")}
+                       >
+                       <div style={{opacity:0.25}}>
+                         <i className="fa fa-angle-double-down"></i>
+                       </div>
+
+
+                     </div>
+
+                      </div>
+                    </div>
+
+                  </div>
+                </ReactScrollWheelHandler>
+              </div>
+            )
+          }
+
 
           let moreButtons = (
             <MoreButtons

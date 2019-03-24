@@ -1,7 +1,7 @@
 import React from 'react';
 import { Scaler, Blockie } from "dapparatus";
 import burnerloader from '../burnerloader.gif';
-export  default ({openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
+export  default ({openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view, splash}) => {
 
 
   let sendButtonOpacity = 1.0
@@ -53,8 +53,13 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     position:"fixed",
     right:-8,
     bottom:63,
-    zIndex:2,
+    zIndex:257,
     cursor:"pointer"
+  }
+
+  if(splash){
+    scanButtonStyle.transform = "scale(1.5)"
+    scanButtonStyle.top="70%"
   }
 
   if(view=="send_to_address"){
