@@ -9,6 +9,8 @@ import i18n from '../i18n';
 let pollInterval
 let metaReceiptTracker = {}
 
+const feeToDeductFromWithdrawl = 0.001
+
 export default class SendToAddress extends React.Component {
 
   constructor(props) {
@@ -77,17 +79,19 @@ export default class SendToAddress extends React.Component {
         //console.log("metaAccount",this.state.metaAccount,"amount",this.props.web3.utils.toWei(amount,'ether'))
         let tx
 
+        const amountMinusFee = String(parseFloat(amount) - feeToDeductFromWithdrawl)
+
         if(this.props.ERC20TOKEN){
           tx={
             to:this.props.contracts[this.props.ERC20TOKEN]._address,
-            data: this.props.contracts[this.props.ERC20TOKEN].transfer(this.props.address,this.props.web3.utils.toWei(""+amount,'ether')).encodeABI(),
+            data: this.props.contracts[this.props.ERC20TOKEN].transfer(this.props.address,this.props.web3.utils.toWei(""+amountMinusFee,'ether')).encodeABI(),
             gas: 60000,
             gasPrice: Math.round(1100000000)//1.1gwei
           }
         }else{
           tx={
             to:this.props.address,
-            value: this.props.web3.utils.toWei(amount,'ether'),
+            value: this.props.web3.utils.toWei(amountMinusFee,'ether'),
             gas: 30000,
             gasPrice: Math.round(1100000000)//1.1gwei
           }
@@ -172,7 +176,7 @@ export default class SendToAddress extends React.Component {
             <div className="form-group w-100">
               <div className="form-group w-100">
                 <label htmlFor="amount_input">{i18n.t('withdraw_from_private.from_address')}</label>
-                <input type="text" className="form-control" placeholder="0x..." value={fromAddress} />
+                <input readOnly type="text" className="form-control" placeholder="0x..." value={fromAddress} />
               </div>
 
               <div className="content bridge row">
@@ -195,6 +199,14 @@ export default class SendToAddress extends React.Component {
                 </div>
                 <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
+              </div>
+
+              <label htmlFor="amount_input">{i18n.t('withdraw_from_private.fee')}</label>
+              <div className="input-group">
+                <div className="input-group-prepend">
+                  <div className="input-group-text">$</div>
+                </div>
+                <input readOnly type="text" className="form-control" value={feeToDeductFromWithdrawl} />
               </div>
               {products}
             </div>

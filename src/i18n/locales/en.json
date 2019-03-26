@@ -47,7 +47,8 @@
       "from_address": "Withdraw from Address",
       "amount": "Withdraw Amount",
       "withdraw": "Withdraw",
-      "error": "Please enter a valid amount to withdraw"
+      "error": "Please enter a valid amount to withdraw",
+      "fee": "Withdraw Fee"
     },
     "send_to_address": {
       "to_address": "To Address",
