@@ -66,6 +66,10 @@ export default class SendWithLink extends React.Component {
     let { dollarSymbol } = this.props
     return (
       <div>
+        <form onSubmit={(event)=>{
+          event.preventDefault();
+          this.send();
+        }}>
         <div className="content row">
           <div className="form-group w-100">
             <label htmlFor="amount_input">Amount</label>
@@ -78,11 +82,12 @@ export default class SendWithLink extends React.Component {
                      onChange={event => this.updateState('amount', event.target.value)} />
             </div>
           </div>
-          <button style={this.props.buttonStyle.primary} className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
+          <button type="submit" style={this.props.buttonStyle.primary} className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
                   onClick={this.send}>
             Send
           </button>
         </div>
+        </form>
       </div>
     )
   }

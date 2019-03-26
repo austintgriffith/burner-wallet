@@ -1,7 +1,7 @@
 import React from 'react';
 import { Scaler, Blockie } from "dapparatus";
 import burnerloader from '../burnerloader.gif';
-export  default ({openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view, splash}) => {
+export  default ({scrollMode, openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view, splash}) => {
 
 
   let sendButtonOpacity = 1.0
@@ -58,17 +58,24 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
   }
 
   let headSpacer = ""
+  let upArrow = ""
 
   if(splash){
     scanButtonStyle.transform = "scale(1.5)"
     scanButtonStyle.top="70%"
     scanButtonStyle.right=10
-  }else{
+  }else if(view=="main"){
 
     const headerHeight = window.innerHeight
-
     headSpacer= (
-      <div style={{height:130}}>
+      <div style={{height:40,width:"100%"}}>
+      </div>
+    )
+    upArrow = (
+      <div style={{position:"absolute",top:-25,left:"40%",zIndex:1,opacity:0.25,width:"20%",textAlign:"center",fontSize:37,color:"#FFFFFF",cursor:"pointer"}} onClick={() => {
+         scrollMode("splash")
+       }}>
+        <i className="fa fa-angle-up"></i>
       </div>
     )
   }
@@ -126,6 +133,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     <div>
       {headSpacer}
       <div className="header" style={{opacity}}>
+        {upArrow}
         {topLeft}
         {topRight}
         {bottomRight}

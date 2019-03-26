@@ -1032,6 +1032,14 @@ syncFullTransactions(){
     this.setState({fullRecentTxs:recentTxs,fullTransactionsByAddress:transactionsByAddress})
   }
 }
+scrollCorrect() {
+   console.log("SCROLLING TO CORRECT")
+   window.scrollTo({
+     top: 37,
+     behavior: 'smooth',
+   })
+
+}
 render() {
   let {
     web3, account, tx, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert, send
@@ -1064,14 +1072,7 @@ render() {
     if(this.state.scrollMode=="splash"){
       console.log("SETTING MODE TO FULL")
       this.setState({scrollMode:"full"},()=>{
-        //setTimeout(()=>{
-          console.log("SCROLLING TO CORRECT")
-           window.scrollTo({
-             top: 120,
-             behavior: 'smooth',
-           })
-        //},100)
-
+        setTimeout(this.scrollCorrect,100)
       })
     }
     else{
@@ -1173,6 +1174,9 @@ render() {
   if(web3){
     header = (
       <Header
+        scrollMode={(mode)=>{
+          this.setState({scrollMode:mode})
+        }}
         splash={this.state.scrollMode=="splash"}
         openScanner={this.openScanner.bind(this)}
         network={this.state.network}
@@ -1271,7 +1275,7 @@ render() {
 
           //console.log("VIEW:",view)
 
-          if(this.state && this.state.scrollMode=="splash"){
+          if(this.state && this.state.scrollMode=="splash" && this.state.view == "main"){
             return (
               <div style={{height:"110%"}}>
                 <ReactScrollWheelHandler
@@ -1303,11 +1307,15 @@ render() {
                         {fulldollaamount}
                        </div>
 
-                       <div style={{position:"absolute",top:"90%",transform:"scale(3)",left:"50%",color:"#FFFFFF"}}
-                         onClick={() => console.log("ARROWS? CLICK")}
+                       <div style={{position:"absolute",top:"90%",transform:"scale(3)",left:"50%",color:"#FFFFFF",cursor:"pointer"}}
+                         onClick={() => {
+                           this.setState({scrollMode:"full"},()=>{
+                             setTimeout(this.scrollCorrect,100)
+                           })
+                         }}
                        >
                        <div style={{opacity:0.25}}>
-                         <i className="fa fa-angle-double-down"></i>
+                         <i className="fa fa-angle-down"></i>
                        </div>
 
 

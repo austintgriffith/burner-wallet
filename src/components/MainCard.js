@@ -103,17 +103,18 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
     )
   }
 
+    let topPad = 1000
   var rect = document.getElementById("maincardHeader")
-  if(rect && (rect = rect.getBoundingClientRect()))
-  console.log(rect.top, rect.right, rect.bottom, rect.left);
+  if(rect && (rect = rect.getBoundingClientRect())){
+      //console.log(rect.top, rect.right, rect.bottom, rect.left);
+    if(rect && rect.top){
+      //console.log(rect.top,y)
+      topPad = y-rect.top-25-window.pageYOffset
+      /*if(window.pageYOffset>0){
+        topPad=0
+      }*/
+    }
 
-  let topPad = 1000
-  if(rect && rect.top){
-    console.log(rect.top,y)
-    topPad = y-rect.top+60-window.pageYOffset
-    /*if(window.pageYOffset>0){
-      topPad=0
-    }*/
   }
 
 
