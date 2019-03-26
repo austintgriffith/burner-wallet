@@ -1,9 +1,12 @@
 import React from 'react';
-import Ruler from "./Ruler";
 import Balance from "./Balance";
-import Blockies from 'react-blockies';
 import i18n from '../i18n';
 
+import {
+  Field,
+  Input,
+  Button
+} from 'rimble-ui'
 
 export default class SendWithLink extends React.Component {
 
@@ -63,26 +66,21 @@ export default class SendWithLink extends React.Component {
 
   render() {
     let { canSend } = this.state;
-    let { dollarSymbol } = this.props
     return (
       <div>
-        <div className="content row">
-          <div className="form-group w-100">
-            <label htmlFor="amount_input">Amount</label>
-            <div className="input-group">
-              <div className="input-group-prepend">
-                <div className="input-group-text">{dollarSymbol}</div>
-              </div>
-              <input type="number" step="0.1" className="form-control" placeholder="0.00"
-                ref={(input) => { this.amountInput = input; }}
-                     onChange={event => this.updateState('amount', event.target.value)} />
-            </div>
-          </div>
-          <button style={this.props.buttonStyle.primary} className={`btn btn-success btn-lg w-100 ${canSend ? '' : 'disabled'}`}
-                  onClick={this.send}>
-            Send
-          </button>
-        </div>
+        <Field label={'Amount'}>
+          <Input
+            width={1}
+            type="number"
+            step="0.1"
+            placeholder="$0.00"
+            ref={(input) => { this.amountInput = input; }}
+            onChange={event => this.updateState('amount', event.target.value)}
+          />
+        </Field>
+        <Button size={'large'} width={1} onClick={this.send} disabled={canSend}>
+          Send
+        </Button>
       </div>
     )
   }
