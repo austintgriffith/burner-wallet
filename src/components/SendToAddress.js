@@ -204,7 +204,7 @@ export default class SendToAddress extends React.Component {
         cookie.remove('sendToAddress', { path: '/' })
 
         this.props.send(toAddress, value, 120000, txData, (result) => {
-          if(result && result.transactionHash){
+          if(result && result.hash){
             this.props.goBack();
             window.history.pushState({},"", "/");
             /*
@@ -214,7 +214,6 @@ export default class SendToAddress extends React.Component {
             });*/
 
             let receiptObj = {to:toAddress,from:result.from,amount:parseFloat(amount),message:this.state.message,result:result}
-
 
             if(this.state.params){
               receiptObj.params = this.state.params

@@ -120,6 +120,14 @@ else if (window.location.hostname.indexOf("xdai") >= 0) {
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = false
 }
+else if (window.location.hostname.indexOf("burner.leapdao.org") >= 0) {
+  XDAI_PROVIDER = "http://18.218.2.145:8645";
+  WEB3_PROVIDER = "http://18.218.2.145:1000";
+  CLAIM_RELAY = false;
+  ERC20NAME = false;
+  ERC20TOKEN = false;
+  ERC20IMAGE = false;
+}
 else if (window.location.hostname.indexOf("buffidai") >= 0) {
   WEB3_PROVIDER = POA_XDAI_NODE;
   CLAIM_RELAY = 'https://x.xdai.io'
@@ -2031,22 +2039,14 @@ async function tokenSend(to,value,gasLimit,txData,cb){
       }
     })
     .then(
-      signedTx => {
-        return {
-          futureReceipt: this.state.xdaiweb3.eth.sendSignedTransaction(
-            signedTx.hex()
-          ),
-        };
-      },
+      signedTx => (this.state.xdaiweb3.eth.sendSignedTransaction(signedTx.hex()))
+      ,
       err => {
         console.log(err);
       }
-    )
-    .then(receipt => {
-      console.log('RES: ', receipt);      
-      cb(result)
+    ).then(receipt => {
+      cb(receipt);
     });
-
 }
 
 let sortByBlockNumberDESC = (a,b)=>{

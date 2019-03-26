@@ -1153,18 +1153,19 @@ export default class Exchange extends React.Component {
       )
 
     }else if(daiToXdaiMode=="deposit"){
-      if(!this.state.mainnetMetaAccount && this.props.network!="Mainnet"){
-        daiToXdaiDisplay = (
-          <div className="content ops row" style={{textAlign:'center'}}>
-            <div className="col-12 p-1">
-              Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>Mainnet</span>
-              <a href="#" onClick={()=>{this.setState({daiToXdaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
-                <i className="fas fa-times"/> dismiss
-              </a>
-            </div>
-          </div>
-        )
-      }else if(this.props.ethBalance<=0){
+      // if(!this.state.mainnetMetaAccount && this.props.network!="Mainnet"){
+      //   daiToXdaiDisplay = (
+      //     <div className="content ops row" style={{textAlign:'center'}}>
+      //       <div className="col-12 p-1">
+      //         Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>Mainnet</span>
+      //         <a href="#" onClick={()=>{this.setState({daiToXdaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
+      //           <i className="fas fa-times"/> dismiss
+      //         </a>
+      //       </div>
+      //     </div>
+      //   )
+      //}else 
+      if(this.props.ethBalance<=0){
         daiToXdaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
