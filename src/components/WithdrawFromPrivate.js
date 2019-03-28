@@ -201,13 +201,8 @@ export default class SendToAddress extends React.Component {
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
 
-              <label htmlFor="amount_input">{i18n.t('withdraw_from_private.fee')}</label>
-              <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input readOnly type="text" className="form-control" value={feeToDeductFromWithdrawl} />
-              </div>
+
+              
               {products}
             </div>
             <button style={this.props.buttonStyle.primary} className={`btn btn-success btn-lg w-100 ${canWithdraw ? '' : 'disabled'}`}
