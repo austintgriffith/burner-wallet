@@ -45,7 +45,7 @@ npm start
 
 in a new terminal start the decentralized metatx relayer from Tabookey:
 ```
-startLocalRelay.sh
+./startLocalRelay.sh
 ```
 
 you probably want to have a bin alias for clevis in your .bashrc or .profile as mentioned in the [clevis docs](https://github.com/austintgriffith/clevis):
