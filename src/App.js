@@ -443,15 +443,15 @@ class App extends Component {
     let daiContract;
     let bridgeContract;
     try{
-      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x72560b830ced423fbb9ec1ae8d01b41f015a5f21")
-      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), "0xd3Bf77460d06cdEEfa1e82115038C5E07A60f951")
+      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0xD2D0F8a6ADfF16C2098101087f9548465EC96C98")
+      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), "0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530")
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
-    let xdaiweb3 = helpers.extendWeb3(new Web3(new Web3.providers.HttpProvider(XDAI_PROVIDER)));
+    let xdaiweb3 = helpers.extendWeb3(new Web3(new Web3.providers.WebsocketProvider(XDAI_PROVIDER)));
     let pdaiContract
     try{
-      pdaiContract = new xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x72560b830ced423fbb9ec1ae8d01b41f015a5f21")
+      pdaiContract = new xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0xD2D0F8a6ADfF16C2098101087f9548465EC96C98")
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
