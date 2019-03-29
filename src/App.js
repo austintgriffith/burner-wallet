@@ -1674,12 +1674,31 @@ render() {
                       let randomWallet = this.state.web3.eth.accounts.create()
                       let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
                       console.log("STATE",this.state,this.state.contracts)
-                      this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,0,amount*10**18,7),250000,false,amount*10**18,async (receipt)=>{
-                        this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
-                          console.log("STATE SAVED",this.state)
+                      // Use xDai as default token
+                      const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
+                      // -- Temp hacks
+                      const expirationTime = 365; // Hard-coded to 1 year link expiration. 
+                      const amountToSend = amount*10**18 ; // Conversion to wei
+                      // --
+                      if(!ERC20TOKEN)
+                      {
+                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (receipt)=>{
+                          this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
+                            console.log("STATE SAVED",this.state)
+                          })
+                          cb(receipt)
                         })
-                        cb(receipt)
-                      })
+                      } else{
+                        this.state.tx(this.state.contracts[ERC20TOKEN].approve(this.state.contracts.Links._address, amountToSend),21000,false,0,async (approveReceipt)=>{
+                          //cb(approveReceipt)
+                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (sendReceipt)=>{
+                            this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
+                              console.log("STATE SAVED",this.state)
+                            })
+                            cb(sendReceipt)
+                          })
+                        })
+                      }
                     }}
                     address={account}
                     changeView={this.changeView}
