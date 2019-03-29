@@ -151,7 +151,7 @@ export default class Advanced extends React.Component {
                 {theName}
               </div>
               <div className="col-3 p-1">
-                ${dollarDisplay(theAmount)}
+                {dollarDisplay(theAmount)}
               </div>
               <div className="col-4 p-1">
               <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap",marginTop:-8}} onClick={()=>{
