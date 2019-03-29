@@ -86,7 +86,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     opacity = 1.0
     topLeft = (
       <div style={{zIndex:-2,position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}}  >
-        <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank" style={{color:"#FFFFFF"}}>
+        <a href={"https://testnet.leapdao.org/explorer/address/"+address} target="_blank" style={{color:"#FFFFFF"}}>
           {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
         </a>
       </div>

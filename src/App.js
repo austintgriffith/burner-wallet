@@ -88,15 +88,12 @@ let titleImage = (
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "http://18.218.2.145:8645";
-  WEB3_PROVIDER = "http://18.218.2.145:1000";
+  XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
+  WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
   CLAIM_RELAY = false;
-  if(true){
-    ERC20NAME = false
-    ERC20TOKEN = false
-    ERC20IMAGE = false
-  }
-
+  ERC20NAME = false;
+  ERC20TOKEN = false;
+  ERC20IMAGE = false;
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = POA_XDAI_NODE;
@@ -121,8 +118,8 @@ else if (window.location.hostname.indexOf("xdai") >= 0) {
   ERC20TOKEN = false
 }
 else if (window.location.hostname.indexOf("burner.leapdao.org") >= 0) {
-  XDAI_PROVIDER = "http://18.218.2.145:8645";
-  WEB3_PROVIDER = "http://18.218.2.145:1000";
+  XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
+  WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
   CLAIM_RELAY = false;
   ERC20NAME = false;
   ERC20TOKEN = false;
@@ -389,20 +386,20 @@ class App extends Component {
     intervalLong = setInterval(this.longPoll.bind(this),45000)
     setTimeout(this.longPoll.bind(this),150)
 
-    let mainnetweb3 = new Web3(new Web3.providers.HttpProvider(WEB3_PROVIDER))
+    let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider(WEB3_PROVIDER));
     let ensContract = new mainnetweb3.eth.Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
     let daiContract;
     let bridgeContract;
     try{
-      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x72560b830ced423fbb9ec1ae8d01b41f015a5f21")
-      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), "0xd3Bf77460d06cdEEfa1e82115038C5E07A60f951")
+      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0xD2D0F8a6ADfF16C2098101087f9548465EC96C98")
+      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), "0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530")
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
-    let xdaiweb3 = helpers.extendWeb3(new Web3(new Web3.providers.HttpProvider(XDAI_PROVIDER)));
+    let xdaiweb3 = helpers.extendWeb3(new Web3(new Web3.providers.WebsocketProvider(XDAI_PROVIDER)));
     let pdaiContract
     try{
-      pdaiContract = new xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x72560b830ced423fbb9ec1ae8d01b41f015a5f21")
+      pdaiContract = new xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0xD2D0F8a6ADfF16C2098101087f9548465EC96C98")
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
@@ -1001,14 +998,14 @@ render() {
   } = this.state;
 
   let networkOverlay = ""
-  if(web3 && !this.checkNetwork() && view!="exchange"){
-    networkOverlay = (
-      <div>
-        <input style={{zIndex:13,position:'absolute',opacity:0.95,right:48,top:192,width:194}} value="https://dai.poa.network" />
-        <img style={{zIndex:12,position:'absolute',opacity:0.95,right:0,top:0,maxHeight:370}} src={customRPCHint} />
-      </div>
-    )
-  }
+  // if(web3 && !this.checkNetwork() && view!="exchange"){
+  //   networkOverlay = (
+  //     <div>
+  //       <input style={{zIndex:13,position:'absolute',opacity:0.95,right:48,top:192,width:194}} value="https://dai.poa.network" />
+  //       <img style={{zIndex:12,position:'absolute',opacity:0.95,right:0,top:0,maxHeight:370}} src={customRPCHint} />
+  //     </div>
+  //   )
+  // }
 
 
   let web3_setup = ""
@@ -1994,7 +1991,7 @@ async function tokenSend(to,value,gasLimit,txData,cb){
 
   console.log("DAPPARATUS TOKEN SENDING WITH GAS LIMIT",setGasLimit)
 
-  const color = 1;
+  const color = 0;
   let result;
 
   this.state.xdaiweb3

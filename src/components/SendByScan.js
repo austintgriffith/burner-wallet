@@ -11,7 +11,7 @@ class SendByScan extends Component {
   constructor(props){
     super(props)
     let defaultToLegacyMode = false
-    if(!navigator||!navigator.mediaDevices){
+    if(!window.navigator||!window.navigator.mediaDevices){
       defaultToLegacyMode = true
     }
     this.state = {
@@ -259,7 +259,7 @@ class SendByScan extends Component {
         </div>
         {displayedReader}
         <div style={{position: 'absolute',zIndex:11,bottom:20,fontSize:12,left:20,color:"#FFFFFF",opacity:0.333}}>
-          {navigator.userAgent} - {JSON.stringify(navigator.mediaDevices)}
+          {window.navigator.userAgent} - {JSON.stringify(window.navigator.mediaDevices)}
         </div>
         {displayedImage}
         {failMessage}
