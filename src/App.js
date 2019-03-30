@@ -1132,7 +1132,7 @@ render() {
 
   let header = null;
   if(web3){
-    
+    /*
     header = (
       <Header
         
@@ -1151,6 +1151,7 @@ render() {
         dollarDisplay={dollarDisplay}
       />
     )
+    */
   }
 
   return (
