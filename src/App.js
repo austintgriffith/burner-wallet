@@ -1455,7 +1455,7 @@ render() {
               
                   
             <ReactFullpage
-              anchors={["firstPage", "secondPage"]}
+              anchors={["simple", "detailed"]}
               scrollOverflow={true}
               render={({ state, fullpageApi }) => {
                 console.log('+++', view)
@@ -2036,9 +2036,7 @@ render() {
 
                        <div style={{position:"absolute",top:"90%",transform:"scale(3)",left:"50%",color:"#FFFFFF",cursor:"pointer"}}
                          onClick={() => {
-                           this.setState({scrollMode:"full"},()=>{
-                             setTimeout(this.scrollCorrect,100)
-                           })
+                           fullpageApi.moveSectionDown();
                          }}
                        >
                        <div style={{opacity:0.25}}>
