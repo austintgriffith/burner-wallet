@@ -72,7 +72,7 @@ export  default ({scrollMode, openScanner, network, total, dollarDisplay, ens, t
       </div>
     )
     upArrow = (
-      <div style={{position:"absolute",top:-25,left:"40%",zIndex:1,opacity:0.25,width:"20%",textAlign:"center",fontSize:37,color:"#FFFFFF",cursor:"pointer"}} onClick={() => {
+      <div style={{zIndex:1,opacity:0.25,width:"20%",textAlign:"center",fontSize:37,color:"#FFFFFF",cursor:"pointer"}} onClick={() => {
          scrollMode("splash")
        }}>
         <i className="fa fa-angle-up"></i>

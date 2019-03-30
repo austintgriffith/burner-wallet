@@ -39,8 +39,9 @@ import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
-import ReactScrollWheelHandler from "react-scroll-wheel-handler";
 
+import "fullpage.js/vendors/scrolloverflow";
+import ReactFullpage from "@fullpage/react-fullpage";
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
@@ -1055,44 +1056,6 @@ render() {
     )
   }
 
-  let scrollFunction = ()=>{
-
-    const winScroll =
-      document.body.scrollTop || document.documentElement.scrollTop
-
-    const height =
-      document.documentElement.scrollHeight -
-      document.documentElement.clientHeight
-
-    const scrolled = Math.abs(winScroll / height)
-
-
-    console.log("WHEEL splash=>full",scrolled)
-    console.log("this.state.scrollMode",this.state.scrollMode)
-    if(this.state.scrollMode=="splash"){
-      console.log("SETTING MODE TO FULL")
-      this.setState({scrollMode:"full"},()=>{
-        setTimeout(this.scrollCorrect,100)
-      })
-    }
-    else{
-      /*
-
-      console.log(winScroll,height,"SCROLLED:",scrolled)
-      if(scrolled>0.2 && this.state.scrollMode=="splash" ){
-        console.log("+++setting mode to FULL")
-        this.setState({scrollMode:"full"},()=>{
-
-        })
-      }else if(scrolled<=0.2 && this.state.scrollMode=="full" ){
-        console.log("+++setting mode to SPLASH")
-        setTimeout(()=>{this.setState({scrollMode:"splash"})},1000)
-      }*/
-    }
-
-
-  }
-
   /*
   <iframe src={"https://min.xdai.io"} style={{width:"100%",height:"100%"}}>
   </iframe>
@@ -1167,17 +1130,13 @@ render() {
     totalBalance += parseFloat(this.state.balance)
   }
 
-  let header = (
-    <div style={{height:50}}>
-    </div>
-  )
+  let header = null;
   if(web3){
+    
     header = (
       <Header
-        scrollMode={(mode)=>{
-          this.setState({scrollMode:mode})
-        }}
-        splash={this.state.scrollMode=="splash"}
+        
+        
         openScanner={this.openScanner.bind(this)}
         network={this.state.network}
         total={totalBalance}
@@ -1271,64 +1230,7 @@ render() {
           }
 
 
-
-
-          //console.log("VIEW:",view)
-
-          if(this.state && this.state.scrollMode=="splash" && this.state.view == "main"){
-            return (
-              <div style={{height:"110%"}}>
-                <ReactScrollWheelHandler
-                upHandler={scrollFunction}
-        downHandler={scrollFunction}
-                >
-                  <div>
-                    <div style={{zIndex:256,position:"absolute",left:0,top:0,width:"100%",height:"101%",backgroundColor:"#000000"}}>
-                    <img style={{position:'absolute',left:"-5%",bottom:"-5%",opacity:0.1,width:"87%",filter:"grayscale(50%) blur(8px)"}} src={LOADERIMAGE} />
-
-                      <div style={mainStyle}>
-                      <div style={{position:'absolute',right:"10%",top:"10%"}}>
-                          <Scaler config={{startZoomAt:1000,origin:"100% 0%"}}>
-                            <div style={{backgroundColor:"#FFFFFF",padding:13,paddingBottom:6}}>
-                            <QRCode value={this.state.account} size={325}/>
-                            </div>
-                          </Scaler>
-                        </div>
-                        <div style={{position:"absolute",left:"10%",top:"10%"}}>
-                         <Scaler config={{startZoomAt:1000,origin:"0% 0%"}}>
-                           <Blockie
-                               address={this.state.account}
-                               config={{size:44}}>
-                           </Blockie>
-                         </Scaler>
-                       </div>
-
-                       <div style={{zIndex:299}}>
-                        {fulldollaamount}
-                       </div>
-
-                       <div style={{position:"absolute",top:"90%",transform:"scale(3)",left:"50%",color:"#FFFFFF",cursor:"pointer"}}
-                         onClick={() => {
-                           this.setState({scrollMode:"full"},()=>{
-                             setTimeout(this.scrollCorrect,100)
-                           })
-                         }}
-                       >
-                       <div style={{opacity:0.25}}>
-                         <i className="fa fa-angle-down"></i>
-                       </div>
-
-
-                     </div>
-
-                      </div>
-                    </div>
-
-                  </div>
-                </ReactScrollWheelHandler>
-              </div>
-            )
-          }
+          
 
 
           let moreButtons = (
@@ -1547,532 +1449,614 @@ render() {
             )
           }
 
-          switch(view) {
-            case 'main':
+            
             return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
-
-                  {extraTokens}
-
-                  <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
-                  <Ruler/>
-                  <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
-                  <Ruler/>
-                  <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
-                  <Ruler/>
-                  {badgeDisplay}
-
-                  <MainCard
-                    subBalanceDisplay={subBalanceDisplay}
-                    buttonStyle={buttonStyle}
-                    address={account}
-                    balance={balance}
-                    changeAlert={this.changeAlert}
-                    changeView={this.changeView}
-                    dollarDisplay={dollarDisplay}
-                    ERC20TOKEN={ERC20TOKEN}
-                  />
-                  {moreButtons}
-                  <RecentTransactions
-                    dollarDisplay={dollarDisplay}
-                    view={this.state.view}
-                    buttonStyle={buttonStyle}
-                    ERC20TOKEN={ERC20TOKEN}
-                    transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
-                    changeView={this.changeView}
-                    address={account}
-                    block={this.state.block}
-                    recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
-                  />
-                </div>
-                <Bottom
-                  icon={"wrench"}
-                  text={i18n.t('advance_title')}
-                  action={()=>{
-                    this.changeView('advanced')
-                  }}
-                />
-              </div>
-            );
-            case 'advanced':
-            return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
-                  <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
-                  <Advanced
-                    isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
-                    buttonStyle={buttonStyle}
-                    address={account}
-                    balance={balance}
-                    changeView={this.changeView}
-                    privateKey={metaAccount.privateKey}
-                    changeAlert={this.changeAlert}
-                    goBack={this.goBack.bind(this)}
-                    setPossibleNewPrivateKey={this.setPossibleNewPrivateKey.bind(this)}
-                  />
-                </div>
-                <Bottom
-                  action={()=>{
-                    this.changeView('main')
-                  }}
-                />
-              </div>
-            )
-            case 'send_by_scan':
-            return (
-              <SendByScan
-                parseAndCleanPath={this.parseAndCleanPath.bind(this)}
-                returnToState={this.returnToState.bind(this)}
-                returnState={this.state.returnState}
-                mainStyle={mainStyle}
-                goBack={this.goBack.bind(this)}
-                changeView={this.changeView}
-                onError={(error) =>{
-                  this.changeAlert("danger",error)
-                }}
-              />
-            );
-            case 'withdraw_from_private':
-
-
-              return (
-                <div>
-                  <div className="send-to-address card w-100" style={{zIndex:1}}>
-                    <NavCard title={i18n.t('withdraw')} goBack={this.goBack.bind(this)}/>
-                    {defaultBalanceDisplay}
-                    <WithdrawFromPrivate
-                      ERC20TOKEN={ERC20TOKEN}
-                      products={this.state.products}
-                      buttonStyle={buttonStyle}
-                      balance={balance}
-                      address={account}
-                      contracts={this.state.contracts}
-                      web3={web3}
-                      //amount={false}
-                      privateKey={this.state.withdrawFromPrivateKey}
+              
+                  
+            <ReactFullpage
+              anchors={["firstPage", "secondPage"]}
+              scrollOverflow={true}
+              render={({ state, fullpageApi }) => {
+                console.log('+++', view)
+                let viewToRender = null;
+                switch(view) {
+                  case 'main':
+                  viewToRender = (
+                    <div>
+                      <div className="main-card card w-100" style={{zIndex:1}}>
+    
+    
+                        {extraTokens}
+    
+                        <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                        <Ruler/>
+                        <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                        <Ruler/>
+                        <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
+                        <Ruler/>
+                        {badgeDisplay}
+    
+                        <MainCard
+                          subBalanceDisplay={subBalanceDisplay}
+                          buttonStyle={buttonStyle}
+                          address={account}
+                          balance={balance}
+                          changeAlert={this.changeAlert}
+                          changeView={this.changeView}
+                          dollarDisplay={dollarDisplay}
+                          ERC20TOKEN={ERC20TOKEN}
+                        />
+                        {moreButtons}
+                        <RecentTransactions
+                          dollarDisplay={dollarDisplay}
+                          view={this.state.view}
+                          buttonStyle={buttonStyle}
+                          ERC20TOKEN={ERC20TOKEN}
+                          transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                          changeView={this.changeView}
+                          address={account}
+                          block={this.state.block}
+                          recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
+                        />
+                      </div>
+                      <Bottom
+                        icon={"wrench"}
+                        text={i18n.t('advance_title')}
+                        action={()=>{
+                          this.changeView('advanced')
+                        }}
+                      />
+                    </div>
+                  );
+                  break;
+                  case 'advanced':
+                  viewToRender = (
+                    <div>
+                      <div className="main-card card w-100" style={{zIndex:1}}>
+    
+                        <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
+                        <Advanced
+                          isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
+                          buttonStyle={buttonStyle}
+                          address={account}
+                          balance={balance}
+                          changeView={this.changeView}
+                          privateKey={metaAccount.privateKey}
+                          changeAlert={this.changeAlert}
+                          goBack={this.goBack.bind(this)}
+                          setPossibleNewPrivateKey={this.setPossibleNewPrivateKey.bind(this)}
+                        />
+                      </div>
+                      <Bottom
+                        action={()=>{
+                          this.changeView('main')
+                        }}
+                      />
+                    </div>
+                  )
+                  break;
+                  case 'send_by_scan':
+                  viewToRender = (
+                    <SendByScan
+                      parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                      returnToState={this.returnToState.bind(this)}
+                      returnState={this.state.returnState}
+                      mainStyle={mainStyle}
                       goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
-                      changeAlert={this.changeAlert}
-                      dollarDisplay={dollarDisplay}
+                      onError={(error) =>{
+                        this.changeAlert("danger",error)
+                      }}
                     />
-                  </div>
-                  <Bottom
-                    action={()=>{
-                      this.changeView('main')
-                    }}
-                  />
-                </div>
-              );
-            case 'send_badge':
-            return (
-              <div>
-                <div className="send-to-address card w-100" style={{zIndex:1}}>
-                  <NavCard title={this.state.badges[this.state.selectedBadge].name} titleLink={this.state.badges[this.state.selectedBadge].external_url} goBack={this.goBack.bind(this)}/>
-                  <SendBadge
-                    changeView={this.changeView}
-                    ensLookup={this.ensLookup.bind(this)}
-                    ERC20TOKEN={ERC20TOKEN}
-                    buttonStyle={buttonStyle}
-                    balance={balance}
-                    web3={this.state.web3}
-                    contracts={this.state.contracts}
-                    address={account}
-                    scannerState={this.state.scannerState}
-                    tx={this.state.tx}
-                    goBack={this.goBack.bind(this)}
-                    openScanner={this.openScanner.bind(this)}
-                    setReceipt={this.setReceipt}
-                    changeAlert={this.changeAlert}
-                    dollarDisplay={dollarDisplay}
-                    badge={this.state.badges[this.state.selectedBadge]}
-                    clearBadges={this.clearBadges.bind(this)}
-                  />
-                </div>
-                <Bottom
-                  text={i18n.t('done')}
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            )
-            case 'send_to_address':
-            return (
-              <div>
-                <div className="send-to-address card w-100" style={{zIndex:1}}>
-                  <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
-                  {defaultBalanceDisplay}
-                  <SendToAddress
-                    convertToDollar={convertToDollar}
-                    dollarSymbol={dollarSymbol}
-                    parseAndCleanPath={this.parseAndCleanPath.bind(this)}
-                    openScanner={this.openScanner.bind(this)}
-                    scannerState={this.state.scannerState}
-                    ensLookup={this.ensLookup.bind(this)}
-                    ERC20TOKEN={ERC20TOKEN}
-                    buttonStyle={buttonStyle}
-                    balance={balance}
-                    web3={this.state.web3}
-                    address={account}
-                    send={send}
-                    goBack={this.goBack.bind(this)}
-                    changeView={this.changeView}
-                    setReceipt={this.setReceipt}
-                    changeAlert={this.changeAlert}
-                    dollarDisplay={dollarDisplay}
-                  />
-                </div>
-                <Bottom
-                  text={i18n.t('cancel')}
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            );
-            case 'receipt':
-            return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
-                  <NavCard title={i18n.t('receipt_title')} goBack={this.goBack.bind(this)}/>
-                  <Receipt
-                    receipt={this.state.receipt}
-                    view={this.state.view}
-                    block={this.state.block}
-                    ensLookup={this.ensLookup.bind(this)}
-                    ERC20TOKEN={ERC20TOKEN}
-                    buttonStyle={buttonStyle}
-                    balance={balance}
-                    web3={this.state.web3}
-                    address={account}
-                    send={send}
-                    goBack={this.goBack.bind(this)}
-                    changeView={this.changeView}
-                    changeAlert={this.changeAlert}
-                    dollarDisplay={dollarDisplay}
-                    transactionsByAddress={this.state.transactionsByAddress}
-                    fullTransactionsByAddress={this.state.fullTransactionsByAddress}
-                    fullRecentTxs={this.state.fullRecentTxs}
-                    recentTxs={this.state.recentTxs}
-                  />
-                </div>
-                <Bottom
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            );
-            case 'receive':
-            return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
-                  <NavCard title={i18n.t('receive_title')} goBack={this.goBack.bind(this)}/>
-                  {defaultBalanceDisplay}
-                  <Receive
-                    dollarDisplay={dollarDisplay}
-                    view={this.state.view}
-                    block={this.state.block}
-                    ensLookup={this.ensLookup.bind(this)}
-                    ERC20TOKEN={ERC20TOKEN}
-                    buttonStyle={buttonStyle}
-                    balance={balance}
-                    web3={this.state.web3}
-                    address={account}
-                    send={send}
-                    goBack={this.goBack.bind(this)}
-                    changeView={this.changeView}
-                    changeAlert={this.changeAlert}
-                    dollarDisplay={dollarDisplay}
-                    transactionsByAddress={this.state.transactionsByAddress}
-                    fullTransactionsByAddress={this.state.fullTransactionsByAddress}
-                    fullRecentTxs={this.state.fullRecentTxs}
-                    recentTxs={this.state.recentTxs}
-                  />
-                </div>
-                <Bottom
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            );
-            case 'request_funds':
-            return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
-                  <NavCard title={i18n.t('request_funds_title')} goBack={this.goBack.bind(this)}/>
-                  {defaultBalanceDisplay}
-                  <RequestFunds
-                    view={this.state.view}
-                    mainStyle={mainStyle}
-                    buttonStyle={buttonStyle}
-                    balance={balance}
-                    address={account}
-                    send={send}
-                    goBack={this.goBack.bind(this)}
-                    changeView={this.changeView}
-                    changeAlert={this.changeAlert}
-                    dollarDisplay={dollarDisplay}
-                    dollarSymbol={dollarSymbol}
-                    transactionsByAddress={this.state.transactionsByAddress}
-                    fullTransactionsByAddress={this.state.fullTransactionsByAddress}
-                    fullRecentTxs={this.state.fullRecentTxs}
-                    recentTxs={this.state.recentTxs}
-                  />
-                </div>
-                <Bottom
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            );
-            case 'share':
-
-              let url = window.location.protocol+"//"+window.location.hostname
-              if(window.location.port&&window.location.port!=80&&window.location.port!=443){
-                url = url+":"+window.location.port
-              }
-
-              return (
-                <div>
-                  <div className="main-card card w-100" style={{zIndex:1}}>
-
-                    <NavCard title={url} goBack={this.goBack.bind(this)} />
-                    <Share
-                      title={url}
-                      url={url}
-                      mainStyle={mainStyle}
-                      sendKey={this.state.sendKey}
-                      sendLink={this.state.sendLink}
-                      balance={balance}
-                      address={account}
-                      changeAlert={this.changeAlert}
-                      goBack={this.goBack.bind(this)}
-                    />
-                  </div>
-                  <Bottom
-                    action={this.goBack.bind(this)}
-                  />
-                </div>
-              );
-            case 'share-link':
-              return (
-                <div>
-                  <div className="main-card card w-100" style={{zIndex:1}}>
-
-                    <NavCard title={'Share Link'} goBack={this.goBack.bind(this)} />
-                      <ShareLink
-                        sendKey={this.state.sendKey}
-                        sendLink={this.state.sendLink}
-                        balance={balance}
-                        address={account}
-                        changeAlert={this.changeAlert}
-                        goBack={this.goBack.bind(this)}
+                  );
+                  break;
+                  case 'withdraw_from_private':
+    
+    
+                    viewToRender = (
+                      <div>
+                        <div className="send-to-address card w-100" style={{zIndex:1}}>
+                          <NavCard title={i18n.t('withdraw')} goBack={this.goBack.bind(this)}/>
+                          {defaultBalanceDisplay}
+                          <WithdrawFromPrivate
+                            ERC20TOKEN={ERC20TOKEN}
+                            products={this.state.products}
+                            buttonStyle={buttonStyle}
+                            balance={balance}
+                            address={account}
+                            contracts={this.state.contracts}
+                            web3={web3}
+                            //amount={false}
+                            privateKey={this.state.withdrawFromPrivateKey}
+                            goBack={this.goBack.bind(this)}
+                            changeView={this.changeView}
+                            changeAlert={this.changeAlert}
+                            dollarDisplay={dollarDisplay}
+                          />
+                        </div>
+                        <Bottom
+                          action={()=>{
+                            this.changeView('main')
+                          }}
+                        />
+                      </div>
+                    );
+                    break;
+                  case 'send_badge':
+                  viewToRender = (
+                    <div>
+                      <div className="send-to-address card w-100" style={{zIndex:1}}>
+                        {/* <NavCard title={this.state.badges[this.state.selectedBadge].name} titleLink={this.state.badges[this.state.selectedBadge].external_url} goBack={this.goBack.bind(this)}/> */}
+                        <SendBadge
+                          changeView={this.changeView}
+                          ensLookup={this.ensLookup.bind(this)}
+                          ERC20TOKEN={ERC20TOKEN}
+                          buttonStyle={buttonStyle}
+                          balance={balance}
+                          web3={this.state.web3}
+                          contracts={this.state.contracts}
+                          address={account}
+                          scannerState={this.state.scannerState}
+                          tx={this.state.tx}
+                          goBack={this.goBack.bind(this)}
+                          openScanner={this.openScanner.bind(this)}
+                          setReceipt={this.setReceipt}
+                          changeAlert={this.changeAlert}
+                          dollarDisplay={dollarDisplay}
+                          badge={this.state.badges[this.state.selectedBadge]}
+                          clearBadges={this.clearBadges.bind(this)}
+                        />
+                      </div>
+                      <Bottom
+                        text={i18n.t('done')}
+                        action={this.goBack.bind(this)}
                       />
+                    </div>
+                  )
+                  break;
+                  case 'send_to_address':
+                  viewToRender = (
+                    <div>
+                      <div className="send-to-address card w-100" style={{zIndex:1}}>
+                        <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
+                        {defaultBalanceDisplay}
+                        <SendToAddress
+                          convertToDollar={convertToDollar}
+                          dollarSymbol={dollarSymbol}
+                          parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                          openScanner={this.openScanner.bind(this)}
+                          scannerState={this.state.scannerState}
+                          ensLookup={this.ensLookup.bind(this)}
+                          ERC20TOKEN={ERC20TOKEN}
+                          buttonStyle={buttonStyle}
+                          balance={balance}
+                          web3={this.state.web3}
+                          address={account}
+                          send={send}
+                          goBack={this.goBack.bind(this)}
+                          changeView={this.changeView}
+                          setReceipt={this.setReceipt}
+                          changeAlert={this.changeAlert}
+                          dollarDisplay={dollarDisplay}
+                        />
+                      </div>
+                      <Bottom
+                        text={i18n.t('cancel')}
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
+                  break;
+                  case 'receipt':
+                  viewToRender = (
+                    <div>
+                      <div className="main-card card w-100" style={{zIndex:1}}>
+    
+                        <NavCard title={i18n.t('receipt_title')} goBack={this.goBack.bind(this)}/>
+                        <Receipt
+                          receipt={this.state.receipt}
+                          view={this.state.view}
+                          block={this.state.block}
+                          ensLookup={this.ensLookup.bind(this)}
+                          ERC20TOKEN={ERC20TOKEN}
+                          buttonStyle={buttonStyle}
+                          balance={balance}
+                          web3={this.state.web3}
+                          address={account}
+                          send={send}
+                          goBack={this.goBack.bind(this)}
+                          changeView={this.changeView}
+                          changeAlert={this.changeAlert}
+                          dollarDisplay={dollarDisplay}
+                          transactionsByAddress={this.state.transactionsByAddress}
+                          fullTransactionsByAddress={this.state.fullTransactionsByAddress}
+                          fullRecentTxs={this.state.fullRecentTxs}
+                          recentTxs={this.state.recentTxs}
+                        />
+                      </div>
+                      <Bottom
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
+                  break;
+                  case 'receive':
+                  viewToRender = (
+                    <div>
+                      <div className="main-card card w-100" style={{zIndex:1}}>
+    
+                        <NavCard title={i18n.t('receive_title')} goBack={this.goBack.bind(this)}/>
+                        {defaultBalanceDisplay}
+                        <Receive
+                          dollarDisplay={dollarDisplay}
+                          view={this.state.view}
+                          block={this.state.block}
+                          ensLookup={this.ensLookup.bind(this)}
+                          ERC20TOKEN={ERC20TOKEN}
+                          buttonStyle={buttonStyle}
+                          balance={balance}
+                          web3={this.state.web3}
+                          address={account}
+                          send={send}
+                          goBack={this.goBack.bind(this)}
+                          changeView={this.changeView}
+                          changeAlert={this.changeAlert}
+                          dollarDisplay={dollarDisplay}
+                          transactionsByAddress={this.state.transactionsByAddress}
+                          fullTransactionsByAddress={this.state.fullTransactionsByAddress}
+                          fullRecentTxs={this.state.fullRecentTxs}
+                          recentTxs={this.state.recentTxs}
+                        />
+                      </div>
+                      <Bottom
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
+                  break;
+                  case 'request_funds':
+                  viewToRender = (
+                    <div>
+                      <div className="main-card card w-100" style={{zIndex:1}}>
+    
+                        <NavCard title={i18n.t('request_funds_title')} goBack={this.goBack.bind(this)}/>
+                        {defaultBalanceDisplay}
+                        <RequestFunds
+                          view={this.state.view}
+                          mainStyle={mainStyle}
+                          buttonStyle={buttonStyle}
+                          balance={balance}
+                          address={account}
+                          send={send}
+                          goBack={this.goBack.bind(this)}
+                          changeView={this.changeView}
+                          changeAlert={this.changeAlert}
+                          dollarDisplay={dollarDisplay}
+                          dollarSymbol={dollarSymbol}
+                          transactionsByAddress={this.state.transactionsByAddress}
+                          fullTransactionsByAddress={this.state.fullTransactionsByAddress}
+                          fullRecentTxs={this.state.fullRecentTxs}
+                          recentTxs={this.state.recentTxs}
+                        />
+                      </div>
+                      <Bottom
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
+                  break;
+                  case 'share':
+    
+                    let url = window.location.protocol+"//"+window.location.hostname
+                    if(window.location.port&&window.location.port!=80&&window.location.port!=443){
+                      url = url+":"+window.location.port
+                    }
+    
+                    viewToRender = (
+                      <div>
+                        <div className="main-card card w-100" style={{zIndex:1}}>
+    
+                          <NavCard title={url} goBack={this.goBack.bind(this)} />
+                          <Share
+                            title={url}
+                            url={url}
+                            mainStyle={mainStyle}
+                            sendKey={this.state.sendKey}
+                            sendLink={this.state.sendLink}
+                            balance={balance}
+                            address={account}
+                            changeAlert={this.changeAlert}
+                            goBack={this.goBack.bind(this)}
+                          />
+                        </div>
+                        <Bottom
+                          action={this.goBack.bind(this)}
+                        />
+                      </div>
+                    );
+                    break;
+                  case 'share-link':
+                    viewToRender = (
+                      <div>
+                        <div className="main-card card w-100" style={{zIndex:1}}>
+    
+                          <NavCard title={'Share Link'} goBack={this.goBack.bind(this)} />
+                            <ShareLink
+                              sendKey={this.state.sendKey}
+                              sendLink={this.state.sendLink}
+                              balance={balance}
+                              address={account}
+                              changeAlert={this.changeAlert}
+                              goBack={this.goBack.bind(this)}
+                            />
+                        </div>
+                        <Bottom
+                          action={this.goBack.bind(this)}
+                        />
+                      </div>
+                    );
+                    break;
+                  case 'send_with_link':
+                  viewToRender = (
+                    <div>
+                      <div className="main-card card w-100" style={{zIndex:1}}>
+    
+                        <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
+                        {defaultBalanceDisplay}
+                        <SendWithLink balance={balance}
+                          buttonStyle={buttonStyle}
+                          changeAlert={this.changeAlert}
+                          sendWithLink={(amount,cb)=>{
+                            let randomHash = this.state.web3.utils.sha3(""+Math.random())
+                            let randomWallet = this.state.web3.eth.accounts.create()
+                            let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
+                            console.log("STATE",this.state,this.state.contracts)
+                            this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,0,amount*10**18,7),250000,false,amount*10**18,async (receipt)=>{
+                              this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
+                                console.log("STATE SAVED",this.state)
+                              })
+                              cb(receipt)
+                            })
+                          }}
+                          address={account}
+                          changeView={this.changeView}
+                          goBack={this.goBack.bind(this)}
+                          dollarDisplay={dollarDisplay}
+                          convertToDollar={convertToDollar}
+                          dollarSymbol={dollarSymbol}
+                        />
+                      </div>
+                      <Bottom
+                        text={i18n.t('cancel')}
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
+                  break;
+                  case 'burn-wallet':
+                  viewToRender = (
+                    <div>
+                      <div className="main-card card w-100" style={{zIndex:1}}>
+    
+                        <NavCard title={"Burn Private Key"} goBack={this.goBack.bind(this)}/>
+                        {defaultBalanceDisplay}
+                        <BurnWallet
+                        mainStyle={mainStyle}
+                        address={account}
+                        balance={balance}
+                        goBack={this.goBack.bind(this)}
+                        dollarDisplay={dollarDisplay}
+                        burnWallet={()=>{
+                          burnMetaAccount()
+                          if(RNMessageChannel){
+                            RNMessageChannel.send("burn")
+                          }
+                          if(localStorage&&typeof localStorage.setItem == "function"){
+                            localStorage.setItem(this.state.account+"loadedBlocksTop","")
+                            localStorage.setItem(this.state.account+"metaPrivateKey","")
+                            localStorage.setItem(this.state.account+"recentTxs","")
+                            localStorage.setItem(this.state.account+"transactionsByAddress","")
+                            this.setState({recentTxs:[],transactionsByAddress:{}})
+                          }
+                        }}
+                        />
+                      </div>
+                      <Bottom
+                        text={i18n.t('cancel')}
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
+                  break;
+                  case 'cash_out':
+                  viewToRender = (
+                    <div>
+                      <div className="main-card card w-100" style={{zIndex:1}}>
+    
+                        <NavCard title={"Cash Out"} goBack={this.goBack.bind(this)}/>
+                        {defaultBalanceDisplay}
+                        <CashOut
+                          buttonStyle={buttonStyle}
+                          changeView={this.changeView}
+                          address={account}
+                          balance={balance}
+                          goBack={this.goBack.bind(this)}
+                          dollarDisplay={dollarDisplay}
+                        />
+                      </div>
+                      <Bottom
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
+                  break;
+                  case 'exchange':
+                  viewToRender = (
+                    <div>
+                      <div className="main-card card w-100" style={{zIndex:1}}>
+    
+                        <NavCard title={i18n.t('exchange_title')} goBack={this.goBack.bind(this)}/>
+                        <Exchange
+                          eth={eth}
+                          dai={dai}
+                          xdai={xdai}
+                          ERC20NAME={ERC20NAME}
+                          ERC20IMAGE={ERC20IMAGE}
+                          ERC20TOKEN={ERC20TOKEN}
+                          ERC20VENDOR={ERC20VENDOR}
+                          ethprice={this.state.ethprice}
+                          ethBalance={this.state.ethBalance}
+                          daiBalance={this.state.daiBalance}
+                          xdaiBalance={this.state.xdaiBalance}
+                          mainnetweb3={this.state.mainnetweb3}
+                          xdaiweb3={this.state.xdaiweb3}
+                          daiContract={this.state.daiContract}
+                          ensContract={this.state.ensContract}
+                          isVendor={this.state.isVendor}
+                          isAdmin={this.state.isAdmin}
+                          contracts={this.state.contracts}
+                          buttonStyle={buttonStyle}
+                          changeAlert={this.changeAlert}
+                          setGwei={this.setGwei}
+                          network={this.state.network}
+                          tx={this.state.tx}
+                          web3={this.state.web3}
+                          send={this.state.send}
+                          nativeSend={this.state.nativeSend}
+                          address={account}
+                          balance={balance}
+                          goBack={this.goBack.bind(this)}
+                          dollarDisplay={dollarDisplay}
+                        />
+                      </div>
+                      <Bottom
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
+                  break;
+                  case 'vendors':
+                  viewToRender = (
+                    <div>
+                      <div className="main-card card w-100" style={{zIndex:1}}>
+    
+                        <NavCard title={i18n.t('vendors')} goBack={this.goBack.bind(this)}/>
+                        <Vendors
+                          ERC20VENDOR={ERC20VENDOR}
+                          products={this.state.products}
+                          vendorObject={this.state.vendorObject}
+                          vendors={this.state.vendors}
+                          address={account}
+                          mainStyle={mainStyle}
+                          changeView={this.changeView}
+                          contracts={this.state.contracts}
+                          vendor={this.state.isVendor}
+                          tx={this.state.tx}
+                          web3={this.state.web3}
+                          block={this.state.block}
+                          goBack={this.goBack.bind(this)}
+                          dollarDisplay={dollarDisplay}
+                        />
+                      </div>
+                      <Bottom
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
+                  break;
+                  case 'loader':
+                  viewToRender = (
+                    <div>
+                      <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
+    
+                        <NavCard title={"Sending..."} goBack={this.goBack.bind(this)} darkMode={true}/>
+                      </div>
+                      <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+                    </div>
+                  );
+                  break;
+                  case 'reader':
+                  viewToRender = (
+                    <div>
+                      <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
+    
+                        <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)} darkMode={true}/>
+                      </div>
+                      <Loader loaderImage={LOADERIMAGE}  mainStyle={mainStyle}/>
+                    </div>
+                  );
+                  break;
+                  case 'claimer':
+                  viewToRender = (
+                    <div>
+                      <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
+    
+                        <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
+                      </div>
+                    <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+                    </div>
+                  );
+                  break;
+                  default:
+                  viewToRender = (
+                    <div>unknown view</div>
+                  )
+                }
+
+                return (
+                  <div id="fullpage-wrapper">
+                    <div className="section">
+                    <div style={{zIndex:256,position:"absolute",left:0,top:0,width:"100%",height:"101%",backgroundColor:"#000000"}}>
+                    <img style={{position:'absolute',left:"-5%",bottom:"-5%",opacity:0.1,width:"87%",filter:"grayscale(50%) blur(8px)"}} src={LOADERIMAGE} />
+
+                      <div style={mainStyle}>
+                      <div style={{position:'absolute',right:"10%",top:"10%"}}>
+                          <Scaler config={{startZoomAt:1000,origin:"100% 0%"}}>
+                            <div style={{backgroundColor:"#FFFFFF",padding:13,paddingBottom:6}}>
+                            <QRCode value={this.state.account} size={325}/>
+                            </div>
+                          </Scaler>
+                        </div>
+                        <div style={{position:"absolute",left:"10%",top:"10%"}}>
+                         <Scaler config={{startZoomAt:1000,origin:"0% 0%"}}>
+                           <Blockie
+                               address={this.state.account}
+                               config={{size:44}}>
+                           </Blockie>
+                         </Scaler>
+                       </div>
+
+                       <div style={{zIndex:299}}>
+                        {fulldollaamount}
+                       </div>
+
+                       <div style={{position:"absolute",top:"90%",transform:"scale(3)",left:"50%",color:"#FFFFFF",cursor:"pointer"}}
+                         onClick={() => {
+                           this.setState({scrollMode:"full"},()=>{
+                             setTimeout(this.scrollCorrect,100)
+                           })
+                         }}
+                       >
+                       <div style={{opacity:0.25}}>
+                         <i className="fa fa-angle-down"></i>
+                       </div>
+
+
+                     </div>
+
+                      </div>
+                    </div>
+                         </div>
+                         <div className="section">
+                          {viewToRender}
+                          </div>
                   </div>
-                  <Bottom
-                    action={this.goBack.bind(this)}
-                  />
-                </div>
-              );
-            case 'send_with_link':
-            return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
-                  <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
-                  {defaultBalanceDisplay}
-                  <SendWithLink balance={balance}
-                    buttonStyle={buttonStyle}
-                    changeAlert={this.changeAlert}
-                    sendWithLink={(amount,cb)=>{
-                      let randomHash = this.state.web3.utils.sha3(""+Math.random())
-                      let randomWallet = this.state.web3.eth.accounts.create()
-                      let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
-                      console.log("STATE",this.state,this.state.contracts)
-                      this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,0,amount*10**18,7),250000,false,amount*10**18,async (receipt)=>{
-                        this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
-                          console.log("STATE SAVED",this.state)
-                        })
-                        cb(receipt)
-                      })
-                    }}
-                    address={account}
-                    changeView={this.changeView}
-                    goBack={this.goBack.bind(this)}
-                    dollarDisplay={dollarDisplay}
-                    convertToDollar={convertToDollar}
-                    dollarSymbol={dollarSymbol}
-                  />
-                </div>
-                <Bottom
-                  text={i18n.t('cancel')}
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            );
-            case 'burn-wallet':
-            return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
-                  <NavCard title={"Burn Private Key"} goBack={this.goBack.bind(this)}/>
-                  {defaultBalanceDisplay}
-                  <BurnWallet
-                  mainStyle={mainStyle}
-                  address={account}
-                  balance={balance}
-                  goBack={this.goBack.bind(this)}
-                  dollarDisplay={dollarDisplay}
-                  burnWallet={()=>{
-                    burnMetaAccount()
-                    if(RNMessageChannel){
-                      RNMessageChannel.send("burn")
-                    }
-                    if(localStorage&&typeof localStorage.setItem == "function"){
-                      localStorage.setItem(this.state.account+"loadedBlocksTop","")
-                      localStorage.setItem(this.state.account+"metaPrivateKey","")
-                      localStorage.setItem(this.state.account+"recentTxs","")
-                      localStorage.setItem(this.state.account+"transactionsByAddress","")
-                      this.setState({recentTxs:[],transactionsByAddress:{}})
-                    }
-                  }}
-                  />
-                </div>
-                <Bottom
-                  text={i18n.t('cancel')}
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            );
-            case 'cash_out':
-            return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
-                  <NavCard title={"Cash Out"} goBack={this.goBack.bind(this)}/>
-                  {defaultBalanceDisplay}
-                  <CashOut
-                    buttonStyle={buttonStyle}
-                    changeView={this.changeView}
-                    address={account}
-                    balance={balance}
-                    goBack={this.goBack.bind(this)}
-                    dollarDisplay={dollarDisplay}
-                  />
-                </div>
-                <Bottom
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            );
-
-            case 'exchange':
-            return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
-                  <NavCard title={i18n.t('exchange_title')} goBack={this.goBack.bind(this)}/>
-                  <Exchange
-                    eth={eth}
-                    dai={dai}
-                    xdai={xdai}
-                    ERC20NAME={ERC20NAME}
-                    ERC20IMAGE={ERC20IMAGE}
-                    ERC20TOKEN={ERC20TOKEN}
-                    ERC20VENDOR={ERC20VENDOR}
-                    ethprice={this.state.ethprice}
-                    ethBalance={this.state.ethBalance}
-                    daiBalance={this.state.daiBalance}
-                    xdaiBalance={this.state.xdaiBalance}
-                    mainnetweb3={this.state.mainnetweb3}
-                    xdaiweb3={this.state.xdaiweb3}
-                    daiContract={this.state.daiContract}
-                    ensContract={this.state.ensContract}
-                    isVendor={this.state.isVendor}
-                    isAdmin={this.state.isAdmin}
-                    contracts={this.state.contracts}
-                    buttonStyle={buttonStyle}
-                    changeAlert={this.changeAlert}
-                    setGwei={this.setGwei}
-                    network={this.state.network}
-                    tx={this.state.tx}
-                    web3={this.state.web3}
-                    send={this.state.send}
-                    nativeSend={this.state.nativeSend}
-                    address={account}
-                    balance={balance}
-                    goBack={this.goBack.bind(this)}
-                    dollarDisplay={dollarDisplay}
-                  />
-                </div>
-                <Bottom
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            );
-            case 'vendors':
-            return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
-                  <NavCard title={i18n.t('vendors')} goBack={this.goBack.bind(this)}/>
-                  <Vendors
-                    ERC20VENDOR={ERC20VENDOR}
-                    products={this.state.products}
-                    vendorObject={this.state.vendorObject}
-                    vendors={this.state.vendors}
-                    address={account}
-                    mainStyle={mainStyle}
-                    changeView={this.changeView}
-                    contracts={this.state.contracts}
-                    vendor={this.state.isVendor}
-                    tx={this.state.tx}
-                    web3={this.state.web3}
-                    block={this.state.block}
-                    goBack={this.goBack.bind(this)}
-                    dollarDisplay={dollarDisplay}
-                  />
-                </div>
-                <Bottom
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            );
-            case 'loader':
-            return (
-              <div>
-                <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
-
-                  <NavCard title={"Sending..."} goBack={this.goBack.bind(this)} darkMode={true}/>
-                </div>
-                <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-              </div>
-            );
-            case 'reader':
-            return (
-              <div>
-                <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
-
-                  <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)} darkMode={true}/>
-                </div>
-                <Loader loaderImage={LOADERIMAGE}  mainStyle={mainStyle}/>
-              </div>
-            );
-            case 'claimer':
-            return (
-              <div>
-                <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
-
-                  <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
-                </div>
-              <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-              </div>
-            );
-            default:
-            return (
-              <div>unknown view</div>
+                );  
+                }}
+            
+            />
             )
-          }
-
+          
         })()}
         { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
           <div>

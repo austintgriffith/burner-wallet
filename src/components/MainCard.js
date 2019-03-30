@@ -120,7 +120,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
 
   return (
     <div>
-      <div id="maincardHeader" style={{height:topPad}}>
+      <div id="maincardHeader" >
       </div>
       <div>
         {sendButtons}
