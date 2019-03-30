@@ -1174,7 +1174,7 @@ render() {
           if(false){
             fulldollaamount = (
               <div>
-                <div style={{position:"absolute",top:"70%",left:"10%",color:"#FFFFFF"}} onClick={() => console.log("BALANCE CLICK")}>
+                <div style={{color:"#FFFFFF"}} onClick={() => console.log("BALANCE CLICK")}>
                   <div style={{fontSize:128}}>
                     <Scaler config={{startZoomAt:1000,origin:"0% 10%"}}>
                       {99999.99}
@@ -1186,11 +1186,11 @@ render() {
           }else{
             if(web3 && !this.checkNetwork()){
              fulldollaamount = (
-               <div style={{fontSize:60,paddingLeft:"20%"}}>
+               <div style={{fontSize:60,paddingLeft:"20%",position:'relative'}}>
                  Wrong Network
                  <div>
                    <input style={{fontSize:16,zIndex:13,position:'absolute',right:48,top:192,width:194}} value="https://dai.poa.network" />
-                   <img style={{zIndex:12,position:'absolute',right:0,top:0,maxHeight:370}} src={customRPCHint} />
+                   <img style={{zIndex:12,maxHeight:370}} src={customRPCHint} />
                  </div>
                </div>
              )
@@ -1199,13 +1199,13 @@ render() {
 
 
              fulldollaamount = (
-               <div>
-                 <div style={{position:"absolute",top:"60%",left:"9%",color:"#FFFFFF"}} onClick={() => console.log("BALANCE CLICK")}>
+              <div style={{position:'relative'}}>
+                 <div style={{color:"#FFFFFF"}} onClick={() => console.log("BALANCE CLICK")}>
 
 
 
                      <Scaler config={{startZoomAt:1000,origin:"0% 10%"}}>
-                        <div style={{position:"absolute",top:"0",left:"0",fontSize:128}}>
+                        <div style={{fontSize:128}}>
                          {dollarDisplay(this.state.balance)}
                          <div style={{textAlign:"right",paddingRight:12,fontSize:48,opacity:0.5,marginTop:-20}}>
                            {this.state.network}
@@ -1220,7 +1220,7 @@ render() {
              )
            }else{
              fulldollaamount = (
-               <div style={{position:"absolute",top:"70%",left:"50%",color:"#FFFFFF"}} onClick={() => console.log("LOADER? CLICK")}>
+               <div style={{color:"#FFFFFF",position:'relative'}} onClick={() => console.log("LOADER? CLICK")}>
                  <div style={{transform:"scale(8)"}}>
                    <Loader loaderImage={false} mainStyle={mainStyle}/>
                  </div>
@@ -2007,18 +2007,20 @@ render() {
                 return (
                   <div id="fullpage-wrapper">
                     <div className="section">
-                    <div style={{zIndex:256,position:"absolute",left:0,top:0,width:"100%",height:"101%",backgroundColor:"#000000"}}>
+                    <div style={{zIndex:256,height:"100%",width:"100%",backgroundColor:"#000000"}}>
                     <img style={{position:'absolute',left:"-5%",bottom:"-5%",opacity:0.1,width:"87%",filter:"grayscale(50%) blur(8px)"}} src={LOADERIMAGE} />
 
-                      <div style={mainStyle}>
-                      <div style={{position:'absolute',right:"10%",top:"10%"}}>
+                      <div style={Object.assign({}, mainStyle, {
+                        display: 'flex',
+                      })}>
+                      <div>
                           <Scaler config={{startZoomAt:1000,origin:"100% 0%"}}>
                             <div style={{backgroundColor:"#FFFFFF",padding:13,paddingBottom:6}}>
                             <QRCode value={this.state.account} size={325}/>
                             </div>
                           </Scaler>
                         </div>
-                        <div style={{position:"absolute",left:"10%",top:"10%"}}>
+                        <div>
                          <Scaler config={{startZoomAt:1000,origin:"0% 0%"}}>
                            <Blockie
                                address={this.state.account}
@@ -2027,6 +2029,7 @@ render() {
                          </Scaler>
                        </div>
 
+                       </div>
                        <div style={{zIndex:299}}>
                         {fulldollaamount}
                        </div>
@@ -2043,7 +2046,7 @@ render() {
                        </div>
 
 
-                     </div>
+
 
                       </div>
                     </div>
