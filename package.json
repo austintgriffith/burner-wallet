@@ -46,7 +46,6 @@
     "react-qr-reader": "^2.1.1",
     "react-scripts": "^2.1.5",
     "react-scroll": "^1.7.10",
-    "react-scroll-wheel-handler": "^1.0.7",
     "react-stack-grid": "^0.7.1",
     "s3": "^4.4.0",
     "scrypt": "^6.0.3",
