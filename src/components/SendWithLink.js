@@ -72,7 +72,7 @@ export default class SendWithLink extends React.Component {
             onChange={event => this.updateState('amount', event.target.value)}
           />
         </Field>
-        <Button size={'large'} width={1} onClick={this.send} disabled={canSend}>
+        <Button size={'large'} width={1} onClick={this.send} disabled={(canSend ? false : true)}>
           Send
         </Button>
       </div>
