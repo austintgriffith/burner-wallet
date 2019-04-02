@@ -15,6 +15,8 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
     using SafeMath for uint;
     using ECDSA for bytes32;
 
+    bytes4 internal constant ERC20TOKEN = bytes4(keccak256("ERC20"));
+
     struct Fund {
         address sender;
         address signer;
@@ -87,7 +89,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         require(_expirationDays >= uint(0),"Links::send - Invalid expiration days");
         address signer = ECDSA.recover(_id.toEthSignedMessageHash(),_signature);
         require(signer != address(0),"Links::send - Invalid signer");
-        address sender = get_sender();  // Get sender from MetaTx instead of msg.sender
+        address sender = get_sender();  // Get sender for MetaTx instead of msg.sender
         
         // Handle Id nonce
         // Ids could be reused if the fund was correclty claimed and deleted
@@ -105,7 +107,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
             expiration = now.add(_expirationDays.mul(1 days));
         }
         assert(nonce < nonceId[_id]);
-        _linkDeposit(_token,_amount,sender);
+        _linkDeposit(_token, ERC20TOKEN, _amount, 0, sender); // If not NATIVE_TOKEN it will be ERC20 - Vault
         funds[_id] = Fund({
             sender: sender,
             signer: signer,
@@ -235,7 +237,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         uint nonce = funds[_id].nonce;
         address token = funds[_id].token;
         uint amount = funds[_id].amount;
-        address sender = get_sender(); // Get sender from MetaTx instead of msg.sender
+        address sender = get_sender(); // Get sender for MetaTx instead of msg.sender
 
         assert(nonce < nonceId[_id]);
         // validate mutex/flag status
@@ -245,11 +247,13 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
             // expired funds can only be claimed back by the original sender.
             if(isClaimExpired(_id)){
                 require(sender == funds[_id].sender,"Links::executeClaim - Not original sender");
-                require(_linkTransfer(token, sender, amount),"Links::executeClaim - Could not transfer to sender");
+                // If not NATIVE_TOKEN it will be ERC20 - Vault
+                require(_linkTransfer(token, ERC20TOKEN, sender, amount, 0),"Links::executeClaim - Could not transfer to sender");
                 delete funds[_id];
                 status = true;
             }else{
-                status = _linkTransfer(token, _destination, amount);
+                // If not NATIVE_TOKEN it will be ERC20 - Vault
+                status = _linkTransfer(token, ERC20TOKEN, _destination, amount, 0);
                 // update mutex with correct status
                 funds[_id].claimed = status;
                 // update fund
