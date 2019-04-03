@@ -41,6 +41,16 @@ import { fromRpcSig } from 'ethereumjs-util';
 
 import { bi, add, divide, lessThan } from 'jsbi-utils';
 
+import {
+  Flex,
+  Box,
+  Button,
+  OutlineButton,
+  Icon,
+  Input,
+  Field
+} from 'rimble-ui'
+
 const BN = Web3.utils.BN
 
 const GASBOOSTPRICE = 0.25
@@ -1748,7 +1758,14 @@ export default class Exchange extends React.Component {
             </Scaler>
           </Button>
 
-          <Button width={1} icon={'ArrowDownward'} disabled={buttonsDisabled}  onClick={()=>{
+          <Button width={1} 
+            icon={'ArrowDownward'}
+            disabled={
+              buttonsDisabled ||
+              (!this.state.notSundai && this.state.exitableSunDaiBalance === 0) ||
+              parseFloat(this.props.xdaiBalance) === 0
+            } 
+            onClick={()=>{
             this.setState({daiToXdaiMode:"withdraw"})
           }} >
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
