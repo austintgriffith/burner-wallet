@@ -240,6 +240,28 @@ let dollarDisplay = (amount)=>{
   amount = Math.floor(amount*100)/100
   return amount.toFixed(2)
 }
+//Function that returns an object with all the URL encoded (?..&..&) parametrers in a given path
+let parseURLParams = (path) => {
+  let splitPath = path.split('?')
+  if(splitPath.length == 1){ // if there was no params
+    return undefined 
+  }
+  let plainParams = splitPath[1].split('&')
+  var parameters = {}
+  // Create an object with each key-value pair from the params
+  for(var i = 0; i < plainParams.length; i++){
+    let key = plainParams[i].split('=')[0]
+    let value = plainParams[i].split('=')[1]
+    if(value == 'true'){
+      parameters[key] = true
+    } else if(value == 'false'){
+      parameters[key] = false
+    } else {
+      parameters[key] = value
+    }
+  }
+  return parameters
+}
 
 let interval
 let intervalLong
@@ -283,6 +305,7 @@ class App extends Component {
       hasUpdateOnce: false,
       badges: {},
       selectedBadge: false,
+      ignoreIdenticalPK:false // used to toggle the 'Identical PK warning'
     };
     this.alertTimeout = null;
     try{
@@ -370,7 +393,12 @@ class App extends Component {
       console.log("PATH",window.location.pathname,window.location.pathname.length,window.location.hash)
       if(window.location.pathname.indexOf("/pk")>=0){
         let tempweb3 = new Web3();
-        let base64encodedPK = window.location.hash.replace("#","")
+        let path = window.location.hash.replace("#","") // get URL path
+        let URLParams = parseURLParams(path)  // parse the URL params
+        if (URLParams && URLParams.ignoreIdenticalPK){ // only if ignoreIdenticalPK toggle
+          this.setState({ignoreIdenticalPK: true})
+        }
+        let base64encodedPK = path.split('?')[0] // whatever is before the '?' is part the pk
         let rawPK = tempweb3.utils.bytesToHex(base64url.toBuffer(base64encodedPK))
         this.setState({possibleNewPrivateKey:rawPK})
         window.history.pushState({},"", "/");
@@ -573,7 +601,8 @@ class App extends Component {
   async dealWithPossibleNewPrivateKey(){
     //this happens as page load and you need to wait until
     if(this.state && this.state.hasUpdateOnce){
-      if(this.state.metaAccount && this.state.metaAccount.privateKey.replace("0x","") == this.state.possibleNewPrivateKey.replace("0x","")){
+      // check if should ignore warning based on state from URL params
+      if(!(this.state.ignoreIdenticalPK) && this.state.metaAccount && this.state.metaAccount.privateKey.replace("0x","") == this.state.possibleNewPrivateKey.replace("0x","")){
         this.setState({possibleNewPrivateKey:false})
         this.changeAlert({
           type: 'warning',
