@@ -712,7 +712,7 @@ class App extends Component {
           to: this.state.contracts.Links._address,
           txfee: 12,
           gas_limit: 150000,
-          gas_price: Math.trunc(1000000000 * 1.3)
+          gas_price: Math.trunc(1000000000 * 25)
         }
         console.log("Hitting relayClient with relayTransaction()",claimData, options)
         relayClient.relayTransaction(claimData, options).then((transaction) => {
