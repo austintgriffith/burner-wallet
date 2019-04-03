@@ -1058,6 +1058,8 @@ render() {
         console.log("Transaction Receipt", transaction, receipt)
       }}
       />
+        <iframe src="http://localhost:3001" style={{zIndex:9999,position:"absolute",left:0,top:0,width:"100%",height:"100%",backgroundColor:"#FFFFFF"}}>
+        </iframe>
       </div>
     )
   }
