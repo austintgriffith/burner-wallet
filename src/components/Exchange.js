@@ -41,15 +41,6 @@ import { fromRpcSig } from 'ethereumjs-util';
 
 import { bi, add, divide, lessThan } from 'jsbi-utils';
 
-import {
-  Flex,
-  Box,
-  Button,
-  OutlineButton,
-  Icon,
-  Input,
-  Field
-} from 'rimble-ui'
 
 const BN = Web3.utils.BN
 
