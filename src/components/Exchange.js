@@ -2126,59 +2126,70 @@ export default class Exchange extends React.Component {
     let sendEthRow = ""
     if(this.state.sendEth){
       sendEthRow = (
-        <div className="send-to-address card w-100" style={{marginTop:20}}>
-        <div className="content ops row">
-          <div className="form-group w-100">
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">To Address</label>
-              <input type="text" className="form-control" placeholder="0x..." value={this.state.ethSendToAddress}
-                     onChange={event => this.updateState('ethSendToAddress', event.target.value)} />
-            </div>
-            <div>  { this.state.ethSendToAddress && this.state.ethSendToAddress.length==42 && <Blockies seed={this.state.ethSendToAddress.toLowerCase()} scale={10} /> }</div>
-            <label htmlFor="amount_input">Send Amount</label>
-            <div className="input-group">
-              <div className="input-group-prepend">
-                <div className="input-group-text">$</div>
-              </div>
-              <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.ethSendAmount}
-                     onChange={event => this.updateState('ethSendAmount', event.target.value)} />
-                     <div className="input-group-append" onClick={() => {
-
-                       console.log("Getting gas price...")
-                       gasPrice()
-                       .catch((err)=>{
-                         console.log("Error getting gas price",err)
-                       })
-                       .then(gwei => {
-                          console.log(gwei)
-
-                          let IDKAMOUNTTOLEAVE = gwei*(1111000000*2) * 201000 // idk maybe enough for a couple transactions?
-
-                          console.log("let's leave ",IDKAMOUNTTOLEAVE,this.props.ethBalance)
-
-                          let gasInEth = this.props.web3.utils.fromWei(""+IDKAMOUNTTOLEAVE,'ether')
-                          console.log("gasInEth",gasInEth)
-
-                          let adjustedEthBalance = (parseFloat(this.props.ethBalance) - parseFloat(gasInEth))
-                          console.log(adjustedEthBalance)
-
-                          this.setState({ethSendAmount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 },()=>{
-                            this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                          })
-                       })
-                     }}>
-                       <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                         max
-                       </span>
-                     </div>
-            </div>
-            <button style={this.props.buttonStyle.primary} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendEth ? '' : 'disabled'}`}
-                    onClick={this.sendEth.bind(this)}>
-              Send
-            </button>
+        <Box
+          border={1}
+          borderColor={'grey'}
+          borderRadius={1}
+          my={3}
+          p={3}
+        >
+          <Field label={'To Address'} mb={3}>
+            <Input
+              type="text"
+              placeholder="0x..."
+              value={this.state.ethSendToAddress}
+              onChange={event => this.updateState('ethSendToAddress', event.target.value)}
+              width={1}
+            />
+          </Field>
+          <div>
+            { this.state.ethSendToAddress && this.state.ethSendToAddress.length==42 && <Blockies seed={this.state.ethSendToAddress.toLowerCase()} scale={10} /> }
           </div>
-        </div>
-        </div>
+          <Field label={'Send Amount'} mb={3}>
+            <Flex>
+              <Input
+                type="number"
+                step="0.1"
+                placeholder="0.00"
+                value={this.state.ethSendAmount}
+                onChange={event => this.updateState('ethSendAmount', event.target.value)}
+                width={1}
+              />
+              <OutlineButton
+                ml={2}
+                onClick={() => {
+                  console.log("Getting gas price...")
+                  gasPrice()
+                  .catch((err)=>{
+                    console.log("Error getting gas price",err)
+                  })
+                  .then(gwei => {
+                     console.log(gwei)
+
+                     let IDKAMOUNTTOLEAVE = gwei*(1111000000*2) * 201000 // idk maybe enough for a couple transactions?
+
+                     console.log("let's leave ",IDKAMOUNTTOLEAVE,this.props.ethBalance)
+
+                     let gasInEth = this.props.web3.utils.fromWei(""+IDKAMOUNTTOLEAVE,'ether')
+                     console.log("gasInEth",gasInEth)
+
+                     let adjustedEthBalance = (parseFloat(this.props.ethBalance) - parseFloat(gasInEth))
+                     console.log(adjustedEthBalance)
+
+                     this.setState({ethSendAmount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 },()=>{
+                       this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                     })
+                  })
+              }}
+              >
+                max
+              </OutlineButton>
+            </Flex>
+          </Field>
+          <Button width={1} disabled={buttonsDisabled} onClick={this.sendEth.bind(this)}>
+            Send
+          </Button>
+        </Box>
       )
       sendEthButton = (
         <button className="btn btn-large w-100" style={{backgroundColor:"#888888",whiteSpace:"nowrap"}} onClick={()=>{
