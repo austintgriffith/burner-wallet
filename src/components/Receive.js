@@ -5,7 +5,6 @@ import {CopyToClipboard} from "react-copy-to-clipboard";
 import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
-import QRCode from 'qrcode.react';
 import config from "../config.json";
 
 import {
