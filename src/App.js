@@ -1962,20 +1962,27 @@ render() {
 
 
 
-            <Dapparatus
-            config={{
-              DEBUG: false,
-              hide: true,
-              requiredNetwork: ['Unknown', 'xDai'],
-              metatxAccountGenerator: false,
-            }}
-            //used to pass a private key into Dapparatus
-            newPrivateKey={this.state.newPrivateKey}
-            fallbackWeb3Provider={WEB3_PROVIDER}
-            onUpdate={async (state) => {
-              //console.log("DAPPARATUS UPDATE",state)
-              if(ERC20TOKEN){
-                delete state.balance
+        <Dapparatus
+        config={{
+          DEBUG: false,
+          hide: true,
+          requiredNetwork: ['Unknown', 'xDai'],
+          metatxAccountGenerator: false,
+        }}
+        //used to pass a private key into Dapparatus
+        newPrivateKey={this.state.newPrivateKey}
+        fallbackWeb3Provider={XDAI_PROVIDER}
+        onUpdate={async (state) => {
+          //console.log("DAPPARATUS UPDATE",state)
+          if(ERC20TOKEN){
+            delete state.balance
+          }
+          if (state.web3Provider) {
+            state.web3 = new Web3(state.web3Provider)
+            this.setState(state,()=>{
+              //console.log("state set:",this.state)
+              if(this.state.possibleNewPrivateKey){
+                this.dealWithPossibleNewPrivateKey()
               }
               if (state.xdaiweb3) {
                 let pdaiContract;
