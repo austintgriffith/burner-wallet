@@ -2229,40 +2229,52 @@ export default class Exchange extends React.Component {
     let sendXdaiRow = ""
     if(this.state.sendXdai){
       sendXdaiRow = (
-        <div className="send-to-address card w-100" style={{marginTop:20}}>
-        <div className="content ops row">
-          <div className="form-group w-100">
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">To Address</label>
-              <input type="text" className="form-control" placeholder="0x..." value={this.state.xdaiSendToAddress}
-                     onChange={event => this.updateState('xdaiSendToAddress', event.target.value)} />
-            </div>
-            <div>  { this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length==42 && <Blockies seed={this.state.xdaiSendToAddress.toLowerCase()} scale={10} /> }</div>
-            <label htmlFor="amount_input">Send Amount</label>
-            <div className="input-group">
-              <div className="input-group-prepend">
-                <div className="input-group-text">$</div>
-              </div>
-              <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.xdaiSendAmount}
-                     onChange={event => this.updateState('xdaiSendAmount', event.target.value)} />
-                     <div className="input-group-append" onClick={() => {
-                           this.setState({xdaiSendAmount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 },()=>{
-                             this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                           })
-                         }
-                       }>
-                       <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                         max
-                       </span>
-                     </div>
-            </div>
-            <button style={this.props.buttonStyle.primary} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendXdai ? '' : 'disabled'}`}
-                    onClick={this.sendXdai.bind(this)}>
-              Send
-            </button>
+        <Box
+          border={1}
+          borderColor={'grey'}
+          borderRadius={1}
+          my={3}
+          p={3}
+        >
+          <Field label={'To Address'} mb={3}>
+            <Input
+              type="text"
+              className="form-control"
+              placeholder="0x..."
+              value={this.state.xdaiSendToAddress}
+              onChange={event => this.updateState('xdaiSendToAddress', event.target.value)}
+            />
+          </Field>
+          <div>
+            { this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length==42 && <Blockies seed={this.state.xdaiSendToAddress.toLowerCase()} scale={10} /> }
           </div>
-        </div>
-        </div>
+          <Field label={'Send Amount'} mb={3}>
+            <Flex>
+              <Input
+                type="number"
+                step="0.1"
+                className="form-control"
+                placeholder="0.00"
+                value={this.state.xdaiSendAmount}
+                onChange={event => this.updateState('xdaiSendAmount', event.target.value)}
+              />
+              <OutlineButton
+                ml={2}
+                onClick={() => {
+                  this.setState({xdaiSendAmount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 },()=>{
+                    this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                  })
+                }}
+              >
+                max
+              </OutlineButton>
+            </Flex>
+          </Field>
+
+          <Button width={1} disabled={buttonsDisabled} onClick={this.sendXdai.bind(this)}>
+            Send
+          </Button>
+        </Box>
       )
       sendXdaiButton = (
         <button className="btn btn-large w-100" style={{backgroundColor:"#888888",whiteSpace:"nowrap"}} onClick={()=>{
