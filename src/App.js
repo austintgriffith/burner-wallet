@@ -1867,7 +1867,7 @@ render() {
         }}
         //used to pass a private key into Dapparatus
         newPrivateKey={this.state.newPrivateKey}
-        fallbackWeb3Provider={WEB3_PROVIDER}
+        fallbackWeb3Provider={XDAI_PROVIDER}
         onUpdate={async (state) => {
           //console.log("DAPPARATUS UPDATE",state)
           if(ERC20TOKEN){
