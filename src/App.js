@@ -421,9 +421,11 @@ class App extends Component {
 
   }
   longPoll() {
-    axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
+    const uniswap = "https://uniswap-analytics.appspot.com/api/v1/ticker?exchangeAddress="
+    const daiExchange = "0x09cabec1ead1c0ba254b09efb3ee13841712be14"
+    axios.get(uniswap+daiExchange)
      .then((response)=>{
-       let ethprice = 174//esponse.data.quotes.USD.price
+       const ethprice = response.data.price
        this.setState({ethprice})
      })
   }
