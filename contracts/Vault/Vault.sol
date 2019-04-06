@@ -54,12 +54,13 @@ contract Vault is IERC721Receiver{
     /// @param _value Amount of tokens being transferred
     /* solium-disable-next-line function-order */
     function _vaultTransfer(address _token, bytes4 _type, address _to, uint256 _value, uint256 _tokenId) private returns(bool status) {
-        require(_value > 0, "Vault::_vaultTransfer - Invalid transfer");
 
         status = false;
         if (_token == NATIVE_TOKEN) {
+            require(_value > 0, "Vault::_vaultTransfer - Invalid transfer");
             status = _to.send(_value);
         } else if(_type == ERC20TOKEN) {
+            require(_value > 0, "Vault::_vaultTransfer - Invalid transfer");
             status = ERC20(_token).transfer(_to, _value);
         } else if(_type == ERC721TOKEN){
             ERC721(_token).safeTransferFrom(address(this), _to, _tokenId);
@@ -75,12 +76,13 @@ contract Vault is IERC721Receiver{
     /// @param _value Amount of tokens being transferred
     /// @param _sender Token holder
     function _vaultDeposit(address _token, bytes4 _type, uint256 _value, uint256 _tokenId, address _sender) private {
-        require(_value > 0, "Vault::_vaultDeposit - Invalid deposit");
 
         if (_token == NATIVE_TOKEN) {
+            require(_value > 0, "Vault::_vaultDeposit - Invalid deposit");
             // Deposit is implicit in this case
             require(msg.value == _value, "Vault::_vaultDeposit - Value mismatch");
         }  else if(_type == ERC20TOKEN) {
+            require(_value > 0, "Vault::_vaultDeposit - Invalid deposit");
             // The Vault contract needs to be approved by the token holder before this transaction takes place. ERC20(_token).approve(address(this), _value)
             require(ERC20(_token).transferFrom(_sender, address(this), _value), "Vault::_vaultDeposit - Reverted ERC20 token transfer");
         } else if(_type == ERC721TOKEN){

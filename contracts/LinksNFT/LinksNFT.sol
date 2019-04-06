@@ -72,12 +72,11 @@ contract LinksNFT is Vault{
         public 
         ifNotValidFund(_id)
         ifValidSig(_signature)
-        payable
         returns (bool)
     {
         address signer = ECDSA.recover(_id.toEthSignedMessageHash(),_signature);
         require(signer != address(0),"LinksNFT::send - Invalid signer");
-        address sender = msg.sender;  // Get sender for MetaTx instead of msg.sender
+        address sender = msg.sender;
         
         // Handle Id nonce
         // Ids could be reused if the fund was correclty claimed and deleted
@@ -89,7 +88,7 @@ contract LinksNFT is Vault{
         nonceId[_id] = nonceId[_id].add(uint(1));
         
         assert(nonce < nonceId[_id]);
-        _linkDeposit(_token, ERC721TOKEN, 0, _tokenId, sender); // If not NATIVE_TOKEN it will be ERC721 - Vault
+        _linkDeposit(_token, ERC721TOKEN, 0, _tokenId, sender);
         funds[_id] = Fund({
             sender: sender,
             signer: signer,
