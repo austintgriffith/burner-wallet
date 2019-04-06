@@ -160,8 +160,38 @@ module.exports = {
         let accounts = await clevis("accounts")
         await clevis('contract', 'adminMint', 'VendingMachine', "0", accounts[1], '10000000000000000000')
 
+        result = await clevis("contract","adminMint","VendingMachine","0","0x2426e79fb3f2ef925d6a04d0a58491d6745ff3e7","10000000000000000000")
+        printTxResult(result)
+
+
+
         result = await clevis("contract","adminMint","VendingMachine","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb","10000000000000000000")
         printTxResult(result)
+
+
+        result = await clevis("contract","adminMint","VendingMachine","0","0xfc6cc752e031c9e43189c6f609a69ce476165d03","5000000000000000000")
+        printTxResult(result)
+
+
+        result = await clevis("contract","adminMint","VendingMachine","0",localContractAddress("ERC20Vendable"),"10000000000000000000000")
+        printTxResult(result)
+
+
+        //updateVendor(address _vendorAddress, b  ytes32 _name, bool _isActive, bool _isAllowed)
+
+        const Web3 = require('web3')
+        const web3 = new Web3()
+        let name = web3.utils.utf8ToHex("Test")
+        console.log("setting vendor name to "+name)
+
+        //addVendor(address _vendorAddress, bytes32 _name)
+        result = await clevis("contract","addVendor","VendingMachine","0","0xfc6cc752e031c9e43189c6f609a69ce476165d03",name)
+        printTxResult(result)
+
+
+        result = await clevis("contract","updateVendor","VendingMachine","0","0xfc6cc752e031c9e43189c6f609a69ce476165d03",name,true,true)
+        printTxResult(result)
+
 
         result = await clevis("send","0.10","0","0x34aa3f359a9d614239015126635ce7732c18fdf3")///<<<-------- change this to your metamask accounts
          printTxResult(result)

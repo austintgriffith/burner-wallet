@@ -5,7 +5,7 @@ import i18next from 'i18next';
 
 
 
-export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
+export default ({SUPERSIMPLEVIEW,buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
 
 
   var w = window,
@@ -97,6 +97,29 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
             <button className="btn btn-large w-100" style={buttonStyle.secondary}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-money-bill-alt"  /> {i18next.t('main_card.vendors')}
+              </Scaler>
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if(SUPERSIMPLEVIEW){
+    sendButtons = (
+      <div>
+        <div className="content ops row">
+          <div className="col-6 p-1" onClick={() => changeView('receive')}>
+            <button className="btn btn-large w-100" style={buttonStyle.primary}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fas fa-qrcode"  /> {i18next.t('main_card.receive')}
+              </Scaler>
+            </button>
+          </div>
+          <div className="col-6 p-1">
+            <button className="btn btn-large w-100" onClick={() => changeView('send_to_address')} style={buttonStyle.primary}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fas fa-paper-plane"/> {i18next.t('main_card.send')}
               </Scaler>
             </button>
           </div>
