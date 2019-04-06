@@ -109,9 +109,14 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
 
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false//'Burner'
+  ERC20NAME = 'EMOJICOIN'
+  ERC20VENDOR = 'VendingMachine'
+  ERC20TOKEN = 'ERC20Vendable'
+  ERC20IMAGE = emojicoin
+  XDAI_PROVIDER = "http://localhost:8545"
+  WEB3_PROVIDER = "http://localhost:8545";
+  LOADERIMAGE = emojicoin
+  SUPERSIMPLEVIEW = "emojicoinexchange"
 }
 else if (window.location.hostname.indexOf("wallet.galleass.io") >= 0) {
   //WEB3_PROVIDER = "https://rinkeby.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac";
