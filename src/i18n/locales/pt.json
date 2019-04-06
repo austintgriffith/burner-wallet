@@ -1,0 +1,109 @@
+{
+  "pt": {
+    "app_name": "Burner",
+    "about": "Saber mais",
+    "code": "Código",
+    "burn": "Destruir PK",
+    "show": "Mostrar PK",
+    "copy": "Copiar PK",
+    "create": "Criar",
+    "receive_title": "Receber",
+    "receipt_title": "Recibo",
+    "send_to_address_title": "Enviar para Endereço",
+    "advance": "Avançadas",
+    "advance_title": "Opções Avançadas",
+    "loading": "Carregar...",
+    "cancel": "Cancelar",
+    "done": "Retroceder",
+    "exchange_title": "Converter",
+    "amount": "Montante",
+    "send": "Enviar",
+    "withdraw": "Levantar",
+    "history_chat": "Histórico & Conversas",
+    "request_funds_title": "Pedir fundos",
+    "request": "Pedir",
+    "vendors": "Comerciantes",
+    "main_card": {
+      "receive": "Receber",
+      "send": "Enviar",
+      "share": "Partilhar",
+      "link": "Link",
+      "vendors": "Comerciantes"
+    },
+    "send_with_link": {
+      "error": "Por Favor um Montante Válido"
+    },
+    "share": {
+      "copied": "URL Copiado Para o Clipboard"
+    },
+    "vendor": {
+      "updating": "atualizando",
+      "open": "Aberto",
+      "closed": "Fechado",
+      "add_product": "Adicionar Produto",
+      "adding": "Adicionar"
+    },
+    "withdraw_from_private": {
+      "from_address": "Levantar do Endereço",
+      "amount": "Levantar Montante",
+      "withdraw": "Levantar",
+      "error": "Por Favor Ponha um Montante Válido para Levantar"
+    },
+    "send_to_address": {
+      "to_address": "Para Endereço",
+      "send_amount": "Enviar Montante",
+      "notice": "Apenas Podes Enviar ",
+      "error": "Por Favor Ponha um Endereço Válido ou ENS."
+    },
+    "send_by_scan": {
+      "try_again": "Por Favor Tenha Outra Vez",
+      "take_photo": "Tirar Foto",
+      "capture": "Escanear Código QR:"
+    },
+    "more_buttons": {
+      "request": "Pedir",
+      "exchange": "Converter"
+    },
+    "receive": {
+      "address_copied": "Endereço URL Copiado Para o Clipboard"
+    },
+    "history": {
+      "metamask_error": "Mensagem Encriptada Não Está Disponível com MetaMask",
+      "wave": "Wave"
+    },
+    "exchange": {
+      "withdrawal_explanation": "Apenar comerciantes podem levantar mais do que depositaram",
+      "funds_transferred": "Fundos Transferidos!",
+      "funds_bridged": "Fundos Convertidos",
+      "insufficient_funds": "Fundos Insuficientes",
+      "invalid_to_address": "Por favor ponha um endereço válido",
+      "invalid_to_amount": "Por Favor ponha um montante válido",
+      "calculate_gas_price": "Calcular o melhor gas price...",
+      "go_to_etherscan": "Ir para etherscan?",
+      "idk": "idk where to go from here? something that explains the bridge?"
+    },
+    "request_funds": {
+      "item_message": "Produto ou Mensagem",
+      "button": "Pedir",
+      "amount": "Pedir Montante"
+    },
+    "admin": {
+      "add_admin": "Add Admin",
+      "adding": "Adding",
+      "add_vendor": "Add Comercianter"
+    },
+    "advanced": {
+      "to_qr": "Para QR"
+    },
+    "balance_display": {
+      "waiting_for_api": "Esperar por API",
+      "no_currency_api": "No Currency API Data Available"
+    },
+    "burn_wallet": {
+      "burn_private_key_question": "Tens a certeza que queres destruir esta private key?",
+      "disclaimer": "Não faças isto! Vais perder todos os fundos!",
+      "cancel": "Não, cancela",
+      "burn": "Destroi!"
+    }
+  }
+}
