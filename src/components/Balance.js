@@ -35,7 +35,7 @@ export  default ({totalFunds, noimage, mainStyle, setLoading, loading, isLoading
     opacity=1
     let displayText = parseFloat(text)*2
     let amountItCosts = displayText
-    console.log("text",text,"displayText",displayText,"amountItCosts",amountItCosts,"vs totalFunds ",totalFunds)
+    //console.log("text",text,"displayText",displayText,"amountItCosts",amountItCosts,"vs totalFunds ",totalFunds)
 
     actionButtons = (
       <div>

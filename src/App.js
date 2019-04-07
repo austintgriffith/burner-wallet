@@ -486,12 +486,15 @@ class App extends Component {
           emojibalances[i] = await this.state.contracts[ERC20TOKEN].emojiBalanceOf(this.state.account,i).call()
         }
 
-
-
-
+        let vendingMachineAddress = this.state.contracts["VendingMachine"]._address
+        console.log("vendingMachineAddress",vendingMachineAddress)
+        let vendingMachineBalance = await this.state.xdaiweb3.eth.getBalance(vendingMachineAddress)
+        console.log("vendingMachineBalance",vendingMachineBalance)
+        vendingMachineBalance = this.state.mainnetweb3.utils.fromWei(""+vendingMachineBalance,"ether")
         this.setState({
           emojiprice:emojiprice,
           emojibalances:emojibalances,
+          vendingMachineBalance:vendingMachineBalance
         })
       }
 
@@ -1412,6 +1415,10 @@ render() {
                 <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
                 <Ruler/>
                 <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
+                <Ruler/>
+                <div style={{opacity:0.6}}>
+                <Balance icon={"🏦"} selected={false} text={"bank"} amount={parseFloat(this.state.vendingMachineBalance)} address={account} dollarDisplay={dollarDisplay}/>
+                </div>
                 <Ruler/>
                 {badgeDisplay}
 
