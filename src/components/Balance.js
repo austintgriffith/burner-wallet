@@ -93,6 +93,10 @@ export  default ({noimage, mainStyle, setLoading, loading, buttonStyle, contract
   //console.log("icon",icon)
 
   if(typeof icon == "string" && icon.length<8){
+    let displayText = text
+    if(parseFloat(displayText)>0.01){
+      displayText="$"+displayText
+    }
     return (
       <div className="balance row" style={{opacity,paddingBottom:0,paddingLeft:20}}>
 
@@ -106,7 +110,7 @@ export  default ({noimage, mainStyle, setLoading, loading, buttonStyle, contract
           <div style={{maxWidth:50,maxHeight:50,fontSize:45,paddingTop:9}}>
             {icon}
             <div style={{position:'absolute',left:60,top:12,fontSize:14,opacity:0.77}}>
-              {text}
+              {displayText}
             </div>
             <div>
 

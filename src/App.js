@@ -57,7 +57,7 @@ const EthCrypto = require('eth-crypto');
 //const POA_XDAI_NODE = "https://dai-b.poa.network"
 const POA_XDAI_NODE = "https://dai.poa.network"
 
-let emojis = ["🔥","🧱","🛢️","💎","🌲","🥩","👑","💡"]
+let emojis = ["🔥","❤️","🎉","🙏","🍑","💪","💩","👌"]
 
 let XDAI_PROVIDER = POA_XDAI_NODE
 
