@@ -8,7 +8,7 @@ export  default ({noimage, mainStyle, setLoading, loading, buttonStyle, contract
 
   if(loading){
     return (
-      <div style={{width:"100%",height:39,backgroundColor:"#333333"}}>
+      <div style={{width:"100%",height:39,backgroundColor:"#666666"}}>
         <div>
           <Loader noimage={noimage} loaderImage={""} mainStyle={mainStyle}/>
         </div>

@@ -1419,6 +1419,7 @@ render() {
                   ERC20TOKEN={ERC20TOKEN}
                   SUPERSIMPLEVIEW={SUPERSIMPLEVIEW}
                 />
+                {moreButtons}
               </div>
             )
           }else{
