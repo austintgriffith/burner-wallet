@@ -22,11 +22,23 @@ class App extends Component {
 
     let shadowAmount = 100
     let shadowColor = this.props.mainStyle.mainColor
+
+    let topImage = (
+      <div style={{width:"100%",paddingTop:"5%",paddingBottom:"10%"}}>
+        <img src ={this.props.loaderImage} style={{maxWidth:"25%",paddingBottom:"5%"}}/>
+      </div>
+    )
+
+    if(this.props.noimage){
+      topImage = (
+        <div style={{width:"100%",paddingTop:20}}>
+        </div>
+      )
+    }
+
     return (
       <div style={{textAlign:'center'}}>
-        <div style={{width:"100%",paddingTop:"5%",paddingBottom:"10%"}}>
-          <img src ={this.props.loaderImage} style={{maxWidth:"25%",paddingBottom:"5%"}}/>
-        </div>
+        {topImage}
         <div style={{width:"80%",height:1,backgroundColor:"#444444",marginLeft:"10%"}}>
           <div style={{width:this.state.percent+"%",height:1,backgroundColor:this.props.mainStyle.mainColorAlt,boxShadow:"0 0 "+shadowAmount/40+"px "+shadowColor+", 0 0 "+shadowAmount/30+"px "+shadowColor+", 0 0 "+shadowAmount/20+"px "+shadowColor+", 0 0 "+shadowAmount/10+"px #ffffff, 0 0 "+shadowAmount/5+"px "+shadowColor+", 0 0 "+shadowAmount/3+"px "+shadowColor+", 0 0 "+shadowAmount/1+"px "+shadowColor+""}}>
           </div>

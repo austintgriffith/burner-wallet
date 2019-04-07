@@ -276,6 +276,7 @@ class App extends Component {
       hasUpdateOnce: false,
       badges: {},
       selectedBadge: false,
+      isLoading:[],
     };
     this.alertTimeout = null;
 
@@ -1335,7 +1336,7 @@ render() {
 
           let defaultBalanceDisplay = (
             <div>
-              <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+              <Balance  icon={xdai} mainStyle={mainStyle} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
               <Ruler/>
             </div>
           )
@@ -1344,7 +1345,7 @@ render() {
             selected = ERC20NAME
             extraTokens = (
               <div>
-                <Balance icon={"🤑"} selected={"emojicoin.exchange"} text={"emojicoin.exchange"} amount={this.state.balance} address={account} dollarDisplay={dollarDisplay} />
+                <Balance icon={"🤑"} mainStyle={mainStyle} selected={"emojicoin.exchange"} text={"emojicoin.exchange"} amount={this.state.balance} address={account} dollarDisplay={dollarDisplay} />
                 <Ruler/>
               </div>
             )
@@ -1374,9 +1375,14 @@ render() {
 
 
             let allEmojiBalances = emojis.map((emoji,index)=>{
+
               return (
                 <div>
-                  <Balance icon={emoji} emojiIndex={index} contracts={this.state.contracts} tx={this.state.tx} force={true} buttonStyle={buttonStyle} selected={selected} text={this.state.emojiprice[index]} amount={this.state.emojibalances[index]} address={account} dollarDisplay={(amount)=>{
+                  <Balance mainStyle={mainStyle} noimage={true} setLoading={(setIndex,val)=>{
+                    let currentIsLoadings = this.state.isLoading
+                    currentIsLoadings[setIndex] = val
+                    this.setState({isLoading:currentIsLoadings})
+                  }} loading={this.state.isLoading[index]} icon={emoji} emojiIndex={index} contracts={this.state.contracts} tx={this.state.tx} force={true} buttonStyle={buttonStyle} selected={selected} text={this.state.emojiprice[index]} amount={this.state.emojibalances[index]} address={account} dollarDisplay={(amount)=>{
                     return amount
                   }}/>
                   <Ruler/>

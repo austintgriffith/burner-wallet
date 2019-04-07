@@ -1,8 +1,20 @@
 import React from 'react';
 import Blockies from 'react-blockies';
+import Loader from './Loader';
 import { Scaler } from "dapparatus";
 
-export  default ({buttonStyle, contracts, tx, force, emojiIndex, icon, text, selected, amount, address, dollarDisplay}) => {
+export  default ({noimage, mainStyle, setLoading, loading, buttonStyle, contracts, tx, force, emojiIndex, icon, text, selected, amount, address, dollarDisplay}) => {
+
+
+  if(loading){
+    return (
+      <div style={{width:"100%",height:39,backgroundColor:"#333333"}}>
+        <div>
+          <Loader noimage={noimage} loaderImage={""} mainStyle={mainStyle}/>
+        </div>
+      </div>
+    )
+  }
 
   let opacity = 0.65
   if(text == selected){
@@ -28,12 +40,14 @@ export  default ({buttonStyle, contracts, tx, force, emojiIndex, icon, text, sel
 
           <div className="col-5" onClick={() => {
             console.log("BUY")
+            setLoading(emojiIndex,true)
             tx(
               //function buyEmoji(uint8 index)
               contracts.ERC20Vendable.buyEmoji(emojiIndex)
               ,240000,0,0,(receipt)=>{
                 if(receipt){
                   console.log("DONE WITH BUY EMOJI?")
+                  setLoading(emojiIndex,false)
                 }
               }
             )
@@ -51,12 +65,14 @@ export  default ({buttonStyle, contracts, tx, force, emojiIndex, icon, text, sel
           <div className="col-5">
             <button className="btn btn-large w-100" onClick={() => {
               console.log("SELL")
+              setLoading(emojiIndex,true)
               tx(
                 //function buyEmoji(uint8 index)
                 contracts.ERC20Vendable.sellEmoji(emojiIndex)
                 ,240000,0,0,(receipt)=>{
                   if(receipt){
                     console.log("DONE WITH BUY EMOJI?")
+                    setLoading(emojiIndex,false)
                   }
                 }
               )
