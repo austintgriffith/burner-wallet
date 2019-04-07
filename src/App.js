@@ -1372,17 +1372,22 @@ render() {
 
 
 
+            let currentIsLoadings = this.state.isLoading
+            let isLoading = false
+            for(let i=0;i<8;i++){
+              isLoading = isLoading || currentIsLoadings[i]
+            }
+            console.log("isLoading",isLoading)
 
 
             let allEmojiBalances = emojis.map((emoji,index)=>{
-
               return (
                 <div>
                   <Balance mainStyle={mainStyle} noimage={true} setLoading={(setIndex,val)=>{
                     let currentIsLoadings = this.state.isLoading
                     currentIsLoadings[setIndex] = val
                     this.setState({isLoading:currentIsLoadings})
-                  }} loading={this.state.isLoading[index]} icon={emoji} emojiIndex={index} contracts={this.state.contracts} tx={this.state.tx} force={true} buttonStyle={buttonStyle} selected={selected} text={this.state.emojiprice[index]} amount={this.state.emojibalances[index]} address={account} dollarDisplay={(amount)=>{
+                  }} loading={this.state.isLoading[index]} icon={emoji} isLoading={isLoading} emojiIndex={index} contracts={this.state.contracts} tx={this.state.tx} force={true} buttonStyle={buttonStyle} selected={selected} text={this.state.emojiprice[index]} amount={this.state.emojibalances[index]} address={account} dollarDisplay={(amount)=>{
                     return amount
                   }}/>
                   <Ruler/>
