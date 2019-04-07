@@ -13,6 +13,9 @@ contract ERC20Vendable is ERC20, Ownable {
   uint256 constant public COSTMULTIPLIER = 10000000000000;
   uint8[] coinInventory = new uint8[](8);
 
+  uint8 constant VARIABILITY_NUM = 63;
+  uint8 constant VARIABILITY_DEN = 64;
+
   uint8 constant STARTING_VOL = 100;
 
   mapping (address => mapping (uint8 => uint8)) emojiBalance;
@@ -60,7 +63,7 @@ contract ERC20Vendable is ERC20, Ownable {
 
   function buyEmoji(uint8 index) public returns (bool){
     uint16 price = getEmojiPrice(index);
-    uint256 fullPrice = price*COSTMULTIPLIER;
+    uint256 fullPrice = uint256(price)*2*COSTMULTIPLIER;
 
     transfer(address(this), fullPrice);
     require(coinInventory[index]>=1,"Emojicoin::buyEmoji");
@@ -76,7 +79,7 @@ contract ERC20Vendable is ERC20, Ownable {
 
   function sellEmoji(uint8 index) public returns (bool){
     uint16 price = getEmojiPrice(index);
-    uint256 fullPrice = price*COSTMULTIPLIER;
+    uint256 fullPrice = uint256(price)*2*COSTMULTIPLIER;
 
 
     require(emojiBalance[msg.sender][index]>0,"Emojicoin::sellEmoji emojiBalance is 0");

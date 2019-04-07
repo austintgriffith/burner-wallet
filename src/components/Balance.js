@@ -95,7 +95,7 @@ export  default ({noimage, mainStyle, setLoading, loading, buttonStyle, contract
   if(typeof icon == "string" && icon.length<8){
     let displayText = text
     if(parseFloat(displayText)>0.01){
-      displayText="$"+displayText
+      displayText="$"+(displayText*2)
     }
     return (
       <div className="balance row" style={{opacity,paddingBottom:0,paddingLeft:20}}>
