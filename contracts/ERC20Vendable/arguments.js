@@ -4,6 +4,6 @@
 */
 
 module.exports = [
-  "buffiDai",
-  "BUFF"
+  "Emojicoin.Exchange",
+  "🤑"
 ]

@@ -108,13 +108,13 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   }
 
 }
-else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
+else if (window.location.hostname.indexOf("emojicoin.exchange") >= 0  ) {
   ERC20NAME = 'EMOJICOIN'
   ERC20VENDOR = 'VendingMachine'
   ERC20TOKEN = 'ERC20Vendable'
   ERC20IMAGE = emojicoin
-  XDAI_PROVIDER = "http://localhost:8545"
-  WEB3_PROVIDER = "http://localhost:8545";
+  XDAI_PROVIDER = POA_XDAI_NODE
+  WEB3_PROVIDER = POA_XDAI_NODE;
   LOADERIMAGE = emojicoin
   SUPERSIMPLEVIEW = "emojicoinexchange"
 }
@@ -1344,7 +1344,7 @@ render() {
             selected = ERC20NAME
             extraTokens = (
               <div>
-                <Balance icon={"💵"} selected={selected} text={ERC20NAME} amount={this.state.balance} address={account} dollarDisplay={dollarDisplay} />
+                <Balance icon={"🤑"} selected={"emojicoin.exchange"} text={"emojicoin.exchange"} amount={this.state.balance} address={account} dollarDisplay={dollarDisplay} />
                 <Ruler/>
               </div>
             )
