@@ -1387,7 +1387,7 @@ render() {
                     let currentIsLoadings = this.state.isLoading
                     currentIsLoadings[setIndex] = val
                     this.setState({isLoading:currentIsLoadings})
-                  }} loading={this.state.isLoading[index]} icon={emoji} isLoading={isLoading} emojiIndex={index} contracts={this.state.contracts} tx={this.state.tx} force={true} buttonStyle={buttonStyle} selected={selected} text={this.state.emojiprice[index]} amount={this.state.emojibalances[index]} address={account} dollarDisplay={(amount)=>{
+                  }} loading={this.state.isLoading[index]} icon={emoji} totalFunds={this.state.balance} isLoading={isLoading} emojiIndex={index} contracts={this.state.contracts} tx={this.state.tx} force={true} buttonStyle={buttonStyle} selected={selected} text={this.state.emojiprice[index]} amount={this.state.emojibalances[index]} address={account} dollarDisplay={(amount)=>{
                     return amount
                   }}/>
                   <Ruler/>

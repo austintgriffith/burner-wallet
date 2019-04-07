@@ -3,7 +3,7 @@ import Blockies from 'react-blockies';
 import Loader from './Loader';
 import { Scaler } from "dapparatus";
 
-export  default ({noimage, mainStyle, setLoading, loading, isLoading, buttonStyle, contracts, tx, force, emojiIndex, icon, text, selected, amount, address, dollarDisplay}) => {
+export  default ({totalFunds, noimage, mainStyle, setLoading, loading, isLoading, buttonStyle, contracts, tx, force, emojiIndex, icon, text, selected, amount, address, dollarDisplay}) => {
 
 
   if(loading){
@@ -33,6 +33,9 @@ export  default ({noimage, mainStyle, setLoading, loading, isLoading, buttonStyl
   let actionButtons = ""
   if(force){
     opacity=1
+    let displayText = parseFloat(text)*2
+    let amountItCosts = displayText
+    console.log("text",text,"displayText",displayText,"amountItCosts",amountItCosts,"vs totalFunds ",totalFunds)
 
     actionButtons = (
       <div>
@@ -52,7 +55,7 @@ export  default ({noimage, mainStyle, setLoading, loading, isLoading, buttonStyl
               }
             )
           }}>
-            <button className="btn btn-large w-100" disabled={isLoading} style={buttonStyle.secondary}>
+            <button className="btn btn-large w-100" disabled={isLoading || amountItCosts>totalFunds  } style={buttonStyle.secondary}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <div style={{fontSize:20}}>
                   Buy
@@ -61,7 +64,7 @@ export  default ({noimage, mainStyle, setLoading, loading, isLoading, buttonStyl
             </button>
           </div>
           <div className="col-5" style={{marginLeft:5}}>
-            <button className="btn btn-large w-100" disabled={isLoading} onClick={() => {
+            <button className="btn btn-large w-100" disabled={isLoading || parseInt(amount)<=0} onClick={() => {
               console.log("SELL")
               setLoading(emojiIndex,true)
               tx(
