@@ -41,21 +41,21 @@ export  default ({totalFunds, noimage, mainStyle, setLoading, loading, isLoading
       <div>
         <div className="content ops row"  >
 
-          <div className="col-5" onClick={() => {
-            console.log("BUY")
-            setLoading(emojiIndex,true)
-            tx(
-              //function buyEmoji(uint8 index)
-              contracts.ERC20Vendable.buyEmoji(emojiIndex)
-              ,240000,0,0,(receipt)=>{
-                if(receipt){
-                  console.log("DONE WITH BUY EMOJI?")
-                  setLoading(emojiIndex,false)
+          <div className="col-5">
+            <button className="btn btn-large w-100" disabled={isLoading || amountItCosts>totalFunds} onClick={() => {
+              console.log("BUY")
+              setLoading(emojiIndex,true)
+              tx(
+                //function buyEmoji(uint8 index)
+                contracts.ERC20Vendable.buyEmoji(emojiIndex)
+                ,240000,0,0,(receipt)=>{
+                  if(receipt){
+                    console.log("DONE WITH BUY EMOJI?")
+                    setLoading(emojiIndex,false)
+                  }
                 }
-              }
-            )
-          }}>
-            <button className="btn btn-large w-100" disabled={isLoading || amountItCosts>totalFunds  } style={buttonStyle.secondary}>
+              )
+            }} style={buttonStyle.secondary}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <div style={{fontSize:20}}>
                   Buy

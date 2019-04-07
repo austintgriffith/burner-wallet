@@ -13,9 +13,6 @@ contract ERC20Vendable is ERC20, Ownable {
   uint256 constant public COSTMULTIPLIER = 10000000000000;
   uint8[] coinInventory = new uint8[](8);
 
-  uint8 constant VARIABILITY_NUM = 63;
-  uint8 constant VARIABILITY_DEN = 64;
-
   uint8 constant STARTING_VOL = 100;
 
   mapping (address => mapping (uint8 => uint8)) emojiBalance;
