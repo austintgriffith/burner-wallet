@@ -60,12 +60,9 @@ export  default ({noimage, mainStyle, setLoading, loading, buttonStyle, contract
               </Scaler>
             </button>
           </div>
-          <div className="col-1">
-          </div>
-          <div className="col-5">
+          <div className="col-5" style={{marginLeft:5}}>
             <button className="btn btn-large w-100" onClick={() => {
               console.log("SELL")
-              setLoading(emojiIndex,true)
               tx(
                 //function buyEmoji(uint8 index)
                 contracts.ERC20Vendable.sellEmoji(emojiIndex)
@@ -84,7 +81,8 @@ export  default ({noimage, mainStyle, setLoading, loading, buttonStyle, contract
               </Scaler>
             </button>
           </div>
-
+          <div className="col-1">
+          </div>
         </div>
       </div>
     )

@@ -97,7 +97,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
     ERC20TOKEN = false
     ERC20IMAGE = false
   }else{
-    ERC20NAME = 'EMOJICOIN'
+    ERC20NAME = 'emojicoin'
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
     ERC20IMAGE = emojicoin
@@ -109,7 +109,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
 
 }
 else if (window.location.hostname.indexOf("emojicoin.exchange") >= 0  ) {
-  ERC20NAME = 'EMOJICOIN'
+  ERC20NAME = 'emojicoin'
   ERC20VENDOR = 'VendingMachine'
   ERC20TOKEN = 'ERC20Vendable'
   ERC20IMAGE = emojicoin
@@ -1404,7 +1404,11 @@ render() {
 
                 <Balance icon={"⛽"} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
                 <Ruler/>
-
+                <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                <Ruler/>
+                <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
+                <Ruler/>
+                {badgeDisplay}
 
 
 
