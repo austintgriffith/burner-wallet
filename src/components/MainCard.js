@@ -1,26 +1,32 @@
 import React from 'react';
-import { Scaler } from "dapparatus";
-import {CopyToClipboard} from "react-copy-to-clipboard";
+import { Scaler } from 'dapparatus';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import i18next from 'i18next';
 
-export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
-
-
+export default ({
+  buttonStyle,
+  ERC20TOKEN,
+  address,
+  balance,
+  changeAlert,
+  changeView,
+  dollarDisplay,
+  subBalanceDisplay,
+}) => {
   var w = window,
-  d = document,
-  e = d.documentElement,
-  g = d.getElementsByTagName('body')[0],
-  x = w.innerWidth || e.clientWidth || g.clientWidth,
-  y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName('body')[0],
+    x = w.innerWidth || e.clientWidth || g.clientWidth,
+    y = w.innerHeight || e.clientHeight || g.clientHeight;
 
-  let pushDownWithWhiteSpace = 0
-  if(y){
+  let pushDownWithWhiteSpace = 0;
+  if (y) {
     //if(ERC20TOKEN){
-      pushDownWithWhiteSpace = y-100
+    pushDownWithWhiteSpace = y - 100;
     //}else{
-      //pushDownWithWhiteSpace = y
+    //pushDownWithWhiteSpace = y
     //}
-
   }
   /*if(pushDownWithWhiteSpace>230){
     pushDownWithWhiteSpace=230
@@ -30,101 +36,119 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
       <div className="content ops row">
         <div className="col-6 p-1" onClick={() => changeView('receive')}>
           <button className="btn btn-large w-100" style={buttonStyle.primary}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+            <Scaler config={{ startZoomAt: 400, origin: '50% 50%' }}>
               {/* <i className="fas fa-qrcode"  /> Receive */}
-              <i className="fas fa-qrcode"  /> {i18next.t('main_card.receive')}
+              <i className="fas fa-qrcode" /> {i18next.t('main_card.receive')}
             </Scaler>
           </button>
         </div>
         <div className="col-6 p-1">
-          <button className="btn btn-large w-100" onClick={() => changeView('send_to_address')} style={buttonStyle.primary}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+          <button
+            className="btn btn-large w-100"
+            onClick={() => changeView('send_to_address')}
+            style={buttonStyle.primary}
+          >
+            <Scaler config={{ startZoomAt: 400, origin: '50% 50%' }}>
               {/* <i className="fas fa-paper-plane"/> Send */}
-              <i className="fas fa-paper-plane"/><span>{i18next.t('main_card.send')}</span>
+              <i className="fas fa-paper-plane" />
+              <span>{i18next.t('main_card.send')}</span>
             </Scaler>
           </button>
         </div>
       </div>
       <div className="content ops row">
         <div className="col-6 p-1" onClick={() => changeView('share')}>
-          <button className="btn btn-large w-100" onClick={() => changeView('share')} style={buttonStyle.secondary}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-share"/> {i18next.t('main_card.share')}
+          <button
+            className="btn btn-large w-100"
+            onClick={() => changeView('share')}
+            style={buttonStyle.secondary}
+          >
+            <Scaler config={{ startZoomAt: 400, origin: '50% 50%' }}>
+              <i className="fas fa-share" /> {i18next.t('main_card.share')}
             </Scaler>
           </button>
         </div>
         <div className="col-6 p-1" onClick={() => changeView('send_with_link')}>
           <button className="btn btn-large w-100" style={buttonStyle.secondary}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-money-bill-alt" /><span> {i18next.t('main_card.link')}</span>
+            <Scaler config={{ startZoomAt: 400, origin: '50% 50%' }}>
+              <i className="fas fa-money-bill-alt" />
+              <span> {i18next.t('main_card.link')}</span>
             </Scaler>
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 
-  if(ERC20TOKEN){
+  if (ERC20TOKEN) {
     sendButtons = (
       <div>
         <div className="content ops row">
           <div className="col-6 p-1" onClick={() => changeView('receive')}>
             <button className="btn btn-large w-100" style={buttonStyle.primary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-qrcode"  /> {i18next.t('main_card.receive')}
+              <Scaler config={{ startZoomAt: 400, origin: '50% 50%' }}>
+                <i className="fas fa-qrcode" /> {i18next.t('main_card.receive')}
               </Scaler>
             </button>
           </div>
           <div className="col-6 p-1">
-            <button className="btn btn-large w-100" onClick={() => changeView('send_to_address')} style={buttonStyle.primary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-paper-plane"/><span>{i18next.t('main_card.send')}</span>
+            <button
+              className="btn btn-large w-100"
+              onClick={() => changeView('send_to_address')}
+              style={buttonStyle.primary}
+            >
+              <Scaler config={{ startZoomAt: 400, origin: '50% 50%' }}>
+                <i className="fas fa-paper-plane" />
+                <span>{i18next.t('main_card.send')}</span>
               </Scaler>
             </button>
           </div>
         </div>
         <div className="content ops row">
           <div className="col-6 p-1" onClick={() => changeView('share')}>
-            <button className="btn btn-large w-100" onClick={() => changeView('share')} style={buttonStyle.secondary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-share"/> {i18next.t('main_card.share')}
+            <button
+              className="btn btn-large w-100"
+              onClick={() => changeView('share')}
+              style={buttonStyle.secondary}
+            >
+              <Scaler config={{ startZoomAt: 400, origin: '50% 50%' }}>
+                <i className="fas fa-share" /> {i18next.t('main_card.share')}
               </Scaler>
             </button>
           </div>
           <div className="col-6 p-1" onClick={() => changeView('vendors')}>
-            <button className="btn btn-large w-100" style={buttonStyle.secondary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-money-bill-alt"  /><span> {i18next.t('main_card.vendors')}</span>
+            <button
+              className="btn btn-large w-100"
+              style={buttonStyle.secondary}
+            >
+              <Scaler config={{ startZoomAt: 400, origin: '50% 50%' }}>
+                <i className="fas fa-money-bill-alt" />
+                <span> {i18next.t('main_card.vendors')}</span>
               </Scaler>
             </button>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
-    let topPad = 1000
-  var rect = document.getElementById("maincardHeader")
-  if(rect && (rect = rect.getBoundingClientRect())){
-      //console.log(rect.top, rect.right, rect.bottom, rect.left);
-    if(rect && rect.top){
+  let topPad = 1000;
+  var rect = document.getElementById('maincardHeader');
+  if (rect && (rect = rect.getBoundingClientRect())) {
+    //console.log(rect.top, rect.right, rect.bottom, rect.left);
+    if (rect && rect.top) {
       //console.log(rect.top,y)
-      topPad = y-rect.top-25-window.pageYOffset
+      topPad = y - rect.top - 25 - window.pageYOffset;
       /*if(window.pageYOffset>0){
         topPad=0
       }*/
     }
-
   }
-
 
   return (
     <div>
-      <div id="maincardHeader" style={{height:topPad}}>
-      </div>
-      <div>
-        {sendButtons}
-      </div>
+      <div id="maincardHeader" style={{ height: topPad }} />
+      <div>{sendButtons}</div>
     </div>
-  )
-}
+  );
+};

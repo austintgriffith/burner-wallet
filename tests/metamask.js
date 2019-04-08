@@ -1,2 +1,2 @@
-const clevis = require("./clevis.js")
-clevis.metamask()
+const clevis = require('./clevis.js');
+clevis.metamask();

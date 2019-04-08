@@ -1,24 +1,24 @@
 var fs = require('fs'),
-    http = require('http'),
-    https = require('https'),
-    express = require('express');
+  http = require('http'),
+  https = require('https'),
+  express = require('express');
 var path = require('path');
 var port = 443;
 
 var options = {
-    key: fs.readFileSync('./privkey.pem'),
-    cert: fs.readFileSync('./fullchain.pem'),
+  key: fs.readFileSync('./privkey.pem'),
+  cert: fs.readFileSync('./fullchain.pem'),
 };
 
 var app = express();
 
-var server = https.createServer(options, app).listen(port, function(){
-  console.log("Express server listening on port " + port);
+var server = https.createServer(options, app).listen(port, function() {
+  console.log('Express server listening on port ' + port);
 });
 
-app.use(express.static('./build'))
+app.use(express.static('./build'));
 
-app.get("/*", function (req, res) {
+app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, 'build/index.html'));
 });
 
