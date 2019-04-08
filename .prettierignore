@@ -1,0 +1,5 @@
+*/.clevis
+*/*/.clevis
+*/node_modules
+/node_modules
+src/contracts/*
