@@ -246,15 +246,10 @@ export default class SendToAddress extends React.Component {
   };
 
   render() {
-<<<<<<< HEAD
+
     let { canSend, toAddress } = this.state;
     let {dollarSymbol} = this.props
-=======
-    let {
-      canSend,
-      toAddress
-    } = this.state;
->>>>>>> 5f2583d6a0a1d8b168ee8e92f8069fb0d7f922b2
+
 
     /*let sendMessage = ""
     if(this.state.message){
@@ -300,37 +295,6 @@ export default class SendToAddress extends React.Component {
 
     return (
       <div>
-<<<<<<< HEAD
-        <div className="content row">
-          <div className="form-group w-100">
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">{i18n.t('send_to_address.to_address')}</label>
-              <div className="input-group">
-                <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
-                  ref={(input) => { this.addressInput = input; }}
-                       onChange={event => this.updateState('toAddress', event.target.value)} />
-                <div className="input-group-append" onClick={() => {
-                  this.props.openScanner({view:"send_to_address"})
-                }}>
-                  <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.primary}>
-                    <i style={{color:"#FFFFFF"}} className="fas fa-qrcode" />
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div>  { this.state.toAddress && this.state.toAddress.length==42 &&
-              <CopyToClipboard text={toAddress.toLowerCase()}>
-                <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
-                  <div style={{opacity:0.33}}>{this.state.fromEns}</div>
-                  <Blockies seed={toAddress.toLowerCase()} scale={10}/>
-                </div>
-              </CopyToClipboard>
-            }</div>
-            <label htmlFor="amount_input">{i18n.t('send_to_address.send_amount')}</label>
-            <div className="input-group">
-              <div className="input-group-prepend">
-                <div className="input-group-text">{dollarSymbol}</div>
-=======
         <Box mb={4}>
           <Field mb={3} label={i18n.t('send_to_address.to_address')}>
             <Input
@@ -352,7 +316,6 @@ export default class SendToAddress extends React.Component {
               <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
                 <div style={{opacity:0.33}}>{this.state.fromEns}</div>
                 <Blockies seed={toAddress.toLowerCase()} scale={10}/>
->>>>>>> 5f2583d6a0a1d8b168ee8e92f8069fb0d7f922b2
               </div>
             </CopyToClipboard>
           }</div>

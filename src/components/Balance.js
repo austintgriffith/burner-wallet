@@ -30,7 +30,7 @@ export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
       </Flex>
 
       <Text fontSize={4}>
-        ${dollarDisplay(amount)}
+        {dollarDisplay(amount)}
       </Text>
     </Flex>
   )
