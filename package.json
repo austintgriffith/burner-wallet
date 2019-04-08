@@ -29,6 +29,7 @@
     "jimp": "^0.6.0",
     "node-sass": "^4.11.0",
     "path": "^0.12.7",
+    "prettier": "^1.16.4",
     "qrcode-reader": "^1.0.4",
     "qrcode.react": "^0.8.0",
     "query-string": "^6.3.0",
