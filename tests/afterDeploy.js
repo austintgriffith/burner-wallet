@@ -1,2 +1,2 @@
-const clevis = require("./clevis.js")
-clevis.updateVendingMachineAddress()
+const clevis = require('./clevis.js');
+clevis.updateVendingMachineAddress();

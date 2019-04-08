@@ -3,7 +3,4 @@
   module.exports = ["hello world"]
 */
 
-module.exports = [
-  "Burner",
-  "BURN"
-]
+module.exports = ['Burner', 'BURN'];

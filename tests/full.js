@@ -1,2 +1,2 @@
-const clevis = require("./clevis.js")
-clevis.full()
+const clevis = require('./clevis.js');
+clevis.full();

@@ -1,117 +1,187 @@
 import React from 'react';
-import { Scaler, Blockie } from "dapparatus";
+import { Scaler, Blockie } from 'dapparatus';
 import burnerloader from '../burnerloader.gif';
-export  default ({openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
-
-
-  let sendButtonOpacity = 1.0
-  if(view=="receive" || view=="send_badge"){
-    sendButtonOpacity = 0
+export default ({
+  openScanner,
+  network,
+  total,
+  dollarDisplay,
+  ens,
+  title,
+  titleImage,
+  mainStyle,
+  balance,
+  address,
+  changeView,
+  view,
+}) => {
+  let sendButtonOpacity = 1.0;
+  if (view == 'receive' || view == 'send_badge') {
+    sendButtonOpacity = 0;
   }
 
-
-
-  let name = ens
-  if(!name){
-    name = address.substring(2,8)
+  let name = ens;
+  if (!name) {
+    name = address.substring(2, 8);
   }
 
-  let moneyDisplay
-  let blockieDisplay
-  if(typeof total == "undefined" || Number.isNaN(total)){
+  let moneyDisplay;
+  let blockieDisplay;
+  if (typeof total == 'undefined' || Number.isNaN(total)) {
     moneyDisplay = (
-      <div style={{opacity:0.1,fontSize:28,paddingTop:15}}>
+      <div style={{ opacity: 0.1, fontSize: 28, paddingTop: 15 }}>
         connecting...
       </div>
-    )
+    );
     blockieDisplay = (
       <div>
-        <img src ={burnerloader} style={{maxHeight:50,opacity:0.25,marginLeft:-20}}/>
+        <img
+          src={burnerloader}
+          style={{ maxHeight: 50, opacity: 0.25, marginLeft: -20 }}
+        />
       </div>
-    )
-  }else{
+    );
+  } else {
     /*moneyDisplay = (
       <div>
         ${dollarDisplay(total)}
       </div>
     )*/
     moneyDisplay = (
-      <div style={{opacity:0.4,fontSize:22,paddingTop:18}}>
+      <div style={{ opacity: 0.4, fontSize: 22, paddingTop: 18 }}>
         {network}
       </div>
-    )
-    blockieDisplay = (
-      <Blockie
-          address={address}
-          config={{size:6}}>
-      </Blockie>
-    )
+    );
+    blockieDisplay = <Blockie address={address} config={{ size: 6 }} />;
   }
 
   let scanButtonStyle = {
-    opacity:sendButtonOpacity,
-    position:"absolute",
-    right:20,
-    top:-180,
-    zIndex:2,
-    cursor:"pointer",
-    transform:"scale(1.5)",
-  }
+    opacity: sendButtonOpacity,
+    position: 'absolute',
+    right: 20,
+    top: -180,
+    zIndex: 2,
+    cursor: 'pointer',
+    transform: 'scale(1.5)',
+  };
 
-  if(view=="send_to_address"){
-    scanButtonStyle.position = "absolute"
-    scanButtonStyle.right = -3
-    scanButtonStyle.top = 217
-    delete scanButtonStyle.bottom
+  if (view == 'send_to_address') {
+    scanButtonStyle.position = 'absolute';
+    scanButtonStyle.right = -3;
+    scanButtonStyle.top = 217;
+    delete scanButtonStyle.bottom;
   }
 
   let bottomRight = (
-    <div style={scanButtonStyle} onClick={() => {
-      openScanner({view:"send_to_address"})
-    }} >
-      <div style={{position:'relative',backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",backgroundColor:mainStyle.mainColor,borderRadius:"50%",width:89,height:89,boxShadow: "0.5px 0.5px 5px #000000"}}>
-        <a href="#" style={{color:'#FFFFFF',position:'absolute',left:30,top:28}}>
+    <div
+      style={scanButtonStyle}
+      onClick={() => {
+        openScanner({ view: 'send_to_address' });
+      }}
+    >
+      <div
+        style={{
+          position: 'relative',
+          backgroundImage:
+            'linear-gradient(' +
+            mainStyle.mainColorAlt +
+            ',' +
+            mainStyle.mainColor +
+            ')',
+          backgroundColor: mainStyle.mainColor,
+          borderRadius: '50%',
+          width: 89,
+          height: 89,
+          boxShadow: '0.5px 0.5px 5px #000000',
+        }}
+      >
+        <a
+          href="#"
+          style={{ color: '#FFFFFF', position: 'absolute', left: 30, top: 28 }}
+        >
           <i className="fas fa-qrcode" />
         </a>
       </div>
     </div>
-  )
+  );
 
-  let opacity = 0.5
+  let opacity = 0.5;
 
+  let topLeft;
 
-
-  let topLeft
-
-  if(view=="main" || view=="exchange"){
-    opacity = 1.0
+  if (view == 'main' || view == 'exchange') {
+    opacity = 1.0;
     topLeft = (
-      <div style={{zIndex:-2,position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}}  >
-        <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank" style={{color:"#FFFFFF"}}>
-          {blockieDisplay}<div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
+      <div
+        style={{
+          zIndex: -2,
+          position: 'absolute',
+          left: 16,
+          top: 4,
+          zIndex: 1,
+          cursor: 'pointer',
+        }}
+      >
+        <a
+          href={
+            'https://blockscout.com/poa/dai/address/' +
+            address +
+            '/transactions'
+          }
+          target="_blank"
+          style={{ color: '#FFFFFF' }}
+        >
+          {blockieDisplay}
+          <div
+            style={{ position: 'absolute', left: 60, top: 15, fontSize: 14 }}
+          >
+            {name}
+          </div>
         </a>
       </div>
-    )
-  }else{
+    );
+  } else {
     topLeft = (
-      <div style={{zIndex:-2,position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}} onClick={() => changeView('main')} >
-          {blockieDisplay}<div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
+      <div
+        style={{
+          zIndex: -2,
+          position: 'absolute',
+          left: 16,
+          top: 4,
+          zIndex: 1,
+          cursor: 'pointer',
+        }}
+        onClick={() => changeView('main')}
+      >
+        {blockieDisplay}
+        <div style={{ position: 'absolute', left: 60, top: 15, fontSize: 14 }}>
+          {name}
+        </div>
       </div>
-    )
+    );
   }
 
   let topRight = (
-    <div style={{zIndex:-2,position:"absolute",right:28,top:-4,zIndex:1,fontSize:46,opacity:0.9}}  >
+    <div
+      style={{
+        zIndex: -2,
+        position: 'absolute',
+        right: 28,
+        top: -4,
+        zIndex: 1,
+        fontSize: 46,
+        opacity: 0.9,
+      }}
+    >
       {moneyDisplay}
     </div>
-  )
-
+  );
 
   return (
-    <div className="header" style={{opacity}}>
+    <div className="header" style={{ opacity }}>
       {topLeft}
       {topRight}
       {bottomRight}
     </div>
-  )
+  );
 };
