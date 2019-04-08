@@ -2,11 +2,16 @@ import React from 'react';
 import Ruler from "./Ruler";
 import Balance from "./Balance";
 import {CopyToClipboard} from "react-copy-to-clipboard";
-import Blockies from 'react-blockies';
 import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
-const QRCode = require('qrcode.react');
+
+import {
+  Flex,
+  Box,
+  PublicAddress,
+  QR as QRCode
+} from 'rimble-ui'
 
 export default class Receive extends React.Component {
 
@@ -16,27 +21,33 @@ export default class Receive extends React.Component {
     }
   }
   render() {
-    let {dollarDisplay,view,buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, subBalanceDisplay,account} = this.props
-
-
-    let qrSize = Math.min(document.documentElement.clientWidth,512)-90
-    let qrValue = address
+    let {
+      view,
+      buttonStyle,
+      ERC20TOKEN,
+      address,
+      balance,
+      changeAlert,
+      changeView,
+      dollarDisplay,
+      subBalanceDisplay,
+      account
+    } = this.props
 
     return (
       <div>
-        <div className="send-to-address w-100">
+        <div>
           <CopyToClipboard text={address} onCopy={() => {
             changeAlert({type: 'success', message: i18n.t('receive.address_copied')})
           }}>
-            <div className="content qr row" style={{cursor:"pointer"}}>
-              <QRCode value={qrValue} size={qrSize}/>
-              <div className="input-group">
-                <input type="text" className="form-control" style={{color:"#999999"}} value={address} disabled/>
-                <div className="input-group-append">
-                  <span className="input-group-text"><i style={{color:"#999999"}}  className="fas fa-copy"/></span>
-                </div>
-              </div>
-            </div>
+            <Box>
+              <Flex flexDirection={'column'} alignItems={'center'} p={3} border={1} borderColor={'grey'} borderRadius={1}>
+                <QRCode value={address} size={'100%'} renderAs={'svg'} />
+              </Flex>
+              <Box mt={3}>
+                <PublicAddress address={address} />
+              </Box>
+            </Box>
           </CopyToClipboard>
           <RecentTransactions
             dollarDisplay={dollarDisplay}

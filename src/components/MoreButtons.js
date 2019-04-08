@@ -1,53 +1,48 @@
-import React from 'react';
-import { Scaler } from "dapparatus";
-import Ruler from "./Ruler";
-import {CopyToClipboard} from "react-copy-to-clipboard";
-import Balance from "./Balance";
-import i18n from '../i18n';
+import React from "react";
+import i18n from "../i18n";
+import {
+  OutlineButton,
+  Flex,
+  Box
+} from "rimble-ui";
 
+export default ({
+  isVendor,
+  buttonStyle,
+  ERC20TOKEN,
+  address,
+  balance,
+  changeAlert,
+  changeView,
+  dollarDisplay,
+  subBalanceDisplay
+}) => {
+  let exchangeButton;
 
-
-export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
-
-  let exchangeButton
-
-  if(!isVendor){
-    exchangeButton  = (
-      <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
-        changeView('exchange')}
-      }>
-        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-          <i className="fa fa-random"></i> {i18n.t('more_buttons.exchange')}
-        </Scaler>
-      </button>
-    )
-  }else{
-    exchangeButton  = (
-      <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
-        changeView('cash_out')}
-      }>
-        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-          <i className="fa fa-credit-card"></i> {"Cash Out"}
-        </Scaler>
-      </button>
-    )
+  if (!isVendor) {
+    exchangeButton = (
+      <OutlineButton icon={'Shuffle'} width={1} onClick={() => {changeView("exchange");}}>
+        {i18n.t("more_buttons.exchange")}
+      </OutlineButton>
+    );
+  } else {
+    exchangeButton = (
+      <OutlineButton icon={'CreditCard'} width={1} onClick={() => {changeView("cash_out");}}>
+        {"Cash Out"}
+      </OutlineButton>
+    );
   }
 
-
   return (
-    <div className="content bridge row">
-      <div className="col-6 p-1">
-        <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
-          changeView('request_funds')}
-        }>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-hand-holding-usd"></i> {i18n.t('more_buttons.request')}
-          </Scaler>
-        </button>
-      </div>
-      <div className="col-6 p-1">
+    <Flex>
+      <Box width={1/2} mr={3}>
+        <OutlineButton icon={'AttachMoney'} width={1} onClick={() => {changeView("request_funds");}}>
+          {i18n.t("more_buttons.request")}
+        </OutlineButton>
+      </Box>
+      <Box width={1/2}>
         {exchangeButton}
-      </div>
-    </div>
-  )
-}
+      </Box>
+    </Flex>
+  );
+};

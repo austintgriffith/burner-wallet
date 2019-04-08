@@ -11,6 +11,16 @@ import Web3 from 'web3';
 import axios from "axios"
 import i18n from '../i18n';
 
+import {
+  Flex,
+  Box,
+  Button,
+  OutlineButton,
+  Icon,
+  Input,
+  Field
+} from 'rimble-ui'
+
 import Wyre from '../services/wyre';
 import wyrelogo from '../wyre.png';
 
@@ -1394,28 +1404,23 @@ export default class Exchange extends React.Component {
       }
     } else {
       daiToXdaiDisplay = (
-        <div className="content ops row">
+        <Flex width={1} px={3}>
+          <Button width={1} mr={2} icon={'ArrowUpward'} disabled={buttonsDisabled} onClick={()=>{
+            this.setState({daiToXdaiMode:"deposit"})
+          }} >
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              DAI to xDai
+            </Scaler>
+          </Button>
 
-          <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} disabled={buttonsDisabled} onClick={()=>{
-              this.setState({daiToXdaiMode:"deposit"})
-            }} >
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-arrow-up"  /> DAI to xDai
-              </Scaler>
-            </button>
-          </div>
-
-          <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} disabled={buttonsDisabled}  onClick={()=>{
-              this.setState({daiToXdaiMode:"withdraw"})
-            }} >
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-arrow-down"  /> xDai to DAI
-              </Scaler>
-            </button>
-          </div>
-        </div>
+          <Button width={1} icon={'ArrowDownward'} disabled={buttonsDisabled}  onClick={()=>{
+            this.setState({daiToXdaiMode:"withdraw"})
+          }} >
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              xDai to DAI
+            </Scaler>
+          </Button>
+        </Flex>
       )
     }
 
@@ -1931,28 +1936,22 @@ export default class Exchange extends React.Component {
 
     }else{
       ethToDaiDisplay = (
-         <div className="content ops row">
-
-           <div className="col-6 p-1">
-             <button className="btn btn-large w-100"  style={this.props.buttonStyle.primary} disabled={buttonsDisabled}  onClick={()=>{
-               this.setState({ethToDaiMode:"deposit"})
-             }}>
-               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-arrow-up"  /> ETH to DAI
-               </Scaler>
-             </button>
-           </div>
-
-           <div className="col-6 p-1">
-             <button className="btn btn-large w-100"  style={this.props.buttonStyle.primary} disabled={buttonsDisabled}  onClick={()=>{
-               this.setState({ethToDaiMode:"withdraw"})
-             }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-               <i className="fas fa-arrow-down" /> DAI to ETH
-              </Scaler>
-             </button>
-           </div>
-         </div>
+        <Flex width={1} px={3}>
+          <Button width={1} mr={2} icon={'ArrowUpward'} disabled={buttonsDisabled} onClick={()=>{
+            this.setState({ethToDaiMode:"deposit"})
+          }}>
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              ETH to DAI
+            </Scaler>
+          </Button>
+          <Button width={1} icon={'ArrowDownward'} disabled={buttonsDisabled} onClick={()=>{
+           this.setState({ethToDaiMode:"withdraw"})
+          }}>
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              DAI to ETH
+            </Scaler>
+        </Button>
+        </Flex>
        )
 
     }
@@ -1961,52 +1960,72 @@ export default class Exchange extends React.Component {
 
 
     let sendDaiButton = (
-      <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} disabled={buttonsDisabled} onClick={()=>{
-        this.setState({sendDai:true})
-      }}>
-        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-          <i className="fas fa-arrow-right"></i>
-        </Scaler>
-      </button>
+      <OutlineButton
+        width={1}
+        icon={'ArrowForward'}
+        icononly
+        disabled={buttonsDisabled}
+        onClick={()=>{
+        this.setState({sendDai:true})}}
+      />
     )
 
     //style={{marginTop:40,backgroundColor:this.props.mainStyle.mainColor}}
     let sendDaiRow = ""
     if(this.state.sendDai){
       sendDaiRow = (
-        <div className="send-to-address card w-100" style={{marginTop:20}}>
-        <div className="content ops row">
-          <div className="form-group w-100">
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">To Address</label>
-              <input type="text" className="form-control" placeholder="0x..." value={this.state.daiSendToAddress}
-                     onChange={event => this.updateState('daiSendToAddress', event.target.value)} />
-            </div>
-            <div>  { this.state.daiSendToAddress && this.state.daiSendToAddress.length==42 && <Blockies seed={this.state.daiSendToAddress.toLowerCase()} scale={10} /> }</div>
-            <label htmlFor="amount_input">Send Amount</label>
-            <div className="input-group">
-              <div className="input-group-prepend">
-                <div className="input-group-text">$</div>
-              </div>
-              <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.daiSendAmount}
-                     onChange={event => this.updateState('daiSendAmount', event.target.value)} />
-               <div className="input-group-append" onClick={() => {
-                  this.setState({daiSendAmount: Math.floor((this.props.daiBalance)*100)/100 },()=>{
-                    this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                  })
-               }}>
-                 <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                   max
-                 </span>
-               </div>
-            </div>
-            <button style={this.props.buttonStyle.primary} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendDai ? '' : 'disabled'}`}
-                    onClick={this.sendDai.bind(this)}>
-              Send
-            </button>
+        <Box
+          border={1}
+          borderColor={'grey'}
+          borderRadius={1}
+          my={3}
+          p={3}
+        >
+          <Field label={'To Address'} mb={3}>
+            <Input
+              type="text"
+              placeholder="0x..."
+              value={this.state.daiSendToAddress}
+              onChange={event => this.updateState('daiSendToAddress', event.target.value)}
+              width={1}
+            />
+          </Field>
+          <div>
+            { this.state.daiSendToAddress && this.state.daiSendToAddress.length==42 && <Blockies seed={this.state.daiSendToAddress.toLowerCase()} scale={10} /> }
           </div>
-        </div>
-        </div>
+          <Field label={'Send Amount'} mb={3}>
+            <Flex>
+              <Input
+                type="number"
+                step="0.1"
+                placeholder="$0.00"
+                value={this.state.daiSendAmount}
+                onChange={event => this.updateState('daiSendAmount', event.target.value)}
+                width={1}
+              />
+              <OutlineButton
+                ml={2}
+                onClick={() => {
+                  this.setState({
+                    daiSendAmount: Math.floor((this.props.daiBalance)*100)/100
+                  },
+                  () => {
+                    this.setState({
+                      canSendDai: this.canSendDai(),
+                      canSendEth: this.canSendEth(),
+                      canSendXdai: this.canSendXdai()
+                    })
+                  })
+                }}
+              >
+                max
+              </OutlineButton>
+            </Flex>
+          </Field>
+          <Button width={1} disabled={buttonsDisabled} onClick={this.sendDai.bind(this)}>
+            Send
+          </Button>
+        </Box>
       )
       sendDaiButton = (
         <button className="btn btn-large w-100" style={{backgroundColor:"#888888",whiteSpace:"nowrap"}} onClick={()=>{
@@ -2024,13 +2043,13 @@ export default class Exchange extends React.Component {
 
 
     let sendEthButton = (
-      <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={()=>{
-        this.setState({sendEth:true})
-      }}>
-        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-          <i className="fas fa-arrow-right"></i>
-        </Scaler>
-      </button>
+      <OutlineButton
+        width={1}
+        icon={'ArrowForward'}
+        icononly
+        disabled={buttonsDisabled}
+        onClick={()=>{this.setState({sendEth:true})}}
+      />
     )
 
     let fundByWyreButton = (
@@ -2073,67 +2092,76 @@ export default class Exchange extends React.Component {
     let sendEthRow = ""
     if(this.state.sendEth){
       sendEthRow = (
-        <div className="send-to-address card w-100" style={{marginTop:20}}>
-        <div className="content ops row">
-          <div className="form-group w-100">
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">To Address</label>
-              <input type="text" className="form-control" placeholder="0x..." value={this.state.ethSendToAddress}
-                     onChange={event => this.updateState('ethSendToAddress', event.target.value)} />
-            </div>
-            <div>  { this.state.ethSendToAddress && this.state.ethSendToAddress.length==42 && <Blockies seed={this.state.ethSendToAddress.toLowerCase()} scale={10} /> }</div>
-            <label htmlFor="amount_input">Send Amount</label>
-            <div className="input-group">
-              <div className="input-group-prepend">
-                <div className="input-group-text">$</div>
-              </div>
-              <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.ethSendAmount}
-                     onChange={event => this.updateState('ethSendAmount', event.target.value)} />
-                     <div className="input-group-append" onClick={() => {
-
-                       console.log("Getting gas price...")
-                       axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
-                       .catch((err)=>{
-                         console.log("Error getting gas price",err)
-                       })
-                       .then((response)=>{
-                         if(response && response.data.average>0&&response.data.average<200){
-                           response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
-                           let gwei = Math.round(response.data.average*100)/1000
-
-                           console.log(gwei)
-
-
-                           let IDKAMOUNTTOLEAVE = gwei*(1111000000*2) * 201000 // idk maybe enough for a couple transactions?
-
-                           console.log("let's leave ",IDKAMOUNTTOLEAVE,this.props.ethBalance)
-
-                           let gasInEth = this.props.web3.utils.fromWei(""+IDKAMOUNTTOLEAVE,'ether')
-                           console.log("gasInEth",gasInEth)
-
-                           let adjustedEthBalance = (parseFloat(this.props.ethBalance) - parseFloat(gasInEth))
-                           console.log(adjustedEthBalance)
-
-                           this.setState({ethSendAmount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 },()=>{
-                             this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                           })
-
-                         }
-                       })
-
-                     }}>
-                       <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                         max
-                       </span>
-                     </div>
-            </div>
-            <button style={this.props.buttonStyle.primary} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendEth ? '' : 'disabled'}`}
-                    onClick={this.sendEth.bind(this)}>
-              Send
-            </button>
+        <Box
+          border={1}
+          borderColor={'grey'}
+          borderRadius={1}
+          my={3}
+          p={3}
+        >
+          <Field label={'To Address'} mb={3}>
+            <Input
+              type="text"
+              placeholder="0x..."
+              value={this.state.ethSendToAddress}
+              onChange={event => this.updateState('ethSendToAddress', event.target.value)}
+              width={1}
+            />
+          </Field>
+          <div>
+            { this.state.ethSendToAddress && this.state.ethSendToAddress.length==42 && <Blockies seed={this.state.ethSendToAddress.toLowerCase()} scale={10} /> }
           </div>
-        </div>
-        </div>
+          <Field label={'Send Amount'} mb={3}>
+            <Flex>
+              <Input
+                type="number"
+                step="0.1"
+                placeholder="$0.00"
+                value={this.state.ethSendAmount}
+                onChange={event => this.updateState('ethSendAmount', event.target.value)}
+                width={1}
+              />
+              <OutlineButton
+                ml={2}
+                onClick={() => {
+                  console.log("Getting gas price...")
+                  axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
+                   .catch((err)=>{
+                     console.log("Error getting gas price",err)
+                   })
+                  .then((response)=>{
+                    if(response && response.data.average>0&&response.data.average<200){
+                      response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
+                      let gwei = Math.round(response.data.average*100)/1000
+
+                      console.log(gwei)
+
+
+                      let IDKAMOUNTTOLEAVE = gwei*(1111000000*2) * 201000 // idk maybe enough for a couple transactions?
+
+                      console.log("let's leave ",IDKAMOUNTTOLEAVE,this.props.ethBalance)
+
+                      let gasInEth = this.props.web3.utils.fromWei(""+IDKAMOUNTTOLEAVE,'ether')
+                      console.log("gasInEth",gasInEth)
+
+                      let adjustedEthBalance = (parseFloat(this.props.ethBalance) - parseFloat(gasInEth))
+                      console.log(adjustedEthBalance)
+
+                      this.setState({ethSendAmount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 },()=>{
+                        this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                      })
+                    }
+                  })
+              }}
+              >
+                max
+              </OutlineButton>
+            </Flex>
+          </Field>
+          <Button width={1} disabled={buttonsDisabled} onClick={this.sendEth.bind(this)}>
+            Send
+          </Button>
+        </Box>
       )
       sendEthButton = (
         <button className="btn btn-large w-100" style={{backgroundColor:"#888888",whiteSpace:"nowrap"}} onClick={()=>{
@@ -2150,59 +2178,75 @@ export default class Exchange extends React.Component {
 
     if(this.props.ERC20TOKEN){
       sendXdaiButton = (
-        <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={()=>{this.setState({sendXdai:true})}}>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-arrow-right"></i>
-          </Scaler>
-        </button>
+        <OutlineButton
+          width={1}
+          icon={'ArrowForward'}
+          icononly
+          disabled={buttonsDisabled}
+          onClick={()=>{this.setState({sendXdai:true})}}
+        />
       )
     }else{
       sendXdaiButton = (
-        <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={this.props.goBack}>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-arrow-right"></i>
-          </Scaler>
-        </button>
+        <OutlineButton
+          width={1}
+          icon={'ArrowForward'}
+          icononly
+          disabled={buttonsDisabled}
+          onClick={this.props.goBack}
+        />
       )
     }
 
     let sendXdaiRow = ""
     if(this.state.sendXdai){
       sendXdaiRow = (
-        <div className="send-to-address card w-100" style={{marginTop:20}}>
-        <div className="content ops row">
-          <div className="form-group w-100">
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">To Address</label>
-              <input type="text" className="form-control" placeholder="0x..." value={this.state.xdaiSendToAddress}
-                     onChange={event => this.updateState('xdaiSendToAddress', event.target.value)} />
-            </div>
-            <div>  { this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length==42 && <Blockies seed={this.state.xdaiSendToAddress.toLowerCase()} scale={10} /> }</div>
-            <label htmlFor="amount_input">Send Amount</label>
-            <div className="input-group">
-              <div className="input-group-prepend">
-                <div className="input-group-text">$</div>
-              </div>
-              <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.xdaiSendAmount}
-                     onChange={event => this.updateState('xdaiSendAmount', event.target.value)} />
-                     <div className="input-group-append" onClick={() => {
-                           this.setState({xdaiSendAmount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 },()=>{
-                             this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                           })
-                         }
-                       }>
-                       <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                         max
-                       </span>
-                     </div>
-            </div>
-            <button style={this.props.buttonStyle.primary} disabled={buttonsDisabled} className={`btn btn-success btn-lg w-100 ${this.state.canSendXdai ? '' : 'disabled'}`}
-                    onClick={this.sendXdai.bind(this)}>
-              Send
-            </button>
+        <Box
+          border={1}
+          borderColor={'grey'}
+          borderRadius={1}
+          my={3}
+          p={3}
+        >
+          <Field label={'To Address'} mb={3}>
+            <Input
+              type="text"
+              className="form-control"
+              placeholder="0x..."
+              value={this.state.xdaiSendToAddress}
+              onChange={event => this.updateState('xdaiSendToAddress', event.target.value)}
+            />
+          </Field>
+          <div>
+            { this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length==42 && <Blockies seed={this.state.xdaiSendToAddress.toLowerCase()} scale={10} /> }
           </div>
-        </div>
-        </div>
+          <Field label={'Send Amount'} mb={3}>
+            <Flex>
+              <Input
+                type="number"
+                step="0.1"
+                className="form-control"
+                placeholder="$0.00"
+                value={this.state.xdaiSendAmount}
+                onChange={event => this.updateState('xdaiSendAmount', event.target.value)}
+              />
+              <OutlineButton
+                ml={2}
+                onClick={() => {
+                  this.setState({xdaiSendAmount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 },()=>{
+                    this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                  })
+                }}
+              >
+                max
+              </OutlineButton>
+            </Flex>
+          </Field>
+
+          <Button width={1} disabled={buttonsDisabled} onClick={this.sendXdai.bind(this)}>
+            Send
+          </Button>
+        </Box>
       )
       sendXdaiButton = (
         <button className="btn btn-large w-100" style={{backgroundColor:"#888888",whiteSpace:"nowrap"}} onClick={()=>{
@@ -2217,7 +2261,7 @@ export default class Exchange extends React.Component {
 
     //console.log("eth price ",this.props.ethBalance,this.props.ethprice)
     return (
-      <div style={{marginTop:30}}>
+      <Box mt={4}>
 
         {tokenDisplay}
 
@@ -2338,7 +2382,7 @@ export default class Exchange extends React.Component {
           {sendEthRow}
           {this.state.extraGasUpDisplay}
 
-      </div>
+      </Box>
     )
   }
 }

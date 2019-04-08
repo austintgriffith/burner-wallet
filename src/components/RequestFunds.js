@@ -5,7 +5,16 @@ import Blockies from 'react-blockies';
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18n from '../i18n';
 import RecentTransactions from './RecentTransactions';
-const QRCode = require('qrcode.react');
+// const QRCode = require('qrcode.react');
+
+import {
+  Flex,
+  Box,
+  Input,
+  Field,
+  Button,
+  QR as QRCode
+} from 'rimble-ui'
 
 export default class RequestFunds extends React.Component {
 
@@ -60,16 +69,19 @@ export default class RequestFunds extends React.Component {
               {message}
             </div>
 
-            <div style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
-              <QRCode value={qrValue} size={qrSize}/>
-            </div>
+            <Flex flexDirection={'column'} alignItems={'center'} p={3} border={1} borderColor={'grey'} borderRadius={1}>
+              <QRCode value={qrValue} size={'100%'} renderAs={'svg'} />
+            </Flex>
+            <Box mt={3}>
+              <Input type='url' readOnly value={qrValue} width={1} />
+            </Box>
 
-            <div className="input-group">
+            {/* <div className="input-group">
               <input type="text" className="form-control" value={qrValue} disabled/>
               <div className="input-group-append">
                 <span className="input-group-text"><i className="fas fa-copy"/></span>
               </div>
-            </div>
+            </div> */}
 
             </div>
           </CopyToClipboard>
@@ -90,28 +102,34 @@ export default class RequestFunds extends React.Component {
     }else{
       return (
         <div>
-          <div className="content row">
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">{i18n.t('request_funds.amount')}</label>
-              <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">{dollarSymbol}</div>
-                </div>
-                <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
-              </div>
-            </div>
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">{i18n.t('request_funds.item_message')}</label>
-              <input type="text" className="form-control" placeholder="Hot Dogs" value={this.state.message}
-                     onChange={event => this.updateState('message', event.target.value)} />
-            </div>
-            <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canRequest ? '' : 'disabled'}`}
-                    onClick={this.request}>
-              {i18n.t('request_funds.button')}
-            </button>
-          </div>
+          <Field label={i18n.t('request_funds.amount')}>
+            <Input
+              type="number"
+              width={1}
+              placeholder="$0.00"
+              value={this.state.amount}
+              onChange={event => this.updateState('amount', event.target.value)}
+            />
+          </Field>
 
+          <Field label={i18n.t('request_funds.item_message')}>
+            <Input
+              type="text"
+              width={1}
+              placeholder="Hot Dogs"
+              value={this.state.message}
+              onChange={event => this.updateState('message', event.target.value)}
+            />
+          </Field>
+
+          <Button
+            size={'large'}
+            width={1}
+            disabled={(canRequest ? false : true)}
+            onClick={this.request}
+          >
+            {i18n.t('request_funds.button')}
+          </Button>
         </div>
       )
     }

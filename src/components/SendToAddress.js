@@ -6,6 +6,13 @@ import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
+import {
+  Box,
+  Button,
+  OutlineButton,
+  Field,
+  Input,
+} from 'rimble-ui';
 const queryString = require('query-string');
 
 export default class SendToAddress extends React.Component {
@@ -239,8 +246,15 @@ export default class SendToAddress extends React.Component {
   };
 
   render() {
+<<<<<<< HEAD
     let { canSend, toAddress } = this.state;
     let {dollarSymbol} = this.props
+=======
+    let {
+      canSend,
+      toAddress
+    } = this.state;
+>>>>>>> 5f2583d6a0a1d8b168ee8e92f8069fb0d7f922b2
 
     /*let sendMessage = ""
     if(this.state.message){
@@ -261,20 +275,32 @@ export default class SendToAddress extends React.Component {
 
 
     let amountInputDisplay = (
-      <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
-          ref={(input) => { this.amountInput = input; }}
-             onChange={event => this.updateState('amount', event.target.value)} />
+      <Input
+        width={1}
+        type="number"
+        placeholder="$0.00"
+        value={this.state.amount}
+        ref={(input) => { this.amountInput = input; }}
+        onChange={event => this.updateState('amount', event.target.value)}
+      />
     )
     if(this.props.scannerState&&this.props.scannerState.daiposOrderId){
       amountInputDisplay = (
-        <input type="number" readOnly className="form-control" placeholder="0.00" value={this.state.amount}
-            ref={(input) => { this.amountInput = input; }}
-               onChange={event => this.updateState('amount', event.target.value)} />
+        <Input
+          width={1}
+          type="number"
+          readOnly
+          placeholder="$0.00"
+          value={this.state.amount}
+          ref={(input) => { this.amountInput = input; }}
+          onChange={event => this.updateState('amount', event.target.value)}
+        />
       )
     }
 
     return (
       <div>
+<<<<<<< HEAD
         <div className="content row">
           <div className="form-group w-100">
             <div className="form-group w-100">
@@ -304,21 +330,51 @@ export default class SendToAddress extends React.Component {
             <div className="input-group">
               <div className="input-group-prepend">
                 <div className="input-group-text">{dollarSymbol}</div>
+=======
+        <Box mb={4}>
+          <Field mb={3} label={i18n.t('send_to_address.to_address')}>
+            <Input
+              width={1}
+              type="text"
+              placeholder="0x..."
+              value={this.state.toAddress}
+              ref={(input) => { this.addressInput = input; }}
+              onChange={event => this.updateState('toAddress', event.target.value)}
+            />
+          </Field>
+
+          <OutlineButton icon={'CenterFocusWeak'} mb={4} width={1} onClick={() => {this.props.openScanner({view:"send_to_address"})}}>
+            Scan QR Code
+          </OutlineButton>
+
+          <div>{ this.state.toAddress && this.state.toAddress.length==42 &&
+            <CopyToClipboard text={toAddress.toLowerCase()}>
+              <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
+                <div style={{opacity:0.33}}>{this.state.fromEns}</div>
+                <Blockies seed={toAddress.toLowerCase()} scale={10}/>
+>>>>>>> 5f2583d6a0a1d8b168ee8e92f8069fb0d7f922b2
               </div>
-              {amountInputDisplay}
-            </div>
-            <div className="form-group w-100" style={{marginTop:20}}>
-              <label htmlFor="amount_input">{messageText}</label>
-              <input type="text" className="form-control" placeholder="optional unencrypted message" value={this.state.message}
-                ref={(input) => { this.messageInput = input; }}
-                     onChange={event => this.updateState('message', event.target.value)} />
-            </div>
-          </div>
-          <button name="theVeryBottom" className={`btn btn-lg w-100 ${canSend ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}
-                  onClick={this.send}>
-            Send
-          </button>
-        </div>
+            </CopyToClipboard>
+          }</div>
+
+          <Field mb={3} label={i18n.t('send_to_address.send_amount')}>
+            {amountInputDisplay}
+          </Field>
+
+          <Field mb={3} label={messageText}>
+            <Input
+              width={1}
+              type="text"
+              placeholder="optional unencrypted message"
+              value={this.state.message}
+              ref={(input) => { this.messageInput = input; }}
+              onChange={event => this.updateState('message', event.target.value)}
+            />
+          </Field>
+        </Box>
+        <Button size={'large'} width={1} disabled={canSend} onClick={this.send}>
+          Send
+        </Button>
       </div>
     )
   }
