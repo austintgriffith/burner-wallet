@@ -57,7 +57,10 @@
     "start": "PORT=3000 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format:write": "prettier --write \"**/*.{js,jsx}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx}\"",
+    "format:issue": "prettier --debug-check \"**/*.{js,jsx}\""
   },
   "eslintConfig": {
     "extends": "react-app"
