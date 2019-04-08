@@ -44,7 +44,8 @@ export default ({fullpageApi, isVendor, buttonStyle,ERC20TOKEN,address, balance,
           changeView('request_funds')}
         }>
           <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-hand-holding-usd"></i> {i18n.t('more_buttons.request')}
+            <i className="fas fa-hand-holding-usd"></i>
+            <span> {i18n.t('more_buttons.request')}</span>
           </Scaler>
         </button>
       </div>

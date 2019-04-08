@@ -42,7 +42,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
           <button className="btn btn-large w-100" onClick={() => changeView('send_to_address')} style={buttonStyle.primary}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               {/* <i className="fas fa-paper-plane"/> Send */}
-              <i className="fas fa-paper-plane"/> {i18next.t('main_card.send')}
+              <i className="fas fa-paper-plane"/><span>{i18next.t('main_card.send')}</span>
             </Scaler>
           </button>
         </div>
@@ -85,7 +85,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
           <div className="col-6 p-1">
             <button className="btn btn-large w-100" onClick={() => changeView('send_to_address')} style={buttonStyle.primary}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-paper-plane"/> {i18next.t('main_card.send')}
+                <i className="fas fa-paper-plane"/><span>{i18next.t('main_card.send')}</span>
               </Scaler>
             </button>
           </div>
