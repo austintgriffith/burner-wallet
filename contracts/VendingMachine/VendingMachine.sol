@@ -1,7 +1,7 @@
 pragma solidity 0.4.25;
 
 import "openzeppelin-solidity/contracts/access/Roles.sol";
-import "ERC20Vendable.sol";
+import "../ERC20Vendable/ERC20Vendable.sol";
 
 contract AdminRole {
   using Roles for Roles.Role;

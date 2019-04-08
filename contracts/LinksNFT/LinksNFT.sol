@@ -10,14 +10,11 @@ contract LinksNFT is Vault{
     using SafeMath for uint;
     using ECDSA for bytes32;
 
-    bytes4 internal constant ERC721TOKEN = bytes4(keccak256("ERC721"));
-
     struct Fund {
         address sender;
         address signer;
         address token;
         uint tokenId;
-        uint msgVal;
         uint nonce;
     }
     mapping (bytes32 => Fund) public funds;
@@ -26,14 +23,14 @@ contract LinksNFT is Vault{
     event Sent(
         bytes32 indexed id,
         address indexed sender,
-        uint value,
+        uint tokenId,
         uint nonce,
         bool indexed sent
     );
     event Claimed(
         bytes32 indexed id,
         address sender, 
-        uint value, 
+        uint tokenId, 
         address indexed receiver, 
         uint nonce, 
         bool indexed claimed
@@ -94,12 +91,11 @@ contract LinksNFT is Vault{
             signer: signer,
             token: _token,
             tokenId: _tokenId,
-            msgVal: msg.value,
             nonce: nonce
         });
         require(isFundValid(_id),"LinksNFT::send - Invalid fund");
         // send out events for frontend parsing
-        emit Sent(_id,sender,msg.value,nonce,true);
+        emit Sent(_id,sender,_tokenId,nonce,true);
         return true;
     }
 

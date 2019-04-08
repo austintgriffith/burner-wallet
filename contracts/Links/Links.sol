@@ -1,6 +1,7 @@
 pragma solidity 0.4.25;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 import "tabookey-gasless/contracts/RelayRecipient.sol";
 import "tabookey-gasless/contracts/RecipientUtils.sol";
@@ -11,11 +12,9 @@ import "../Vault/Vault.sol";
 /// @author TabooKey Team  - <info@tabookey.com>
 /// @notice Funds have an adjustable expiration time.
 /// After a fund expires it can only be claimed by the original sender.
-contract Links is Vault, RelayRecipient, RecipientUtils {
+contract Links is Ownable, Vault, RelayRecipient, RecipientUtils {
     using SafeMath for uint;
     using ECDSA for bytes32;
-
-    bytes4 internal constant ERC20TOKEN = bytes4(keccak256("ERC20"));
 
     struct Fund {
         address sender;
@@ -278,7 +277,8 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
     function set_hub(
         RelayHub rhub
     ) 
-        public 
+        public
+        onlyOwner() 
     {
         init_relay_hub(rhub);
     }

@@ -1,9 +1,9 @@
 pragma solidity 0.4.25;
 
-import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../ERC20MetaTx/ERC20MetaTx.sol";
 
-contract Burner is ERC20, Ownable {
+contract Burner is Ownable, ERC20MetaTx {
   address public vendingMachine;
   string public name;
   string public symbol;
@@ -22,7 +22,7 @@ contract Burner is ERC20, Ownable {
   //to emulate how we send data with a transaction, we do that here on a token transfer to enable similar chat in the burner
   function transferWithData(address to, uint256 value, bytes data) public returns (bool) {
     emit TransferWithData(msg.sender,to,value,data);
-    return transfer(to, value);
+    return transferFrom(address(this), to, value);
   }
   event TransferWithData(address indexed from, address indexed to, uint256 value, bytes data);
 
