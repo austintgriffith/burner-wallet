@@ -126,7 +126,9 @@ export default class Advanced extends React.Component {
               <div className="main-card card w-100" style={{paddingTop:40}} onClick={toggleQR}>
                 <div className="content qr row">
                     <QRCode value={qrValue} size={qrSize}/>
-                    <div style={{width:'100%',textAlign:'center'}}><div>{correctVendorObject.name}</div>  {theName}:   {dollarDisplay(theAmount)}</div>
+                    <div style={{width:'100%',textAlign:'center'}}>
+                    <div>{correctVendorObject.name}</div>
+                    <span>{theName}: {dollarDisplay(theAmount)}</span></div>
                 </div>
               </div>
             )

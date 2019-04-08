@@ -145,7 +145,9 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
               </div>
               <div className="col-2 p-1" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
                 <Scaler config={{startZoomAt:600,origin:"25% 50%",adjustedZoom:1}}>
-                <span style={{marginLeft:5,marginTop:-5,opacity:0.4,fontSize:12}}>{cleanTime((blockAge)*5)} ago</span>
+                <span style={{marginLeft:5,marginTop:-5,opacity:0.4,fontSize:12}}>
+                  {`${cleanTime((blockAge)*5)} ago`}
+                  </span>
                 </Scaler>
               </div>
 

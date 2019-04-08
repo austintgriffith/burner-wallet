@@ -151,7 +151,7 @@ export default class SendBadge extends React.Component {
               </div>
             </div>
 
-            <div>  { this.state.toAddress && this.state.toAddress.length==42 &&
+            <div>{this.state.toAddress && this.state.toAddress.length==42 &&
               <CopyToClipboard text={toAddress.toLowerCase()}>
                 <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
                   <div style={{opacity:0.33}}>{this.state.fromEns}</div>

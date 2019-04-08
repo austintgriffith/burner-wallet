@@ -110,14 +110,14 @@ export  default ({scrollMode, openScanner, network, total, dollarDisplay, ens, t
     topLeft = (
       <div style={{zIndex:-2,position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}}  >
         <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank" style={{color:"#FFFFFF"}}>
-          {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
+          {blockieDisplay}<div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
         </a>
       </div>
     )
   }else{
     topLeft = (
       <div style={{zIndex:-2,position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}} onClick={() => changeView('main')} >
-          {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
+          {blockieDisplay}<div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
       </div>
     )
   }

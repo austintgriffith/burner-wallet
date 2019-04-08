@@ -40,7 +40,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
           <button className="btn btn-large w-100" onClick={() => changeView('send_to_address')} style={buttonStyle.primary}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               {/* <i className="fas fa-paper-plane"/> Send */}
-              <i className="fas fa-paper-plane"/> {i18next.t('main_card.send')}
+              <i className="fas fa-paper-plane"/><span>{i18next.t('main_card.send')}</span>
             </Scaler>
           </button>
         </div>
@@ -56,7 +56,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
         <div className="col-6 p-1" onClick={() => changeView('send_with_link')}>
           <button className="btn btn-large w-100" style={buttonStyle.secondary}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-money-bill-alt"  /> {i18next.t('main_card.link')}
+              <i className="fas fa-money-bill-alt" /><span> {i18next.t('main_card.link')}</span>
             </Scaler>
           </button>
         </div>
@@ -78,7 +78,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
           <div className="col-6 p-1">
             <button className="btn btn-large w-100" onClick={() => changeView('send_to_address')} style={buttonStyle.primary}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-paper-plane"/> {i18next.t('main_card.send')}
+                <i className="fas fa-paper-plane"/><span>{i18next.t('main_card.send')}</span>
               </Scaler>
             </button>
           </div>
@@ -94,7 +94,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
           <div className="col-6 p-1" onClick={() => changeView('vendors')}>
             <button className="btn btn-large w-100" style={buttonStyle.secondary}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-money-bill-alt"  /> {i18next.t('main_card.vendors')}
+                <i className="fas fa-money-bill-alt"  /><span> {i18next.t('main_card.vendors')}</span>
               </Scaler>
             </button>
           </div>

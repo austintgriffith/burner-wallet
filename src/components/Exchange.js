@@ -835,7 +835,7 @@ export default class Exchange extends React.Component {
           xdaiToDendaiDisplay = (
             <div className="content ops row" style={{textAlign:'center'}}>
               <div className="col-12 p-1">
-                Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>dai.poa.network</span>
+                <span>Error: MetaMask network must be: </span><span style={{fontWeight:"bold",marginLeft:5}}>dai.poa.network</span>
                 <a href="#" onClick={()=>{this.setState({xdaiToDendaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
                   <i className="fas fa-times"/> dismiss
                 </a>
@@ -944,9 +944,10 @@ export default class Exchange extends React.Component {
           xdaiToDendaiDisplay = (
             <div className="content ops row" style={{textAlign:'center'}}>
               <div className="col-12 p-1">
-                Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>dai.poa.network</span>
+                <span>Error: MetaMask network must be: </span>
+                <span style={{fontWeight:"bold",marginLeft:5}}>dai.poa.network</span>
                 <a href="#" onClick={()=>{this.setState({xdaiToDendaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
-                  <i className="fas fa-times"/> dismiss
+                  <i className="fas fa-times"/><span> dismiss</span>
                 </a>
               </div>
             </div>
@@ -959,7 +960,7 @@ export default class Exchange extends React.Component {
             extraWithdrawInfo = (
               <div className="content ops row" style={{paddingTop:10}}>
                 <div style={{width:"100%",textAlign:'center'}}>
-                  Maximum withdrawal amount: {this.props.dollarDisplay(this.state.maxWithdrawlAmount)}
+                  <span>Maximum withdrawal amount: </span>{this.props.dollarDisplay(this.state.maxWithdrawlAmount)}
                 </div>
                 <div style={{width:"100%",textAlign:'center',opacity:0.5}}>
                   ({this.state.withdrawalExplanation})
@@ -1057,7 +1058,7 @@ export default class Exchange extends React.Component {
 
                   }}>
                     <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
-                      <i className="fas fa-arrow-down" /> Send
+                      <i className="fas fa-arrow-down" /> <span>Send</span>
                     </Scaler>
                   </button>
 
@@ -1080,7 +1081,7 @@ export default class Exchange extends React.Component {
                  this.setState({xdaiToDendaiMode:"deposit"})
                }}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-arrow-up"  /> xDai to {this.props.ERC20NAME}
+                    <i className="fas fa-arrow-up"  /><span>xDai to {this.props.ERC20NAME}</span>
                   </Scaler>
                </button>
              </div>
@@ -1156,7 +1157,7 @@ export default class Exchange extends React.Component {
         daiToXdaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
-              Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>Mainnet</span>
+            <span>Error: MetaMask network must be: </span><span style={{fontWeight:"bold",marginLeft:5}}>Mainnet</span>
               <a href="#" onClick={()=>{this.setState({daiToXdaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
                 <i className="fas fa-times"/> dismiss
               </a>
@@ -1251,7 +1252,7 @@ export default class Exchange extends React.Component {
         daiToXdaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
-              Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>dai.poa.network</span>
+              <span>Error: MetaMask network must be: </span><span style={{fontWeight:"bold",marginLeft:5}}>dai.poa.network</span>
               <a href="#" onClick={()=>{this.setState({daiToXdaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
                 <i className="fas fa-times"/> dismiss
               </a>
@@ -1401,7 +1402,7 @@ export default class Exchange extends React.Component {
               this.setState({daiToXdaiMode:"deposit"})
             }} >
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-arrow-up"  /> DAI to xDai
+              <i className="fas fa-arrow-up"  /> <span>DAI to xDai</span>
               </Scaler>
             </button>
           </div>
@@ -1411,7 +1412,7 @@ export default class Exchange extends React.Component {
               this.setState({daiToXdaiMode:"withdraw"})
             }} >
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-arrow-down"  /> xDai to DAI
+              <i className="fas fa-arrow-down"  /> <span>Dai to DAI</span>
               </Scaler>
             </button>
           </div>
@@ -1439,7 +1440,7 @@ export default class Exchange extends React.Component {
         ethToDaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
-              Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>Mainnet</span>
+              <span>Error: MetaMask network must be: </span><span style={{fontWeight:"bold",marginLeft:5}}>Mainnet</span>
               <a href="#" onClick={()=>{this.setState({ethToDaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
                 <i className="fas fa-times"/> dismiss
               </a>
@@ -1595,7 +1596,7 @@ export default class Exchange extends React.Component {
         ethToDaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
-              Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>Mainnet</span>
+              <span>Error: MetaMask network must be:</span><span style={{fontWeight:"bold",marginLeft:5}}>Mainnet</span>
               <a href="#" onClick={()=>{this.setState({ethToDaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
                 <i className="fas fa-times"/> dismiss
               </a>
@@ -1938,7 +1939,7 @@ export default class Exchange extends React.Component {
                this.setState({ethToDaiMode:"deposit"})
              }}>
                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-arrow-up"  /> ETH to DAI
+                <i className="fas fa-arrow-up"  /><span> ETH to DAI</span>
                </Scaler>
              </button>
            </div>
@@ -1982,7 +1983,7 @@ export default class Exchange extends React.Component {
               <input type="text" className="form-control" placeholder="0x..." value={this.state.daiSendToAddress}
                      onChange={event => this.updateState('daiSendToAddress', event.target.value)} />
             </div>
-            <div>  { this.state.daiSendToAddress && this.state.daiSendToAddress.length==42 && <Blockies seed={this.state.daiSendToAddress.toLowerCase()} scale={10} /> }</div>
+            <div>{this.state.daiSendToAddress && this.state.daiSendToAddress.length==42 && <Blockies seed={this.state.daiSendToAddress.toLowerCase()} scale={10} /> }</div>
             <label htmlFor="amount_input">Send Amount</label>
             <div className="input-group">
               <div className="input-group-prepend">
@@ -2081,7 +2082,9 @@ export default class Exchange extends React.Component {
               <input type="text" className="form-control" placeholder="0x..." value={this.state.ethSendToAddress}
                      onChange={event => this.updateState('ethSendToAddress', event.target.value)} />
             </div>
-            <div>  { this.state.ethSendToAddress && this.state.ethSendToAddress.length==42 && <Blockies seed={this.state.ethSendToAddress.toLowerCase()} scale={10} /> }</div>
+            <div>
+              {this.state.ethSendToAddress && this.state.ethSendToAddress.length==42 && <Blockies seed={this.state.ethSendToAddress.toLowerCase()} scale={10} />}
+            </div>
             <label htmlFor="amount_input">Send Amount</label>
             <div className="input-group">
               <div className="input-group-prepend">
@@ -2177,7 +2180,7 @@ export default class Exchange extends React.Component {
               <input type="text" className="form-control" placeholder="0x..." value={this.state.xdaiSendToAddress}
                      onChange={event => this.updateState('xdaiSendToAddress', event.target.value)} />
             </div>
-            <div>  { this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length==42 && <Blockies seed={this.state.xdaiSendToAddress.toLowerCase()} scale={10} /> }</div>
+            <div>{this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length==42 && <Blockies seed={this.state.xdaiSendToAddress.toLowerCase()} scale={10} />}</div>
             <label htmlFor="amount_input">Send Amount</label>
             <div className="input-group">
               <div className="input-group-prepend">

@@ -198,7 +198,8 @@ export default class History extends React.Component {
               <Ruler />
               <div className="content ops row" style={{position:"relative"}}>
                 <div style={{position:'absolute',right:0,top:-13,opacity:0.5,fontSize:12}}>
-                  {isEncrypted} {cleanTime((block-theseTransactionsByAddress[r].blockNumber)*5)} ago
+                  <span>{isEncrypted}</span>
+                  <span>{`${cleanTime((block-theseTransactionsByAddress[r].blockNumber)*5)} ago`}</span>
                 </div>
                 <div style={{position:'absolute',left:0}}>
                   <Blockies seed={theseTransactionsByAddress[r].from} scale={3}/>
@@ -220,7 +221,7 @@ export default class History extends React.Component {
               <Ruler />
               <div className="content ops row" style={{position:"relative",paddingTop:3}}>
                 <div style={{position:'absolute',right:0,top:6,opacity:0.5,fontSize:12}}>
-                  {cleanTime((block-theseTransactionsByAddress[r].blockNumber)*5)} ago
+                  <span>{`${cleanTime((block-theseTransactionsByAddress[r].blockNumber)*5)} ago`}</span>
                 </div>
                 <div style={{color:"#000000",width:"100%",marginTop:-2}}>
                   {messageValue}
@@ -247,7 +248,7 @@ export default class History extends React.Component {
               <Ruler />
               <div className="content ops row" style={{position:"relative"}}>
                 <div style={{position:'absolute',left:0,top:-13,opacity:0.5,fontSize:12}}>
-                  {isEncrypted} {cleanTime((block-theseTransactionsByAddress[r].blockNumber)*5)} ago
+                  <span>{isEncrypted}</span><span>{` ${cleanTime((block-theseTransactionsByAddress[r].blockNumber)*5)} ago`}</span>
                 </div>
                 <div style={{position:'absolute',right:0}}>
                   <Blockies seed={theseTransactionsByAddress[r].from} scale={3}/>
@@ -269,7 +270,7 @@ export default class History extends React.Component {
               <Ruler />
               <div className="content ops row" style={{position:"relative",paddingTop:3}}>
                 <div style={{position:'absolute',left:0,top:6,opacity:0.5,fontSize:12}}>
-                  {cleanTime((block-theseTransactionsByAddress[r].blockNumber)*5)} ago
+                  {` ${cleanTime((block-theseTransactionsByAddress[r].blockNumber)*5)} ago`}
                 </div>
                 <div style={{color:"#000000",width:"100%",marginTop:-2}}>
                   {messageValue}

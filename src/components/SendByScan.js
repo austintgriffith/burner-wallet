@@ -236,7 +236,7 @@ class SendByScan extends Component {
               <div className="main-card card w-100" style={{backgroundColor:"#000000"}}>
                 <div className="content ops row" style={{paddingLeft:"12%",paddingRight:"12%",paddingTop:10}}>
                     <button className="btn btn-large w-100" style={{backgroundColor:this.props.mainStyle.mainColor}}>
-                        <i className="fas fa-camera"  /> {i18n.t('send_by_scan.take_photo')}
+                        <i className="fas fa-camera"  /><span> {i18n.t('send_by_scan.take_photo')}</span>
                     </button>
                 </div>
               </div>
@@ -251,6 +251,7 @@ class SendByScan extends Component {
       )
     }
 
+      const userAgentMediaDevices = `${navigator.userAgent} - ${JSON.stringify(navigator.mediaDevices)}`;
 
     return (
       <div style={{  position: "fixed",top:0,left:0,right:0,bottom:0,zIndex:5,margin:'0 auto !important',background:"#000000"}}>
@@ -259,7 +260,7 @@ class SendByScan extends Component {
         </div>
         {displayedReader}
         <div style={{position: 'absolute',zIndex:11,bottom:20,fontSize:12,left:20,color:"#FFFFFF",opacity:0.333}}>
-          {navigator.userAgent} - {JSON.stringify(navigator.mediaDevices)}
+          {userAgentMediaDevices}
         </div>
         {displayedImage}
         {failMessage}
