@@ -487,9 +487,9 @@ class App extends Component {
         }
 
         let vendingMachineAddress = this.state.contracts["VendingMachine"]._address
-        console.log("vendingMachineAddress",vendingMachineAddress)
+        //console.log("vendingMachineAddress",vendingMachineAddress)
         let vendingMachineBalance = await this.state.xdaiweb3.eth.getBalance(vendingMachineAddress)
-        console.log("vendingMachineBalance",vendingMachineBalance)
+        //console.log("vendingMachineBalance",vendingMachineBalance)
         vendingMachineBalance = this.state.mainnetweb3.utils.fromWei(""+vendingMachineBalance,"ether")
         this.setState({
           emojiprice:emojiprice,
@@ -1380,13 +1380,13 @@ render() {
             for(let i=0;i<8;i++){
               isLoading = isLoading || currentIsLoadings[i]
             }
-            console.log("isLoading",isLoading)
+            //console.log("isLoading",isLoading)
 
 
             let allEmojiBalances = emojis.map((emoji,index)=>{
               return (
                 <div>
-                  <Balance mainStyle={mainStyle} noimage={true} setLoading={(setIndex,val)=>{
+                  <Balance key={'balance'+index} mainStyle={mainStyle} noimage={true} setLoading={(setIndex,val)=>{
                     let currentIsLoadings = this.state.isLoading
                     currentIsLoadings[setIndex] = val
                     this.setState({isLoading:currentIsLoadings})

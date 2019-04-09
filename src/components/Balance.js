@@ -5,10 +5,10 @@ import { Scaler } from "dapparatus";
 
 export  default ({totalFunds, noimage, mainStyle, setLoading, loading, isLoading, buttonStyle, contracts, tx, force, emojiIndex, icon, text, selected, amount, address, dollarDisplay}) => {
 
-
+  let lbar = ""
   if(loading){
-    return (
-      <div style={{width:"100%",height:39,backgroundColor:"#666666"}}>
+    lbar =  (
+      <div style={{position:'absolute',left:-7,top:0,width:"100%",height:39,backgroundColor:"#DDDDDD",opacity:0.79}}>
         <div>
           <Loader noimage={noimage} loaderImage={""} mainStyle={mainStyle}/>
         </div>
@@ -42,7 +42,7 @@ export  default ({totalFunds, noimage, mainStyle, setLoading, loading, isLoading
         <div className="content ops row"  >
 
           <div className="col-5">
-            <button className="btn btn-large w-100" disabled={isLoading || amountItCosts>totalFunds} onClick={() => {
+            <button className="btn btn-large w-100" disabled={amountItCosts>totalFunds} onClick={() => {
               console.log("BUY")
               setLoading(emojiIndex,true)
               tx(
@@ -64,7 +64,7 @@ export  default ({totalFunds, noimage, mainStyle, setLoading, loading, isLoading
             </button>
           </div>
           <div className="col-5" style={{marginLeft:5}}>
-            <button className="btn btn-large w-100" disabled={isLoading || parseInt(amount)<=0} onClick={() => {
+            <button className="btn btn-large w-100" disabled={parseInt(amount)<=0} onClick={() => {
               console.log("SELL")
               setLoading(emojiIndex,true)
               tx(
@@ -108,9 +108,10 @@ export  default ({totalFunds, noimage, mainStyle, setLoading, loading, isLoading
 
 
         <div className="avatar col p-0">
-
+            {lbar}
 
           <div style={{maxWidth:50,maxHeight:50,fontSize:45,paddingTop:9}}>
+
             {icon}
             <div style={{position:'absolute',left:60,top:12,fontSize:14,opacity:0.77}}>
               {displayText}
@@ -121,6 +122,7 @@ export  default ({totalFunds, noimage, mainStyle, setLoading, loading, isLoading
           </div>
 
         </div>
+
 <div className="avatar col p-0" style={{width:"50%"}}>
         <div style={{position:"absolute",left:"35%",top:0,width:260}}>
           {actionButtons}
