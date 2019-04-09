@@ -3,4 +3,4 @@
   module.exports = ["hello world"]
 */
 
-module.exports = ["BurnerBadge","BRNB"]
+module.exports = ["Motion Film","MOTION"]
