@@ -1682,16 +1682,18 @@ render() {
                       // --
                       if(!ERC20TOKEN)
                       {
-                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (receipt)=>{
+                        //0xfdae1ba7 - bytes4(keccak256("NATIVE"))
+                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,"0xfdae1ba7",amountToSend,expirationTime),300000,false,amountToSend,async (receipt)=>{
                           this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
                             console.log("STATE SAVED",this.state)
                           })
                           cb(receipt)
                         })
                       } else{
+                        //0x8ae85d84 - bytes4(keccak256("ERC20"))
                         this.state.tx(this.state.contracts[ERC20TOKEN].approve(this.state.contracts.Links._address, amountToSend),21000,false,0,async (approveReceipt)=>{
                           //cb(approveReceipt)
-                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (sendReceipt)=>{
+                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,"0x8ae85d84",amountToSend,expirationTime),300000,false,amountToSend,async (sendReceipt)=>{
                             this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
                               console.log("STATE SAVED",this.state)
                             })
