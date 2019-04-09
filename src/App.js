@@ -1283,26 +1283,36 @@ render() {
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                    <NavCard title={'Send with Link'} />
-                    {defaultBalanceDisplay}
-                    <SendWithLink
-                      balance={balance}
-                      buttonStyle={buttonStyle}
-                      changeAlert={this.changeAlert}
-                      sendWithLink={(amount,cb)=>{
-                        let randomHash = this.state.web3.utils.sha3(""+Math.random())
-                        let randomWallet = this.state.web3.eth.accounts.create()
-                        let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
-                        console.log("STATE",this.state,this.state.contracts)
-                        // Use xDai as default token
-                        const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
-                        // -- Temp hacks
-                        const expirationTime = 365; // Hard-coded to 1 year link expiration.
-                        const amountToSend = amount*10**18 ; // Conversion to wei
-                        // --
-                        if(!ERC20TOKEN)
-                        {
-                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (receipt)=>{
+                  <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
+                  {defaultBalanceDisplay}
+                  <SendWithLink balance={balance}
+                    buttonStyle={buttonStyle}
+                    changeAlert={this.changeAlert}
+                    sendWithLink={(amount,cb)=>{
+                      let randomHash = this.state.web3.utils.sha3(""+Math.random())
+                      let randomWallet = this.state.web3.eth.accounts.create()
+                      let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
+                      console.log("STATE",this.state,this.state.contracts)
+                      // Use xDai as default token
+                      const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
+                      // -- Temp hacks
+                      const expirationTime = 365; // Hard-coded to 1 year link expiration. 
+                      const amountToSend = amount*10**18 ; // Conversion to wei
+                      // --
+                      if(!ERC20TOKEN)
+                      {
+                        //0xfdae1ba7 - bytes4(keccak256("NATIVE"))
+                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,"0xfdae1ba7",amountToSend,expirationTime),300000,false,amountToSend,async (receipt)=>{
+                          this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
+                            console.log("STATE SAVED",this.state)
+                          })
+                          cb(receipt)
+                        })
+                      } else{
+                        //0x8ae85d84 - bytes4(keccak256("ERC20"))
+                        this.state.tx(this.state.contracts[ERC20TOKEN].approve(this.state.contracts.Links._address, amountToSend),21000,false,0,async (approveReceipt)=>{
+                          //cb(approveReceipt)
+                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,"0x8ae85d84",amountToSend,expirationTime),300000,false,amountToSend,async (sendReceipt)=>{
                             this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
                               console.log("STATE SAVED",this.state)
                             })
