@@ -1,0 +1,109 @@
+{
+  "he": {
+    "app_name": "Burner",
+    "about": "אודות",
+    "code": "קוד מקור",
+    "burn": "לשרוף PK",
+    "show": "להצג PK",
+    "copy": "להעתיק PK",
+    "create": "לייצר",
+    "receive_title": "קבל",
+    "receipt_title": "קבלה",
+    "send_to_address_title": "שלח לכתובת",
+    "advance": "מתקדם",
+    "advance_title": "הגדרות מתקדמות",
+    "loading": "טוען...",
+    "cancel": "ביטול",
+    "done": "סיום",
+    "exchange_title": "המרת מטבע",
+    "amount": "סכום",
+    "send": "לשלוח",
+    "withdraw": "משיכה",
+    "history_chat": "היסטוריה וצ'אט",
+    "request_funds_title": "בקש כספים",
+    "request": "בקשה",
+    "vendors": "ספקים",
+    "main_card": {
+      "receive": "לקבל",
+      "send": "שלח",
+      "share": "לשתף",
+      "link": "קישור",
+      "vendors": "ספקים"
+    },
+    "send_with_link": {
+      "error": "אנא הכנס סכום חוקי"
+    },
+    "share": {
+      "copied": "הקישור הועתקה ללוח"
+    },
+    "vendor": {
+      "updating": "מעדכן",
+      "open": "פתוח",
+      "closed": "סגור",
+      "add_product": "הוסף מוצר",
+      "adding": "הוסף"
+    },
+    "withdraw_from_private": {
+      "from_address": "משוך מהכתובת",
+      "amount": "משוך סכום",
+      "withdraw": "משיכה",
+      "error": "אנא הכנס סכום חוקי למשיכה"
+    },
+    "send_to_address": {
+      "to_address": "לכתובת",
+      "send_amount": "שלח סכום",
+      "notice": "אתה יכול לשלוח רק ",
+      "error": "נא להזין כתובת חוקית או ENS."
+    },
+    "send_by_scan": {
+      "try_again": "אנא נסה שוב",
+      "take_photo": "צלם תמונה",
+      "capture": "QR לכידת קוד"
+    },
+    "more_buttons": {
+      "request": "בקשה",
+      "exchange": "המרת מטבע"
+    },
+    "receive": {
+      "address_copied": "הכתובת הועתקה ללוח"
+    },
+    "history": {
+      "metamask_error": "הודעות מוצפנות לא זמינות עם MetaMask",
+      "wave": "Wave"
+    },
+    "exchange": {
+      "withdrawal_explanation": "רק ספקים יכולים לסגת יותר ממה שהופקדו",
+      "funds_transferred": "כספים הועברו!",
+      "funds_bridged": "כספים החליפו",
+      "insufficient_funds": "אין מספיק כסף",
+      "invalid_to_address": "הזן כתובת יעד חוקית",
+      "invalid_to_amount": "הזן סכום יעד חוקי",
+      "calculate_gas_price": "חישוב מחיר הגז הטוב ביותר...",
+      "go_to_etherscan": "go to etherscan?",
+      "idk": "idk where to go from here? something that explains the bridge?"
+    },
+    "request_funds": {
+      "item_message": "פריט או הודעה",
+      "button": "בקשה",
+      "amount": "סכום בקשה"
+    },
+    "admin": {
+      "add_admin": "Add Admin",
+      "adding": "Adding",
+      "add_vendor": "Add Vendor"
+    },
+    "advanced": {
+      "to_qr": "QR ליצור"
+    },
+    "balance_display": {
+      "waiting_for_api": "Waiting for API",
+      "no_currency_api": "No Currency API Data Available"
+    },
+    "burn_wallet": {
+      "burn_private_key_question": "האם אתה בטוח שברצונך לצרוב את המפתח הפרט?",
+      "disclaimer": "אל תעשה את זה! תאבד את כל הכספים!",
+      "cancel": "לא, ביטול",
+      "burn": "לשרוף את זה!"
+    }
+  }
+}

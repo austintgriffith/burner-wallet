@@ -1,0 +1,109 @@
+{
+  "zh_TW": {
+    "app_name": "Burner",
+    "about": "關於",
+    "code": "程式碼",
+    "burn": "焚毀私鑰",
+    "show": "顯示私鑰",
+    "copy": "複製私鑰",
+    "create": "建立",
+    "receive_title": "收款",
+    "receipt_title": "收據",
+    "send_to_address_title": "發送到地址",
+    "advance": "進階",
+    "advance_title": "進階",
+    "loading": "載入中...",
+    "cancel": "取消",
+    "done": "完成",
+    "exchange_title": "交換",
+    "amount": "金額",
+    "send": "發送",
+    "withdraw": "提領",
+    "history_chat": "歷史紀錄 & 聊天",
+    "request_funds_title": "要求付款",
+    "request": "請款",
+    "vendors": "廠商",
+    "main_card": {
+      "receive": "收款",
+      "send": "發送",
+      "share": "分享",
+      "link": "連結",
+      "vendors": "廠商"
+    },
+    "send_with_link": {
+      "error": "請輸入正確的金額"
+    },
+    "share": {
+      "copied": "URL 已經複製到剪貼簿"
+    },
+    "vendor": {
+      "updating": "更新中",
+      "open": "開啟",
+      "closed": "已關閉",
+      "add_product": "新增產品",
+      "adding": "新增中"
+    },
+    "withdraw_from_private": {
+      "from_address": "從錢包地址提款",
+      "amount": "提款金額",
+      "withdraw": "提款",
+      "error": "請輸入正確的提款金額"
+    },
+    "send_to_address": {
+      "to_address": "到此地址",
+      "send_amount": "發送金額",
+      "notice": "你只能發送 ",
+      "error": "請輸入正確的錢包地址或者 ENS。"
+    },
+    "send_by_scan": {
+      "try_again": "請重試一次",
+      "take_photo": "照相",
+      "capture": "擷取二維碼:"
+    },
+    "more_buttons": {
+      "request": "請款",
+      "exchange": "交換"
+    },
+    "receive": {
+      "address_copied": "錢包地址以複製到剪貼簿"
+    },
+    "history": {
+      "metamask_error": "無法與 MetaMask 使用加密訊息",
+      "wave": "Wave"
+    },
+    "exchange": {
+      "withdrawal_explanation": "只有廠商可以提領超過存入的金額",
+      "funds_transferred": "代幣已轉帳!",
+      "funds_bridged": "代幣已交換",
+      "insufficient_funds": "代幣數量不足",
+      "invalid_to_address": "請輸入正確的錢包地址",
+      "invalid_to_amount": "請輸入正確的金額",
+      "calculate_gas_price": "正在計算最佳瓦斯費中...",
+      "go_to_etherscan": "跳轉到 etherscan?",
+      "idk": "我不知道接來怎麼做? 有誰可以解釋 bridge 是什麼?"
+    },
+    "request_funds": {
+      "item_message": "品項或訊息",
+      "button": "請款",
+      "amount": "請款金額"
+    },
+    "admin": {
+      "add_admin": "新增管理員",
+      "adding": "新增中",
+      "add_vendor": "新增廠商"
+    },
+    "advanced": {
+      "to_qr": "轉成 QR"
+    },
+    "balance_display": {
+      "waiting_for_api": "等待 API",
+      "no_currency_api": "沒有貨幣 API 資料可用"
+    },
+    "burn_wallet": {
+      "burn_private_key_question": "您確定要焚毀這組私鑰?",
+      "disclaimer": "不要這樣做! 您會損失所有代幣!",
+      "cancel": "不, 我要取消",
+      "burn": "焚毀吧!"
+    }
+  }
+}

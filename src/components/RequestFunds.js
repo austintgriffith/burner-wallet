@@ -36,7 +36,7 @@ export default class RequestFunds extends React.Component {
 
   render() {
     let { canRequest, message, amount, requested } = this.state;
-    let {view,buttonStyle,ERC20TOKEN,address, changeView} = this.props
+    let {dollarDisplay,view,buttonStyle,ERC20TOKEN,address, changeView, dollarSymbol} = this.props
     if(requested){
 
       let url = window.location.protocol+"//"+window.location.hostname
@@ -53,7 +53,7 @@ export default class RequestFunds extends React.Component {
           }}>
           <div style={{width:"100%",textAlign:'center'}}>
             <div style={{fontSize:30,cursor:"pointer",textAlign:"center",width:"100%"}}>
-              ${parseFloat(amount).toFixed(2)}
+              {dollarDisplay(amount)}
             </div>
 
             <div style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
@@ -74,6 +74,7 @@ export default class RequestFunds extends React.Component {
             </div>
           </CopyToClipboard>
           <RecentTransactions
+            dollarDisplay={dollarDisplay}
             view={view}
             max={5}
             buttonStyle={buttonStyle}
@@ -94,7 +95,7 @@ export default class RequestFunds extends React.Component {
               <label htmlFor="amount_input">{i18n.t('request_funds.amount')}</label>
               <div className="input-group">
                 <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
+                  <div className="input-group-text">{dollarSymbol}</div>
                 </div>
                 <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />

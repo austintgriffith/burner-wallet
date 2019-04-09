@@ -32,7 +32,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
   }else{
     /*moneyDisplay = (
       <div>
-        ${dollarDisplay(total)}
+        {dollarDisplay(total)}
       </div>
     )*/
     moneyDisplay = (

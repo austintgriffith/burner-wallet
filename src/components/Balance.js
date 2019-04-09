@@ -29,7 +29,7 @@ export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
       <div style={{position:"absolute",right:25,marginTop:15}}>
         <Scaler config={{startZoomAt:400,origin:"200px 30px",adjustedZoom:1}}>
           <div style={{fontSize:40,letterSpacing:-2}}>
-            ${dollarDisplay(amount)}
+            {dollarDisplay(amount)}
           </div>
         </Scaler>
       </div>

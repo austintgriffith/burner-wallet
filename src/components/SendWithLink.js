@@ -34,7 +34,13 @@ export default class SendWithLink extends React.Component {
 
   send = () => {
     let { amount } = this.state;
+    let { convertToDollar } = this.props
+
     if(this.state.canSend){
+
+      amount = convertToDollar(amount)
+      console.log("CONVERTED TO DOLLAR AMOUNT",amount)
+
       //if(this.props.balance-0.0001<=amount){
       //  this.props.changeAlert({type: 'warning', message: 'You can only send $'+Math.floor((this.props.balance-0.0001)*100)/100+' (gas costs)'})
       //}else{
@@ -57,6 +63,7 @@ export default class SendWithLink extends React.Component {
 
   render() {
     let { canSend } = this.state;
+    let { dollarSymbol } = this.props
     return (
       <div>
         <div className="content row">
@@ -64,7 +71,7 @@ export default class SendWithLink extends React.Component {
             <label htmlFor="amount_input">Amount</label>
             <div className="input-group">
               <div className="input-group-prepend">
-                <div className="input-group-text">$</div>
+                <div className="input-group-text">{dollarSymbol}</div>
               </div>
               <input type="number" step="0.1" className="form-control" placeholder="0.00"
                 ref={(input) => { this.amountInput = input; }}

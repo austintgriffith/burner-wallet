@@ -1,10 +1,10 @@
 {
   "fr": {
     "app_name": "Burner",
-    "about": "Propos",
+    "about": "à Propos",
     "code": "Code",
     "burn": "Brûle la PK",
-    "show": "Montrez la PK",
+    "show": "Afficher la PK",
     "copy": "Copier la PK",
     "create": "Générer",
     "receive_title": "Recevoir",
@@ -14,7 +14,7 @@
     "advance_title": "Avancé",
     "loading": "Chargement...",
     "cancel": "Annuler",
-    "done": "Fini",
+    "done": "Retour",
     "exchange_title": "Convertir",
     "amount": "Montant",
     "send": "Envoyer",
@@ -75,11 +75,11 @@
       "withdrawal_explanation": "Seuls les vendeurs peuvent retirer plus qu'ils ont déposé",
       "funds_transferred": "Fonds transférés!",
       "funds_bridged": "Fonds convertis",
-      "insufficient_funds": "fonds inssufisants",
+      "insufficient_funds": "fonds insuffisants",
       "invalid_to_address": "Entrez une adresse valide s'il vous plaît",
       "invalid_to_amount": "Entrez un montant valide s'il vous plaît",
       "calculate_gas_price": "Calcul du meilleur prix du gaz...",
-      "go_to_etherscan": "Aller à etherscan?",
+      "go_to_etherscan": "Se connecter à etherscan.io ?",
       "idk": "Je ne sais pas où aller en partant d'ici? Quelque chose qui explique le pont?"
     },
     "request_funds": {
@@ -97,7 +97,7 @@
     },
     "balance_display": {
       "waiting_for_api": "Attente pour API",
-      "no_currency_api": "Pas de monnaie API données disponibles"
+      "no_currency_api": "données indisponibles par API pour cette paire de devises"
     },
     "burn_wallet": {
       "burn_private_key_question": "Êtes-vous sûr de vouloir détruire cette PK?",

@@ -214,10 +214,20 @@ let metaReceiptTracker = {}
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
 
+let dollarSymbol = "$"
+let dollarConversion = 1.0
+//let dollarSymbol = "€"
+//let dollarConversion = 0.88
+let convertToDollar = (amount)=>{
+  return (parseFloat(amount)/dollarConversion)
+}
+let convertFromDollar = (amount)=>{
+  return (parseFloat(amount)*dollarConversion)
+}
 let dollarDisplay = (amount)=>{
   let floatAmount = parseFloat(amount)
   amount = Math.floor(amount*100)/100
-  return amount.toFixed(2)
+  return dollarSymbol+convertFromDollar(amount).toFixed(2)
 }
 
 let interval
@@ -710,7 +720,7 @@ class App extends Component {
           to: this.state.contracts.Links._address,
           txfee: 12,
           gas_limit: 150000,
-          gas_price: Math.trunc(1000000000 * 1.3)
+          gas_price: Math.trunc(1000000000 * 25)
         }
         console.log("Hitting relayClient with relayTransaction()",claimData, options)
         relayClient.relayTransaction(claimData, options).then((transaction) => {
@@ -1358,6 +1368,7 @@ render() {
                   />
                   {moreButtons}
                   <RecentTransactions
+                    dollarDisplay={dollarDisplay}
                     view={this.state.view}
                     buttonStyle={buttonStyle}
                     ERC20TOKEN={ERC20TOKEN}
@@ -1485,6 +1496,8 @@ render() {
                   <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <SendToAddress
+                    convertToDollar={convertToDollar}
+                    dollarSymbol={dollarSymbol}
                     parseAndCleanPath={this.parseAndCleanPath.bind(this)}
                     openScanner={this.openScanner.bind(this)}
                     scannerState={this.state.scannerState}
@@ -1548,6 +1561,7 @@ render() {
                   <NavCard title={i18n.t('receive_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <Receive
+                    dollarDisplay={dollarDisplay}
                     view={this.state.view}
                     block={this.state.block}
                     ensLookup={this.ensLookup.bind(this)}
@@ -1590,6 +1604,7 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
+                    dollarSymbol={dollarSymbol}
                     transactionsByAddress={this.state.transactionsByAddress}
                     fullTransactionsByAddress={this.state.fullTransactionsByAddress}
                     fullRecentTxs={this.state.fullRecentTxs}
@@ -1665,17 +1680,38 @@ render() {
                       let randomWallet = this.state.web3.eth.accounts.create()
                       let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
                       console.log("STATE",this.state,this.state.contracts)
-                      this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,0,amount*10**18,7),250000,false,amount*10**18,async (receipt)=>{
-                        this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
-                          console.log("STATE SAVED",this.state)
+                      // Use xDai as default token
+                      const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
+                      // -- Temp hacks
+                      const expirationTime = 365; // Hard-coded to 1 year link expiration. 
+                      const amountToSend = amount*10**18 ; // Conversion to wei
+                      // --
+                      if(!ERC20TOKEN)
+                      {
+                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (receipt)=>{
+                          this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
+                            console.log("STATE SAVED",this.state)
+                          })
+                          cb(receipt)
                         })
-                        cb(receipt)
-                      })
+                      } else{
+                        this.state.tx(this.state.contracts[ERC20TOKEN].approve(this.state.contracts.Links._address, amountToSend),21000,false,0,async (approveReceipt)=>{
+                          //cb(approveReceipt)
+                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (sendReceipt)=>{
+                            this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
+                              console.log("STATE SAVED",this.state)
+                            })
+                            cb(sendReceipt)
+                          })
+                        })
+                      }
                     }}
                     address={account}
                     changeView={this.changeView}
                     goBack={this.goBack.bind(this)}
                     dollarDisplay={dollarDisplay}
+                    convertToDollar={convertToDollar}
+                    dollarSymbol={dollarSymbol}
                   />
                 </div>
                 <Bottom

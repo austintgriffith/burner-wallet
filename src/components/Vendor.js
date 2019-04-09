@@ -86,7 +86,7 @@ export default class Advanced extends React.Component {
               {web3.utils.hexToUtf8(prod.name)}
             </div>
             <div className="col-4 p-1">
-              ${dollarDisplay(web3.utils.fromWei(prod.cost,'ether'))}
+              {dollarDisplay(web3.utils.fromWei(prod.cost,'ether'))}
             </div>
             <div className="col-2 p-1">
               {productIsActive}
