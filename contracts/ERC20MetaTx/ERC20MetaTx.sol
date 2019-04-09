@@ -10,7 +10,7 @@ import "tabookey-gasless/contracts/RecipientUtils.sol";
 /// @notice Glue layer to enable token meta transactions.
 contract ERC20MetaTx is Ownable, ERC20, RelayRecipient, RecipientUtils {
 
-  // Override ERC20 _allowed to move it up in hierarchy
+  // Override _allowed to move it up in hierarchy
   mapping (address => mapping (address => uint256)) private _allowed;
 
   /// Approve function override. 
@@ -53,8 +53,21 @@ contract ERC20MetaTx is Ownable, ERC20, RelayRecipient, RecipientUtils {
     return true;
   }
 
-
-  /// TabooKey Team - MetaTX Relay Section
+  /// Transfer function override. 
+  /// @dev Transfer token for a specified address
+  /// @param to The address to transfer to.
+  /// @param value The amount to be transferred.
+  function transfer(
+    address to, 
+    uint256 value
+  ) 
+    public 
+    returns (bool) 
+  {
+    address sender = get_sender();
+    _transfer(sender, to, value);
+    return true;
+  }
 
   function set_hub(
       RelayHub rhub
@@ -86,21 +99,47 @@ contract ERC20MetaTx is Ownable, ERC20, RelayRecipient, RecipientUtils {
       view 
       returns(uint32)
   {
-      bytes4 claimFunctionIdentifier = RecipientUtils.sig("claim(bytes32,bytes,bytes32,address)");
-      bool is_call_to_claim = RecipientUtils.getMethodSig(encoded_function) == claimFunctionIdentifier;
-      if (!is_call_to_claim){
+      bool is_call_to_approve = RecipientUtils.getMethodSig(encoded_function) == bytes4(keccak256('approve(address,uint256)'));
+      bool is_call_to_transfer = RecipientUtils.getMethodSig(encoded_function) == bytes4(keccak256('transfer(address,uint256)'));
+      bool is_call_to_transferFrom = RecipientUtils.getMethodSig(encoded_function) == bytes4(keccak256('transferFrom(address,address,uint256)'));
+      if (!(is_call_to_approve || is_call_to_transfer || is_call_to_transferFrom)){
           return 4;
       }
-      bytes32 id = bytes32(RecipientUtils.getParam(encoded_function, 0));
-      bytes memory signature = RecipientUtils.getBytesParam(encoded_function, 1);
-      bytes32 claimHash = bytes32(RecipientUtils.getParam(encoded_function, 2));
-      address destination = address(RecipientUtils.getParam(encoded_function, 3));
       address sender = get_sender();
-      uint256 balance = balanceOf(sender); // TODO Improve to a robust check
-      if (balance > 0) {
-          return 5;
+      address to = 0;
+      uint256 value = 0;
+      uint256 balance = 0;
+      address from = address(0);
+
+      if (is_call_to_approve){
+          value = uint256(RecipientUtils.getParam(encoded_function, 1));
+          balance = balanceOf(sender);
+          if (value <= balance) {
+              return 5;
+          } else{
+            return 0;
+          }
+      } else if (is_call_to_transfer){
+          to = address(RecipientUtils.getParam(encoded_function, 0));
+          value = uint256(RecipientUtils.getParam(encoded_function, 1));
+          balance = balanceOf(sender);
+          if (value <= balance) {
+              return 5;
+          } else{
+            return 0;
+          }
+      } else if (is_call_to_transferFrom){
+          from = address(RecipientUtils.getParam(encoded_function, 0));
+          value = uint256(RecipientUtils.getParam(encoded_function, 2));
+          balance = balanceOf(sender);
+          if (value <= _allowed[from][sender] && value <= balance) {
+              return 5;
+          } else{
+            return 0;
+          }
+      } else{
+          return 0;
       }
-      return 0;
   }
 
   function post_relayed_call(

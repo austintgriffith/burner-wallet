@@ -58,8 +58,6 @@ contract ERC721MetaTx is Ownable, ERC721, RelayRecipient, RecipientUtils {
     }
   }
 
-  /// TabooKey Team - MetaTX Relay Section
-
   function set_hub(
       RelayHub rhub
   ) 
@@ -90,21 +88,37 @@ contract ERC721MetaTx is Ownable, ERC721, RelayRecipient, RecipientUtils {
       view 
       returns(uint32)
   {
-      bytes4 claimFunctionIdentifier = RecipientUtils.sig("claim(bytes32,bytes,bytes32,address)");
-      bool is_call_to_claim = RecipientUtils.getMethodSig(encoded_function) == claimFunctionIdentifier;
-      if (!is_call_to_claim){
+      bool is_call_to_approve = RecipientUtils.getMethodSig(encoded_function) == bytes4(keccak256('approve(address,uint256)'));
+      bool is_call_to_transferFrom = RecipientUtils.getMethodSig(encoded_function) == bytes4(keccak256('transferFrom(address,address,uint256)'));
+      bool is_call_to_safeTransferFrom = RecipientUtils.getMethodSig(encoded_function) == bytes4(keccak256('safeTransferFrom(address,address,uint256)'));
+      if (!(is_call_to_approve || is_call_to_transferFrom || is_call_to_safeTransferFrom)){
           return 4;
       }
-      bytes32 id = bytes32(RecipientUtils.getParam(encoded_function, 0));
-      bytes memory signature = RecipientUtils.getBytesParam(encoded_function, 1);
-      bytes32 claimHash = bytes32(RecipientUtils.getParam(encoded_function, 2));
-      address destination = address(RecipientUtils.getParam(encoded_function, 3));
       address sender = get_sender();
-      uint256 balance = balanceOf(sender); // TODO Improve to a robust check
-      if (balance > 0) {
-          return 5;
+      address to = 0;
+      uint256 tokenId = 0;
+      address from = address(0);
+      address owner = address(0);
+
+      if (is_call_to_approve){
+          to = address(RecipientUtils.getParam(encoded_function, 0));
+          tokenId = uint256(RecipientUtils.getParam(encoded_function, 1));
+          owner = ownerOf(tokenId);
+          if (owner == sender && to != owner) {
+              return 5;
+          } else{
+            return 0;
+          }
+      } else if (is_call_to_transferFrom || is_call_to_safeTransferFrom){
+          tokenId = uint256(RecipientUtils.getParam(encoded_function, 2));
+          if (_isApprovedOrOwner(sender, tokenId)) {
+              return 5;
+          } else{
+            return 0;
+          }
+      } else{
+          return 0;
       }
-      return 0;
   }
 
   function post_relayed_call(
