@@ -126,7 +126,7 @@ export default class Advanced extends React.Component {
               <div className="main-card card w-100" style={{paddingTop:40}} onClick={toggleQR}>
                 <div className="content qr row">
                     <QRCode value={qrValue} size={qrSize}/>
-                    <div style={{width:'100%',textAlign:'center'}}><div>{correctVendorObject.name}</div>  {theName}:   ${dollarDisplay(theAmount)}</div>
+                    <div style={{width:'100%',textAlign:'center'}}><div>{correctVendorObject.name}</div>  {theName}:   {dollarDisplay(theAmount)}</div>
                 </div>
               </div>
             )
@@ -151,7 +151,7 @@ export default class Advanced extends React.Component {
                 {theName}
               </div>
               <div className="col-3 p-1">
-                ${dollarDisplay(theAmount)}
+                {dollarDisplay(theAmount)}
               </div>
               <div className="col-4 p-1">
               <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap",marginTop:-8}} onClick={()=>{

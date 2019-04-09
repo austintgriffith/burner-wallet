@@ -79,9 +79,10 @@ app.post('/link', async (req, res) => {
   console.log("/link",req.body)
 
 
+  let validClaim = await contracts.Links.methods.isClaimValid(req.body.id).call()
   let expiredClaim = await contracts.Links.methods.isClaimExpired(req.body.id,req.body.sig,req.body.claimHash,req.body.dest).call()
 
-  if(expiredClaim){
+  if(expiredClaim || !validClaim){
     console.log("INVALID CLAIM!!!!")
     res.set('Content-Type', 'application/json');
     res.end(JSON.stringify({invalid:"claim"}));

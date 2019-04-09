@@ -2,6 +2,8 @@ pragma solidity 0.4.25;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
+import "tabookey-gasless/contracts/RelayRecipient.sol";
+import "tabookey-gasless/contracts/RecipientUtils.sol";
 import "../Vault/Vault.sol";
 
 /// @title Send xDai/Eth with a link.
@@ -9,48 +11,52 @@ import "../Vault/Vault.sol";
 /// @author TabooKey Team  - <info@tabookey.com>
 /// @notice Funds have an adjustable expiration time.
 /// After a fund expires it can only be claimed by the original sender.
-contract Links is Vault {
-    using SafeMath for uint256;
+contract Links is Vault, RelayRecipient, RecipientUtils {
+    using SafeMath for uint;
     using ECDSA for bytes32;
+
+    bytes4 internal constant ERC20TOKEN = bytes4(keccak256("ERC20"));
 
     struct Fund {
         address sender;
         address signer;
         address token;
-        uint256 amount;
-        uint256 msgVal;
-        uint256 nonce;
-        uint256 creationTime;
-        uint256 expirationTime;
+        uint amount;
+        uint msgVal;
+        uint nonce;
+        uint creationTime;
+        uint expirationTime;
         bool claimed;
     }
-    uint256 public  contractNonce = 1;
     mapping (bytes32 => Fund) public funds;
+    mapping(bytes32 => uint) public nonceId;
+    mapping(address => uint) public blockLog;
 
     event Sent(
         bytes32 indexed id,
         address indexed sender,
-        uint256 value,
-        uint256 indexed nonce,
-        bool sent
+        uint value,
+        uint nonce,
+        bool sent,
+        uint indexed previousBlock
     );
     event Claimed(
         bytes32 indexed id,
         address sender, 
-        uint256 value, 
+        uint value, 
         address indexed receiver, 
-        uint256 indexed nonce, 
-        bool claimed
+        uint nonce, 
+        bool indexed claimed
     );
 
     /// @dev Verifies if it is a valid Id.
-    modifier ifValidId(bytes32 Id){
-        require(isFundValid(Id),"Links::ifValidId - Id does NOT exists.");
+    modifier ifValidFund(bytes32 Id){
+        require(isFundValid(Id),"Links::ifValidFund - Fund does NOT exists.");
         _;
     }
     /// @dev Verifies if the Id exists.
-    modifier ifNotValidId(bytes32 Id){
-        require(!isFundValid(Id),"Links::ifNotValidId - Id exists.");
+    modifier ifNotValidFund(bytes32 Id){
+        require(!isFundValid(Id),"Links::ifNotValidFund - Fund exists.");
         _;
     }
     /// @dev Verifies if it is a valid Signature lenght.
@@ -71,32 +77,39 @@ contract Links is Vault {
         bytes32 _id, 
         bytes memory _signature,
         address _token,
-        uint256 _amount,
-        uint256 _expirationDays
+        uint _amount,
+        uint _expirationDays
     )   
         public 
-        ifNotValidId(_id)
+        ifNotValidFund(_id)
         ifValidSig(_signature)
         payable
         returns (bool)
     {
-        require(_expirationDays >= uint256(0),"Links::send - Invalid expiration days");
-        
+        require(_expirationDays >= uint(0),"Links::send - Invalid expiration days");
         address signer = ECDSA.recover(_id.toEthSignedMessageHash(),_signature);
         require(signer != address(0),"Links::send - Invalid signer");
+        address sender = get_sender();  // Get sender for MetaTx instead of msg.sender
         
-        uint256 nonce = contractNonce;
-        contractNonce = contractNonce.add(uint256(1));
+        // Handle Id nonce
+        // Ids could be reused if the fund was correclty claimed and deleted
+        uint nonce = nonceId[_id];
+        if(nonce == 0){
+            nonce = 1;
+            nonceId[_id] = 1;
+            blockLog[sender] = block.number;
+        }
+        nonceId[_id] = nonceId[_id].add(uint(1));
         
         // Default expiration time
-        uint256 expiration = now.add(1 days);
+        uint expiration = now.add(1 days);
         if (_expirationDays > 1){
             expiration = now.add(_expirationDays.mul(1 days));
         }
-        assert(nonce < contractNonce);
-        _deposit(_token,_amount);
+        assert(nonce < nonceId[_id]);
+        _linkDeposit(_token, ERC20TOKEN, _amount, 0, sender); // If not NATIVE_TOKEN it will be ERC20 - Vault
         funds[_id] = Fund({
-            sender: get_sender(),
+            sender: sender,
             signer: signer,
             token: _token,
             amount: _amount,
@@ -106,10 +119,11 @@ contract Links is Vault {
             expirationTime: expiration,
             claimed: false
         });
-
         require(isFundValid(_id),"Links::send - Invalid fund");
-        //send out events for frontend parsing
-        emit Sent(_id,get_sender(),msg.value,nonce,true);
+        // send out events for frontend parsing
+        emit Sent(_id,sender,msg.value,nonce,true,blockLog[sender]);
+        // keep track of the block number in order to scan the log bloom filter for Ids.
+        blockLog[sender] = block.number;
         return true;
     }
 
@@ -124,7 +138,7 @@ contract Links is Vault {
         address _destination
     ) 
         public 
-        ifValidId(_id)
+        ifValidFund(_id)
         returns (bool)
     {
         return executeClaim(_id,_signature,_claimHash,_destination);
@@ -144,23 +158,23 @@ contract Links is Vault {
         view 
         returns (bool)
     {
-        // address(0) destination is valid
         if(isFundValid(_id) && _signature.length == 65){
             address signer = address(0);
-            uint256 nonce = funds[_id].nonce;
+            uint nonce = funds[_id].nonce;
+            bool expired = isClaimExpired(_id);
             // keccak256(_id,_destination,nonce,address(this)) is a unique key
             // remains unique if the id gets reused after fund deletion
             bytes32 claimHash1 = keccak256(abi.encodePacked(_id,_destination,nonce,address(this)));
             if(_claimHash == claimHash1){
-                signer = ECDSA.recover(claimHash1.toEthSignedMessageHash(),_signature);
+                signer = ECDSA.recover(_claimHash.toEthSignedMessageHash(),_signature);
             } else{
                 return false;
             } 
-            if(signer != address(0)){
-                return(funds[_id].signer == signer);
-            } else{
-                return false;
-            }
+            return (
+                signer != address(0) &&
+                ((!expired && signer == funds[_id].signer) || // normal case
+                (expired && (signer == funds[_id].sender || signer == funds[_id].signer))) // expired case
+            );
         } else{
             return false;
         }
@@ -177,7 +191,7 @@ contract Links is Vault {
     {
         address sender = funds[_id].sender;
         address signer = funds[_id].signer;
-        uint256 nonce = funds[_id].nonce;
+        uint nonce = funds[_id].nonce;
         /* solium-disable-next-line security/no-inline-assembly */
         assembly {
           // Cannot assume empty initial values without initializating them. 
@@ -186,24 +200,20 @@ contract Links is Vault {
           nonce := and(nonce, 0xffffffff)
         }
         return (
-          (sender != address(0)) && (signer != address(0)) && (nonce > uint256(0)) && (nonce < contractNonce)
+          (sender != address(0)) && (signer != address(0)) && (nonce > uint(0)) && (nonce < nonceId[_id])
         );
     }
 
     /// @dev Validate fund status. 
     /// @param _id Lookup key id.
-    /// @param _destination Destination address.
     function isClaimExpired(
-        bytes32 _id, 
-        bytes memory _signature, 
-        bytes32 _claimHash, 
-        address _destination
+        bytes32 _id
     ) 
         public 
         view 
         returns (bool)
     {
-        if(isClaimValid(_id,_signature,_claimHash,_destination)){
+        if(isFundValid(_id)){
             return (funds[_id].expirationTime < now);
         }else{
             return true;
@@ -224,30 +234,33 @@ contract Links is Vault {
     {
         require(isClaimValid(_id,_signature,_claimHash,_destination),"Links::executeClaim - Invalid claim.");
         bool status = false;
-        uint256 nonce = funds[_id].nonce;
+        uint nonce = funds[_id].nonce;
         address token = funds[_id].token;
-        uint256 amount = funds[_id].amount;
-        assert(nonce < contractNonce);
+        uint amount = funds[_id].amount;
+        address sender = get_sender(); // Get sender for MetaTx instead of msg.sender
 
+        assert(nonce < nonceId[_id]);
         // validate mutex/flag status
         if(funds[_id].claimed == false){
             // mutex activation
             funds[_id].claimed = true;
-            // expired funds can only be claimed back by original sender.
-            if(isClaimExpired(_id,_signature,_claimHash,_destination)){
-                require(get_sender() == funds[_id].sender,"Links::executeClaim - Not original sender");
-                require(_transfer(token, get_sender(), amount),"Links::executeClaim - Could not transfer to sender");
+            // expired funds can only be claimed back by the original sender.
+            if(isClaimExpired(_id)){
+                require(sender == funds[_id].sender,"Links::executeClaim - Not original sender");
+                // If not NATIVE_TOKEN it will be ERC20 - Vault
+                require(_linkTransfer(token, ERC20TOKEN, sender, amount, 0),"Links::executeClaim - Could not transfer to sender");
                 delete funds[_id];
                 status = true;
             }else{
-                status = _transfer(token, _destination, amount);
+                // If not NATIVE_TOKEN it will be ERC20 - Vault
+                status = _linkTransfer(token, ERC20TOKEN, _destination, amount, 0);
                 // update mutex with correct status
                 funds[_id].claimed = status;
                 // update fund
                 if(status == true){
                     delete funds[_id];
                 }
-                require(get_sender().send(0),"Links::executeClaim - Unsuccessful transaction");
+                require(sender.send(0),"Links::executeClaim - Unsuccessful transaction");
             }
         } else{
             // DESTROY object so it can't be claimed again and free storage space.
@@ -255,7 +268,7 @@ contract Links is Vault {
             status = true;
         }
         // send out events for frontend parsing
-        emit Claimed(_id,get_sender(),amount,_destination,nonce,status);
+        emit Claimed(_id,sender,amount,_destination,nonce,status);
         return status;
     }
 

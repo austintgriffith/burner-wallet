@@ -117,6 +117,7 @@ export default class Exchange extends React.Component {
       withdrawalExplanation: i18n.t('exchange.withdrawal_explanation'),
       gettingGas:false,
       wyreFundAmount: 5,
+      wyreWidgetOpen: false,
     }
   }
   updateState = (key, value) => {
@@ -960,7 +961,7 @@ export default class Exchange extends React.Component {
             extraWithdrawInfo = (
               <div className="content ops row" style={{paddingTop:10}}>
                 <div style={{width:"100%",textAlign:'center'}}>
-                  Maximum withdrawal amount: ${this.props.dollarDisplay(this.state.maxWithdrawlAmount)}
+                  Maximum withdrawal amount: {this.props.dollarDisplay(this.state.maxWithdrawlAmount)}
                 </div>
                 <div style={{width:"100%",textAlign:'center',opacity:0.5}}>
                   ({this.state.withdrawalExplanation})
@@ -1117,7 +1118,7 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-5 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  ${this.props.dollarDisplay(this.state.denDaiBalance)}
+                  {this.props.dollarDisplay(this.state.denDaiBalance)}
                 </Scaler>
             </div>
             <div className="col-2 p-1" style={{marginTop:8}}>
@@ -2050,16 +2051,22 @@ export default class Exchange extends React.Component {
             })
         }
         onClick={()=>{
+          this.setState({ wyreWidgetOpen: true });
           Wyre.displayWidget(
               this.props.address,
               this.state.wyreFundAmount,
-              () => { alert('An error occured or widget was closed prematurely.') },
-              () => { alert('Fund should show up shortly!') }
+              () => { this.setState({ wyreWidgetOpen: false }); }
           );
         }}
       ><Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
         <div style={{flex: '0 0 30px', textAlign: 'center'}}>
-            Buy ${this.state.wyreFundAmount}
+            {this.state.wyreWidgetOpen ? (
+                <>
+                    <span style={{paddingRight: '10px'}}>
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                    <span>Loading...</span>
+                </>) : `Buy $${this.state.wyreFundAmount}`}
         </div>
         </Scaler>
       </button>
@@ -2227,7 +2234,7 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-4 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  ${this.props.dollarDisplay(this.props.xdaiBalance)}
+                  {this.props.dollarDisplay(this.props.xdaiBalance)}
                 </Scaler>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
@@ -2252,7 +2259,7 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-4 p-1" style={{marginTop:9,whiteSpace:"nowrap"}}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                ${this.props.dollarDisplay(this.props.daiBalance)}
+                {this.props.dollarDisplay(this.props.daiBalance)}
               </Scaler>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
@@ -2276,7 +2283,7 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-4 p-1" style={{marginTop:10,whiteSpace:"nowrap"}}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                ${this.props.dollarDisplay(this.props.ethBalance*this.props.ethprice)}
+                {this.props.dollarDisplay(this.props.ethBalance*this.props.ethprice)}
               </Scaler>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
