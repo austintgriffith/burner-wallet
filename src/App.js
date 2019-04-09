@@ -402,7 +402,7 @@ class App extends Component {
     let bridgeContract;
     try{
       daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0xD2D0F8a6ADfF16C2098101087f9548465EC96C98")
-      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), "0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530")
+      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), require("./contracts/Bridge.address.js"))
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
