@@ -1927,16 +1927,17 @@ render() {
                 <div className="send-to-address card w-100" style={{zIndex:1}}>
                   <NavCard title={i18n.t('mint.title')} goBack={this.goBack.bind(this)}/>
                   <RegisterMovie
+                    mainnetweb3={this.state.mainnetweb3}
                     ERC721Full={this.state.contracts.ERC721Full}
                     openScanner={this.openScanner.bind(this)}
                     scannerState={this.state.scannerState}
                     buttonStyle={buttonStyle}
                     web3={this.state.web3}
                     address={account}
-                    send={send}
                     goBack={this.goBack.bind(this)}
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
+                    pTx={this.state.pTx}
                   />
                 </div>
                 <Bottom

@@ -3,6 +3,10 @@ import React from 'react';
 import i18n from '../i18n';
 import ipfsClient from 'ipfs-http-client';
 import {Buffer} from 'buffer';
+import axios from 'axios';
+
+// Taken from Exchange.js
+const GASBOOSTPRICE = 0.25;
 
 export default class RegisterMovie extends React.Component {
   constructor(props) {
@@ -13,24 +17,51 @@ export default class RegisterMovie extends React.Component {
     this.upload = this.upload.bind(this);
     this.readFile = this.readFile.bind(this);
 
-    const {scannerState} = this.props;
+    const {scannerState, mainnetweb3, address} = this.props;
+    const pk = localStorage.getItem('metaPrivateKey');
+    let mainnetMetaAccount = false;
+    let mainnetMetaAddress = '';
+    if (pk && pk != '0') {
+      mainnetMetaAccount = mainnetweb3.eth.accounts.privateKeyToAccount(pk);
+      mainnetMetaAddress = mainnetMetaAccount.address.toLowerCase();
+    }
+
     this.state = {
       rightholderAddress: scannerState.toAddress || '',
+      provider: {
+        mainnet: {
+          address,
+        },
+      },
+      meta: {
+        mainnet: {
+          account: mainnetMetaAccount,
+          address: mainnetMetaAddress,
+        },
+      },
     };
   }
 
   async submit() {
-    const {web3, ERC721Full, address} = this.props;
+    const {mainnetweb3, ERC721Full, address, pTx} = this.props;
     const {image, movieName, rightholderAddress, rightholderName} = this.refs;
+    const {provider, meta} = this.state;
 
     let imageBuf;
     try {
       imageBuf = await this.readFile(image);
     } catch (err) {
-      // TODO: Handle this error in the frontend
+      // TODO: Throw error to frontend
+      console.log(err);
     }
-    // TODO: Check which errors to catch and throw them to the frontend
-    const imageHash = await this.upload(imageBuf);
+
+    let imageHash;
+    try {
+      imageHash = await this.upload(imageBuf);
+    } catch (err) {
+      // TODO: Throw error to frontend
+      console.log(err);
+    }
 
     const token = {
       name: movieName.value,
@@ -43,24 +74,112 @@ export default class RegisterMovie extends React.Component {
       },
     };
 
-    // TODO: Check which errors to catch and throw them to the frontend
-    const tokenHash = await this.upload(Buffer(JSON.stringify(token)));
+    let tokenHash;
     try {
-      await ERC721Full.mint(rightholderAddress.value, tokenHash).send({
-        from: address,
-      });
+      tokenHash = await this.upload(Buffer(JSON.stringify(token)));
     } catch (err) {
-      // TODO: bubble this error to the frontend
+      // TODO: Throw error to frontend
       console.log(err);
+    }
+
+    if (meta.mainnet.account) {
+      let receipt;
+      try {
+        receipt = await this.sendMetaTx(
+          mainnetweb3,
+          ERC721Full,
+          'mint',
+          [
+            rightholderAddress.value,
+            `https://${this.ipfsEndpoint}/ipfs/${tokenHash}`,
+          ],
+          meta.mainnet.address,
+          ERC721Full._address,
+          0,
+          meta.mainnet.account.privateKey,
+        );
+      } catch (err) {
+        // TODO: Throw error to frontend
+        console.log(err);
+      }
+      console.log('metareceipt', receipt);
+    } else {
+      const method = ERC721Full.mint(
+        rightholderAddress.value,
+        `https://${this.ipfsEndpoint}/ipfs/${tokenHash}`,
+      );
+      const gas = await method.estimateGas({from: provider.mainnet.address});
+      const receipt = await pTx(method, gas, 0, 0);
+      console.log('receipt', receipt);
+    }
+  }
+
+  async getGasAverage() {
+    try {
+      return (await axios.get(
+        'https://ethgasstation.info/json/ethgasAPI.json',
+        {crossdomain: true},
+      )).data.average;
+    } catch (err) {
+      return err;
+      console.log('Error getting gas price', err);
+    }
+  }
+
+  async sendMetaTx(
+    web3,
+    contract,
+    methodName,
+    params,
+    from,
+    to,
+    value,
+    privateKey,
+  ) {
+    let average;
+    try {
+      average = await this.getGasAverage();
+    } catch (err) {
+      return err;
+    }
+
+    if (average > 0 && average < 200) {
+      // NOTE: We boost the gas price by 25%. Taken from other Burner Wallet
+      // code
+      average += average * GASBOOSTPRICE;
+      const gwei = Math.round(average * 100) / 1000;
+
+      const method = contract[methodName](...params);
+      const data = method.encodeABI();
+      const gas = await method.estimateGas({from});
+      const tx = {
+        from,
+        data,
+        to,
+        value,
+        gas,
+        gasPrice: Math.round(gwei * 1000000000),
+      };
+      const signed = await web3.eth.accounts.signTransaction(tx, privateKey);
+      const raw = signed.rawTransaction;
+      try {
+        return await web3.eth.sendSignedTransaction(raw);
+      } catch (err) {
+        return err;
+      }
+    } else {
+      return new Error('Error response from gassstation');
     }
   }
 
   async upload(buf) {
-    const res = await this.ipfs.add(buf, {
-      pin: true,
-    });
-
-    return res[0].hash;
+    try {
+      return (await this.ipfs.add(buf, {
+        pin: true,
+      }))[0].Hash;
+    } catch (err) {
+      return err;
+    }
   }
 
   async readFile(file) {
