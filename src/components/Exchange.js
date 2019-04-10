@@ -506,9 +506,6 @@ export default class Exchange extends React.Component {
     return (this.state.daiSendToAddress && this.state.daiSendToAddress.length === 42 && parseFloat(this.state.daiSendAmount)>0 && parseFloat(this.state.daiSendAmount) <= parseFloat(this.props.daiBalance))
   }
   async transferDai(destination,amount,message,cb) {
-    // Inspired by: https://github.com/leapdao/bridge-ui/blob/427f72944c31a62f687f3b53a35c4115765efada/src/stores/token.ts#L281
-    const approveAmount = new BN("2").pow(new BN("255"));
-
     let response
     try {
       response = await axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
@@ -550,7 +547,7 @@ export default class Exchange extends React.Component {
             paramsObject.to = this.props.daiContract._address
             paramsObject.data = this.props.daiContract.methods.approve(
               this.props.bridgeContract._address,
-              approveAmount
+              amountWei
             ).encodeABI()
 
             const signedApprove = await this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey)
@@ -639,7 +636,7 @@ export default class Exchange extends React.Component {
             const approveReceipt = await tx(
               daiContract.methods.approve(
                 bridgeContract._address,
-                approveAmount
+                amountWei
               ),
               ///TODO LET ME PASS IN A CERTAIN AMOUNT OF GAS INSTEAD OF LEANING BACK ON THE <GAS> COMPONENT!!!!!
               150000,
