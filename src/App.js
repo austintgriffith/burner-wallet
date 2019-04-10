@@ -438,7 +438,7 @@ class App extends Component {
     this.connectToRPC()
   }
   connectToRPC(){
-    let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
+    let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider("wss://rinkeby.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac"));
     let ensContract = new mainnetweb3.eth.Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
     let daiContract;
     let bridgeContract;
