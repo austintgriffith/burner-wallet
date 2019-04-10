@@ -458,16 +458,16 @@ class App extends Component {
   async poll() {
 
     let badgeBalance = 0
-    if(this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown") && this.state.contracts.Badges){
-      //check for badges for this user
-      badgeBalance = await this.state.contracts.Badges.balanceOf(this.state.account).call()
+    if(this.state.contracts && this.state.contracts.ERC721Full){
+      //check for NFTs for this user
+      badgeBalance = await this.state.contracts.ERC721Full.balanceOf(this.state.account).call()
       if(badgeBalance>0){
         let update = false
         for(let b = 0;b<badgeBalance;b++){
-          let thisBadgeId = await this.state.contracts.Badges.tokenOfOwnerByIndex(this.state.account,b).call()
+          let thisBadgeId = await this.state.contracts.ERC721Full.tokenOfOwnerByIndex(this.state.account,b).call()
           if(!this.state.badges[thisBadgeId]){
 
-            let thisBadgeData = await this.state.contracts.Badges.tokenURI(thisBadgeId).call()
+            let thisBadgeData = await this.state.contracts.ERC721Full.tokenURI(thisBadgeId).call()
             //console.log("BADGE",b,thisBadgeId,thisBadgeData)
             if(!this.state.badges[thisBadgeId]){
               console.log("Getting badge data ",thisBadgeData)
