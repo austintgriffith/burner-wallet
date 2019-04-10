@@ -176,7 +176,7 @@ export default class RegisterMovie extends React.Component {
     try {
       return (await this.ipfs.add(buf, {
         pin: true,
-      }))[0].Hash;
+      }))[0].hash;
     } catch (err) {
       return err;
     }
