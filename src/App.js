@@ -1949,17 +1949,14 @@ render() {
                   <div>unknown view</div>
                 )
               }
-
-            })()}
-            { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
-              <div>
-                <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-              </div>
-            }
-            { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
-            </div>
-
-
+        })()}
+        { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
+          <div>
+            <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+          </div>
+        }
+        { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
+        </div>
 
             <Dapparatus
             config={{

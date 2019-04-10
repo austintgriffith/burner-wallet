@@ -36,6 +36,16 @@ export default ({
   let sendButtons = (
     <Box>
       <Flex mx={-2}>
+        <Box width={[1, 1, 1]} m={2}>
+          <Button fullWidth onClick={() => changeView("mint")}>
+            <Flex alignItems="center">
+              <Icon name="Add" mr={2} />
+              {i18next.t("main_card.mint")}
+            </Flex>
+          </Button>
+        </Box>
+      </Flex>
+      <Flex mx={-2}>
         <Box width={[1, 1/2, 1/2]} m={2}>
           <Button fullWidth onClick={() => changeView("receive")}>
             <Flex alignItems="center">
