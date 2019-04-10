@@ -107,7 +107,15 @@
       "burn": "Verbrenn ihn!"
     },
     "mint": {
-      "title": "Einen Film registrieren"
+      "title": "Einen Film registrieren",
+      "image_title": "Bild hochladen",
+      "rightholder": {
+        "address": "Adresse des Rechteinhabers",
+        "name": "Name des Rechteinhabers"
+      },
+      "movie": {
+        "name": "Name des Films"
+      }
     }
   }
 }

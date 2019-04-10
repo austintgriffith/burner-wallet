@@ -107,7 +107,15 @@
       "burn": "Burn It!"
     },
     "mint": {
-      "title": "Register a Movie"
+      "title": "Register a Movie",
+      "image_title": "Upload image",
+      "rightholder": {
+        "address": "Address of Rightholder",
+        "name": "Name of Rightholder"
+      },
+      "movie": {
+        "name": "Name of the Movie"
+      }
     }
   }
 }
