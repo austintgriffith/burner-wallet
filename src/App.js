@@ -1848,6 +1848,7 @@ render() {
                     setGwei={this.setGwei}
                     network={this.state.network}
                     tx={this.state.tx}
+                    pTx={this.state.pTx}
                     web3={this.state.web3}
                     send={this.state.send}
                     nativeSend={this.state.nativeSend}
