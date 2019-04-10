@@ -92,7 +92,7 @@ let titleImage = (
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
   XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
-  WEB3_PROVIDER = "https://rinkeby.infura.io/v3/f039330d8fb747e48a7ce98f51400d65"
+  WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
   CLAIM_RELAY = false;
   ERC20NAME = false;
   ERC20TOKEN = false;
@@ -446,8 +446,8 @@ class App extends Component {
     let daiContract;
     let bridgeContract;
     try{
-      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x72560b830ced423fbb9ec1ae8d01b41f015a5f21")
-      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), "0xd3Bf77460d06cdEEfa1e82115038C5E07A60f951")
+      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0xD2D0F8a6ADfF16C2098101087f9548465EC96C98")
+      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), "0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530")
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
@@ -840,21 +840,20 @@ async parseBlocks(parseBlock,recentTxs,transactionsByAddress){
   }
   let block = await web3.eth.getBlock(parseBlock)
   let updatedTxs = false
-
   if(block){
     let transactions = block.transactions
 
     //console.log("transactions",transactions)
     for(let t in transactions){
       //console.log("TX",transactions[t])
-      let tx = await web3.eth.getTransaction(transactions[t])
+      let tx = await this.state.web3.eth.getTransaction(transactions[t])
       if(tx && tx.to && tx.from ){
         //console.log("EEETRTTTTERTETETET",tx)
         let smallerTx = {
           hash:tx.hash,
           to:tx.to.toLowerCase(),
           from:tx.from.toLowerCase(),
-          value:web3.utils.fromWei(""+tx.value,"ether"),
+          value:this.state.web3.utils.fromWei(""+tx.value,"ether"),
           blockNumber:tx.blockNumber
         }
 
@@ -870,7 +869,7 @@ async parseBlocks(parseBlock,recentTxs,transactionsByAddress){
             }
 
             try{
-              smallerTx.data = web3.utils.hexToUtf8(tx.input)
+              smallerTx.data = this.state.web3.utils.hexToUtf8(tx.input)
             }catch(e){}
             //console.log("smallerTx at this point",smallerTx)
             if(!smallerTx.data){
@@ -1962,27 +1961,20 @@ render() {
 
 
 
-        <Dapparatus
-        config={{
-          DEBUG: false,
-          hide: true,
-          requiredNetwork: ['Unknown', 'xDai'],
-          metatxAccountGenerator: false,
-        }}
-        //used to pass a private key into Dapparatus
-        newPrivateKey={this.state.newPrivateKey}
-        fallbackWeb3Provider={XDAI_PROVIDER}
-        onUpdate={async (state) => {
-          //console.log("DAPPARATUS UPDATE",state)
-          if(ERC20TOKEN){
-            delete state.balance
-          }
-          if (state.web3Provider) {
-            state.web3 = new Web3(state.web3Provider)
-            this.setState(state,()=>{
-              //console.log("state set:",this.state)
-              if(this.state.possibleNewPrivateKey){
-                this.dealWithPossibleNewPrivateKey()
+            <Dapparatus
+            config={{
+              DEBUG: false,
+              hide: true,
+              requiredNetwork: ['Unknown', 'xDai'],
+              metatxAccountGenerator: false,
+            }}
+            //used to pass a private key into Dapparatus
+            newPrivateKey={this.state.newPrivateKey}
+            fallbackWeb3Provider={XDAI_PROVIDER}
+            onUpdate={async (state) => {
+              //console.log("DAPPARATUS UPDATE",state)
+              if(ERC20TOKEN){
+                delete state.balance
               }
               if (state.xdaiweb3) {
                 let pdaiContract;
@@ -2113,7 +2105,7 @@ async function tokenSend(to,value,gasLimit,txData,cb){
 
   console.log("DAPPARATUS TOKEN SENDING WITH GAS LIMIT",setGasLimit)
 
-  const color = 1;
+  const color = 0;
   let result;
 
   this.state.xdaiweb3
