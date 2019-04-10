@@ -30,6 +30,15 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
   let sendButtons = (
     <div>
       <div className="content ops row">
+        <div className="col-12 p-1" onClick={() => changeView('mint')}>
+          <button className="btn btn-large w-100" style={buttonStyle.primary}>
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              <i className="fas fa-plus"  /> {i18next.t('main_card.mint')}
+            </Scaler>
+          </button>
+        </div>
+      </div>
+      <div className="content ops row">
         <div className="col-6 p-1" onClick={() => changeView('receive')}>
           <button className="btn btn-large w-100" style={buttonStyle.primary}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>

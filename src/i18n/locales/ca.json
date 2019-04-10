@@ -28,7 +28,8 @@
       "send": "Enviar",
       "share": "Compartir",
       "link": "Enllaçar",
-      "vendors": "Venedors"
+      "vendors": "Venedors",
+      "mint": "Mint NFT"
     },
     "send_with_link": {
       "error": "Si us plau introdueix una quantitat vàlida"

@@ -11,6 +11,7 @@ import Header from './components/Header';
 import NavCard from './components/NavCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
+import RegisterMovie from './components/RegisterMovie';
 import SendBadge from './components/SendBadge';
 import WithdrawFromPrivate from './components/WithdrawFromPrivate';
 import RequestFunds from './components/RequestFunds';
@@ -799,13 +800,13 @@ class App extends Component {
     message: 'Insufficient funds',
   });
   return;
-}
-}
-*/
-this.changeAlert(null);
-console.log("Setting state",view)
-this.setState({ view, scannerState:false },cb);
-};
+  }
+  }
+  */
+  this.changeAlert(null);
+  console.log("Setting state",view)
+  this.setState({ view, scannerState:false },cb);
+  };
 changeAlert = (alert, hide=true) => {
   clearTimeout(this.alertTimeout);
   this.setState({ alert });
@@ -1918,6 +1919,28 @@ render() {
                   <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                 </div>
               <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+              </div>
+            );
+            case 'mint':
+            return (
+              <div>
+                <div className="send-to-address card w-100" style={{zIndex:1}}>
+                  <NavCard title={i18n.t('mint.title')} goBack={this.goBack.bind(this)}/>
+                  <RegisterMovie
+                    openScanner={this.openScanner.bind(this)}
+                    buttonStyle={buttonStyle}
+                    web3={this.state.web3}
+                    address={account}
+                    send={send}
+                    goBack={this.goBack.bind(this)}
+                    changeView={this.changeView}
+                    changeAlert={this.changeAlert}
+                  />
+                </div>
+                <Bottom
+                  text={i18n.t('cancel')}
+                  action={this.goBack.bind(this)}
+                />
               </div>
             );
             default:

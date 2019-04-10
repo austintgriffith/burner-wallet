@@ -28,7 +28,8 @@
       "send": "Senden",
       "share": "Teilen",
       "link": "Link",
-      "vendors": "Verkäufer"
+      "vendors": "Verkäufer",
+      "mint": "Film registrieren"
     },
     "send_with_link": {
       "error": "Bitte einen güligen Betrag eingeben"
@@ -104,6 +105,9 @@
       "disclaimer": "Tun Sie das nicht! Sie werden all ihr Guthaben verlieren!",
       "cancel": "Nein, abbrechen",
       "burn": "Verbrenn ihn!"
+    },
+    "mint": {
+      "title": "Einen Film registrieren"
     }
   }
 }

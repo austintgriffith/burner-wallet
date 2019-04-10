@@ -28,7 +28,8 @@
       "send": "Send",
       "share": "Share",
       "link": "Link",
-      "vendors": "Vendors"
+      "vendors": "Vendors",
+      "mint": "Register Movie"
     },
     "send_with_link": {
       "error": "Please enter a valid amount"
@@ -104,6 +105,9 @@
       "disclaimer": "Don't do it! You will lose all funds!",
       "cancel": "No, Cancel",
       "burn": "Burn It!"
+    },
+    "mint": {
+      "title": "Register a Movie"
     }
   }
 }
