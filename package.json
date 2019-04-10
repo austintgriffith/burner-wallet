@@ -9,7 +9,7 @@
     "bootstrap": "^4.1.3",
     "cors": "^2.8.4",
     "crypto": "^1.0.1",
-    "dapparatus": "^1.0.72",
+    "dapparatus": "leapdao/dapparatus#pdai",
     "dotenv": "^6.2.0",
     "eccrypto": "^1.1.0",
     "eth-crypto": "^1.3.2",

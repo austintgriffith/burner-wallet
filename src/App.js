@@ -89,7 +89,7 @@ let titleImage = (
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
   XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
-  WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
+  WEB3_PROVIDER = "https://rinkeby.infura.io/v3/f039330d8fb747e48a7ce98f51400d65"
   CLAIM_RELAY = false;
   ERC20NAME = false;
   ERC20TOKEN = false;
@@ -396,7 +396,8 @@ class App extends Component {
     intervalLong = setInterval(this.longPoll.bind(this),45000)
     setTimeout(this.longPoll.bind(this),150)
 
-    let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider(WEB3_PROVIDER));
+    // NOTE: Change this to mainnet again when ready for mainnet launch.
+    let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider("wss://rinkeby.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac"));
     let ensContract = new mainnetweb3.eth.Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
     let daiContract;
     let bridgeContract;
@@ -789,22 +790,29 @@ goBack(){
   setTimeout(()=>{window.scrollTo(0,0)},60)
 }
 async parseBlocks(parseBlock,recentTxs,transactionsByAddress){
-  let block = await this.state.web3.eth.getBlock(parseBlock)
+  let web3;
+  if (this.state.leapProvider) {
+    web3 = this.state.leapProvider
+  } else {
+    web3 = this.state.web3
+  }
+  let block = await web3.eth.getBlock(parseBlock)
   let updatedTxs = false
+
   if(block){
     let transactions = block.transactions
 
     //console.log("transactions",transactions)
     for(let t in transactions){
       //console.log("TX",transactions[t])
-      let tx = await this.state.web3.eth.getTransaction(transactions[t])
+      let tx = await web3.eth.getTransaction(transactions[t])
       if(tx && tx.to && tx.from ){
         //console.log("EEETRTTTTERTETETET",tx)
         let smallerTx = {
           hash:tx.hash,
           to:tx.to.toLowerCase(),
           from:tx.from.toLowerCase(),
-          value:this.state.web3.utils.fromWei(""+tx.value,"ether"),
+          value:web3.utils.fromWei(""+tx.value,"ether"),
           blockNumber:tx.blockNumber
         }
 
@@ -820,7 +828,7 @@ async parseBlocks(parseBlock,recentTxs,transactionsByAddress){
             }
 
             try{
-              smallerTx.data = this.state.web3.utils.hexToUtf8(tx.input)
+              smallerTx.data = web3.utils.hexToUtf8(tx.input)
             }catch(e){}
             //console.log("smallerTx at this point",smallerTx)
             if(!smallerTx.data){
@@ -1905,7 +1913,9 @@ render() {
         }}
         //used to pass a private key into Dapparatus
         newPrivateKey={this.state.newPrivateKey}
-        fallbackWeb3Provider={XDAI_PROVIDER}
+        fallbackWeb3Provider={WEB3_PROVIDER}
+        network="LeapTestnet"
+        leapProvider={XDAI_PROVIDER}
         onUpdate={async (state) => {
           //console.log("DAPPARATUS UPDATE",state)
           if(ERC20TOKEN){
@@ -2026,8 +2036,6 @@ async function tokenSend(to,value,gasLimit,txData,cb){
   }else{
     data = txData
   }
-
-  console.log("DAPPARATUS TOKEN SENDING WITH GAS LIMIT",setGasLimit)
 
   const color = 0;
   let result;
