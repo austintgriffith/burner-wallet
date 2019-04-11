@@ -5,6 +5,8 @@ import QrCode from 'qrcode-reader';
 import qrimage from '../qrcode.png';
 import RNMessageChannel from 'react-native-webview-messaging';
 import i18n from "../i18n";
+import Web3 from "web3";
+
 var Jimp = require("jimp");
 let interval
 class SendByScan extends Component {
@@ -77,17 +79,17 @@ class SendByScan extends Component {
       console.log("dataAfterColon:",dataAfterColon)
       if (dataAfterColon) {
         this.stopRecording();
-        console.log("RETURN STATE:",this.props.returnState)
-        if(this.props.returnState && this.props.returnState.view!="send_to_address"){
+        if (Web3.utils.isAddress(dataAfterColon)) {
+          console.log("RETURN STATE:",this.props.returnState)
           let returnState = this.props.parseAndCleanPath(dataAfterColon)
           this.props.returnToState(returnState)
-          console.log("return state",returnState)
-        }else{
-          this.props.changeView('reader')
-          setTimeout(()=>{
-            //maybe they just scanned an address?
-            window.location = "/"+dataAfterColon
-          },100)
+        } else {
+            // NOTE: Everything that is not a valid Ethereum address, we insert
+            // in the URL to see if the burner wallet can resolve it.
+            this.props.changeView("reader")
+            setTimeout(() => {
+                window.location = "/" +  dataAfterColon 
+            }, 100)
         }
       }
     }
