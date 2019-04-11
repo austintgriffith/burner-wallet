@@ -17,6 +17,25 @@ import wyrelogo from '../wyre.png';
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
 
+import {
+  Unspent,
+  Tx,
+  Input,
+  Output,
+  Outpoint,
+  OutpointJSON,
+  Type,
+  LeapTransaction,
+  helpers,
+  Exit,
+} from 'leap-core';
+
+import { bi } from 'jsbi-utils';
+
+import { toBuffer, bufferToHex } from 'ethereumjs-util';
+
+const { periodBlockRange } = helpers;
+
 const BN = Web3.utils.BN
 const GASBOOSTPRICE = 0.25
 
@@ -60,8 +79,8 @@ export default class Exchange extends React.Component {
     let xdaiweb3 = this.props.xdaiweb3
     //make it easier for local debugging...
     if(false && window.location.hostname.indexOf("localhost")>=0){
-      console.log("WARNING, USING LOCAL RPC")
-      xdaiweb3 = new Web3(new Web3.providers.HttpProvider("http://0.0.0.0:8545"))
+      //console.log("WARNING, USING LOCAL RPC")
+      //xdaiweb3 = new Web3(new Web3.providers.HttpProvider("http://0.0.0.0:8545"))
     }
     //let mainnetweb3 = new Web3("https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac")
     let mainnetweb3 = props.mainnetweb3
@@ -1172,7 +1191,7 @@ export default class Exchange extends React.Component {
                  this.setState({xdaiToDendaiMode:"deposit"})
                }}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-arrow-up"  /> xDai to {this.props.ERC20NAME}
+                    <i className="fas fa-arrow-up"  /> pDai to {this.props.ERC20NAME}
                   </Scaler>
                </button>
              </div>
@@ -1182,7 +1201,7 @@ export default class Exchange extends React.Component {
                  this.setState({xdaiToDendaiMode:"withdraw"})
                }}>
                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-arrow-down" /> {this.props.ERC20NAME} to xDai
+                  <i className="fas fa-arrow-down" /> {this.props.ERC20NAME} to pDai
                  </Scaler>
                </button>
              </div>
@@ -1340,7 +1359,7 @@ export default class Exchange extends React.Component {
       }
     } else if(daiToXdaiMode=="withdraw"){
       console.log("CHECKING META ACCOUNT ",this.state.xdaiMetaAccount,this.props.network)
-      if(!this.state.xdaiMetaAccount && this.props.network!="xDai"){
+      if(!this.state.xdaiMetaAccount && this.props.network!="LeapTestnet"){
         daiToXdaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
@@ -1456,25 +1475,92 @@ export default class Exchange extends React.Component {
                       }
                     })
                   }else{
-                    console.log("sending ",this.state.amount," to ",toDaiBridgeAccount)
-                    this.props.send(toDaiBridgeAccount, this.state.amount, 120000, (result) => {
-                      console.log("RESUTL!!!!",result)
-                      if(result && result.transactionHash){
-                        this.setState({
-                          amount:"",
-                          loaderBarColor:"#4ab3f5",
-                          loaderBarStatusText:"Waiting for bridge...",
-                          loaderBarClick:()=>{
-                            alert(i18n.t('exchange.idk'))
-                          }
-                        })
-                      }
+                    let inputTx;
+                    let tx;
+                    let setup;
+                    const amount = bi(this.state.amount * 10 ** 18).toString();
+                    const tokenAddr = this.props.daiContract._address;
+                    
+                    Promise.all([
+                      this.state.xdaiweb3.getUnspent(this.state.daiAddress),
+                      this.state.xdaiweb3.getConfig(),
+                      this.state.xdaiweb3.getColor(tokenAddr),
+                    ])
+                    .then(([unspent, config, color]) => {
+                      console.log(unspent, config, color);
+                      console.log(amount);
+                      tx = Tx.transferFromUtxos(
+                        unspent, this.state.daiAddress,
+                        config.exitHandlerAddr, amount, color,
+                      );
+                      return Promise.all([
+                        tx.signWeb3(this.props.web3),
+                        this.state.xdaiweb3.eth.getTransaction(
+                          bufferToHex(tx.inputs[0].prevout.hash)
+                        ),
+                      ]);
                     })
+                    .then(([signedTx, _inputTx]) => {
+                      console.log(inputTx);
+                      inputTx = _inputTx;
+                      console.log('TxHash:', signedTx.hash());
+                      return this.state.xdaiweb3.eth.sendSignedTransaction(
+                        signedTx.hex()
+                      );
+                    })
+                    .then(transferTx => {
+                      const tx = Tx.fromRaw(transferTx.raw);
+                      
+                      const utxoId = (new Outpoint(tx.hash(), 0)).getUtxoId();
+                      const sigHashBuff = Exit.sigHashBuff(utxoId, bi(amount));
+                      const sigHash = `0x${sigHashBuff.toString('hex')}`;
+                      setup = {
+                        unspent: {
+                          outpoint: {
+                            hash: bufferToHex(tx.inputs[0].prevout.hash),
+                            index: tx.inputs[0].prevout.index,
+                          },
+                        },
+                        inputTx,
+                        tx: transferTx,
+                        effectiveBlock: periodBlockRange(transferTx.blockNumber)[1],
+                        sigHashBuff,
+                        sigHash,
+                      };
+
+                      return Tx.signMessageWithWeb3(this.props.web3, sigHash);
+                    })
+                    .then(sig => {
+                      const vBuff = Buffer.alloc(32);
+                      vBuff.writeInt8(sig.v, 31);    
+                      const signedData = Exit.bufferToBytes32Array(
+                        Buffer.concat([setup.sigHashBuff, Buffer.from(sig.r), Buffer.from(sig.s), vBuff])
+                      );
+                      delete setup.sigHash;
+                      delete setup.sigHashBuff;
+                      setup.signedData = signedData;
+                      console.log(setup);
+                      return fetch(
+                        'https://ycxraahrrb.execute-api.eu-west-1.amazonaws.com/testnet/sellExit',
+                        {
+                          method: "POST",
+                          mode: "cors",
+                          cache: "no-cache",
+                          headers: {
+                              "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify(setup),
+                        }
+                      );
+                    })
+                    .then(response => response.json())
+                    .then(rsp => {
+                      console.log(rsp);
+                    }).catch(err => {
+                      console.log(err);
+                    });
                   }
-
-
                 }
-
               }}>
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-down" /> Send
@@ -1504,7 +1590,7 @@ export default class Exchange extends React.Component {
               this.setState({daiToXdaiMode:"withdraw"})
             }} >
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-arrow-down"  /> xDai to DAI
+              <i className="fas fa-arrow-down"  /> pDai to DAI
               </Scaler>
             </button>
           </div>
