@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
+import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events, Blockie } from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
@@ -1399,11 +1399,61 @@ render() {
               )
             })
 
+            let fontsize = 30
+
+            let winners = [
+              {address:"0x0fa86Ac12bA377cB1D2Ce93111a767B66bF9075A".toLowerCase(),amount:100},
+              {address:"0xD9B12999ADa6bCd5b2787d52d28c0341C1C8d03f".toLowerCase(),amount:	100},
+              {address:"0x7b742F96bC4b7dd277CE1cBeF8ade12Aef333Dc4".toLowerCase(),amount:	57.59},
+              {address:"0xC6DB52F61819104808C97055282246df2124A786".toLowerCase(),amount:	22.73},
+              {address:"0x3F4D607a7b1e18712B2175fB5426576de7CEFF3C".toLowerCase(),amount:	6},
+              {address:"0x70120c09BE01BE438807E125D527719244Dc7BC2".toLowerCase(),amount:	5.03},
+              {address:"0x79577DcADBdd213E6111454Cc09Ca6a31831D4Da".toLowerCase(),amount:	4.67},
+              {address:"0x91ABe41067362c0f9876C2413bF69022E64bDBc3".toLowerCase(),amount:	2.31},
+              {address:"0x60014239b12E9a8Caec20eb256fcB0309CBc76E2".toLowerCase(),amount:	1.15},
+              {address:"0x44Dd5f85409465cd67bdEDA25aC6E6361D6103E3".toLowerCase(),amount:	1}
+            ]
+
+            let winnerDisplay = []
+
+            for(let w in winners){
+              console.log(winners[w])
+              winnerDisplay.push (
+                <div key={"winner"+w} style={{width:"100%",paddingLeft:"5%",paddingRight:"5%",textAlign:'center',fontSize:22}}>
+                  <span style={{paddingRight:10}}>
+                      <Blockie
+                        address={winners[w].address}
+                        config={{size:3}}>
+                      </Blockie>
+                  </span>
+                  <span style={{paddingRight:10,textAlign:'center',fontSize:fontsize,color:"#000000"}}>
+                    {winners[w].address.substring(2,8)}
+                  </span>
+                  <span style={{textAlign:'center',fontSize:fontsize,color:"#5fa16f"}}>
+                    {dollarDisplay(winners[w].amount)}
+                  </span>
+                </div>
+              )
+            }
+
             balanceDisplay = (
               <div>
+
+
+
                 {extraTokens}
 
 
+                <div style={{width:"100%",padding:"5%",textAlign:'center',fontSize:22}}>
+                  Thanks for playing! ( 🏦 == broke )
+                </div>
+                <div style={{width:"100%",paddingLeft:"5%",paddingRight:"5%",textAlign:'center',fontSize:18}}>
+                  Winners:
+                </div>
+
+                <div style={{width:"100%",padding:"5%",textAlign:'center',fontSize:22}}>
+                  {winnerDisplay}
+                </div>
 
 
                 {allEmojiBalances}
