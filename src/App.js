@@ -1938,6 +1938,7 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     pTx={this.state.pTx}
+                    setReceipt={this.setReceipt}
                   />
                 </div>
                 <Bottom

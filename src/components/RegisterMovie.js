@@ -43,7 +43,14 @@ export default class RegisterMovie extends React.Component {
   }
 
   async submit() {
-    const {mainnetweb3, ERC721Full, address, pTx} = this.props;
+    const {
+      mainnetweb3,
+      ERC721Full,
+      address,
+      pTx,
+      setReceipt,
+      changeView,
+    } = this.props;
     const {image, movieName, rightholderAddress, rightholderName} = this.refs;
     const {provider, meta} = this.state;
 
@@ -103,6 +110,13 @@ export default class RegisterMovie extends React.Component {
         console.log(err);
       }
       console.log('metareceipt', receipt);
+      setReceipt({
+        to: rightholderAddress.value,
+        from: ERC721Full._address,
+        badge: token,
+        result: receipt,
+      });
+      changeView('receipt');
     } else {
       const method = ERC721Full.mint(
         rightholderAddress.value,
@@ -111,6 +125,13 @@ export default class RegisterMovie extends React.Component {
       const gas = await method.estimateGas({from: provider.mainnet.address});
       const receipt = await pTx(method, gas, 0, 0);
       console.log('receipt', receipt);
+      setReceipt({
+        to: rightholderAddress.value,
+        from: ERC721Full._address,
+        badge: token,
+        result: receipt,
+      });
+      changeView('receipt');
     }
   }
 
