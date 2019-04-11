@@ -17,7 +17,7 @@ export default class RegisterMovie extends React.Component {
     this.upload = this.upload.bind(this);
     this.readFile = this.readFile.bind(this);
 
-    const {scannerState, mainnetweb3, address} = this.props;
+    const {mainnetweb3, address} = this.props;
     const pk = localStorage.getItem('metaPrivateKey');
     let mainnetMetaAccount = false;
     let mainnetMetaAddress = '';
@@ -27,7 +27,7 @@ export default class RegisterMovie extends React.Component {
     }
 
     this.state = {
-      rightholderAddress: scannerState.toAddress || '',
+      rightholderAddress: '',
       provider: {
         mainnet: {
           address,
@@ -40,6 +40,12 @@ export default class RegisterMovie extends React.Component {
         },
       },
     };
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (this.props.scannerState !== newProps.scannerState) {
+      this.setState({rightholderAddress: newProps.scannerState.toAddress});
+    }
   }
 
   async submit() {
