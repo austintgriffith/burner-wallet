@@ -1417,8 +1417,7 @@ render() {
                 return (
                   <div>
                     {this.state.scannerOpen ? sendByScan : null}
-                    <Card>
-
+                    <Card p={3}>
                       {extraTokens}
 
                       <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
@@ -1911,7 +1910,6 @@ render() {
                 return (
                   <div>
                     <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
-
                       <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                     </div>
                   <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
