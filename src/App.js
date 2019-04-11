@@ -816,9 +816,9 @@ changeAlert = (alert, hide=true) => {
     }, 2000);
   }
 };
-goBack(){
+goBack(view="main"){
   console.log("GO BACK")
-  this.changeView('main')
+  this.changeView(view)
   setTimeout(()=>{window.scrollTo(0,0)},60)
 }
 async parseBlocks(parseBlock,recentTxs,transactionsByAddress){

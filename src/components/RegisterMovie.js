@@ -258,7 +258,7 @@ export default class RegisterMovie extends React.Component {
               <div
                 className="input-group-append"
                 onClick={() => {
-                  this.props.openScanner({view: 'mint'});
+                  this.props.openScanner({view: 'mint', goBackView: 'mint'});
                 }}>
                 <span
                   className="input-group-text"
