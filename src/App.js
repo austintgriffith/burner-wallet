@@ -456,7 +456,6 @@ class App extends Component {
     window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
   async poll() {
-
     let badgeBalance = 0
     if(this.state.contracts && this.state.contracts.ERC721Full){
       //check for NFTs for this user
