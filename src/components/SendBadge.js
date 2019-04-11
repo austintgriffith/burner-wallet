@@ -91,7 +91,7 @@ export default class SendBadge extends React.Component {
 
       cookie.remove('sendBadgeToAddress', { path: '/' })
       this.props.tx(
-        this.props.contracts.Badges.transferFrom(this.props.address,this.state.toAddress,this.props.badge.id)
+        this.props.contracts.ERC721Full.transferFrom(this.props.address,this.state.toAddress,this.props.badge.id)
         ,240000,0,0,(receipt)=>{
           if(receipt){
 
