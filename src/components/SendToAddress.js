@@ -13,44 +13,29 @@ export default class SendToAddress extends React.Component {
   constructor(props) {
     super(props);
 
-
-
     console.log("!!!!!!!!!!!!!!!!!!!!!!!! window.location.search",window.location.search,parsed)
 
-    let startAmount = props.amount
-    if(props.scannerState) startAmount = props.scannerState.amount
-    if(!startAmount) {
-      startAmount = cookie.load('sendToStartAmount')
-    }else{
-      cookie.save('sendToStartAmount', startAmount, { path: '/', maxAge: 60 })
-    }
-    let startMessage= props.message
-    if(props.scannerState) startMessage = props.scannerState.message
-    if(!startMessage) {
-      startMessage = cookie.load('sendToStartMessage')
-    }else{
-      cookie.save('sendToStartMessage', startMessage, { path: '/', maxAge: 60 })
-    }
-
-    let extraMessage = props.extraMessage
-    if(props.scannerState) extraMessage = props.scannerState.extraMessage
-
-    let toAddress = ""
-    if(props.scannerState) toAddress = props.scannerState.toAddress
-    if(!toAddress) {
-      toAddress = cookie.load('sendToAddress')
-    }else{
-      cookie.save('sendToAddress', toAddress, { path: '/', maxAge: 60 })
+    let initialState;
+    if (props.scannerState) {
+      const { amount, message, extraMessage, toAddress } = props.scannerState
+      initialState = {
+        amount,
+        message,
+        extraMessage,
+        toAddress
+      }
+    } else {
+      const { amount, message, extraMessage } = props
+      initialState = {
+        amount: amount,
+        message: message,
+        extraMessage: extraMessage,
+        toAddress: ""
+      }
     }
 
-    let initialState = {
-      amount: startAmount,
-      message: startMessage,
-      toAddress: toAddress,
-      extraMessage: extraMessage,
-      fromEns: "",
-      canSend: false,
-    }
+    initialState.fromEns = ""
+    initialState.canSend = false
 
     let startingAmount = 0.15
     if(props.amount){
@@ -73,23 +58,17 @@ export default class SendToAddress extends React.Component {
     }
 
     this.state = initialState
-  //  console.log("SendToAddress constructor",this.state)
+    //console.log("SendToAddress constructor",this.state)
     window.history.pushState({},"", "/");
+  }
 
-
-
+  componentWillReceiveProps(newProps) {
+    if (this.props.scannerState !== newProps.scannerState) {
+        this.setState(Object.assign(this.state, newProps.scannerState))
+    }
   }
 
   updateState = async (key, value) => {
-    if(key=="amount"){
-      cookie.save('sendToStartAmount', value, { path: '/', maxAge: 60 })
-    }
-    else if(key=="message"){
-      cookie.save('sendToStartMessage', value, { path: '/', maxAge: 60 })
-    }
-    else if(key=="toAddress"){
-      cookie.save('sendToAddress', value, { path: '/', maxAge: 60 })
-    }
     this.setState({ [key]: value },()=>{
       this.setState({ canSend: this.canSend() },()=>{
         if(key!="message"){
