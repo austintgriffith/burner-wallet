@@ -1445,7 +1445,8 @@ render() {
 
 
                 <div style={{width:"100%",padding:"5%",textAlign:'center',fontSize:22}}>
-                  Thanks for playing! ( 🏦 == broke )
+                   Thanks for playing! Game Over!
+                  <div>(<a href="https://medium.com/gitcoin/emojicoin-exchange-53f9658c9e3b">read the full story here</a>)</div>
                 </div>
                 <div style={{width:"100%",paddingLeft:"5%",paddingRight:"5%",textAlign:'center',fontSize:18}}>
                   Winners:
