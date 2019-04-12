@@ -125,6 +125,14 @@ else if (window.location.hostname.indexOf("burner.leapdao.org") >= 0) {
   ERC20TOKEN = false;
   ERC20IMAGE = false;
 }
+else if (window.location.hostname.indexOf("sundai.io") >= 0) {
+  XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
+  WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
+  CLAIM_RELAY = false;
+  ERC20NAME = false;
+  ERC20TOKEN = false;
+  ERC20IMAGE = false;
+}
 else if (window.location.hostname.indexOf("buffidai") >= 0) {
   WEB3_PROVIDER = POA_XDAI_NODE;
   CLAIM_RELAY = 'https://x.xdai.io'
