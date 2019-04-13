@@ -37,7 +37,7 @@ const options = {
     }
   },
 
-  fallbackLng: "he",
+  fallbackLng: "en",
 
   ns: ["common"],
 
