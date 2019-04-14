@@ -109,6 +109,49 @@ module.exports = {
     });
   },
 
+  mintBatch:(accountindex,image,toIndex)=>{
+    describe('#testMint() ', function() {
+      it('should mint a batch of cryptogs', async function() {
+        this.timeout(120000)
+        const Web3 = require('web3')
+        const web3 = new Web3(new Web3.providers.HttpProvider(clevisConfig.provider))
+        const accounts = await clevis("accounts")
+        assert(image,"No Image!?")
+        let bytes32Image = web3.utils.fromAscii(image);
+        const result = await clevis("contract","mintBatch","Slammers",accountindex,bytes32Image,bytes32Image,bytes32Image,bytes32Image,bytes32Image,accounts[toIndex])
+        printTxResult(result)
+        const tokensOfOwner = await clevis("contract","tokensOfOwner","Slammers",accounts[toIndex])
+        const lastToken = tokensOfOwner[tokensOfOwner.length-1]
+        const token = await clevis("contract","getToken","Slammers",lastToken)
+        assert(token.owner==accounts[toIndex],"This should never be wrong!?!")
+        const cleanImage = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+        assert(cleanImage==image,"Image of minted token doesn't equal image we meant to mint.. hah.")
+        console.log(tab,accounts[accountindex].blue+" minted 5 cryptogs "+lastToken.magenta+" to account "+accounts[toIndex].cyan+" with image "+cleanImage.white)
+      });
+    });
+  },
+  mintBatchToAddress:(accountindex,image,address)=>{
+    describe('#testMint() ', function() {
+      it('should mint a batch of cryptogs', async function() {
+        this.timeout(120000)
+        const Web3 = require('web3')
+        const web3 = new Web3(new Web3.providers.HttpProvider(clevisConfig.provider))
+        const accounts = await clevis("accounts")
+        assert(image,"No Image!?")
+        let bytes32Image = web3.utils.fromAscii(image);
+        const result = await clevis("contract","mintBatch","Slammers",accountindex,bytes32Image,bytes32Image,bytes32Image,bytes32Image,bytes32Image,address)
+        printTxResult(result)
+        const tokensOfOwner = await clevis("contract","tokensOfOwner","Slammers",address)
+        const lastToken = tokensOfOwner[tokensOfOwner.length-1]
+        const token = await clevis("contract","getToken","Slammers",lastToken)
+        assert(token.owner==accounts[toIndex],"This should never be wrong!?!")
+        const cleanImage = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+        assert(cleanImage==image,"Image of minted token doesn't equal image we meant to mint.. hah.")
+        console.log(tab,accounts[accountindex].blue+" minted 5 cryptogs "+lastToken.magenta+" to account "+aaddress.cyan+" with image "+cleanImage.white)
+      });
+    });
+  },
+
   gsn:()=>{
     describe(bigHeader('RELAY HUB GSN '), function(){
       it('should set Relay Hub address to Relay Recepient and provide it with a deposit', async function(){

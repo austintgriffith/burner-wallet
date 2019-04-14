@@ -40,6 +40,11 @@ import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 
+
+//SLAMMERS
+import MyCryptogs from './slammers/MyCryptogs.js'
+
+
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
 
@@ -85,7 +90,10 @@ let titleImage = (
 )
 
 //<i className="fas fa-fire" />
-if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
+if (window.location.hostname.indexOf("localhost") >= 0 ||
+    window.location.hostname.indexOf("10.0.0.107") >= 0 ||
+    window.location.hostname.indexOf("xdai.io") >=0 )
+  {
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
@@ -452,6 +460,30 @@ class App extends Component {
     }
 
 
+    let cryptogBalance = 0
+    if(this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown") && this.state.contracts.Slammers){
+      //check for badges for this user
+      cryptogBalance = await this.state.contracts.Slammers.balanceOf(this.state.account).call()
+      if(cryptogBalance>0){
+        console.log("cryptogBalance ",cryptogBalance)
+        let myCryptogs = await this.state.contracts["Slammers"].tokensOfOwner(this.state.account).call()
+        console.log("myCryptogs:",myCryptogs)
+        if(myCryptogs && myCryptogs.length>0 && this.state.myCryptogs!=myCryptogs){
+          console.log("UPDATE myCryptogs:",myCryptogs)
+          this.setState({myCryptogs:myCryptogs})
+          let myCryptogObjs = []
+          for(let i in myCryptogs ){
+            console.log("look up ",myCryptogs[i])
+            myCryptogObjs.push( await this.state.contracts["Slammers"].getToken(myCryptogs[i]).call() )
+          }
+          console.log("myCryptogObjs",myCryptogObjs)
+          this.setState({myCryptogObjs:myCryptogObjs})
+        }
+      }
+
+    }
+
+
     //console.log(">>>>>>> <<< >>>>>> Looking into iframe...")
     //console.log(document.getElementById('galleassFrame').contentWindow['web3'])
 
@@ -527,7 +559,7 @@ class App extends Component {
         xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
       }
 
-      this.setState({ethBalance,daiBalance,xdaiBalance,badgeBalance,hasUpdateOnce:true})
+      this.setState({ethBalance,daiBalance,xdaiBalance,badgeBalance,cryptogBalance,hasUpdateOnce:true})
     }
 
 
@@ -585,6 +617,13 @@ class App extends Component {
     let { network, web3 } = this.state;
     if (web3 && network !== prevState.network /*&& !this.checkNetwork()*/) {
       console.log("WEB3 DETECTED BUT NOT RIGHT NETWORK",web3, network, prevState.network);
+
+      var iframe = document.getElementById("cryptogsFrame");
+      console.log("checking frame...")
+      if(iframe){
+        iframe.contentWindow.web3 = web3
+        console.log("set frame...")
+      }
       //this.changeAlert({
       //  type: 'danger',
       //  message: 'Wrong Network. Please use Custom RPC endpoint: https://dai.poa.network or turn off MetaMask.'
@@ -1058,11 +1097,11 @@ render() {
         console.log("Transaction Receipt", transaction, receipt)
       }}
       />
-        <iframe src="http://localhost:3001" style={{zIndex:9999,position:"absolute",left:0,top:0,width:"100%",height:"100%",backgroundColor:"#FFFFFF"}}>
-        </iframe>
+
       </div>
     )
   }
+  //<iframe src="http://localhost:3001" style={{zIndex:9999,position:"absolute",left:0,top:0,width:"100%",height:"100%",backgroundColor:"#FFFFFF"}}></iframe>
 
   let eventParser = ""
 
@@ -1335,11 +1374,31 @@ render() {
             )
           }
 
+          let cryptogDisplay = ""
+          if(this.state.cryptogBalance>0){
+            cryptogDisplay = (
+              <div>
+                <Badges
+                  badges={this.state.myCryptogObjs}
+                  address={account}
+                  selectBadge={this.selectBadge.bind(this)}
+                />
+                <Ruler/>
+              </div>
+            )
+          }
+
+
+          //<iframe id="cryptogsFrame" style={{zIndex:99,position:"absolute",left:0,top:0,width:800,height:600}} src="http://cryptogs.xdai.io:8000" />
+
           switch(view) {
             case 'main':
             return (
               <div>
                 <div className="main-card card w-100" style={{zIndex:1}}>
+
+
+                <iframe id="cryptogsFrame" style={{zIndex:99,position:"absolute",left:0,top:0,width:800,height:600}} src="http://cryptogs.xdai.io:8000" />
 
 
                   {extraTokens}
@@ -1350,6 +1409,9 @@ render() {
                   <Ruler/>
                   <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
+
+                  {cryptogDisplay}
+
                   {badgeDisplay}
 
                   <MainCard
@@ -1883,6 +1945,19 @@ render() {
         newPrivateKey={this.state.newPrivateKey}
         fallbackWeb3Provider={WEB3_PROVIDER}
         onUpdate={async (state) => {
+
+          console.log("!@#$!@#!@#!@#!@# NO WEB3 SET IT?",window.web3)
+          window.web3 = new Web3(WEB3_PROVIDER);
+          var iframe = document.getElementById("cryptogsFrame");
+          if(iframe){
+            iframe.contentWindow.web3 = window.web3
+            iframe.contentWindow.web3.eth.getAccounts = ()=>{
+              return new Promise(function(resolve, reject) {
+                resolve([state.account]);
+              });
+            }
+          }
+
           //console.log("DAPPARATUS UPDATE",state)
           if(ERC20TOKEN){
             delete state.balance
@@ -1971,6 +2046,7 @@ render() {
         }}
         />
         {eventParser}
+
       </div>
     </div>
     </I18nextProvider>
