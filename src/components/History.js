@@ -192,7 +192,6 @@ export default class History extends React.Component {
         if(theseTransactionsByAddress[r].data){
 
           let emojiText = toArray(theseTransactionsByAddress[r].data)
-          //<Emoji text={Autolinker.link()} />
           txns.push(
             <div style={{paddingTop:10,paddingBottom:10}}>
               <Ruler />
