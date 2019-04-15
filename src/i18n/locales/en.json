@@ -108,7 +108,8 @@
     },
     "mint": {
       "title": "Register a Movie",
-      "image_title": "Upload image",
+      "image_title": "Upload poster",
+      "movie_title": "Upload movie",
       "rightholder": {
         "address": "Address of Rightholder",
         "name": "Name of Rightholder"

@@ -108,7 +108,8 @@
     },
     "mint": {
       "title": "Einen Film registrieren",
-      "image_title": "Bild hochladen",
+      "image_title": "Poster hochladen",
+      "movie_title": "Film hochladen",
       "rightholder": {
         "address": "Adresse des Rechteinhabers",
         "name": "Name des Rechteinhabers"

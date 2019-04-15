@@ -5,6 +5,8 @@ import ipfsClient from 'ipfs-http-client';
 import {Buffer} from 'buffer';
 import axios from 'axios';
 
+import Uploader from './Uploader';
+
 // Taken from Exchange.js
 const GASBOOSTPRICE = 0.25;
 
@@ -15,7 +17,6 @@ export default class RegisterMovie extends React.Component {
     this.ipfs = ipfsClient(this.ipfsEndpoint, '5001', {protocol: 'https'});
     this.submit = this.submit.bind(this);
     this.upload = this.upload.bind(this);
-    this.readFile = this.readFile.bind(this);
 
     const {mainnetweb3, address} = this.props;
     const pk = localStorage.getItem('metaPrivateKey');
@@ -39,6 +40,7 @@ export default class RegisterMovie extends React.Component {
           address: mainnetMetaAddress,
         },
       },
+      uploader: {},
     };
   }
 
@@ -58,39 +60,18 @@ export default class RegisterMovie extends React.Component {
       changeView,
     } = this.props;
     const {image, movieName, rightholderAddress, rightholderName} = this.refs;
-    const {provider, meta} = this.state;
-
-    let imageBuf;
-    try {
-      imageBuf = await this.readFile(image);
-    } catch (err) {
-      this.changeAlert({
-        type: 'warning',
-        message: "Couldn't read file to upload",
-      });
-      console.log(err);
-    }
-
-    let imageHash;
-    try {
-      imageHash = await this.upload(imageBuf);
-    } catch (err) {
-      this.changeAlert({
-        type: 'warning',
-        message: "Couldn't upload image",
-      });
-      console.log(err);
-    }
+    const {provider, meta, uploader} = this.state;
 
     const token = {
       name: movieName.value,
       description: 'A movie registered by the Burner Wallet',
-      image: `https://${this.ipfsEndpoint}/ipfs/${imageHash}`,
+      image: uploader.posters,
       rightholder: {
         // NOTE: This is currently expressed through the ERC721 token holder
         //address: rightholderAddress.value,
         name: rightholderName.value,
       },
+      movie: uploader.movies,
     };
 
     let tokenHash;
@@ -221,22 +202,26 @@ export default class RegisterMovie extends React.Component {
     }
   }
 
-  async readFile(file) {
-    return new Promise((resolve, reject) => {
-      if (file.files.length) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          resolve(Buffer(reader.result));
-        };
-        reader.readAsArrayBuffer(file.files[0]);
-      } else {
-        reject(new Error('No file selected'));
+  uploadStatus(uploaderId) {
+    const {uploader} = this.state;
+    return (err, urls) => {
+      if (err) {
+        this.changeAlert({
+          type: 'warning',
+          message: err.message,
+        });
+        console.log(err);
       }
-    });
+      this.setState(
+        Object.assign(uploader, {
+          [uploaderId]: urls,
+        }),
+      );
+    };
   }
 
   render() {
-    const {rightholderAddress} = this.state;
+    const {rightholderAddress, uploader} = this.state;
 
     return (
       <div>
@@ -289,11 +274,21 @@ export default class RegisterMovie extends React.Component {
           </div>
           <div className="form-group w-100">
             <label>{i18n.t('mint.image_title')}</label>
-            <div className="input-group">
-              <input ref="image" type="file" />
-            </div>
+            <Uploader
+              fileType="image"
+              uploadStatus={this.uploadStatus('posters')}
+            />
+          </div>
+          <div className="form-group w-100">
+            <label>{i18n.t('mint.movie_title')}</label>
+            <Uploader
+              destinationBucket="cinemarket-videos"
+              fileType="video"
+              uploadStatus={this.uploadStatus('movies')}
+            />
           </div>
           <button
+            disabled={!(uploader && uploader.posters && uploader.movies)}
             name="theVeryBottom"
             className={`btn btn-lg w-100`}
             style={this.props.buttonStyle.primary}
