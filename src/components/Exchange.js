@@ -30,7 +30,7 @@ import {
   Exit,
 } from 'leap-core';
 
-import { bi } from 'jsbi-utils';
+import { bi, add, divide } from 'jsbi-utils';
 
 import { toBuffer, bufferToHex } from 'ethereumjs-util';
 
@@ -139,7 +139,34 @@ export default class Exchange extends React.Component {
       wyreFundAmount: 5,
       wyreWidgetOpen: false,
     }
+
+    setInterval(() => this.updatePendingExits(daiAddress, xdaiweb3), 5000);
   }
+
+  updatePendingExits(daiAddress, xdaiweb3) {
+    const account = daiAddress;
+    const tokenAddr = this.props.daiContract._address;
+                    
+    xdaiweb3.getColor(tokenAddr)
+    .then(color => {
+      return fetch(
+      `https://yxygzjw6s4.execute-api.eu-west-1.amazonaws.com/testnet/exits/${account}/${color}`,
+      { method: "GET", mode: "cors" }
+      );
+    })
+    .then(response => response.json())
+    .then(rsp => {
+      console.log(rsp);
+      const pendingValue = rsp.reduce((sum, v) => add(sum, bi(v.value)), bi(0));
+      const pendingTokens = parseInt(String(divide(pendingValue, bi(10 ** 16)))) / 100;
+      const pendingMsg = "Pending exits of " + pendingTokens.toString() + " pDAI";
+      this.setState({
+        pendingMsg
+      });
+    });
+  };
+
+
   updateState = (key, value) => {
     this.setState({ [key]: value },()=>{
       this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
@@ -1405,18 +1432,6 @@ export default class Exchange extends React.Component {
             <div className="col-3 p-1">
               <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
-                this.setState({
-                  daiToXdaiMode:"withdrawing",
-                  daiBalanceAtStart:this.props.daiBalance,
-                  daiBalanceShouldBe:parseFloat(this.props.daiBalance)+parseFloat(this.state.amount),
-                  loaderBarColor:"#f5eb4a",
-                  loaderBarStatusText:"Sending funds to bridge...",
-                  loaderBarPercent:0,
-                  loaderBarStartTime: Date.now(),
-                  loaderBarClick:()=>{
-                    alert(i18n.t('exchange.go_to_etherscan'))
-                  }
-                })
                 console.log("Withdrawing to ",toDaiBridgeAccount)
 
 
@@ -1478,6 +1493,7 @@ export default class Exchange extends React.Component {
                     let inputTx;
                     let tx;
                     let setup;
+                    let color;
                     const amount = bi(this.state.amount * 10 ** 18).toString();
                     const tokenAddr = this.props.daiContract._address;
                     
@@ -1486,7 +1502,8 @@ export default class Exchange extends React.Component {
                       this.state.xdaiweb3.getConfig(),
                       this.state.xdaiweb3.getColor(tokenAddr),
                     ])
-                    .then(([unspent, config, color]) => {
+                    .then(([unspent, config, _color]) => {
+                      color = _color;
                       console.log(unspent, config, color);
                       console.log(amount);
                       tx = Tx.transferFromUtxos(
@@ -1515,12 +1532,6 @@ export default class Exchange extends React.Component {
                       const sigHashBuff = Exit.sigHashBuff(utxoId, bi(amount));
                       const sigHash = `0x${sigHashBuff.toString('hex')}`;
                       setup = {
-                        unspent: {
-                          outpoint: {
-                            hash: bufferToHex(tx.inputs[0].prevout.hash),
-                            index: tx.inputs[0].prevout.index,
-                          },
-                        },
                         inputTx,
                         tx: transferTx,
                         effectiveBlock: periodBlockRange(transferTx.blockNumber)[1],
@@ -1541,7 +1552,7 @@ export default class Exchange extends React.Component {
                       setup.signedData = signedData;
                       console.log(setup);
                       return fetch(
-                        'https://ycxraahrrb.execute-api.eu-west-1.amazonaws.com/testnet/sellExit',
+                        'https://yxygzjw6s4.execute-api.eu-west-1.amazonaws.com/testnet/sellExit',
                         {
                           method: "POST",
                           mode: "cors",
@@ -2397,6 +2408,9 @@ export default class Exchange extends React.Component {
     //console.log("eth price ",this.props.ethBalance,this.props.ethprice)
     return (
       <div style={{marginTop:30}}>
+        {this.state.pendingMsg && <div class="pending-exits" style={{
+          padding: '10px', backgroundColor: 'orange', textAlign: 'center'
+        }}>{this.state.pendingMsg}</div> }
 
         {tokenDisplay}
 
