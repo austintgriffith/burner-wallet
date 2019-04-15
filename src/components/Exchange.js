@@ -24,6 +24,7 @@ import {
   Input as RInput,
   Field
 } from 'rimble-ui'
+
 import {
   Unspent,
   Tx,
@@ -39,23 +40,7 @@ import {
 
 import { fromRpcSig } from 'ethereumjs-util';
 
-import { bi, add, divide, lessThan } from 'jsbi-utils';
-
-
-import {
-  Unspent,
-  Tx,
-  Input,
-  Output,
-  Outpoint,
-  OutpointJSON,
-  Type,
-  LeapTransaction,
-  helpers,
-  Exit,
-} from 'leap-core';
-
-import { bi } from 'jsbi-utils';
+import { bi, add, divide } from 'jsbi-utils';
 
 import { toBuffer, bufferToHex } from 'ethereumjs-util';
 
@@ -181,276 +166,32 @@ export default class Exchange extends React.Component {
       wyreWidgetOpen: false,
     }
 
-    this.updatePendingExits(daiAddress, xdaiweb3);
-
-    this.getWrappedDaiBalance();
-  }
-
-  delay(time) {
-    return new Promise(resolve => setTimeout(resolve, time));
-  }
-
-  getTransactionReceiptMined(txHash) {
-    const transactionReceiptRetry = () => this.state.mainnetweb3.eth.getTransactionReceipt(txHash)
-        .then(receipt => receipt != null
-            ? receipt
-            : this.delay(2000).then(transactionReceiptRetry));
-    return transactionReceiptRetry();
-  }
-
-  async getGasPrice() {
-    const rsp = await axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
-      .catch((err)=>{
-        console.log("Error getting gas price", err)
-      });
-
-    if(rsp && rsp.data.average > 0 && rsp.data.average < 200) {
-      rsp.data.average = rsp.data.average + (rsp.data.average * GASBOOSTPRICE);
-      return Math.round(rsp.data.average * 100) / 1000;
-    }
-  }
-
-  async getWrappedDaiBalance() {
-    // not a sundai, return immediatelly
-    if (this.state.notSundai) return true;
-
-    const rootPdai = new this.state.mainnetweb3.eth.Contract(
-      require("../contracts/SunDai.abi.js"),
-      this.props.pdaiContract._address
-    );
-
-    try {
-      const daiBalance = await rootPdai.methods.daiBalance(this.state.daiAddress).call();
-      return parseInt(daiBalance);
-    } catch (e) {
-      // no daiBalance function = not a sundai contract, so skipping this check
-      if (e.message.indexOf('Returned values aren\'t valid') >= 0) {
-        this.setState({ notSundai: true });
-        return 0;
-      }
-      throw e;
-    }
-  }
-
-  async maybeApprovePDai(amountWei) {
-
-    const pDaiAllowance = await this.props.daiContract.methods.allowance(
-      this.state.daiAddress,
-      this.props.pdaiContract._address,
-    ).call({ from: this.state.daiAddress })
-
-    // Only trigger allowance dialogue when amount is more than allowance
-    if (new BN(pDaiAllowance).lt(new BN(amountWei))) {
-      this.setState({
-        loaderBarColor:"#f5eb4a",
-        loaderBarStatusText: "Approving sunDai amount for Plasma bridge"
-      })
-
-      const metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
-
-      const receipt = await this.props.pTx(
-        metaMaskDaiContract.methods.approve(this.props.pdaiContract._address, amountWei),
-        150000, 0, 0,
-      );
-
-      console.log(receipt);
-      return receipt;
-    }
+    setInterval(() => this.updatePendingExits(daiAddress, xdaiweb3), 5000);
   }
 
   updatePendingExits(daiAddress, xdaiweb3) {
     const account = daiAddress;
-    const tokenAddr = this.props.pdaiContract._address;
-
+    const tokenAddr = this.props.daiContract._address;
+                    
     xdaiweb3.getColor(tokenAddr)
     .then(color => {
       return fetch(
-        `${this.props.marketMaker}/exits/${account}/${color}`,
+      `https://yxygzjw6s4.execute-api.eu-west-1.amazonaws.com/testnet/exits/${account}/${color}`,
       { method: "GET", mode: "cors" }
       );
     })
     .then(response => response.json())
     .then(rsp => {
-      if (rsp.length === 0 || !rsp.reduce) {
-        this.setState({
-          pendingMsg: null
-        });
-        return;
-      }
+      console.log(rsp);
       const pendingValue = rsp.reduce((sum, v) => add(sum, bi(v.value)), bi(0));
       const pendingTokens = parseInt(String(divide(pendingValue, bi(10 ** 16)))) / 100;
-      const pendingMsg = "Pending exits of " + pendingTokens.toString() + " sunDAI";
+      const pendingMsg = "Pending exits of " + pendingTokens.toString() + " pDAI";
       this.setState({
         pendingMsg
       });
     });
   };
 
-  async rootNetworkSend(to, tx, gasLimit = 100000) {
-    if (this.state.mainnetMetaAccount) {
-      const gwei = await this.getGasPrice();
-
-      let paramsObject = {
-        from: this.state.daiAddress,
-        value: 0,
-        gas: gasLimit,
-        gasPrice: Math.round(gwei * 1000000000)
-      }
-
-      paramsObject.to = to;
-      paramsObject.data = tx.encodeABI();
-
-      const signed = await this.state.mainnetweb3.eth.accounts
-        .signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey);
-    
-      console.log("========= >>> SIGNED",signed)
-      return this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction);
-    } else {
-      return this.props.pTx(tx, 150000, 0, 0);
-    }
-  }
-
-  async directSell(amount, color) {
-    // do not allow to exit more than daiBalance from SunDai
-    if (lessThan(bi(this.state.exitableSunDaiBalance), amount)) {
-      amount = bi(this.state.exitableSunDaiBalance);
-    }
-
-    console.log('Exitable amount', amount.toString());
-
-    let rsp;
-    try {
-      rsp = await axios.get(`${this.props.marketMaker}/deals`, { crossdomain: true });
-    } catch (e) {
-      console.error(e);
-      this.props.changeAlert({
-        type: 'warning',
-        message: 'Failed to fetch markets'
-      });
-      return;
-    }
-
-    if (rsp.data.errorMessage) {
-      console.error(rsp.data);
-      this.props.changeAlert({
-        type: 'warning',
-        message: 'Failed to fetch markets: ' + rsp.data.errorMessage
-      });
-      return;
-    }
-
-    const market = rsp.data.deals.find(deal => deal.color === color);
-    if (!market || lessThan(bi(market.balance), amount)) {
-      this.props.changeAlert({
-        type: 'warning',
-        message: 'Not enough liquidity on the market'
-      });
-      return;
-    }
-
-    const mmAddress = rsp.data.address;
-    console.log(mmAddress, rsp);
-      
-    this.setState({
-      daiToXdaiMode:"withdrawing",
-      amount:"",
-      loaderBarColor:"#4ab3f5",
-      loaderBarStatusText:"Transferring to market maker...",
-    })
-
-    let receipt;
-    try {
-      receipt = await this.props.tokenSendV2(
-        this.state.daiAddress,
-        mmAddress,
-        amount,
-        color,
-        this.state.xdaiweb3,
-        this.props.web3,
-        this.state.mainnetMetaAccount && this.state.mainnetMetaAccount.privateKey
-      )
-    } catch (e) {
-      console.error(e);
-      this.props.changeAlert({
-        type: 'warning',
-        message: 'Transfer failed'
-      });
-      return;
-    }
-
-    console.log('Transfer to market maker:', receipt);
-
-    this.setState({
-      daiToXdaiMode:"withdrawing",
-      amount:"",
-      loaderBarColor:"#4ab3f5",
-      loaderBarStatusText:"Posting sell request...",
-    })
-
-    rsp = await axios.post(`${this.props.marketMaker}/directSell`, {
-      txHash: receipt.hash,
-    }, { crossdomain: true }).catch(e => {
-      console.error(e);
-      this.props.changeAlert({
-        type: 'warning',
-        message: 'Failed to sell'
-      });
-      return;
-    });
-
-    if (rsp.data.errorMessage) {
-      console.error(rsp.data);
-      this.props.changeAlert({
-        type: 'warning',
-        message: 'Failed to sell: ' + rsp.data.errorMessage
-      });
-      return;
-    }
-
-    console.log('Payout tx', rsp.data);
-
-    this.setState({
-      daiToXdaiMode:"withdrawing",
-      amount:"",
-      loaderBarColor:"#4ab3f5",
-      loaderBarStatusText:"Waiting for payout tx to mine...",
-    })
-    receipt = await this.getTransactionReceiptMined(rsp.data);
-
-    console.log('got receipt', receipt);
-
-    if (!receipt.status) {
-      console.log('Payout failed');
-      return;
-    };
-
-    this.setState({
-      daiToXdaiMode:"withdrawing",
-      amount:"",
-      loaderBarColor:"#4ab3f5",
-      loaderBarStatusText:"Unwrapping sunDAI for DAI...",
-    })
-
-    const web3 = this.state.mainnetMetaAccount
-      ? this.props.mainnetweb3
-      : this.props.web3;
-
-    const sunDai = new web3.eth.Contract(
-      require("../contracts/SunDai.abi.js"),
-      this.props.pdaiContract._address,
-    )
-
-    receipt = await this.rootNetworkSend(sunDai._address, sunDai.methods.burnSender());
-
-    console.log(receipt);
-
-    this.setState({
-      daiToXdaiMode:"",
-      amount:"",
-      loaderBarColor:"#4ab3f5",
-      loaderBarStatusText:"",
-    })    
-  }
 
   updateState = (key, value) => {
     this.setState({ [key]: value },()=>{
