@@ -2414,7 +2414,7 @@ export default class Exchange extends React.Component {
     //console.log("eth price ",this.props.ethBalance,this.props.ethprice)
     return (
       <div style={{marginTop:30}}>
-        {this.state.pendingMsg && <div class="pending-exits" style={{
+        {this.state.pendingMsg && <div style={{
           padding: '10px', backgroundColor: 'orange', textAlign: 'center'
         }}>{this.state.pendingMsg}</div> }
 
