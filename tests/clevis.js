@@ -249,6 +249,17 @@ module.exports = {
         assert(result==0,"fast ERRORS")
       });
     });
+
+  },
+
+  withrelay:()=>{
+    describe(bigHeader('FULL'), function() {
+      it('should run the full test (everything after compile)', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","full")
+        assert(result==0,"full ERRORS")
+      });
+    });
     describe(bigHeader('RELAY HUB'), function(){
       it('should set Relay Hub address to Relay Recepient and provide it with a deposit', async function(){
         const Web3 = require('web3')
