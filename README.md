@@ -16,6 +16,7 @@ you'll need ganache installed and running
 ganache-cli
 ```
 
+clone the burner wallet repo
 ```
 git clone https://github.com/austintgriffith/burner-wallet.git
 cd burner-wallet
