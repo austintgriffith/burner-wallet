@@ -43,6 +43,8 @@ import namehash from 'eth-ens-namehash'
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
 
+import YourModule from './components/YourModule'
+
 
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
@@ -1333,7 +1335,52 @@ render() {
             )
           }
 
+
           switch(view) {
+            case 'yourmodule':
+            return (
+              <div>
+                <div className="send-to-address card w-100" style={{zIndex:1}}>
+                  <NavCard title={"Nav Title?"} titleLink={""} goBack={this.goBack.bind(this)}/>
+                  <YourModule
+                    eth={eth}
+                    dai={dai}
+                    xdai={xdai}
+                    ERC20NAME={ERC20NAME}
+                    ERC20IMAGE={ERC20IMAGE}
+                    ERC20TOKEN={ERC20TOKEN}
+                    ERC20VENDOR={ERC20VENDOR}
+                    ethprice={this.state.ethprice}
+                    ethBalance={this.state.ethBalance}
+                    daiBalance={this.state.daiBalance}
+                    xdaiBalance={this.state.xdaiBalance}
+                    mainnetweb3={this.state.mainnetweb3}
+                    xdaiweb3={this.state.xdaiweb3}
+                    daiContract={this.state.daiContract}
+                    ensContract={this.state.ensContract}
+                    isVendor={this.state.isVendor}
+                    isAdmin={this.state.isAdmin}
+                    contracts={this.state.contracts}
+                    buttonStyle={buttonStyle}
+                    changeAlert={this.changeAlert}
+                    setGwei={this.setGwei}
+                    network={this.state.network}
+                    tx={this.state.tx}
+                    web3={this.state.web3}
+                    send={this.state.send}
+                    nativeSend={this.state.nativeSend}
+                    address={account}
+                    balance={balance}
+                    goBack={this.goBack.bind(this)}
+                    dollarDisplay={dollarDisplay}
+                  />
+                </div>
+                <Bottom
+                  text={"buttom button"}
+                  action={this.goBack.bind(this)}
+                />
+              </div>
+            )
             case 'main':
             return (
               <div>
@@ -1344,10 +1391,15 @@ render() {
 
                   <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
+
+
+
+
                   <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
                   <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
+
                   {badgeDisplay}
 
                   <MainCard
@@ -1677,7 +1729,7 @@ render() {
                       // Use xDai as default token
                       const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
                       // -- Temp hacks
-                      const expirationTime = 365; // Hard-coded to 1 year link expiration. 
+                      const expirationTime = 365; // Hard-coded to 1 year link expiration.
                       const amountToSend = amount*10**18 ; // Conversion to wei
                       // --
                       if(!ERC20TOKEN)
