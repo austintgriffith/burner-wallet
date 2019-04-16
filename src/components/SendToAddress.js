@@ -175,12 +175,8 @@ export default class SendToAddress extends React.Component {
       if(!ERC20TOKEN && parseFloat(this.props.balance) <= 0){
         console.log("No funds!?!",ERC20TOKEN,parseFloat(this.props.balance))
         this.props.changeAlert({type: 'warning', message: "No Funds."})
-      }else if(!ERC20TOKEN && parseFloat(this.props.balance)-0.0001<=parseFloat(amount)){
-        let extraHint = ""
-        if(!ERC20TOKEN && parseFloat(amount)-parseFloat(this.props.balance)<=.01){
-          extraHint = "(gas costs)"
-        }
-        this.props.changeAlert({type: 'warning', message: 'Not enough funds: '+dollarDisplay(Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100)+' '+extraHint})
+      }else if(!ERC20TOKEN && parseFloat(this.props.balance)<parseFloat(amount)){
+        this.props.changeAlert({type: 'warning', message: 'Not enough funds: '+dollarDisplay(Math.floor((parseFloat(this.props.balance))*100)/100)})
       }else if((ERC20TOKEN && (parseFloat(this.props.balance)<parseFloat(amount)))){
         console.log("SO THE BALANCE IS LESS!")
         this.props.changeAlert({type: 'warning', message: 'Not enough tokens: $'+parseFloat(this.props.balance)})
