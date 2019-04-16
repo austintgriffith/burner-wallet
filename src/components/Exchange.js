@@ -1500,82 +1500,22 @@ export default class Exchange extends React.Component {
                     let tx;
                     let setup;
                     let color;
-                    const amount = bi(this.state.amount * 10 ** 18).toString();
+                    // TODO: get real decimals
+                    const amount = bi(this.state.amount * 10 ** 18);
                     const tokenAddr = this.props.daiContract._address;
                     
-                    Promise.all([
-                      this.state.xdaiweb3.getUnspent(this.state.daiAddress),
-                      this.state.xdaiweb3.getConfig(),
-                      this.state.xdaiweb3.getColor(tokenAddr),
-                    ])
-                    .then(([unspent, config, _color]) => {
-                      color = _color;
-                      console.log(unspent, config, color);
-                      console.log(amount);
-                      tx = Tx.transferFromUtxos(
-                        unspent, this.state.daiAddress,
-                        config.exitHandlerAddr, amount, color,
-                      );
-                      return Promise.all([
-                        tx.signWeb3(this.props.web3),
-                        this.state.xdaiweb3.eth.getTransaction(
-                          bufferToHex(tx.inputs[0].prevout.hash)
-                        ),
-                      ]);
-                    })
-                    .then(([signedTx, _inputTx]) => {
-                      console.log(inputTx);
-                      inputTx = _inputTx;
-                      console.log('TxHash:', signedTx.hash());
-                      return this.state.xdaiweb3.eth.sendSignedTransaction(
-                        signedTx.hex()
-                      );
-                    })
-                    .then(transferTx => {
-                      const tx = Tx.fromRaw(transferTx.raw);
-                      
-                      const utxoId = (new Outpoint(tx.hash(), 0)).getUtxoId();
-                      const sigHashBuff = Exit.sigHashBuff(utxoId, bi(amount));
-                      const sigHash = `0x${sigHashBuff.toString('hex')}`;
-                      setup = {
-                        inputTx,
-                        tx: transferTx,
-                        effectiveBlock: periodBlockRange(transferTx.blockNumber)[1],
-                        sigHashBuff,
-                        sigHash,
-                      };
-
-                      return Tx.signMessageWithWeb3(this.props.web3, sigHash);
-                    })
-                    .then(sig => {
-                      const vBuff = Buffer.alloc(32);
-                      vBuff.writeInt8(sig.v, 31);    
-                      const signedData = Exit.bufferToBytes32Array(
-                        Buffer.concat([setup.sigHashBuff, Buffer.from(sig.r), Buffer.from(sig.s), vBuff])
-                      );
-                      delete setup.sigHash;
-                      delete setup.sigHashBuff;
-                      setup.signedData = signedData;
-                      console.log(setup);
-                      return fetch(
-                        'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet/sellExit',
-                        {
-                          method: "POST",
-                          mode: "cors",
-                          cache: "no-cache",
-                          headers: {
-                              "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify(setup),
-                        }
-                      );
-                    })
-                    .then(response => response.json())
-                    .then(rsp => {
-                      console.log(rsp);
-                    }).catch(err => {
-                      console.log(err);
-                    });
+                    this.state.xdaiweb3.getColor(tokenAddr)
+                      .then(color =>
+                        Exit.fastSellAmount(
+                          this.state.daiAddress, amount, color,
+                          this.state.xdaiweb3, this.props.web3,
+                          'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet/sellExit'
+                        )
+                      ).then(rsp => {
+                        console.log(rsp);
+                      }).catch(err => {
+                        console.log(err);
+                      });
                   }
                 }
               }}>
