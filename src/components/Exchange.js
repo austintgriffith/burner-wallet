@@ -24,7 +24,7 @@ import {
   Button,
   OutlineButton,
   Icon,
-  Input,
+  Input as RInput,
   Field
 } from 'rimble-ui'
 import {
@@ -39,6 +39,8 @@ import {
   helpers,
   Exit,
 } from 'leap-core';
+
+import { fromRpcSig } from 'ethereumjs-util';
 
 import { bi, add, divide } from 'jsbi-utils';
 
@@ -162,10 +164,7 @@ export default class Exchange extends React.Component {
       wyreWidgetOpen: false,
     }
 
-<<<<<<< HEAD
     this.updatePendingExits(daiAddress, xdaiweb3);
-=======
->>>>>>> feat: show pending exits message
     setInterval(() => this.updatePendingExits(daiAddress, xdaiweb3), 5000);
   }
 
@@ -176,26 +175,19 @@ export default class Exchange extends React.Component {
     xdaiweb3.getColor(tokenAddr)
     .then(color => {
       return fetch(
-<<<<<<< HEAD
-      `https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet/exits/${account}/${color}`,
-=======
       `https://yxygzjw6s4.execute-api.eu-west-1.amazonaws.com/testnet/exits/${account}/${color}`,
->>>>>>> feat: show pending exits message
       { method: "GET", mode: "cors" }
       );
     })
     .then(response => response.json())
     .then(rsp => {
       console.log(rsp);
-<<<<<<< HEAD
       if (rsp.length === 0) {
         this.setState({
           pendingMsg: null
         });
         return;
       }
-=======
->>>>>>> feat: show pending exits message
       const pendingValue = rsp.reduce((sum, v) => add(sum, bi(v.value)), bi(0));
       const pendingTokens = parseInt(String(divide(pendingValue, bi(10 ** 16)))) / 100;
       const pendingMsg = "Pending exits of " + pendingTokens.toString() + " pDAI";
@@ -2040,7 +2032,7 @@ export default class Exchange extends React.Component {
           p={3}
         >
           <Field label={'To Address'} mb={3}>
-            <Input
+            <RInput
               type="text"
               placeholder="0x..."
               value={this.state.daiSendToAddress}
@@ -2053,7 +2045,7 @@ export default class Exchange extends React.Component {
           </div>
           <Field label={'Send Amount'} mb={3}>
             <Flex>
-              <Input
+              <RInput
                 type="number"
                 step="0.1"
                 placeholder="$0.00"
@@ -2158,7 +2150,7 @@ export default class Exchange extends React.Component {
           p={3}
         >
           <Field label={'To Address'} mb={3}>
-            <Input
+            <RInput
               type="text"
               placeholder="0x..."
               value={this.state.ethSendToAddress}
@@ -2171,7 +2163,7 @@ export default class Exchange extends React.Component {
           </div>
           <Field label={'Send Amount'} mb={3}>
             <Flex>
-              <Input
+              <RInput
                 type="number"
                 step="0.1"
                 placeholder="$0.00"
@@ -2261,7 +2253,7 @@ export default class Exchange extends React.Component {
           p={3}
         >
           <Field label={'To Address'} mb={3}>
-            <Input
+            <RInput
               type="text"
               className="form-control"
               placeholder="0x..."
@@ -2274,7 +2266,7 @@ export default class Exchange extends React.Component {
           </div>
           <Field label={'Send Amount'} mb={3}>
             <Flex>
-              <Input
+              <RInput
                 type="number"
                 step="0.1"
                 className="form-control"
