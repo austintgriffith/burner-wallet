@@ -18,6 +18,7 @@ import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
 
 import { Exit } from 'leap-core';
+import { fromRpcSig } from 'ethereumjs-util';
 import { bi, add, divide } from 'jsbi-utils';
 
 const BN = Web3.utils.BN
@@ -63,8 +64,8 @@ export default class Exchange extends React.Component {
     let xdaiweb3 = this.props.xdaiweb3
     //make it easier for local debugging...
     if(false && window.location.hostname.indexOf("localhost")>=0){
-      //console.log("WARNING, USING LOCAL RPC")
-      //xdaiweb3 = new Web3(new Web3.providers.HttpProvider("http://0.0.0.0:8545"))
+      console.log("WARNING, USING LOCAL RPC")
+      xdaiweb3 = new Web3(new Web3.providers.HttpProvider("http://0.0.0.0:8545"))
     }
     //let mainnetweb3 = new Web3("https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac")
     let mainnetweb3 = props.mainnetweb3
@@ -1431,37 +1432,38 @@ export default class Exchange extends React.Component {
                 if(this.state.xdaiMetaAccount){
                   //send funds using metaaccount on xdai
 
-                  let paramsObject = {
-                    from: this.state.daiAddress,
-                    to: toDaiBridgeAccount,
-                    value: this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether'),
-                    gas: 120000,
-                    gasPrice: Math.round(1.1 * 1000000000)
-                  }
-                  console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
-                  console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+                  const signer = {
+                    signTx: (tx) => {
+                      const privKeys = tx.inputs.map(_ => this.state.xdaiMetaAccount.privateKey);
+                      return tx.sign(privKeys);
+                    },
+                    signMessage: (msg) => {
+                      const { signature } = this.state.xdaiweb3.eth.accounts.sign(msg, this.state.xdaiMetaAccount.privateKey);
+                      const { r, s, v } = fromRpcSig(signature);
+                      return { r, s, v, signer: this.state.daiAddress };
+                    }
+                  };
 
-                  this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
-                    console.log("========= >>> SIGNED",signed)
-                      this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                        console.log("META RECEIPT",receipt)
-                        if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                          metaReceiptTracker[receipt.transactionHash] = true
-                          this.setState({
-                            amount:"",
-                            loaderBarColor:"#4ab3f5",
-                            loaderBarStatusText:"Waiting for bridge...",
-                            loaderBarClick:()=>{
-                              alert(i18n.t('exchange.idk'))
-                            }
-                          })
-                        }
-                      }).on('error', (err)=>{
-                        console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                        this.props.changeAlert({type: 'danger',message: err.toString()});
-                      }).then(console.log)
-                  });
-
+                  // TODO: get real decimals
+                  const amount = bi(this.state.amount * 10 ** 18);
+                  const tokenAddr = this.props.daiContract._address;
+                  console.log('MetA!!!', signer);
+                  this.state.xdaiweb3.getColor(tokenAddr)
+                    .then(color =>
+                      Exit.fastSellAmount(
+                        this.state.daiAddress, amount, color,
+                        this.state.xdaiweb3, this.props.web3,
+                        'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet/sellExit',
+                        signer,
+                      )
+                    ).then(rsp => {
+                      console.log(rsp);
+                      this.updatePendingExits(this.state.daiAddress, this.state.xdaiweb3);
+                      this.setState({ amount: "", daiToXdaiMode: false });
+                    }).catch(err => {
+                      console.log(err);
+                    });
+                  
                 }else{
 
                   //BECAUSE THIS COULD BE ON A TOKEN, THE SEND FUNCTION IS SENDING TOKENS TO THE BRIDGE HAHAHAHA LETs FIX THAT
