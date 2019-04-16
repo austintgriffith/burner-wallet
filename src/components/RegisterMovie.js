@@ -64,7 +64,10 @@ export default class RegisterMovie extends React.Component {
     try {
       imageBuf = await this.readFile(image);
     } catch (err) {
-      // TODO: Throw error to frontend
+      this.changeAlert({
+        type: 'warning',
+        message: "Couldn't read file to upload",
+      });
       console.log(err);
     }
 
@@ -72,7 +75,10 @@ export default class RegisterMovie extends React.Component {
     try {
       imageHash = await this.upload(imageBuf);
     } catch (err) {
-      // TODO: Throw error to frontend
+      this.changeAlert({
+        type: 'warning',
+        message: "Couldn't upload image",
+      });
       console.log(err);
     }
 
@@ -91,7 +97,10 @@ export default class RegisterMovie extends React.Component {
     try {
       tokenHash = await this.upload(Buffer(JSON.stringify(token)));
     } catch (err) {
-      // TODO: Throw error to frontend
+      this.changeAlert({
+        type: 'warning',
+        message: "Couldn't upload token",
+      });
       console.log(err);
     }
 
@@ -112,7 +121,10 @@ export default class RegisterMovie extends React.Component {
           meta.mainnet.account.privateKey,
         );
       } catch (err) {
-        // TODO: Throw error to frontend
+        this.changeAlert({
+          type: 'warning',
+          message: "Couldn't send transaction",
+        });
         console.log(err);
       }
       console.log('metareceipt', receipt);
@@ -148,8 +160,8 @@ export default class RegisterMovie extends React.Component {
         {crossdomain: true},
       )).data.average;
     } catch (err) {
-      return err;
       console.log('Error getting gas price', err);
+      return err;
     }
   }
 
