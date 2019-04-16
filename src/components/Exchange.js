@@ -1513,6 +1513,7 @@ export default class Exchange extends React.Component {
                         )
                       ).then(rsp => {
                         console.log(rsp);
+                        this.setState({ amount: "", daiToXdaiMode: false });
                       }).catch(err => {
                         console.log(err);
                       });
