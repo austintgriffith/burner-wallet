@@ -11,6 +11,11 @@ What we need is a way to exchange an intuitive currency like DAI using a simple 
 
 ### Contributing as a Developer/Designer
 
+you'll need ganache installed and running
+```
+ganache-cli
+```
+
 ```
 git clone https://github.com/austintgriffith/burner-wallet.git
 cd burner-wallet
@@ -22,15 +27,9 @@ npx clevis init
 ```
 (You'll need to hit enter a few times to specify some config directories.)
 
-
 install burner:
 ```
 npm i
-```
-
-in a new terminal install and fire up ganache:
-```
-ganache-cli
 ```
 
 link clevis 
@@ -38,12 +37,12 @@ link clevis
 alias clevis='./node_modules/clevis/bin.js'
 ```
 
-in a new terminal compile and deploy all contracts:
+compile, deploy, test, and inject all contracts in the frontend:
 ```
 clevis test full
 ```
 
-in a new terminal start the app:
+start the app:
 ```
 npm start
 ```
