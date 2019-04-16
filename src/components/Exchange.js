@@ -42,10 +42,6 @@ import {
 
 import { bi, add, divide } from 'jsbi-utils';
 
-import { toBuffer, bufferToHex } from 'ethereumjs-util';
-
-const { periodBlockRange } = helpers;
-
 const BN = Web3.utils.BN
 
 const GASBOOSTPRICE = 0.25
