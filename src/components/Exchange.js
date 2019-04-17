@@ -1435,12 +1435,14 @@ export default class Exchange extends React.Component {
                   const signer = {
                     signTx: (tx) => {
                       const privKeys = tx.inputs.map(_ => this.state.xdaiMetaAccount.privateKey);
-                      return tx.sign(privKeys);
+                      return Promise.resolve(tx.sign(privKeys));
                     },
                     signMessage: (msg) => {
                       const { signature } = this.state.xdaiweb3.eth.accounts.sign(msg, this.state.xdaiMetaAccount.privateKey);
                       const { r, s, v } = fromRpcSig(signature);
-                      return { r, s, v, signer: this.state.daiAddress };
+                      return Promise.resolve(
+                        { r, s, v, signer: this.state.daiAddress }
+                      );
                     }
                   };
 
