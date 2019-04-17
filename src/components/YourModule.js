@@ -57,10 +57,7 @@ export default class YourModule extends React.Component {
     Time to make a transaction with YourContract!
     */
     this.props.tx(this.state.YourContract.updateVar(name),120000,0,0,(result)=>{
-      console.log("ACTIVE:",result)
-      setTimeout(()=>{
-       this.setState({changingActive:false})
-      },1500)
+      console.log(result)
     })
 
   }
@@ -72,8 +69,8 @@ export default class YourModule extends React.Component {
     //
     let code = require("../contracts/YourContract.bytecode.js")
     this.props.tx(this.state.YourContract._contract.deploy({data:code}),640000,(receipt)=>{
-      console.log("~~~~~~ DEPLOY RECEIPT:",receipt)
-      this.setState({ YourContract: this.props.contractLoader("YourContract",receipt.contractAddress)})
+      let yourContract = this.props.contractLoader("YourContract",receipt.contractAddress)
+      this.setState({ YourContract: yourContract})
     })
   }
   render(){
@@ -94,7 +91,7 @@ export default class YourModule extends React.Component {
             YOURMODULE DISPLAY HERE
             <Ruler/>
             <div style={{padding:20}}>
-              The logged in user is {this.state.ensName}
+              The logged in user is
               <Blockie
                 address={this.props.address}
                 config={{size:6}}
