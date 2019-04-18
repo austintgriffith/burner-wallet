@@ -87,8 +87,8 @@ let titleImage = (
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "https://mainnet-rpc.thundercore.com"
-  WEB3_PROVIDER = "https://mainnet-rpc.thundercore.com";
+  XDAI_PROVIDER = "http://localhost:8545"
+  WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
   if(true){
     ERC20NAME = false
@@ -104,6 +104,11 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
     LOADERIMAGE = bufficorn
   }
 
+}
+else if (window.location.hostname.indexOf("tt.burnerwallet.io") >= 0) {
+  WEB3_PROVIDER = "https://mainnet-rpc.thundercore.com";
+  CLAIM_RELAY = 'https://x.xdai.io'
+  ERC20TOKEN = false//'Burner'
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = POA_XDAI_NODE;
@@ -1366,7 +1371,7 @@ render() {
                     dollarDisplay={dollarDisplay}
                     ERC20TOKEN={ERC20TOKEN}
                   />
-      
+
                   <RecentTransactions
                     dollarDisplay={dollarDisplay}
                     view={this.state.view}
