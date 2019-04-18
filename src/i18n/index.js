@@ -41,7 +41,7 @@ const options = {
     ja: {
       common: ja.ja
     },
-  },
+  }
 
   fallbackLng: "en",
 
