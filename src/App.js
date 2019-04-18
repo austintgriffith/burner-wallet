@@ -1395,6 +1395,7 @@ render() {
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
                       dollarDisplay={dollarDisplay}
+                      tokenSendV2={tokenSendV2.bind(this)}
                     />
                     <Ruler/>
                   </div>
@@ -2084,83 +2085,65 @@ render() {
 const NFT_COLOR_BASE = 32769; // 2^15 + 1
 const isNFT = (color: Number): boolean => color >= NFT_COLOR_BASE;
 
-async function tokenSend(to,value,gasLimit,txData,cb){
-  let {account,web3} = this.state
-
-  console.log("tokenSend")
-
-  let weiValue =  this.state.web3.utils.toWei(""+value, 'ether')
-
-  let setGasLimit = 60000
+// NOTE: This function is used heavily by legacy code. We've reimplemented it's
+// body though.
+// NOTE2: Color is currently hard-coded. Use tokenSendV2 to send specific colors.
+async function tokenSend(to, value, gasLimit, txData, cb) {
+  let { account, web3, xdaiweb3, metaAccount } = this.state
   if(typeof gasLimit == "function"){
-    cb=gasLimit
-  }else if(gasLimit){
-    setGasLimit=gasLimit
+    cb = gasLimit
   }
 
-  let data = false
   if(typeof txData == "function"){
     cb = txData
-  }else{
-    data = txData
   }
 
-  console.log("DAPPARATUS TOKEN SENDING WITH GAS LIMIT",setGasLimit)
+  value = xdaiweb3.utils.toWei(""+value, "ether")
 
-  const color = 0;
-  let result;
+  let receipt;
+  if (metaAccount) {
+    receipt = await tokenSendV2(account, to, value, 0, xdaiweb3, web3, metaAccount.privateKey)
+  } else {
+    receipt = await tokenSendV2(account, to, value, 0, xdaiweb3, web3, null)
+  }
+  // NOTE: The callback cb is not used correctly in the format 
+  // cb(error, receipt) throughout the app. We hence cannot send errors in
+  // the callback :(
+  // TODO: leap-core doesn't return receipts as part of their architecture.
+  // This will have to be addressed as part of this issue:
+  // https://github.com/leapdao/burner-wallet/issues/1
+  cb(receipt);
+}
 
-  this.state.xdaiweb3
-    .getUnspent(this.state.account)
-    .then(unspent => {
-      if (isNFT(color)) {
-        const { outpoint } = unspent.find(
-          ({ output }) =>
-            Number(output.color) === Number(color) &&
-            equal(bi(output.value), bi(weiValue))
-        );
-        const inputs = [new Input(outpoint)];
-        const outputs = [new Output(weiValue, to, color)];
-        return Tx.transfer(inputs, outputs);
-      }
+async function tokenSendV2(from, to, value, color, xdaiweb3, web3, privateKey) {
+  const unspent = await xdaiweb3.getUnspent(from)
 
-      const inputs = helpers.calcInputs(
-        unspent,
-        this.state.account,
-        weiValue,
-        color
-      );
-      const outputs = helpers.calcOutputs(
-        unspent,
-        inputs,
-        this.state.account,
-        to,
-        weiValue,
-        color
-      );
-      return Tx.transfer(inputs, outputs);
-    })
-    .then(tx => {
-      if(this.state.metaAccount){
-        const privs = [];
-        for(const input of tx.inputs){
-          privs.push(this.state.metaAccount.privateKey);
-        }
-        return tx.sign(privs);
-      } else {
-        return tx.signWeb3(web3);
-      }
-    })
-    .then(
-      signedTx => (this.state.xdaiweb3.eth.sendSignedTransaction(signedTx.hex()))
-      ,
-      err => {
-        console.log(err);
-      }
-    ).then(receipt => {
-      cb(receipt);
-    });
+  let transaction;
+  if (isNFT(color)) {
+    const { outpoint } = unspent.find(
+      ({ output }) =>
+        Number(output.color) === Number(color) &&
+        equal(bi(output.value), bi(value))
+    );
+    const inputs = [new Input(outpoint)];
+    const outputs = [new Output(value, to, color)];
+    transaction = Tx.transfer(inputs, outputs);
+  } else {
+    transaction = Tx.transferFromUtxos(unspent, from, to, value, color)
+  }
 
+  let signedTx;
+  if (!privateKey) {
+    signedTx = await transaction.signWeb3(web3)
+  } else {
+    const privs = [];
+    for(const input of transaction.inputs){
+      privs.push(privateKey);
+    }
+    signedTx = await transaction.sign(privs)
+  }
+
+  return await xdaiweb3.eth.sendSignedTransaction(signedTx.hex())
 }
 
 let sortByBlockNumberDESC = (a,b)=>{

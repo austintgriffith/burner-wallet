@@ -189,7 +189,7 @@ export default class SendToAddress extends React.Component {
         cookie.remove('sendToStartMessage', { path: '/' })
         cookie.remove('sendToAddress', { path: '/' })
 
-        this.props.send(toAddress, value, 120000, txData, (result) => {
+        this.props.send(toAddress, value, 120000, txData, result => {
           if(result && result.hash){
             this.props.goBack();
             window.history.pushState({},"", "/");

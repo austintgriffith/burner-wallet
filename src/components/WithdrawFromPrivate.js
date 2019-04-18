@@ -43,16 +43,13 @@ export default class SendToAddress extends React.Component {
   }
 
   async poll(){
-    let fromBalance
-    if(this.props.ERC20TOKEN){
-      fromBalance = await this.props.contracts[this.props.ERC20TOKEN].balanceOf('' + this.state.fromAddress).call()
-    }else{
-      fromBalance = await this.props.web3.eth.getBalance('' + this.state.fromAddress)
-    }
+    const { xdaiweb3 } = this.props;
+    const { fromAddress } = this.state;
+    let fromBalance = await xdaiweb3.eth.getBalance(fromAddress)
 
-    fromBalance = parseFloat(this.props.web3.utils.fromWei(fromBalance,'ether'))
+    fromBalance = parseFloat(xdaiweb3.utils.fromWei(fromBalance,'ether'))
     fromBalance = fromBalance.toFixed(2)
-    console.log("from balance:",fromBalance,"of from address",this.state.fromAddress)
+    console.log("from balance:",fromBalance,"of from address",fromAddress)
 
     if(typeof this.state.amount == "undefined"){
       this.setState({fromBalance,canWithdraw:this.canWithdraw(),amount:fromBalance})
@@ -65,50 +62,33 @@ export default class SendToAddress extends React.Component {
     return (parseFloat(this.state.amount) > 0 && parseFloat(this.state.amount) <= parseFloat(this.state.fromBalance))
   }
 
-  withdraw = () => {
-    let { fromAddress, amount, metaAccount } = this.state;
-
+  withdraw = async () => {
+    let { fromAddress, amount, metaAccount } = this.state
+    const { tokenSendV2, address, web3, xdaiweb3 } = this.props
 
     if(this.state.canWithdraw){
-
         console.log("SWITCH TO LOADER VIEW...")
         this.props.changeView('loader')
         setTimeout(()=>{window.scrollTo(0,0)},60)
         //console.log("metaAccount",this.state.metaAccount,"amount",this.props.web3.utils.toWei(amount,'ether'))
-        let tx
 
-        if(this.props.ERC20TOKEN){
-          tx={
-            to:this.props.contracts[this.props.ERC20TOKEN]._address,
-            data: this.props.contracts[this.props.ERC20TOKEN].transfer(this.props.address,this.props.web3.utils.toWei(""+amount,'ether')).encodeABI(),
-            gas: 60000,
-            gasPrice: Math.round(1100000000)//1.1gwei
-          }
-        }else{
-          tx={
-            to:this.props.address,
-            value: this.props.web3.utils.toWei(amount,'ether'),
-            gas: 30000,
-            gasPrice: Math.round(1100000000)//1.1gwei
-          }
-        }
+        const weiAmount = web3.utils.toWei(amount, "ether")
+        await tokenSendV2(
+          fromAddress,
+          address,
+          weiAmount,
+          0,
+          xdaiweb3,
+          web3,
+          metaAccount.privateKey
+        )
 
-        this.props.web3.eth.accounts.signTransaction(tx, metaAccount.privateKey).then(signed => {
-            this.props.web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-              console.log("META RECEIPT",receipt)
-              if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                metaReceiptTracker[receipt.transactionHash] = true
-                this.props.goBack();
-                window.history.pushState({},"", "/");
-                this.props.changeAlert({
-                  type: 'success',
-                  message: 'Withdrawn! '+receipt.transactionHash,
-                });
-              }
-
-            })
+        this.props.goBack();
+        window.history.pushState({},"", "/");
+        this.props.changeAlert({
+          type: 'success',
+          message: 'Withdrawn!'
         });
-
     }else{
       this.props.changeAlert({type: 'warning', message: i18n.t('withdraw_from_private.error')})
     }
