@@ -48,8 +48,9 @@ import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
 import eth from './ethereum.png';
 import dai from './dai.jpg';
-import xdai from './xdai.jpg';
+import xdai from './thunder.png';
 import Wyre from './services/wyre';
+
 
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
@@ -74,9 +75,9 @@ let mainStyle = {
   height:"100%",
   backgroundImage:"linear-gradient(#292929, #191919)",
   backgroundColor:"#191919",
-  hotColor:"#F69E4D",
-  mainColorAlt:"#fa7d36",
-  mainColor:"#F76B1C",
+  hotColor:"#fee63b",
+  mainColorAlt:"#f7e144",
+  mainColor:"#efcf4d",
 }
 
 let title = i18n.t('app_name')
@@ -86,8 +87,8 @@ let titleImage = (
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "http://localhost:8545"
-  WEB3_PROVIDER = "http://localhost:8545";
+  XDAI_PROVIDER = "https://mainnet-rpc.thundercore.com"
+  WEB3_PROVIDER = "https://mainnet-rpc.thundercore.com";
   CLAIM_RELAY = 'http://localhost:18462'
   if(true){
     ERC20NAME = false
@@ -227,6 +228,11 @@ let convertFromDollar = (amount)=>{
   return (parseFloat(amount)*dollarConversion)
 }
 let dollarDisplay = (amount)=>{
+  let floatAmount = parseFloat(amount)
+  amount = Math.floor(amount*1000)/1000
+  return convertFromDollar(amount).toFixed(3)
+}
+let dollarDisplayCash = (amount)=>{
   let floatAmount = parseFloat(amount)
   amount = Math.floor(amount*100)/100
   return dollarSymbol+convertFromDollar(amount).toFixed(2)
@@ -1303,7 +1309,7 @@ render() {
 
           let defaultBalanceDisplay = (
             <div>
-              <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+              <Balance icon={xdai} selected={false} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
               <Ruler/>
             </div>
           )
@@ -1342,11 +1348,11 @@ render() {
 
                   {extraTokens}
 
-                  <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance icon={xdai} selected={"TT"} text={"TT"} amount={this.state.xdaiBalance} address={account} dollarDisplay={(amount)=>{return amount}}/>
                   <Ruler/>
-                  <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplayCash}/>
                   <Ruler/>
-                  <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplayCash}/>
                   <Ruler/>
                   {badgeDisplay}
 
@@ -1360,7 +1366,7 @@ render() {
                     dollarDisplay={dollarDisplay}
                     ERC20TOKEN={ERC20TOKEN}
                   />
-                  {moreButtons}
+      
                   <RecentTransactions
                     dollarDisplay={dollarDisplay}
                     view={this.state.view}
@@ -1677,7 +1683,7 @@ render() {
                       // Use xDai as default token
                       const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
                       // -- Temp hacks
-                      const expirationTime = 365; // Hard-coded to 1 year link expiration. 
+                      const expirationTime = 365; // Hard-coded to 1 year link expiration.
                       const amountToSend = amount*10**18 ; // Conversion to wei
                       // --
                       if(!ERC20TOKEN)
