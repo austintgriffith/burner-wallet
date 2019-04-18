@@ -17,6 +17,10 @@ import wyrelogo from '../wyre.png';
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
 
+import { Exit } from 'leap-core';
+import { fromRpcSig } from 'ethereumjs-util';
+import { bi, add, divide } from 'jsbi-utils';
+
 const BN = Web3.utils.BN
 const GASBOOSTPRICE = 0.25
 
@@ -120,7 +124,41 @@ export default class Exchange extends React.Component {
       wyreFundAmount: 5,
       wyreWidgetOpen: false,
     }
+
+    this.updatePendingExits(daiAddress, xdaiweb3);
+    setInterval(() => this.updatePendingExits(daiAddress, xdaiweb3), 5000);
   }
+
+  updatePendingExits(daiAddress, xdaiweb3) {
+    const account = daiAddress;
+    const tokenAddr = this.props.daiContract._address;
+                    
+    xdaiweb3.getColor(tokenAddr)
+    .then(color => {
+      return fetch(
+      `https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet/exits/${account}/${color}`,
+      { method: "GET", mode: "cors" }
+      );
+    })
+    .then(response => response.json())
+    .then(rsp => {
+      console.log(rsp);
+      if (rsp.length === 0) {
+        this.setState({
+          pendingMsg: null
+        });
+        return;
+      }
+      const pendingValue = rsp.reduce((sum, v) => add(sum, bi(v.value)), bi(0));
+      const pendingTokens = parseInt(String(divide(pendingValue, bi(10 ** 16)))) / 100;
+      const pendingMsg = "Pending exits of " + pendingTokens.toString() + " pDAI";
+      this.setState({
+        pendingMsg
+      });
+    });
+  };
+
+
   updateState = (key, value) => {
     this.setState({ [key]: value },()=>{
       this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
@@ -1172,7 +1210,7 @@ export default class Exchange extends React.Component {
                  this.setState({xdaiToDendaiMode:"deposit"})
                }}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-arrow-up"  /> xDai to {this.props.ERC20NAME}
+                    <i className="fas fa-arrow-up"  /> pDai to {this.props.ERC20NAME}
                   </Scaler>
                </button>
              </div>
@@ -1182,7 +1220,7 @@ export default class Exchange extends React.Component {
                  this.setState({xdaiToDendaiMode:"withdraw"})
                }}>
                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-arrow-down" /> {this.props.ERC20NAME} to xDai
+                  <i className="fas fa-arrow-down" /> {this.props.ERC20NAME} to pDai
                  </Scaler>
                </button>
              </div>
@@ -1340,7 +1378,7 @@ export default class Exchange extends React.Component {
       }
     } else if(daiToXdaiMode=="withdraw"){
       console.log("CHECKING META ACCOUNT ",this.state.xdaiMetaAccount,this.props.network)
-      if(!this.state.xdaiMetaAccount && this.props.network!="xDai"){
+      if(!this.state.xdaiMetaAccount && this.props.network!="LeapTestnet"){
         daiToXdaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
@@ -1386,18 +1424,6 @@ export default class Exchange extends React.Component {
             <div className="col-3 p-1">
               <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
-                this.setState({
-                  daiToXdaiMode:"withdrawing",
-                  daiBalanceAtStart:this.props.daiBalance,
-                  daiBalanceShouldBe:parseFloat(this.props.daiBalance)+parseFloat(this.state.amount),
-                  loaderBarColor:"#f5eb4a",
-                  loaderBarStatusText:"Sending funds to bridge...",
-                  loaderBarPercent:0,
-                  loaderBarStartTime: Date.now(),
-                  loaderBarClick:()=>{
-                    alert(i18n.t('exchange.go_to_etherscan'))
-                  }
-                })
                 console.log("Withdrawing to ",toDaiBridgeAccount)
 
 
@@ -1406,37 +1432,40 @@ export default class Exchange extends React.Component {
                 if(this.state.xdaiMetaAccount){
                   //send funds using metaaccount on xdai
 
-                  let paramsObject = {
-                    from: this.state.daiAddress,
-                    to: toDaiBridgeAccount,
-                    value: this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether'),
-                    gas: 120000,
-                    gasPrice: Math.round(1.1 * 1000000000)
-                  }
-                  console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
-                  console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+                  const signer = {
+                    signTx: (tx) => {
+                      const privKeys = tx.inputs.map(_ => this.state.xdaiMetaAccount.privateKey);
+                      return Promise.resolve(tx.sign(privKeys));
+                    },
+                    signMessage: (msg) => {
+                      const { signature } = this.state.xdaiweb3.eth.accounts.sign(msg, this.state.xdaiMetaAccount.privateKey);
+                      const { r, s, v } = fromRpcSig(signature);
+                      return Promise.resolve(
+                        { r, s, v, signer: this.state.daiAddress }
+                      );
+                    }
+                  };
 
-                  this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
-                    console.log("========= >>> SIGNED",signed)
-                      this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                        console.log("META RECEIPT",receipt)
-                        if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                          metaReceiptTracker[receipt.transactionHash] = true
-                          this.setState({
-                            amount:"",
-                            loaderBarColor:"#4ab3f5",
-                            loaderBarStatusText:"Waiting for bridge...",
-                            loaderBarClick:()=>{
-                              alert(i18n.t('exchange.idk'))
-                            }
-                          })
-                        }
-                      }).on('error', (err)=>{
-                        console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                        this.props.changeAlert({type: 'danger',message: err.toString()});
-                      }).then(console.log)
-                  });
-
+                  // TODO: get real decimals
+                  const amount = bi(this.state.amount * 10 ** 18);
+                  const tokenAddr = this.props.daiContract._address;
+                  console.log('MetA!!!', signer);
+                  this.state.xdaiweb3.getColor(tokenAddr)
+                    .then(color =>
+                      Exit.fastSellAmount(
+                        this.state.daiAddress, amount, color,
+                        this.state.xdaiweb3, this.props.web3,
+                        'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet/sellExit',
+                        signer,
+                      )
+                    ).then(rsp => {
+                      console.log(rsp);
+                      this.updatePendingExits(this.state.daiAddress, this.state.xdaiweb3);
+                      this.setState({ amount: "", daiToXdaiMode: false });
+                    }).catch(err => {
+                      console.log(err);
+                    });
+                  
                 }else{
 
                   //BECAUSE THIS COULD BE ON A TOKEN, THE SEND FUNCTION IS SENDING TOKENS TO THE BRIDGE HAHAHAHA LETs FIX THAT
@@ -1456,25 +1485,26 @@ export default class Exchange extends React.Component {
                       }
                     })
                   }else{
-                    console.log("sending ",this.state.amount," to ",toDaiBridgeAccount)
-                    this.props.send(toDaiBridgeAccount, this.state.amount, 120000, (result) => {
-                      console.log("RESUTL!!!!",result)
-                      if(result && result.transactionHash){
-                        this.setState({
-                          amount:"",
-                          loaderBarColor:"#4ab3f5",
-                          loaderBarStatusText:"Waiting for bridge...",
-                          loaderBarClick:()=>{
-                            alert(i18n.t('exchange.idk'))
-                          }
-                        })
-                      }
-                    })
+                    // TODO: get real decimals
+                    const amount = bi(this.state.amount * 10 ** 18);
+                    const tokenAddr = this.props.daiContract._address;
+                    
+                    this.state.xdaiweb3.getColor(tokenAddr)
+                      .then(color =>
+                        Exit.fastSellAmount(
+                          this.state.daiAddress, amount, color,
+                          this.state.xdaiweb3, this.props.web3,
+                          'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet/sellExit'
+                        )
+                      ).then(rsp => {
+                        console.log(rsp);
+                        this.updatePendingExits(this.state.daiAddress, this.state.xdaiweb3);
+                        this.setState({ amount: "", daiToXdaiMode: false });
+                      }).catch(err => {
+                        console.log(err);
+                      });
                   }
-
-
                 }
-
               }}>
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-down" /> Send
@@ -1504,7 +1534,7 @@ export default class Exchange extends React.Component {
               this.setState({daiToXdaiMode:"withdraw"})
             }} >
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-arrow-down"  /> xDai to DAI
+              <i className="fas fa-arrow-down"  /> pDai to DAI
               </Scaler>
             </button>
           </div>
@@ -2311,6 +2341,9 @@ export default class Exchange extends React.Component {
     //console.log("eth price ",this.props.ethBalance,this.props.ethprice)
     return (
       <div style={{marginTop:30}}>
+        {this.state.pendingMsg && <div style={{
+          padding: '10px', backgroundColor: 'orange', textAlign: 'center'
+        }}>{this.state.pendingMsg}</div> }
 
         {tokenDisplay}
 
