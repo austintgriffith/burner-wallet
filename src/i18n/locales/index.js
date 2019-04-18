@@ -10,4 +10,4 @@ import pt from "./pt.json";
 import ja from "./ja.json";
 
 
-export { en, fr, es, ca, de, ro, he, ru, pt, ja,  };
+export { en, fr, es, ca, de, ro, he, ru, pt, ja, };
