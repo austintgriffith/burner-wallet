@@ -35,7 +35,7 @@
     "react-scroll": "^1.7.10",
     "react-stack-grid": "^0.7.1",
     "tabookey-gasless": "0.3.3",
-    "web3": "1.0.0-beta.33"
+    "web3": "1.0.0-beta.36"
   },
   "scripts": {
     "start": "PORT=3000 react-scripts start",
