@@ -449,14 +449,7 @@ class App extends Component {
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
-    let xdaiweb3 = helpers.extendWeb3(new Web3(new Web3.providers.WebsocketProvider(XDAI_PROVIDER)));
-    let pdaiContract
-    try{
-      pdaiContract = new xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0xD2D0F8a6ADfF16C2098101087f9548465EC96C98")
-    }catch(e){
-      console.log("ERROR LOADING DAI Stablecoin Contract",e)
-    }
-    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract, pdaiContract, bridgeContract})
+    this.setState({mainnetweb3,ensContract,daiContract,bridgeContract})
   }
   componentWillUnmount() {
     clearInterval(interval)
