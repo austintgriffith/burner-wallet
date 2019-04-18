@@ -3,9 +3,6 @@
 Read the full article here:
 [Ethereum in Emerging Economies - Mass adoption will start where decentralization is necessary](https://medium.com/@austin_48503/ethereum-in-emerging-economies-b235f8dac2f2)
 
-
-There are places in the world today where it's hard to find important goods with the traditional currency or the currency may fluctuate immensely in value due to inflation. Luckily, exchange of value is one of our most powerful assets in the Ethereum space. 
-
 Unfortunately, it is especially difficult to onboard new users because our ecosystem has such a steep learning curve. Traditional wallets put a huge burden on the user to understand a new currency and deal with seed phrases.
 
 What we need is a way to exchange an intuitive currency like DAI using a simple and ubiquitous platform like the mobile web browser.
@@ -14,11 +11,16 @@ What we need is a way to exchange an intuitive currency like DAI using a simple 
 
 ### Contributing as a Developer/Designer
 
+you'll need ganache installed and running
+```
+ganache-cli
+```
+
+clone the burner wallet repo
 ```
 git clone https://github.com/austintgriffith/burner-wallet.git
 cd burner-wallet
 ```
-
 
 initialize burner:
 ```
@@ -26,36 +28,48 @@ npx clevis init
 ```
 (You'll need to hit enter a few times to specify some config directories.)
 
-
-install burner: 
+install burner:
 ```
 npm i
 ```
 
-
-in a new terminal install and fire up ganache:
-```
-ganache-cli
-```
-
-in a new terminal start the app:
-```
-npm start
-```
-
-you probably want to have a bin alias for clevis in your .bashrc or .profile as mentioned in the [clevis docs](https://github.com/austintgriffith/clevis):
+link clevis 
 ```
 alias clevis='./node_modules/clevis/bin.js'
 ```
 
-in a new terminal compile and deploy all contracts:
+compile, deploy, test, and inject all contracts in the frontend:
 ```
 clevis test full
 ```
 
-Take a look at `tests/clevis.js`, the `metamask()` function in particular, to give your MetaMask accounts some ETH when you run the full test. 
+start the app:
+```
+npm start
+```
+
+### Meta Transaction Relay
+
+in a new terminal start the decentralized metatx relayer from Tabookey:
+```
+./startLocalRelay.sh
+```
+
+then deploy and test 
+```
+clevis test withrelay
+```
+
+### WTF is Clevis? (It's like truffle and drizzle I think.)
+
+Clevis is used to compile, deploy, and test the smart contracts. It is mainly for orchestration, but it also injects all the contracts into the Dapparatus (frontend). 
+
+[clevis docs](https://github.com/austintgriffith/clevis):
 
 
+### Testing locally
+
+Take a look at `tests/clevis.js`, the `metamask()` function in particular, to give your MetaMask accounts some ETH when you run the full test.
 
 # Original Video
 
@@ -145,7 +159,7 @@ Your frontend should automatically reload and your account should have xDai:
 
 
 
-Are you a developer or designer that would like to help build the next iteration of the 🔥👛Burner Wallet👛🔥? Here is a short intro video to explain how to get started: 
+Are you a developer or designer that would like to help build the next iteration of the 🔥👛Burner Wallet👛🔥? Here is a short intro video to explain how to get started:
 
 [![onrampscreencast](https://user-images.githubusercontent.com/2653167/48449772-ee8e9b00-e760-11e8-93dd-ab2105a1c28d.png)](https://youtu.be/bAHluAuyLqo)
 
@@ -156,4 +170,3 @@ To learn more about Clevis and Dapparatus check out some of the following articl
 [https://medium.com/@austin_48503/buidlguidl-0x0-clevis-dapparatus-533936a8236a](https://medium.com/@austin_48503/buidlguidl-0x0-clevis-dapparatus-533936a8236a)
 [https://medium.com/@austin_48503/buidlguidl-0x1-guidlcoin-3be30c6ac76f](https://medium.com/@austin_48503/buidlguidl-0x1-guidlcoin-3be30c6ac76f)
 [https://medium.com/@austin_48503/%EF%B8%8Fclevis-blockchain-orchestration-682d2396aeef](https://medium.com/@austin_48503/%EF%B8%8Fclevis-blockchain-orchestration-682d2396aeef)
-

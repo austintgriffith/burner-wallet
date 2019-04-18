@@ -185,7 +185,7 @@ export default class History extends React.Component {
         if(value){
           messageValue = (
             <div style={{width:"100%",textAlign:"center",marginTop:5,marginBottom:-15,opacity:0.7,fontSize:14}}>
-              -${this.props.dollarDisplay(theseTransactionsByAddress[r].value)}{"->"}
+              -{this.props.dollarDisplay(theseTransactionsByAddress[r].value)}{"->"}
             </div>
           )
         }
@@ -289,14 +289,14 @@ export default class History extends React.Component {
     if(this.state.sendingChat){
       sendChatButton = (
         <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:"#666666"}}>
-          <Scaler config={{startZoomAt:700,origin:"-5px 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-cog fa-spin"></i>
           </Scaler>
         </button>
       )
       sendFundsButton = (
         <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:"#666666"}}>
-          <Scaler config={{startZoomAt:700,origin:"-5px 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-cog fa-spin"></i>
           </Scaler>
         </button>
@@ -305,7 +305,7 @@ export default class History extends React.Component {
       sendChatButton = (
         <button className="btn btn-large w-100" style={buttonStyle.primary}
                 onClick={this.sendChat.bind(this)}>
-          <Scaler config={{startZoomAt:700,origin:"-10px 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-comment"/>
           </Scaler>
         </button>
@@ -313,7 +313,7 @@ export default class History extends React.Component {
       sendFundsButton = (
         <button className="btn btn-large w-100" style={buttonStyle.secondary}
                 onClick={this.sendChat.bind(this)}>
-          <Scaler config={{startZoomAt:700,origin:"-10px 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-comment"/>
           </Scaler>
         </button>
@@ -325,7 +325,7 @@ export default class History extends React.Component {
     if(this.state.waving){
       waveButton = (
         <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:"#666666"}}>
-          <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-cog fa-spin"></i>
           </Scaler>
         </button>
@@ -341,7 +341,7 @@ export default class History extends React.Component {
                     }
                   })
                 }}>
-          <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-handshake"/> {i18next.t('history.wave')}
           </Scaler>
         </button>
@@ -352,7 +352,7 @@ export default class History extends React.Component {
                 onClick={()=>{
                   this.props.changeAlert({type: 'warning', message: i18next.t('history.metamask_error')})
                 }}>
-          <Scaler config={{startZoomAt:500,origin:"10% 50%"}}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-handshake"/> {i18next.t('history.wave')}
           </Scaler>
         </button>
@@ -426,7 +426,7 @@ export default class History extends React.Component {
                   },250)
                 })
               }}>
-              <Scaler config={{startZoomAt:700,origin:"-12px 50%"}}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-money-bill-wave"/>
               </Scaler>
             </button>
@@ -457,17 +457,17 @@ export default class History extends React.Component {
               </a>
             </div>
 
-            <div className="col-2 p-1">
+            <div className="col-4 p-1">
               <CopyToClipboard text={target}>
                 <button className="btn btn-large w-100" style={buttonStyle.secondary}
                   onClick={() => this.props.changeAlert({type: 'success', message: target+' copied to clipboard'})}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-save"/>
+                    <i className="fas fa-save"/> Copy
                   </Scaler>
                 </button>
               </CopyToClipboard>
             </div>
-            <div className="col-4 p-1">
+            <div className="col-2 p-1">
             </div>
             <div className="col-4 p-1">
               {waveButton}

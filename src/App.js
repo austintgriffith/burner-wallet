@@ -4,11 +4,13 @@ import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
+import gasless from 'tabookey-gasless';
 import './App.scss';
 import Header from './components/Header';
 import NavCard from './components/NavCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
+import SendBadge from './components/SendBadge';
 import WithdrawFromPrivate from './components/WithdrawFromPrivate';
 import RequestFunds from './components/RequestFunds';
 import SendWithLink from './components/SendWithLink';
@@ -16,6 +18,7 @@ import Receive from './components/Receive'
 import Share from './components/Share'
 import ShareLink from './components/ShareLink'
 import Balance from "./components/Balance";
+import Badges from "./components/Badges";
 import Ruler from "./components/Ruler";
 import Receipt from "./components/Receipt";
 import CashOut from "./components/CashOut";
@@ -46,11 +49,15 @@ import cypherpunk from './cypherpunk.png';
 import eth from './ethereum.png';
 import dai from './dai.jpg';
 import xdai from './xdai.jpg';
+import Wyre from './services/wyre';
 
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
 
-let XDAI_PROVIDER = "https://dai.poa.network"
+//const POA_XDAI_NODE = "https://dai-b.poa.network"
+const POA_XDAI_NODE = "https://dai.poa.network"
+
+let XDAI_PROVIDER = POA_XDAI_NODE
 
 let WEB3_PROVIDER
 let CLAIM_RELAY
@@ -60,6 +67,7 @@ let ERC20IMAGE
 let ERC20NAME
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
+let FAILCOUNT = 0
 
 let mainStyle = {
   width:"100%",
@@ -81,23 +89,23 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(false){
+  if(true){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
   }else{
-    ERC20NAME = 'BURN'
+    ERC20NAME = 'BUFF'
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
-    ERC20IMAGE = cypherpunk
+    ERC20IMAGE = bufficorn
     XDAI_PROVIDER = "http://localhost:8545"
     WEB3_PROVIDER = "http://localhost:8545";
-    LOADERIMAGE = cypherpunk
+    LOADERIMAGE = bufficorn
   }
 
 }
 else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
+  WEB3_PROVIDER = POA_XDAI_NODE;
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = false//'Burner'
 }
@@ -114,12 +122,12 @@ else if (window.location.hostname.indexOf("qreth") >= 0) {
   ERC20TOKEN = false
 }
 else if (window.location.hostname.indexOf("xdai") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
+  WEB3_PROVIDER = POA_XDAI_NODE;
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = false
 }
 else if (window.location.hostname.indexOf("buffidai") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
+  WEB3_PROVIDER = POA_XDAI_NODE;
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20NAME = 'BUFF'
   ERC20VENDOR = 'VendingMachine'
@@ -128,7 +136,7 @@ else if (window.location.hostname.indexOf("buffidai") >= 0) {
   LOADERIMAGE = bufficorn
 }
 else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
+  WEB3_PROVIDER = POA_XDAI_NODE;
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20NAME = 'BURN'
   ERC20VENDOR = 'BurnerVendor'
@@ -136,9 +144,15 @@ else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   ERC20IMAGE = cypherpunk
   LOADERIMAGE = cypherpunk
 }
+else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
+  WEB3_PROVIDER = "https://dai.poa.network";
+  ERC20NAME = false
+  ERC20TOKEN = false
+  ERC20IMAGE = false
+}
 
 
-if(ERC20TOKEN=="ERC20Vendable"){
+if(ERC20NAME=="BUFF"){
   mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
   mainStyle.backgroundColor = "#20012d"
   mainStyle.mainColor = "#b6299e"
@@ -152,7 +166,7 @@ if(ERC20TOKEN=="ERC20Vendable"){
       marginTop:-10
     }}/>
   )
-} else if(ERC20TOKEN=="Burner"){
+} else if(ERC20NAME=="BURN"){
   mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
   mainStyle.backgroundColor = "#6c0664"
   mainStyle.mainColor = "#e72da3"
@@ -172,7 +186,7 @@ if(ERC20TOKEN=="ERC20Vendable"){
 let innerStyle = {
   maxWidth:740,
   margin:'0 auto',
-  textAlign:'left',
+  textAlign:'left'
 }
 
 let buttonStyle = {
@@ -202,10 +216,20 @@ let metaReceiptTracker = {}
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
 
+let dollarSymbol = "$"
+let dollarConversion = 1.0
+//let dollarSymbol = "€"
+//let dollarConversion = 0.88
+let convertToDollar = (amount)=>{
+  return (parseFloat(amount)/dollarConversion)
+}
+let convertFromDollar = (amount)=>{
+  return (parseFloat(amount)*dollarConversion)
+}
 let dollarDisplay = (amount)=>{
   let floatAmount = parseFloat(amount)
   amount = Math.floor(amount*100)/100
-  return amount.toFixed(2)
+  return dollarSymbol+convertFromDollar(amount).toFixed(2)
 }
 
 let interval
@@ -240,7 +264,9 @@ class App extends Component {
       balance: 0.00,
       vendors: {},
       ethprice: 0.00,
-      hasUpdateOnce: false
+      hasUpdateOnce: false,
+      badges: {},
+      selectedBadge: false,
     };
     this.alertTimeout = null;
 
@@ -261,6 +287,44 @@ class App extends Component {
     }catch(e){console.log(e)}
 
   }
+  parseAndCleanPath(path){
+    let parts = path.split(";")
+    //console.log("PARTS",parts)
+    let state = {}
+    if(parts.length>0){
+      state.toAddress = parts[0].replace("/","")
+    }
+    if(parts.length>=2){
+      state.amount = parts[1]
+    }
+    if(parts.length>2){
+      state.message = decodeURI(parts[2]).replaceAll("%23","#").replaceAll("%3B",";").replaceAll("%3A",":").replaceAll("%2F","/")
+    }
+    if(parts.length>3){
+      state.extraMessage = decodeURI(parts[3]).replaceAll("%23","#").replaceAll("%3B",";").replaceAll("%3A",":").replaceAll("%2F","/")
+    }
+    //console.log("STATE",state)
+    return state;
+  }
+  selectBadge(id){
+    this.setState({selectedBadge:id},()=>{
+      this.changeView('send_badge')
+    })
+  }
+  openScanner(returnState){
+    this.setState({returnState:returnState,view:"send_by_scan"})
+  }
+  returnToState(scannerState){
+    let updateState = Object.assign({scannerState:scannerState}, this.state.returnState);
+    updateState.returnState = false
+    console.log("UPDATE FROM RETURN STATE",updateState)
+    this.setState(updateState)
+  }
+  clearBadges() {
+    this.setState({badges:{}},()=>{
+      console.log("BADGES CLEARED",this.state.badges)
+    })
+  }
   updateDimensions() {
     //force it to rerender when the window is resized to make sure qr fits etc
     this.forceUpdate();
@@ -269,6 +333,10 @@ class App extends Component {
     this.setState(update)
   }
   componentDidMount(){
+
+    Wyre.configure();
+
+
     document.body.style.backgroundColor = mainStyle.backgroundColor
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
@@ -348,22 +416,58 @@ class App extends Component {
   }
   async poll() {
 
+    let badgeBalance = 0
+    if(this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown") && this.state.contracts.Badges){
+      //check for badges for this user
+      badgeBalance = await this.state.contracts.Badges.balanceOf(this.state.account).call()
+      if(badgeBalance>0){
+        let update = false
+        for(let b = 0;b<badgeBalance;b++){
+          let thisBadgeId = await this.state.contracts.Badges.tokenOfOwnerByIndex(this.state.account,b).call()
+          if(!this.state.badges[thisBadgeId]){
+
+            let thisBadgeData = await this.state.contracts.Badges.tokenURI(thisBadgeId).call()
+            //console.log("BADGE",b,thisBadgeId,thisBadgeData)
+            if(!this.state.badges[thisBadgeId]){
+              console.log("Getting badge data ",thisBadgeData)
+              let response = axios.get(thisBadgeData).then((response)=>{
+                console.log("RESPONSE:",response)
+                if(response && response.data){
+                  this.state.badges[thisBadgeId] = response.data
+                  this.state.badges[thisBadgeId].id = thisBadgeId
+                  update=true
+                }
+              })
+
+            }
+          }
+        }
+        if(update){
+          //console.log("Saving badges state...")
+          this.setState({badges:this.state.badges})
+        }
+
+      }
+
+    }
+
+
     //console.log(">>>>>>> <<< >>>>>> Looking into iframe...")
     //console.log(document.getElementById('galleassFrame').contentWindow['web3'])
 
     if(ERC20TOKEN&&this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown")){
       let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
       gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
-      console.log("Getting balanceOf "+this.state.account+" in contract ",this.state.contracts[ERC20TOKEN])
+      //console.log("Getting balanceOf "+this.state.account+" in contract ",this.state.contracts[ERC20TOKEN])
       let tokenBalance = await this.state.contracts[ERC20TOKEN].balanceOf(this.state.account).call()
       //console.log("balance is ",tokenBalance)
       tokenBalance = this.state.web3.utils.fromWei(""+tokenBalance,'ether')
 
       //console.log("Getting admin from ",this.state.contracts[ERC20VENDOR])
       let isAdmin = await this.state.contracts[ERC20VENDOR].isAdmin(this.state.account).call()
-      console.log("ISADMIN",this.state.account,isAdmin)
+      //console.log("ISADMIN",this.state.account,isAdmin)
       let isVendor = await this.state.contracts[ERC20VENDOR].vendors(this.state.account).call()
-      console.log("isVendor",isVendor)
+      //console.log("isVendor",isVendor)
 
       let vendorObject = this.state.vendorObject
       let products = []//this.state.products
@@ -394,9 +498,7 @@ class App extends Component {
 
       this.setState({gasBalance:gasBalance,balance:tokenBalance,isAdmin:isAdmin,isVendor:isVendor,hasUpdateOnce:true,vendorObject,products})
     }
-    if(!ERC20TOKEN){
-      this.setState({hasUpdateOnce:true})
-    }
+
 
     if(this.state.account){
       let ethBalance = 0.00
@@ -425,8 +527,10 @@ class App extends Component {
         xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
       }
 
-      this.setState({ethBalance,daiBalance,xdaiBalance})
+      this.setState({ethBalance,daiBalance,xdaiBalance,badgeBalance,hasUpdateOnce:true})
     }
+
+
   }
   longPoll() {
     axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
@@ -450,7 +554,16 @@ class App extends Component {
           message: 'Imported identical private key.',
         });
       }else{
-        if(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 ){
+
+        console.log("Checking on pk import...")
+        console.log("this.state.balance",this.state.balance)
+        console.log("this.state.metaAccount",this.state.metaAccount)
+        console.log("this.state.xdaiBalance",this.state.xdaiBalance)
+        console.log("this.state.daiBalance",this.state.daiBalance)
+        console.log("this.state.isVendor",this.state.isVendor)
+
+
+        if(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed)){
           this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
             this.changeView('withdraw_from_private')
           })
@@ -509,14 +622,14 @@ class App extends Component {
 
     let fund = await contracts.Links.funds(this.state.claimId).call()
     console.log("FUND FOR "+this.state.claimId+" IS: ", fund)
-    if (fund&&parseInt(fund.nonce)>0) {
+    if (parseInt(fund[5].toString())>0) {
       this.setState({fund: fund})
 
 
       let claimHash = this.state.web3.utils.soliditySha3(
         {type: 'bytes32', value: this.state.claimId}, // fund id
         {type: 'address', value: this.state.account}, // destination address
-        {type: 'uint256', value: fund[3]}, // nonce
+        {type: 'uint256', value: fund[5]}, // nonce
         {type: 'address', value: contracts.Links._address} // contract address
       )
       console.log("claimHash", claimHash)
@@ -525,7 +638,7 @@ class App extends Component {
       sig = sig.signature;
 
       console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
-      tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account), 240000, false, 0, (result) => {
+      tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account), 250000, false, 0, (result) => {
         if (result) {
           console.log("CLAIMED!!!", result)
           this.setState({claimed: true})
@@ -538,10 +651,19 @@ class App extends Component {
         }
       })
       .catch((error) => {
-        console.log(error); //Estimate Gas promise
+        console.log(error);
       });
     }else{
       console.log("FUND IS NOT READY YET, WAITING...")
+      if(FAILCOUNT++>1){
+        this.changeAlert({type: 'danger', message: 'Sorry. Failed to claim. Already claimed?'})
+        setTimeout(() => {
+          this.setState({sending: false}, () => {
+            //alert("DONE")
+            window.location = "/"
+          })
+        }, 2000)
+      }
       setTimeout(()=>{
         this.chainClaim(tx, contracts)
       },3000)
@@ -552,14 +674,14 @@ class App extends Component {
   async relayClaim() {
     console.log("DOING CLAIM THROUGH RELAY")
     let fund = await this.state.contracts.Links.funds(this.state.claimId).call()
-      if (fund&&parseInt(fund.nonce)>0) {
+      if (parseInt(fund[5].toString())>0) {
         this.setState({fund: fund})
         console.log("FUND: ", fund)
 
         let claimHash = this.state.web3.utils.soliditySha3(
           {type: 'bytes32', value: this.state.claimId}, // fund id
           {type: 'address', value: this.state.account}, // destination address
-          {type: 'uint256', value: fund[3]}, // nonce
+          {type: 'uint256', value: fund[5]}, // nonce
           {type: 'address', value: this.state.contracts.Links._address} // contract address
         )
         console.log("claimHash", claimHash)
@@ -573,19 +695,28 @@ class App extends Component {
           console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
 
           this.setState({sending: true})
-          let postData = {
-            id: this.state.claimId,
-            sig: sig,
-            claimHash: claimHash,
-            dest: this.state.account,
-          }
-          console.log("CLAIM_RELAY:", CLAIM_RELAY," POSTDATA:",postData)
-          axios.post(CLAIM_RELAY + "/link", postData, {
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          }).then((response) => {
-            console.log("TX RESULT", response.data.transactionHash)
+        let relayClient = new gasless.RelayClient(this.state.web3);
+
+        if(this.state.metaAccount && this.state.metaAccount.privateKey){
+          relayClient.useKeypairForSigning(this.state.metaAccount)
+        }
+        console.log("Calling encodeABU on Links.claim() ",this.state.claimId, sig, claimHash, this.state.account)
+        let claimData = this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account).encodeABI()
+        //let network_gas_price = await this.state.web3.eth.getGasPrice();
+        // Sometimes, xDai network returns '0'
+        //if (!network_gas_price || network_gas_price == 0) {
+        //  network_gas_price = 222222222222; // 222.(2) gwei
+        //}
+        let options = {
+          from: this.state.account,
+          to: this.state.contracts.Links._address,
+          txfee: 12,
+          gas_limit: 150000,
+          gas_price: Math.trunc(1000000000 * 25)
+        }
+        console.log("Hitting relayClient with relayTransaction()",claimData, options)
+        relayClient.relayTransaction(claimData, options).then((transaction) => {
+            console.log("TX REALYED: ", transaction)
             this.setState({claimed: true})
             setTimeout(() => {
               this.setState({sending: false}, () => {
@@ -594,16 +725,18 @@ class App extends Component {
               })
             }, 2000)
           })
-          .catch((error) => {
-            console.log(error); //axios promise
-          });
-
-
       //})
       //.catch((error) => {
       //  console.log(error); //Get Gas price promise
       //});
     }else{
+      this.changeAlert({type: 'danger', message: 'Sorry. Failed to claim. Already claimed?'})
+      setTimeout(() => {
+        this.setState({sending: false}, () => {
+          //alert("DONE")
+          window.location = "/"
+        })
+      }, 2000)
       console.log("Fund is not valid yet, trying again....")
       setTimeout(this.relayClaim,2000)
     }
@@ -631,7 +764,7 @@ class App extends Component {
 */
 this.changeAlert(null);
 console.log("Setting state",view)
-this.setState({ view },cb);
+this.setState({ view, scannerState:false },cb);
 };
 changeAlert = (alert, hide=true) => {
   clearTimeout(this.alertTimeout);
@@ -952,6 +1085,7 @@ render() {
   if(web3){
     header = (
       <Header
+        openScanner={this.openScanner.bind(this)}
         network={this.state.network}
         total={totalBalance}
         ens={this.state.ens}
@@ -1185,6 +1319,20 @@ render() {
             defaultBalanceDisplay = extraTokens
           }
 
+          let badgeDisplay = ""
+          if(this.state.badgeBalance>0){
+            badgeDisplay = (
+              <div>
+                <Badges
+                  badges={this.state.badges}
+                  address={account}
+                  selectBadge={this.selectBadge.bind(this)}
+                />
+                <Ruler/>
+              </div>
+            )
+          }
+
           switch(view) {
             case 'main':
             return (
@@ -1200,6 +1348,7 @@ render() {
                   <Ruler/>
                   <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
+                  {badgeDisplay}
 
                   <MainCard
                     subBalanceDisplay={subBalanceDisplay}
@@ -1213,6 +1362,7 @@ render() {
                   />
                   {moreButtons}
                   <RecentTransactions
+                    dollarDisplay={dollarDisplay}
                     view={this.state.view}
                     buttonStyle={buttonStyle}
                     ERC20TOKEN={ERC20TOKEN}
@@ -1239,7 +1389,7 @@ render() {
 
                   <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
                   <Advanced
-                    isVendor={false}
+                    isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
                     buttonStyle={buttonStyle}
                     address={account}
                     balance={balance}
@@ -1260,12 +1410,15 @@ render() {
             case 'send_by_scan':
             return (
               <SendByScan
-              mainStyle={mainStyle}
-              goBack={this.goBack.bind(this)}
-              changeView={this.changeView}
-              onError={(error) =>{
-                this.changeAlert("danger",error)
-              }}
+                parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                returnToState={this.returnToState.bind(this)}
+                returnState={this.state.returnState}
+                mainStyle={mainStyle}
+                goBack={this.goBack.bind(this)}
+                changeView={this.changeView}
+                onError={(error) =>{
+                  this.changeAlert("danger",error)
+                }}
               />
             );
             case 'withdraw_from_private':
@@ -1299,6 +1452,37 @@ render() {
                   />
                 </div>
               );
+            case 'send_badge':
+            return (
+              <div>
+                <div className="send-to-address card w-100" style={{zIndex:1}}>
+                  <NavCard title={this.state.badges[this.state.selectedBadge].name} titleLink={this.state.badges[this.state.selectedBadge].external_url} goBack={this.goBack.bind(this)}/>
+                  <SendBadge
+                    changeView={this.changeView}
+                    ensLookup={this.ensLookup.bind(this)}
+                    ERC20TOKEN={ERC20TOKEN}
+                    buttonStyle={buttonStyle}
+                    balance={balance}
+                    web3={this.state.web3}
+                    contracts={this.state.contracts}
+                    address={account}
+                    scannerState={this.state.scannerState}
+                    tx={this.state.tx}
+                    goBack={this.goBack.bind(this)}
+                    openScanner={this.openScanner.bind(this)}
+                    setReceipt={this.setReceipt}
+                    changeAlert={this.changeAlert}
+                    dollarDisplay={dollarDisplay}
+                    badge={this.state.badges[this.state.selectedBadge]}
+                    clearBadges={this.clearBadges.bind(this)}
+                  />
+                </div>
+                <Bottom
+                  text={i18n.t('done')}
+                  action={this.goBack.bind(this)}
+                />
+              </div>
+            )
             case 'send_to_address':
             return (
               <div>
@@ -1306,6 +1490,11 @@ render() {
                   <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <SendToAddress
+                    convertToDollar={convertToDollar}
+                    dollarSymbol={dollarSymbol}
+                    parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                    openScanner={this.openScanner.bind(this)}
+                    scannerState={this.state.scannerState}
                     ensLookup={this.ensLookup.bind(this)}
                     ERC20TOKEN={ERC20TOKEN}
                     buttonStyle={buttonStyle}
@@ -1366,6 +1555,7 @@ render() {
                   <NavCard title={i18n.t('receive_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <Receive
+                    dollarDisplay={dollarDisplay}
                     view={this.state.view}
                     block={this.state.block}
                     ensLookup={this.ensLookup.bind(this)}
@@ -1408,6 +1598,7 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
+                    dollarSymbol={dollarSymbol}
                     transactionsByAddress={this.state.transactionsByAddress}
                     fullTransactionsByAddress={this.state.fullTransactionsByAddress}
                     fullRecentTxs={this.state.fullRecentTxs}
@@ -1483,17 +1674,38 @@ render() {
                       let randomWallet = this.state.web3.eth.accounts.create()
                       let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
                       console.log("STATE",this.state,this.state.contracts)
-                      this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature),140000,false,amount*10**18,async (receipt)=>{
-                        this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
-                          console.log("STATE SAVED",this.state)
+                      // Use xDai as default token
+                      const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
+                      // -- Temp hacks
+                      const expirationTime = 365; // Hard-coded to 1 year link expiration. 
+                      const amountToSend = amount*10**18 ; // Conversion to wei
+                      // --
+                      if(!ERC20TOKEN)
+                      {
+                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (receipt)=>{
+                          this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
+                            console.log("STATE SAVED",this.state)
+                          })
+                          cb(receipt)
                         })
-                        cb(receipt)
-                      })
+                      } else{
+                        this.state.tx(this.state.contracts[ERC20TOKEN].approve(this.state.contracts.Links._address, amountToSend),21000,false,0,async (approveReceipt)=>{
+                          //cb(approveReceipt)
+                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (sendReceipt)=>{
+                            this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
+                              console.log("STATE SAVED",this.state)
+                            })
+                            cb(sendReceipt)
+                          })
+                        })
+                      }
                     }}
                     address={account}
                     changeView={this.changeView}
                     goBack={this.goBack.bind(this)}
                     dollarDisplay={dollarDisplay}
+                    convertToDollar={convertToDollar}
+                    dollarSymbol={dollarSymbol}
                   />
                 </div>
                 <Bottom

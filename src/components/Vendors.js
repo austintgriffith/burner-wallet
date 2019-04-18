@@ -1,6 +1,5 @@
 import React from 'react';
 import { Scaler, Events } from "dapparatus";
-import ReactLoading from 'react-loading';
 import Blockies from 'react-blockies';
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
@@ -127,7 +126,7 @@ export default class Advanced extends React.Component {
               <div className="main-card card w-100" style={{paddingTop:40}} onClick={toggleQR}>
                 <div className="content qr row">
                     <QRCode value={qrValue} size={qrSize}/>
-                    <div style={{width:'100%',textAlign:'center'}}><div>{correctVendorObject.name}</div>  {theName}:   ${dollarDisplay(theAmount)}</div>
+                    <div style={{width:'100%',textAlign:'center'}}><div>{correctVendorObject.name}</div>  {theName}:   {dollarDisplay(theAmount)}</div>
                 </div>
               </div>
             )
@@ -152,7 +151,7 @@ export default class Advanced extends React.Component {
                 {theName}
               </div>
               <div className="col-3 p-1">
-                ${dollarDisplay(theAmount)}
+                {dollarDisplay(theAmount)}
               </div>
               <div className="col-4 p-1">
               <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor,whiteSpace:"nowrap",marginTop:-8}} onClick={()=>{
@@ -214,22 +213,11 @@ export default class Advanced extends React.Component {
       }
     }
 
-    let loader = ""
-    if(this.state.loading){
-      loader = (
-        <div>
-          <div style={{position:"relative",width:"70%",margin:'auto',marginTop:-50}}>
-            <ReactLoading type="cylon" color={"#FFFFFF"} width={"100%"} />
-          </div>
-        </div>
-      )
-    }
 
 
     return (
       <div>
 
-          {loader}
           {vendorDisplay}
           {products}
 

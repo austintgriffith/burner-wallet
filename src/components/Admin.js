@@ -96,7 +96,7 @@ export default class Advanced extends React.Component {
         )
       }else{
         vendorActiveDisplay = (
-          <i className="fas fa-window-close"></i>
+          <i className="fas fa-thumbs-down"></i>
         )
       }
 

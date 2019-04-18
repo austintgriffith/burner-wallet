@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import QrReader from "react-qr-reader";
-import ReactLoading from 'react-loading';
 import FileReaderInput from 'react-file-reader-input';
 import QrCode from 'qrcode-reader';
 import qrimage from '../qrcode.png';
 import RNMessageChannel from 'react-native-webview-messaging';
 import i18n from "../i18n";
 var Jimp = require("jimp");
-
+let interval
 class SendByScan extends Component {
   constructor(props){
     super(props)
@@ -20,7 +19,8 @@ class SendByScan extends Component {
       browser: "",
       legacyMode: defaultToLegacyMode,
       scanFail: false,
-      isLoading: false
+      isLoading: false,
+      percent: 5,
     };
     this.handleScan = this.handleScan.bind(this)
 
@@ -38,28 +38,58 @@ class SendByScan extends Component {
   handleScan = data => {
     console.log("DATA")
     console.log(data)
-    let dataAfterColon
-    if(data){
-      dataAfterColon = data
-      let colonAt = dataAfterColon.lastIndexOf(":")
-      if(colonAt>=0) dataAfterColon = dataAfterColon.substring(colonAt+1)
-      if(!dataAfterColon){
-        dataAfterColon = data
+
+    //detect and respect status deep links...
+    if(data && data.indexOf("get.status.im")>=0){
+      let paymentLocation = data.indexOf("payment/")
+      let paymentParts = data.substring(paymentLocation)
+      let paymentPartsArray = paymentParts.split("/")
+      console.log("Status Deep Link paymentParts",paymentParts,paymentPartsArray)
+
+      if(paymentPartsArray.length>=4){
+        let toAddress = paymentPartsArray[1]
+        let amount = paymentPartsArray[2]
+        let orderId = paymentPartsArray[3]
+        this.props.returnToState({toAddress,amount,daiposOrderId:orderId,message:"Ching Order: "+orderId})
       }
-      let slashAt = dataAfterColon.lastIndexOf("/")
-      if(slashAt>=0) dataAfterColon = dataAfterColon.substring(slashAt+1)
-      if(!dataAfterColon){
+    }else{
+      let dataAfterColon
+      if(data){
         dataAfterColon = data
+        let colonAt = dataAfterColon.lastIndexOf(":")
+        if(colonAt>=0) dataAfterColon = dataAfterColon.substring(colonAt+1)
+        if(!dataAfterColon){
+          dataAfterColon = data
+        }
+        let slashAt = dataAfterColon.lastIndexOf("/")
+        if(slashAt>=0) dataAfterColon = dataAfterColon.substring(slashAt+1)
+        if(!dataAfterColon){
+          dataAfterColon = data
+        }
+        console.log("SCAN",data)
+        if(data.indexOf("/pk")>=0){
+          //don't mess with it
+        }else{
+          dataAfterColon=dataAfterColon.replace("#","")//had to pull this to get PKs to load in right
+        }
+
       }
-      console.log("SCAN",data)
-    }
-    if (dataAfterColon) {
-      this.stopRecording();
-      this.props.changeView('reader')
-      setTimeout(()=>{
-        //maybe they just scanned an address?
-        window.location = "/"+dataAfterColon
-      },100)
+      console.log("dataAfterColon:",dataAfterColon)
+      if (dataAfterColon) {
+        this.stopRecording();
+        console.log("RETURN STATE:",this.props.returnState)
+        if(this.props.returnState && this.props.returnState.view!="send_to_address"){
+          let returnState = this.props.parseAndCleanPath(dataAfterColon)
+          this.props.returnToState(returnState)
+          console.log("return state",returnState)
+        }else{
+          this.props.changeView('reader')
+          setTimeout(()=>{
+            //maybe they just scanned an address?
+            window.location = "/"+dataAfterColon
+          },100)
+        }
+      }
     }
   };
   chooseDeviceId = (a,b) => {
@@ -77,11 +107,17 @@ class SendByScan extends Component {
     this.stopRecording();
     this.props.goBack();
   };
-  //componentDidMount(){
-  //  this.setState({scanFail:"TEST"})
-  //}
+  componentDidMount(){
+    interval = setInterval(this.loadMore.bind(this),750)
+  }
   componentWillUnmount() {
+    clearInterval(interval)
     this.stopRecording();
+  }
+  loadMore(){
+    let newPercent = this.state.percent+3
+    if(newPercent>100) newPercent=5
+    this.setState({percent:newPercent})
   }
   legacyHandleChange(e, results){
     //this.props.changeView('reader')
@@ -137,12 +173,20 @@ class SendByScan extends Component {
       )
     }
 
-    let loader = ""
+    let loaderDisplay = ""
     if(this.state.isLoading){
-      loader = (
-        <div style={{position:'absolute',left:0,top:"-25%",zIndex:98,fontSize:24,color:"#FF0000",backgroundColor:"#333333",opacity:0.9,width:"100%",height:1,fontWeight:'bold'}}>
-          <ReactLoading type="cylon" color={"#FFFFFF"} width={"100%"}  />
-        </div>
+      let shadowAmount = 100
+      let shadowColor = this.props.mainStyle.mainColor
+      loaderDisplay = (
+          <div style={{textAlign:'center'}}>
+            <div style={{width:"100%"}}>
+              <img src ={this.props.loaderImage} style={{maxWidth:"25%"}}/>
+            </div>
+            <div style={{width:"80%",height:1,backgroundColor:"#444444",marginLeft:"10%"}}>
+              <div style={{width:this.state.percent+"%",height:1,backgroundColor:this.props.mainStyle.mainColorAlt,boxShadow:"0 0 "+shadowAmount/40+"px "+shadowColor+", 0 0 "+shadowAmount/30+"px "+shadowColor+", 0 0 "+shadowAmount/20+"px "+shadowColor+", 0 0 "+shadowAmount/10+"px #ffffff, 0 0 "+shadowAmount/5+"px "+shadowColor+", 0 0 "+shadowAmount/3+"px "+shadowColor+", 0 0 "+shadowAmount/1+"px "+shadowColor+""}}>
+              </div>
+            </div>
+          </div>
       )
     }
 
@@ -181,11 +225,13 @@ class SendByScan extends Component {
         }}>
         <FileReaderInput as="binary" id="my-file-input" onChange={this.legacyHandleChange.bind(this)}>
         <div style={{position: 'absolute',zIndex:11,top:0,left:0,width:"100%",height:"100%",color:"#FFFFFF",cursor:"pointer"}}>
+          {loaderDisplay}
           <div style={{textAlign:"center",paddingTop:"15%"}}>
             <div style={{marginBottom:20}}><i className="fas fa-camera"></i></div>
             <img src={qrimage} style={{position:"absolute",left:"36%",top:"25%",padding:4,border:"1px solid #888888",opacity:0.25,maxWidth:"30%",maxHight:"30%"}} />
           </div>
-          <div style={{textAlign:"center",paddingTop:"45%"}}>
+          <div style={{textAlign:"center",paddingTop:"35%"}}>
+
             <div>{i18n.t('send_by_scan.capture')}</div>
               <div className="main-card card w-100" style={{backgroundColor:"#000000"}}>
                 <div className="content ops row" style={{paddingLeft:"12%",paddingRight:"12%",paddingTop:10}}>
@@ -195,7 +241,11 @@ class SendByScan extends Component {
                 </div>
               </div>
             </div>
+            <div style={{textAlign:"center",paddingTop:"5%"}}>
+              Lay QR flat and take a picture of it from a distance.
+            </div>
         </div>
+
         </FileReaderInput>
         </div>
       )
@@ -213,7 +263,6 @@ class SendByScan extends Component {
         </div>
         {displayedImage}
         {failMessage}
-        {loader}
       </div>
     );
   }

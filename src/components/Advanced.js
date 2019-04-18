@@ -202,7 +202,7 @@ export default class Advanced extends React.Component {
         </div>
         }
 
-        {privateKey && !isVendor && 
+        {privateKey &&
         <div>
           <div className="content ops row" >
             <div className="col-12 p-1">
@@ -247,6 +247,23 @@ export default class Advanced extends React.Component {
           </div>
         </div>
         {showingQr}
+
+        {isVendor &&
+        <div>
+          <div className="content ops row" style={{marginBottom:10}}>
+
+            <div className="col-12 p-1">
+            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
+              this.props.changeView("exchange")
+            }}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fas fa-key"/> {"Exchange"}
+              </Scaler>
+            </button>
+            </div>
+          </div>
+        </div>
+        }
 
       </div>
     )

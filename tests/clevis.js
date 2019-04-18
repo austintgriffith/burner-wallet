@@ -109,13 +109,52 @@ module.exports = {
     });
   },
 
+  gsn:()=>{
+    describe(bigHeader('RELAY HUB GSN '), function(){
+      it('should set Relay Hub address to Relay Recepient and provide it with a deposit', async function(){
+        this.timeout(600000)
 
+
+        /*
+        const Web3 = require('web3')
+        const web3ForStake = new Web3(new Web3.providers.HttpProvider(clevisConfig.provider))
+        let relayHubAddress = "0x49a984490a7762B0e5d775f0FfA608899Ebe2ee8"///<<<-------- Stable if using tbk docker. Change this to your deployed Relay Hub address
+        let linksAddress = localContractAddress("Links")
+        console.log("linksAddress",linksAddress)
+        let linksAbi = localContractAbi("Links")
+        let accounts = await web3ForStake.eth.getAccounts()
+        console.log("accounts",accounts)
+        if(!accounts||accounts.length<=0){
+          accounts = await clevis("accounts")
+          console.log(accounts)
+        }
+        let links = new web3ForStake.eth.Contract(linksAbi, linksAddress, ({from: accounts[0]}))
+        await links.methods.set_hub(relayHubAddress).send()
+        await links.methods.deposit_to_relay_hub().send({value: web3ForStake.utils.toWei("0.5", "ether")})
+        */
+
+
+        let relayHubAddress = "0x49a984490a7762B0e5d775f0FfA608899Ebe2ee8" //<----- RELAY HUB FOR xDAI!!!!!
+
+        //update relay hub in Links contract:
+        result = await clevis("contract","set_hub","Links","0",relayHubAddress)///<<<-------- change this to the xDai relay hub!
+        printTxResult(result)
+        let hubAddress = await clevis("contract","get_hub_addr","Links")///<<<-------- change this to the xDai relay hub!
+        console.log("\t\t\thubAddress:",hubAddress.green)
+
+        //deposit funds as Links contract
+        result = await clevis("contract","deposit_to_relay_hub","Links","0","500000000000000000")///<<<-------- change this to the xDai relay hub!
+        printTxResult(result)
+
+      });
+    })
+  },
 
   metamask:()=>{
     describe('#transfer() ', function() {
       it('should give metamask account some ether or tokens to test', async function() {
         this.timeout(600000)
-        let result = await clevis("send","0.10","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")///<<<-------- change this to your metamask accounts
+        let result = await clevis("send","1","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")///<<<-------- change this to your metamask accounts
         printTxResult(result)
 
         let accounts = await clevis("accounts")
@@ -125,7 +164,7 @@ module.exports = {
         printTxResult(result)
 
         result = await clevis("send","0.10","0","0x34aa3f359a9d614239015126635ce7732c18fdf3")///<<<-------- change this to your metamask accounts
-       printTxResult(result)
+         printTxResult(result)
 
 
 
@@ -140,7 +179,28 @@ module.exports = {
         printTxResult(result)
 
 
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/burner.json")
+        printTxResult(result)
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/burner.json")
+        printTxResult(result)
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffidai.json")
+        printTxResult(result)
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffidai.json")
+        printTxResult(result)
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffidai.json")
+        printTxResult(result)
 
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa0ddb01deab4f240cf6dad304e50b58085055372","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
+        printTxResult(result)
+
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa0ddb01deab4f240cf6dad304e50b58085055372","https://badges.xdai.io/ethdenver/v1/json/gitcoin.json")
+        printTxResult(result)
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa0ddb01deab4f240cf6dad304e50b58085055372","https://badges.xdai.io/ethdenver/v1/json/consensys.json")
+        printTxResult(result)
+
+
+                result = await clevis("send","0.10","0","0xa0ddb01deab4f240cf6dad304e50b58085055372")///<<<-------- change this to your metamask accounts
+                printTxResult(result)
 
 
       });
@@ -189,6 +249,30 @@ module.exports = {
         assert(result==0,"fast ERRORS")
       });
     });
+
+  },
+
+  withrelay:()=>{
+    describe(bigHeader('FULL'), function() {
+      it('should run the full test (everything after compile)', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","full")
+        assert(result==0,"full ERRORS")
+      });
+    });
+    describe(bigHeader('RELAY HUB'), function(){
+      it('should set Relay Hub address to Relay Recepient and provide it with a deposit', async function(){
+        const Web3 = require('web3')
+        const web3ForStake = new Web3(new Web3.providers.HttpProvider(clevisConfig.provider))
+        let relayHubAddress = "0x9C57C0F1965D225951FE1B2618C92Eefd687654F"///<<<-------- Stable if using tbk docker. Change this to your deployed Relay Hub address
+        let linksAddress = localContractAddress("Links")
+        let linksAbi = localContractAbi("Links")
+        const accounts = await web3ForStake.eth.getAccounts()
+        let links = new web3ForStake.eth.Contract(linksAbi, linksAddress, ({from: accounts[0]}))
+        await links.methods.set_hub(relayHubAddress).send()
+        await links.methods.deposit_to_relay_hub().send({value: web3ForStake.utils.toWei("0.5", "ether")})
+      });
+    })
   },
 
   fast:()=>{
