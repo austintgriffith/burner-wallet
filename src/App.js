@@ -415,14 +415,7 @@ class App extends Component {
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
-    let xdaiweb3 = helpers.extendWeb3(new Web3(new Web3.providers.WebsocketProvider(XDAI_PROVIDER)));
-    let pdaiContract
-    try{
-      pdaiContract = new xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0xD2D0F8a6ADfF16C2098101087f9548465EC96C98")
-    }catch(e){
-      console.log("ERROR LOADING DAI Stablecoin Contract",e)
-    }
-    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract, pdaiContract, bridgeContract})
+    this.setState({mainnetweb3,ensContract,daiContract,bridgeContract})
   }
   componentWillUnmount() {
     clearInterval(interval)
@@ -533,11 +526,8 @@ class App extends Component {
         }catch(e){
           console.log(e)
         }
-
-
-
       }
-      if(this.state.xdaiweb3){
+      if(this.state.xdaiweb3 && this.state.pdaiContract){
         xdaiBalance = await this.state.pdaiContract.methods.balanceOf(this.state.account).call();
         xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
       }
@@ -799,8 +789,8 @@ goBack(){
 }
 async parseBlocks(parseBlock,recentTxs,transactionsByAddress){
   let web3;
-  if (this.state.leapProvider) {
-    web3 = this.state.leapProvider
+  if (this.state.xdaiweb3) {
+    web3 = this.state.xdaiweb3
   } else {
     web3 = this.state.web3
   }
@@ -1458,7 +1448,8 @@ render() {
                       balance={balance}
                       address={account}
                       contracts={this.state.contracts}
-                      web3={web3}
+                      web3={this.state.web3}
+                      xdaiweb3={this.state.xdaiweb3}
                       //amount={false}
                       privateKey={this.state.withdrawFromPrivateKey}
                       goBack={this.goBack.bind(this)}
@@ -1923,11 +1914,21 @@ render() {
         newPrivateKey={this.state.newPrivateKey}
         fallbackWeb3Provider={WEB3_PROVIDER}
         network="LeapTestnet"
-        leapProvider={XDAI_PROVIDER}
+        xdaiProvider={XDAI_PROVIDER}
         onUpdate={async (state) => {
           //console.log("DAPPARATUS UPDATE",state)
           if(ERC20TOKEN){
             delete state.balance
+          }
+          if (state.xdaiweb3) {
+            let pdaiContract;
+            try{
+              pdaiContract = new state.xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0xD2D0F8a6ADfF16C2098101087f9548465EC96C98")
+            }catch(e){
+              console.log("ERROR LOADING DAI Stablecoin Contract",e)
+            }
+
+            this.setState({pdaiContract});
           }
           if (state.web3Provider) {
             state.web3 = new Web3(state.web3Provider)

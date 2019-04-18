@@ -62,11 +62,6 @@ export default class Exchange extends React.Component {
     super(props);
 
     let xdaiweb3 = this.props.xdaiweb3
-    //make it easier for local debugging...
-    if(false && window.location.hostname.indexOf("localhost")>=0){
-      console.log("WARNING, USING LOCAL RPC")
-      xdaiweb3 = new Web3(new Web3.providers.HttpProvider("http://0.0.0.0:8545"))
-    }
     //let mainnetweb3 = new Web3("https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac")
     let mainnetweb3 = props.mainnetweb3
     let pk = localStorage.getItem('metaPrivateKey')
