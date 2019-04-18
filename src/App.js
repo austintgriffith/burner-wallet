@@ -76,8 +76,8 @@ let mainStyle = {
   backgroundImage:"linear-gradient(#292929, #191919)",
   backgroundColor:"#191919",
   hotColor:"#fee63b",
-  mainColorAlt:"#f7e144",
-  mainColor:"#efcf4d",
+  mainColorAlt:"#4d4c4f",
+  mainColor:"#565658",
 }
 
 let title = i18n.t('app_name')
