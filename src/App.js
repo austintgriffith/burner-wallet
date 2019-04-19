@@ -106,6 +106,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
 
 }
 else if (window.location.hostname.indexOf("tt.burnerwallet.io") >= 0) {
+  XDAI_PROVIDER = "https://mainnet-rpc.thundercore.com";
   WEB3_PROVIDER = "https://mainnet-rpc.thundercore.com";
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = false//'Burner'
@@ -1016,7 +1017,7 @@ render() {
   if(web3 && !this.checkNetwork() && view!="exchange"){
     networkOverlay = (
       <div>
-        <input style={{zIndex:13,position:'absolute',opacity:0.95,right:48,top:192,width:194}} value="https://dai.poa.network" />
+        <input style={{zIndex:13,position:'absolute',opacity:0.95,right:48,top:192,width:194}} value={WEB3_PROVIDER} />
         <img style={{zIndex:12,position:'absolute',opacity:0.95,right:0,top:0,maxHeight:370}} src={customRPCHint} />
       </div>
     )
@@ -1353,7 +1354,7 @@ render() {
 
                   {extraTokens}
 
-                  <Balance icon={xdai} selected={"TT"} text={"TT"} amount={this.state.xdaiBalance} address={account} dollarDisplay={(amount)=>{return amount}}/>
+                  <Balance icon={xdai} selected={"TT"} text={"TT"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
                   <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplayCash}/>
                   <Ruler/>
@@ -1904,7 +1905,7 @@ render() {
         config={{
           DEBUG: false,
           hide: true,
-          requiredNetwork: ['Unknown', 'xDai'],
+          requiredNetwork: ['Unknown'],
           metatxAccountGenerator: false,
         }}
         //used to pass a private key into Dapparatus
@@ -1915,6 +1916,7 @@ render() {
           if(ERC20TOKEN){
             delete state.balance
           }
+
           if (state.web3Provider) {
             state.web3 = new Web3(state.web3Provider)
             this.setState(state,()=>{

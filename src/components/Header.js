@@ -9,6 +9,10 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     sendButtonOpacity = 0
   }
 
+  let networkDisplay = ""
+  if(network!="Unknown"){
+    networkDisplay = network
+  }
 
 
   let name = ens
@@ -37,7 +41,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     )*/
     moneyDisplay = (
       <div style={{opacity:0.4,fontSize:22,paddingTop:18}}>
-        {network}
+        {networkDisplay}
       </div>
     )
     blockieDisplay = (
