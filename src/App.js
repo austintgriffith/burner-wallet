@@ -33,7 +33,6 @@ import Vendors from './components/Vendors';
 import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
-import burnerlogo from './burnerwallet.png';
 import BurnWallet from './components/BurnWallet'
 import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
@@ -43,6 +42,7 @@ import namehash from 'eth-ens-namehash'
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
 
+import { DOLLAR_SYMBOL, WEB3_PROVIDER, ERC20TOKEN, ERC20VENDOR, ERC20IMAGE, ERC20NAME, XDAI_PROVIDER, LOADERIMAGE } from './config';
 
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
@@ -54,18 +54,6 @@ import Wyre from './services/wyre';
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
 
-//const POA_XDAI_NODE = "https://dai-b.poa.network"
-const POA_XDAI_NODE = "https://dai.poa.network"
-
-let XDAI_PROVIDER = POA_XDAI_NODE
-
-let WEB3_PROVIDER
-let CLAIM_RELAY
-let ERC20TOKEN
-let ERC20VENDOR
-let ERC20IMAGE
-let ERC20NAME
-let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
 let FAILCOUNT = 0
 
@@ -83,73 +71,6 @@ let title = i18n.t('app_name')
 let titleImage = (
   <span style={{paddingRight:20,paddingLeft:16}}><i className="fas fa-fire" /></span>
 )
-
-//<i className="fas fa-fire" />
-if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "http://localhost:8545"
-  WEB3_PROVIDER = "http://localhost:8545";
-  CLAIM_RELAY = 'http://localhost:18462'
-  if(true){
-    ERC20NAME = false
-    ERC20TOKEN = false
-    ERC20IMAGE = false
-  }else{
-    ERC20NAME = 'BUFF'
-    ERC20VENDOR = 'VendingMachine'
-    ERC20TOKEN = 'ERC20Vendable'
-    ERC20IMAGE = bufficorn
-    XDAI_PROVIDER = "http://localhost:8545"
-    WEB3_PROVIDER = "http://localhost:8545";
-    LOADERIMAGE = bufficorn
-  }
-
-}
-else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false//'Burner'
-}
-else if (window.location.hostname.indexOf("wallet.galleass.io") >= 0) {
-  //WEB3_PROVIDER = "https://rinkeby.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac";
-  WEB3_PROVIDER = "http://localhost:8545"
-  //CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false//'Burner'
-  document.domain = 'galleass.io'
-}
-else if (window.location.hostname.indexOf("qreth") >= 0) {
-  WEB3_PROVIDER = "https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac"
-  CLAIM_RELAY = false
-  ERC20TOKEN = false
-}
-else if (window.location.hostname.indexOf("xdai") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false
-}
-else if (window.location.hostname.indexOf("buffidai") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20NAME = 'BUFF'
-  ERC20VENDOR = 'VendingMachine'
-  ERC20TOKEN = 'ERC20Vendable'
-  ERC20IMAGE = bufficorn
-  LOADERIMAGE = bufficorn
-}
-else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20NAME = 'BURN'
-  ERC20VENDOR = 'BurnerVendor'
-  ERC20TOKEN = 'Burner'
-  ERC20IMAGE = cypherpunk
-  LOADERIMAGE = cypherpunk
-}
-else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
-  ERC20NAME = false
-  ERC20TOKEN = false
-  ERC20IMAGE = false
-}
 
 
 if(ERC20NAME=="BUFF"){
@@ -216,7 +137,6 @@ let metaReceiptTracker = {}
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
 
-let dollarSymbol = "$"
 let dollarConversion = 1.0
 //let dollarSymbol = "€"
 //let dollarConversion = 0.88
@@ -227,9 +147,8 @@ let convertFromDollar = (amount)=>{
   return (parseFloat(amount)*dollarConversion)
 }
 let dollarDisplay = (amount)=>{
-  let floatAmount = parseFloat(amount)
   amount = Math.floor(amount*100)/100
-  return dollarSymbol+convertFromDollar(amount).toFixed(2)
+  return DOLLAR_SYMBOL + convertFromDollar(amount).toFixed(2)
 }
 
 let interval
@@ -1491,7 +1410,6 @@ render() {
                   {defaultBalanceDisplay}
                   <SendToAddress
                     convertToDollar={convertToDollar}
-                    dollarSymbol={dollarSymbol}
                     parseAndCleanPath={this.parseAndCleanPath.bind(this)}
                     openScanner={this.openScanner.bind(this)}
                     scannerState={this.state.scannerState}
@@ -1598,7 +1516,6 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
-                    dollarSymbol={dollarSymbol}
                     transactionsByAddress={this.state.transactionsByAddress}
                     fullTransactionsByAddress={this.state.fullTransactionsByAddress}
                     fullRecentTxs={this.state.fullRecentTxs}
@@ -1705,7 +1622,6 @@ render() {
                     goBack={this.goBack.bind(this)}
                     dollarDisplay={dollarDisplay}
                     convertToDollar={convertToDollar}
-                    dollarSymbol={dollarSymbol}
                   />
                 </div>
                 <Bottom
