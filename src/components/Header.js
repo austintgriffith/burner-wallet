@@ -1,11 +1,12 @@
 import React from 'react';
 import { Scaler, Blockie } from "dapparatus";
 import burnerloader from '../burnerloader.gif';
-export  default ({openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
+import { withRouter } from 'react-router-dom';
 
+const Header = ({openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, location }) => {
 
   let sendButtonOpacity = 1.0
-  if(view=="receive" || view=="send_badge"){
+  if(location.pathname === "/receive" || location.pathname === "/send_badge"){
     sendButtonOpacity = 0
   }
 
@@ -57,7 +58,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     cursor:"pointer"
   }
 
-  if(view=="send_to_address"){
+  if(location.pathname === "/send_to_address"){
     scanButtonStyle.position = "absolute"
     scanButtonStyle.right = -3
     scanButtonStyle.top = 217
@@ -82,7 +83,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
 
   let topLeft
 
-  if(view=="main" || view=="exchange"){
+  if(location.pathname === "/main" || location.pathname === "/exchange"){
     opacity = 1.0
     topLeft = (
       <div style={{zIndex:-2,position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}} onClick={() => changeView('receive')} >
@@ -113,3 +114,5 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     </div>
   )
 };
+
+export default withRouter(Header);

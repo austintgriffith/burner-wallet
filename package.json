@@ -42,6 +42,7 @@
     "react-linkify": "^0.2.2",
     "react-native-webview-messaging": "^1.2.3",
     "react-qr-reader": "^2.1.1",
+    "react-router-dom": "^5.0.0",
     "react-scripts": "^2.1.5",
     "react-scroll": "^1.7.10",
     "react-stack-grid": "^0.7.1",
