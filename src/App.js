@@ -342,50 +342,6 @@ class App extends Component {
   componentDidMount(){
 
     document.body.style.backgroundColor = mainStyle.backgroundColor
-
-    /*
-    try{
-      var fs = window.RequestFileSystem || window.webkitRequestFileSystem;
-      if (!fs) {
-        console.log("check failed?");
-      } else {
-        fs(window.TEMPORARY,
-           100,
-           ()=>{
-             //"NOT INCOG" NORMAL BROWSING
-             console.log("NOT INCOG")
-             if (typeof web3 !== 'undefined') {
-               if (window.web3.currentProvider.isMetaMask === true) {
-                console.log('MetaMask is active')
-                document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
-                document.body.style.backgroundColor = "#ca6e28"
-
-
-                var elem = document.createElement('div');
-                elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
-                elem.innerHTML = 'METAMASK';
-                document.body.appendChild(elem);
-              } else {
-                console.log('MetaMask is not available')
-                document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
-                document.body.style.backgroundColor = "#305582"
-
-
-                var elem = document.createElement('div');
-                elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
-                elem.innerHTML = 'WEB3INJECTED';
-                document.body.appendChild(elem);
-              }
-
-             }
-           },
-           ()=>{
-
-           }
-         );
-      }
-    }catch(e){console.log(e)}
-    */
     console.log("DETECTING INCOG....")
     //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
     incogDetect((result)=>{
@@ -405,12 +361,12 @@ class App extends Component {
           elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
           elem.innerHTML = 'METAMASK';
           document.body.appendChild(elem);
-        } else {
+        } else if(!this.state.metaAccount) {
           document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
           document.body.style.backgroundColor = "#305582"
           var elem = document.createElement('div');
           elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
-          elem.innerHTML = 'WEB3INJECTED';
+          elem.innerHTML = 'WEB3';
           document.body.appendChild(elem);
         }
       }
