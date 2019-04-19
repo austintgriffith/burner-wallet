@@ -381,6 +381,7 @@ class App extends Component {
     }catch(e){console.log(e)}
     */
     console.log("DETECTING INCOG....")
+    //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
     incogDetect((result)=>{
       if(result){
         console.log("INCOG")
