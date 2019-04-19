@@ -1,3 +1,6 @@
+
+    //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
+
 function retry(isDone, next) {
     var current_trial = 0, max_retry = 50, interval = 10, is_timeout = false;
     var id = window.setInterval(
