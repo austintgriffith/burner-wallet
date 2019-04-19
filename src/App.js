@@ -333,10 +333,8 @@ class App extends Component {
   saveKey(update){
     this.setState(update)
   }
-  componentDidMount(){
-
-    document.body.style.backgroundColor = mainStyle.backgroundColor
-    console.log("DETECTING INCOG....")
+  detectContext(){
+    console.log("DETECTING CONTEXT....")
     //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
     incogDetect((result)=>{
       if(result){
@@ -365,11 +363,14 @@ class App extends Component {
         }
       }
     })
+  }
+  componentDidMount(){
 
+    document.body.style.backgroundColor = mainStyle.backgroundColor
 
     Wyre.configure();
 
-
+    this.detectContext()
 
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
@@ -1940,6 +1941,7 @@ render() {
           if (state.web3Provider) {
             state.web3 = new Web3(state.web3Provider)
             this.setState(state,()=>{
+              this.detectContext()
               //console.log("state set:",this.state)
               if(this.state.possibleNewPrivateKey){
                 this.dealWithPossibleNewPrivateKey()
