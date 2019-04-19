@@ -334,10 +334,64 @@ class App extends Component {
   }
   componentDidMount(){
 
+    document.body.style.backgroundColor = mainStyle.backgroundColor
+
+    try{
+      var fs = window.RequestFileSystem || window.webkitRequestFileSystem;
+      if (!fs) {
+        console.log("check failed?");
+      } else {
+        fs(window.TEMPORARY,
+           100,
+           ()=>{
+             //"NOT INCOG" NORMAL BROWSING
+             console.log("NOT INCOG")
+             if (typeof web3 !== 'undefined') {
+               if (window.web3.currentProvider.isMetaMask === true) {
+                console.log('MetaMask is active')
+                document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
+                document.body.style.backgroundColor = "#ca6e28"
+
+
+                var elem = document.createElement('div');
+                elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
+                elem.innerHTML = 'METAMASK';
+                document.body.appendChild(elem);
+              } else {
+                console.log('MetaMask is not available')
+                document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
+                document.body.style.backgroundColor = "#305582"
+
+
+                var elem = document.createElement('div');
+                elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
+                elem.innerHTML = 'WEB3INJECTED';
+                document.body.appendChild(elem);
+              }
+
+             }
+           },
+           ()=>{
+             console.log("INCOG",document.body.style)
+              document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
+              document.body.style.backgroundColor = "#671c1c"
+
+
+              var elem = document.createElement('div');
+              elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
+              elem.innerHTML = 'INCOGNITO';
+              document.body.appendChild(elem);
+           }
+         );
+      }
+    }catch(e){console.log(e)}
+
+
+
     Wyre.configure();
 
 
-    document.body.style.backgroundColor = mainStyle.backgroundColor
+
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
     if(window.location.pathname){
@@ -1103,7 +1157,7 @@ render() {
 
   return (
     <I18nextProvider i18n={i18n}>
-    <div style={mainStyle}>
+    <div id="main" style={mainStyle}>
       <div style={innerStyle}>
         {extraHead}
         {networkOverlay}
@@ -1677,7 +1731,7 @@ render() {
                       // Use xDai as default token
                       const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
                       // -- Temp hacks
-                      const expirationTime = 365; // Hard-coded to 1 year link expiration. 
+                      const expirationTime = 365; // Hard-coded to 1 year link expiration.
                       const amountToSend = amount*10**18 ; // Conversion to wei
                       // --
                       if(!ERC20TOKEN)
