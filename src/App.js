@@ -39,6 +39,7 @@ import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
+import incogDetect from './services/incogDetect.js'
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
@@ -336,6 +337,7 @@ class App extends Component {
 
     document.body.style.backgroundColor = mainStyle.backgroundColor
 
+    /*
     try{
       var fs = window.RequestFileSystem || window.webkitRequestFileSystem;
       if (!fs) {
@@ -372,20 +374,40 @@ class App extends Component {
              }
            },
            ()=>{
-             console.log("INCOG",document.body.style)
-              document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
-              document.body.style.backgroundColor = "#671c1c"
 
-
-              var elem = document.createElement('div');
-              elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
-              elem.innerHTML = 'INCOGNITO';
-              document.body.appendChild(elem);
            }
          );
       }
     }catch(e){console.log(e)}
-
+    */
+    console.log("DETECTING INCOG....")
+    incogDetect((result)=>{
+      if(result){
+        console.log("INCOG")
+        document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
+        document.body.style.backgroundColor = "#671c1c"
+        var elem = document.createElement('div');
+        elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
+        elem.innerHTML = 'INCOGNITO';
+        document.body.appendChild(elem);
+      }else if (typeof web3 !== 'undefined') {
+        if (window.web3.currentProvider.isMetaMask === true) {
+          document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
+          document.body.style.backgroundColor = "#ca6e28"
+          var elem = document.createElement('div');
+          elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
+          elem.innerHTML = 'METAMASK';
+          document.body.appendChild(elem);
+        } else {
+          document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
+          document.body.style.backgroundColor = "#305582"
+          var elem = document.createElement('div');
+          elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
+          elem.innerHTML = 'WEB3INJECTED';
+          document.body.appendChild(elem);
+        }
+      }
+    })
 
 
     Wyre.configure();
