@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { Blockie } from "dapparatus";
 import { withTransactionStore } from '../contexts/TransactionStore';
 import { ERC20TOKEN } from '../config';
@@ -6,7 +7,7 @@ import Ruler from "./Ruler";
 import { Scaler } from "dapparatus";
 
 const RecentTransactions = ({
-  dollarDisplay, view, max, buttonStyle, vendorName, address, block, changeView, recentTxs, fullRecentTxs
+  dollarDisplay, max, buttonStyle, vendorName, address, block, changeView, recentTxs, fullRecentTxs, location
 }) => {
   let txns = []
   let count=0
@@ -17,7 +18,7 @@ const RecentTransactions = ({
     if(thisValue>0.0){
 
       let extraUp = 0
-      if(view=="receive"){
+      if(location.pathname === "/receive"){
         extraUp=-10
       }
       let extraIcon = ""
@@ -186,4 +187,4 @@ let cleanTime = (s)=>{
   }
 }
 
-export default withTransactionStore(RecentTransactions);
+export default withRouter(withTransactionStore(RecentTransactions));
