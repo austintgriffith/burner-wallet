@@ -37,10 +37,7 @@ export default class RequestFunds extends React.Component {
 
   render() {
     let { canRequest, message, amount, requested } = this.state;
-    const {
-      dollarDisplay, view, buttonStyle, ERC20TOKEN, address, changeView,
-      transactionsByAddress, fullTransactionsByAddress, fullRecentTxs, recentTxs,
-    } = this.props
+    const { dollarDisplay, view, buttonStyle, address, changeView } = this.props
     if(requested){
 
       let url = window.location.protocol+"//"+window.location.hostname
@@ -82,12 +79,9 @@ export default class RequestFunds extends React.Component {
             view={view}
             max={5}
             buttonStyle={buttonStyle}
-            ERC20TOKEN={ERC20TOKEN}
-            transactionsByAddress={ERC20TOKEN ? fullTransactionsByAddress : transactionsByAddress}
             changeView={changeView}
             address={address}
             block={this.props.block}
-            recentTxs={ERC20TOKEN ? fullRecentTxs : recentTxs}
           />
         </div>
       )

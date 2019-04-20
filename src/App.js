@@ -941,8 +941,6 @@ render() {
 
 
         {web3 /*&& this.checkNetwork()*/ && (() => {
-          const { fullTransactionsByAddress, transactionsByAddress, recentTxs, fullRecentTxs } = this.props;
-
           //console.log("VIEW:",view)
 
           let moreButtons = (
@@ -1103,7 +1101,6 @@ render() {
                     buttonStyle={buttonStyle}
                     saveKey={this.saveKey.bind(this)}
                     metaAccount={this.state.metaAccount}
-                    transactionsByAddress={ERC20TOKEN ? fullTransactionsByAddress : transactionsByAddress}
                     address={account}
                     balance={balance}
                     changeAlert={this.changeAlert}
@@ -1193,12 +1190,9 @@ render() {
                     dollarDisplay={dollarDisplay}
                     view={this.state.view}
                     buttonStyle={buttonStyle}
-                    ERC20TOKEN={ERC20TOKEN}
-                    transactionsByAddress={ERC20TOKEN ? fullTransactionsByAddress : transactionsByAddress}
                     changeView={this.changeView}
                     address={account}
                     block={this.state.block}
-                    recentTxs={ERC20TOKEN ? fullRecentTxs : recentTxs}
                   />
                 </div>
                 <Bottom
@@ -1361,7 +1355,6 @@ render() {
                     view={this.state.view}
                     block={this.state.block}
                     ensLookup={this.ensLookup.bind(this)}
-                    ERC20TOKEN={ERC20TOKEN}
                     buttonStyle={buttonStyle}
                     balance={balance}
                     web3={this.state.web3}
@@ -1371,8 +1364,6 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
-                    fullRecentTxs={fullRecentTxs}
-                    recentTxs={recentTxs}
                   />
                 </div>
                 <Bottom
@@ -1392,7 +1383,6 @@ render() {
                     view={this.state.view}
                     block={this.state.block}
                     ensLookup={this.ensLookup.bind(this)}
-                    ERC20TOKEN={ERC20TOKEN}
                     buttonStyle={buttonStyle}
                     balance={balance}
                     web3={this.state.web3}
@@ -1402,8 +1392,6 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
-                    fullRecentTxs={fullRecentTxs}
-                    recentTxs={recentTxs}
                   />
                 </div>
                 <Bottom
@@ -1429,10 +1417,6 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
-                    transactionsByAddress={this.state.transactionsByAddress}
-                    fullTransactionsByAddress={this.state.fullTransactionsByAddress}
-                    fullRecentTxs={fullRecentTxs}
-                    recentTxs={recentTxs}
                   />
                 </div>
                 <Bottom

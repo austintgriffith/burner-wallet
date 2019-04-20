@@ -1,14 +1,19 @@
 import React from 'react';
 import { Blockie } from "dapparatus";
+import { withTransactionStore } from '../contexts/TransactionStore';
+import { ERC20TOKEN } from '../config';
 import Ruler from "./Ruler";
 import { Scaler } from "dapparatus";
 
-export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
+const RecentTransactions = ({
+  dollarDisplay, view, max, buttonStyle, vendorName, address, block, changeView, recentTxs, fullRecentTxs
+}) => {
   let txns = []
   let count=0
+  const transactions = ERC20TOKEN ? fullRecentTxs : recentTxs;
   if(!max) max=9999
-  for(let r in recentTxs){
-    let thisValue = parseFloat(recentTxs[r].value)
+  for(const transaction of transactions){
+    let thisValue = parseFloat(transaction.value)
     if(thisValue>0.0){
 
       let extraUp = 0
@@ -16,7 +21,7 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
         extraUp=-10
       }
       let extraIcon = ""
-      if(recentTxs[r].data){
+      if(transaction.data){
         extraIcon = (
           <div style={{position:'absolute',right:-3,top:extraUp}}>
             <button className="btn btn-large w-100" style={buttonStyle.primary}>
@@ -40,16 +45,16 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
 
       let dollarView
       if(ERC20TOKEN){
-        if(recentTxs[r].token){
+        if(transaction.token){
           dollarView = (
             <span>
-              <span style={{opacity:0.33}}>-</span>{dollarDisplay(recentTxs[r].value)}<span style={{opacity:0.33}}>-></span>
+              <span style={{opacity:0.33}}>-</span>{dollarDisplay(transaction.value)}<span style={{opacity:0.33}}>-></span>
             </span>
           )
         }else{
           dollarView = (
             <span style={{opacity:0.5,fontSize:14}}>
-              {dollarDisplay(recentTxs[r].value)}
+              {dollarDisplay(transaction.value)}
             </span>
           )
         }
@@ -58,19 +63,19 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
         //dollarDisplay
         dollarView = (
           <span>
-            <span style={{opacity:0.33}}>-</span>{dollarDisplay(recentTxs[r].value)}<span style={{opacity:0.33}}>-></span>
+            <span style={{opacity:0.33}}>-</span>{dollarDisplay(transaction.value)}<span style={{opacity:0.33}}>-></span>
           </span>
         )
       }
 
       let toBlockie = (
         <Blockie
-          address={recentTxs[r].to}
+          address={transaction.to}
           config={{size:4}}
         />
       )
-      if(recentTxs[r].to==address && recentTxs[r].data) {
-        let message = recentTxs[r].data
+      if(transaction.to==address && transaction.data) {
+        let message = transaction.data
         let limit = 18
         if(message.length>limit){
           message = message.substring(0,limit-3)+"..."
@@ -85,19 +90,19 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
       if(count++<max){
         //if(txns.length>0){
           txns.push(
-            <hr key={"ruler"+recentTxs[r].hash} style={{ "color": "#DFDFDF",marginTop:0,marginBottom:7 }}/>
+            <hr key={"ruler"+transaction.hash} style={{ "color": "#DFDFDF",marginTop:0,marginBottom:7 }}/>
           )
         //}
 
-        let blockAge = block-recentTxs[r].blockNumber
+        let blockAge = block-transaction.blockNumber
 
-        if(blockAge<=1&&recentTxs[r].to==address){
+        if(blockAge<=1&&transaction.to==address){
           txns.push(
-            <div key={"green"+count} style={{position:'relative',cursor:'pointer',paddingTop:10,paddingBottom:10}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
-              if(recentTxs[r].from==address){
-                changeView("account_"+recentTxs[r].to)
+            <div key={"green"+count} style={{position:'relative',cursor:'pointer',paddingTop:10,paddingBottom:10}} key={transaction.hash} className="content bridge row" onClick={()=>{
+              if(transaction.from==address){
+                changeView("account_"+transaction.to)
               }else{
-                changeView("account_"+recentTxs[r].from)
+                changeView("account_"+transaction.from)
               }
             }}>
               <div className="col-3" style={{textAlign:'center'}}>
@@ -105,7 +110,7 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
               </div>
               <div className="col-3" style={{textAlign:'center',paddingTop:6}}>
                 <Blockie
-                  address={recentTxs[r].from}
+                  address={transaction.from}
                   config={{size:7}}
                 />
               </div>
@@ -121,17 +126,17 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
           )
         }else{
           txns.push(
-            <div key={count} style={{position:'relative',cursor:'pointer'}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
-              if(recentTxs[r].from==address){
-                changeView("account_"+recentTxs[r].to)
+            <div style={{position:'relative',cursor:'pointer'}} key={transaction.hash} className="content bridge row" onClick={()=>{
+              if(transaction.from==address){
+                changeView("account_"+transaction.to)
               }else{
-                changeView("account_"+recentTxs[r].from)
+                changeView("account_"+transaction.from)
               }
             }}>
               {extraIcon}
               <div className="col-3 p-1" style={{textAlign:'center'}}>
                 <Blockie
-                  address={recentTxs[r].from}
+                  address={transaction.from}
                   config={{size:4}}
                 />
               </div>
@@ -180,3 +185,5 @@ let cleanTime = (s)=>{
     return Math.round((s/60/6)/24)/10+"d"
   }
 }
+
+export default withTransactionStore(RecentTransactions);
