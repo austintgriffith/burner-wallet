@@ -1,5 +1,5 @@
 
-    //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
+//snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
 
 function retry(isDone, next) {
     var current_trial = 0, max_retry = 50, interval = 10, is_timeout = false;
@@ -87,12 +87,11 @@ module.exports = function(callback) {
         if (window.safariIncognito) {
             is_private = true;
         } else {
-                    try {
-                       window.openDatabase(null, null, null, null);
-                    } catch (e) {
-                       is_private = true;
-                    }
-
+            try {
+                window.openDatabase(null, null, null, null);
+            } catch (e) {
+                is_private = true;
+            }
             try {
                 window.localStorage.setItem('test', 1);
             } catch(e) {
@@ -105,8 +104,6 @@ module.exports = function(callback) {
             window.localStorage.removeItem('test');
         }
     }
-
-
 
     retry(
         function isDone() {
