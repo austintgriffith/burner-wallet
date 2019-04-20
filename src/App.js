@@ -241,6 +241,7 @@ let dollarDisplay = (amount)=>{
 
 let interval
 let intervalLong
+let originalStyle = {}
 
 class App extends Component {
   constructor(props) {
@@ -352,6 +353,7 @@ class App extends Component {
         elem.innerHTML = 'INCOGNITO';
         document.body.appendChild(elem);
       }else if (typeof web3 !== 'undefined') {
+        console.log("NOT INCOG",this.state.metaAccount)
         if (window.web3.currentProvider.isMetaMask === true) {
           document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
           document.body.style.backgroundColor = "#ca6e28"
@@ -359,7 +361,8 @@ class App extends Component {
           elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
           elem.innerHTML = 'METAMASK';
           document.body.appendChild(elem);
-        } else if(!this.state.metaAccount) {
+        } else if(this.state.account && !this.state.metaAccount) {
+          console.log("~~~*** WEB3",this.state.metaAccount,result)
           document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
           document.body.style.backgroundColor = "#305582"
           var elem = document.createElement('div');
