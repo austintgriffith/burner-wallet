@@ -5,6 +5,7 @@ import cookie from 'react-cookies'
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
+import { DOLLAR_SYMBOL } from '../config';
 import i18n from '../i18n';
 const queryString = require('query-string');
 
@@ -240,7 +241,6 @@ export default class SendToAddress extends React.Component {
 
   render() {
     let { canSend, toAddress } = this.state;
-    let {dollarSymbol} = this.props
 
     /*let sendMessage = ""
     if(this.state.message){
@@ -303,7 +303,7 @@ export default class SendToAddress extends React.Component {
             <label htmlFor="amount_input">{i18n.t('send_to_address.send_amount')}</label>
             <div className="input-group">
               <div className="input-group-prepend">
-                <div className="input-group-text">{dollarSymbol}</div>
+                <div className="input-group-text">{DOLLAR_SYMBOL}</div>
               </div>
               {amountInputDisplay}
             </div>

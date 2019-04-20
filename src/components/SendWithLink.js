@@ -3,6 +3,7 @@ import Ruler from "./Ruler";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import i18n from '../i18n';
+import { DOLLAR_SYMBOL } from '../config';
 
 
 export default class SendWithLink extends React.Component {
@@ -63,7 +64,6 @@ export default class SendWithLink extends React.Component {
 
   render() {
     let { canSend } = this.state;
-    let { dollarSymbol } = this.props
     return (
       <div>
         <div className="content row">
@@ -71,7 +71,7 @@ export default class SendWithLink extends React.Component {
             <label htmlFor="amount_input">Amount</label>
             <div className="input-group">
               <div className="input-group-prepend">
-                <div className="input-group-text">{dollarSymbol}</div>
+                <div className="input-group-text">{DOLLAR_SYMBOL}</div>
               </div>
               <input type="number" step="0.1" className="form-control" placeholder="0.00"
                 ref={(input) => { this.amountInput = input; }}

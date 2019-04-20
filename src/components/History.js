@@ -8,10 +8,12 @@ import {toArray} from 'react-emoji-render';
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18next from 'i18next';
-const QRCode = require('qrcode.react');
-const Transaction = require("ethereumjs-tx")
-const EthUtil = require('ethereumjs-util')
-const EthCrypto = require('eth-crypto');
+import QRCode from 'qrcode.react';
+import Transaction from "ethereumjs-tx";
+import EthUtil from 'ethereumjs-util';
+import EthCrypto from 'eth-crypto';
+import { ERC20TOKEN } from '../config';
+
 const BockieSize = 4
 
 let interval
@@ -39,7 +41,9 @@ export default class History extends React.Component {
     clearInterval(interval)
   }
   async poll(){
-    let {transactionsByAddress,target} = this.props
+    const { target } = this.props
+    const transactionsByAddress = ERC20TOKEN ? this.props.fullTransactionsByAddress : this.props.transactionsByAddress;
+
     let theseTransactionsByAddress = []
     if(transactionsByAddress&&transactionsByAddress[target]){
       theseTransactionsByAddress = transactionsByAddress[target]
@@ -161,7 +165,8 @@ export default class History extends React.Component {
     })
   }
   render(){
-    let {transactionsByAddress,address,changeView,block,goBack,target,buttonStyle} = this.props
+    let {address,changeView,block,goBack,target,buttonStyle} = this.props
+    const transactionsByAddress = ERC20TOKEN ? this.props.fullTransactionsByAddress : this.props.transactionsByAddress;
 
     let theseTransactionsByAddress = []
     if(transactionsByAddress&&transactionsByAddress[target]){

@@ -16,7 +16,7 @@ export default class Receive extends React.Component {
     }
   }
   render() {
-    let {dollarDisplay,view,buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, subBalanceDisplay,account} = this.props
+    const { dollarDisplay, view, buttonStyle, address, balance, changeAlert, changeView, subBalanceDisplay, account } = this.props
 
 
     let qrSize = Math.min(document.documentElement.clientWidth,512)-90
@@ -43,12 +43,9 @@ export default class Receive extends React.Component {
             view={view}
             max={5}
             buttonStyle={buttonStyle}
-            ERC20TOKEN={ERC20TOKEN}
-            transactionsByAddress={ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
             changeView={changeView}
             address={address}
             block={this.props.block}
-            recentTxs={ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
           />
         </div>
         <div name="theVeryBottom" className="text-center bottom-text">

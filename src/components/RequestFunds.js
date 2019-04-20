@@ -5,6 +5,7 @@ import Blockies from 'react-blockies';
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18n from '../i18n';
 import RecentTransactions from './RecentTransactions';
+import { DOLLAR_SYMBOL } from '../config';
 const QRCode = require('qrcode.react');
 
 export default class RequestFunds extends React.Component {
@@ -36,7 +37,7 @@ export default class RequestFunds extends React.Component {
 
   render() {
     let { canRequest, message, amount, requested } = this.state;
-    let {dollarDisplay,view,buttonStyle,ERC20TOKEN,address, changeView, dollarSymbol} = this.props
+    const { dollarDisplay, view, buttonStyle, address, changeView } = this.props
     if(requested){
 
       let url = window.location.protocol+"//"+window.location.hostname
@@ -78,12 +79,9 @@ export default class RequestFunds extends React.Component {
             view={view}
             max={5}
             buttonStyle={buttonStyle}
-            ERC20TOKEN={ERC20TOKEN}
-            transactionsByAddress={ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
             changeView={changeView}
             address={address}
             block={this.props.block}
-            recentTxs={ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
           />
         </div>
       )
@@ -95,7 +93,7 @@ export default class RequestFunds extends React.Component {
               <label htmlFor="amount_input">{i18n.t('request_funds.amount')}</label>
               <div className="input-group">
                 <div className="input-group-prepend">
-                  <div className="input-group-text">{dollarSymbol}</div>
+                  <div className="input-group-text">{DOLLAR_SYMBOL}</div>
                 </div>
                 <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />

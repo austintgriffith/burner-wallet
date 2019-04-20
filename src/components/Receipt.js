@@ -50,7 +50,7 @@ export default class Receive extends React.Component {
     }
   }
   render() {
-    let {receipt,buttonStyle,ERC20TOKEN,address, balance, changeView, dollarDisplay,account} = this.props
+    let {receipt,buttonStyle,address, balance, changeView, dollarDisplay,account} = this.props
 
     let message = ""
 
