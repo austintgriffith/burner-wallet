@@ -348,27 +348,21 @@ class App extends Component {
         console.log("INCOG")
         document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
         document.body.style.backgroundColor = "#671c1c"
-        var elem = document.createElement('div');
-        elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
-        elem.innerHTML = 'INCOGNITO';
-        document.body.appendChild(elem);
+        var contextElement = document.getElementById("context")
+        contextElement.innerHTML = 'INCOGNITO';
       }else if (typeof web3 !== 'undefined') {
         console.log("NOT INCOG",this.state.metaAccount)
         if (window.web3.currentProvider.isMetaMask === true) {
           document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
           document.body.style.backgroundColor = "#ca6e28"
-          var elem = document.createElement('div');
-          elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
-          elem.innerHTML = 'METAMASK';
-          document.body.appendChild(elem);
+          var contextElement = document.getElementById("context")
+          contextElement.innerHTML = 'METAMASK';
         } else if(this.state.account && !this.state.metaAccount) {
           console.log("~~~*** WEB3",this.state.metaAccount,result)
           document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
           document.body.style.backgroundColor = "#305582"
-          var elem = document.createElement('div');
-          elem.style.cssText = 'position:absolute;right:5px;top:-15px;opacity:0.2;z-index:100;font-size:60px;color:#FFFFFF';
-          elem.innerHTML = 'WEB3';
-          document.body.appendChild(elem);
+          var contextElement = document.getElementById("context")
+          contextElement.innerHTML = 'WEB3';
         }
       }
     })
@@ -2051,6 +2045,10 @@ render() {
           })
         }}
         />
+
+        <div id="context" style={{position:"absolute",right:5,top:-15,opacity:0.2,zIndex:100,fontSize:60,color:'#FFFFFF'}}>
+        </div>
+
         {eventParser}
       </div>
     </div>
