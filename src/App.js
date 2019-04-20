@@ -36,6 +36,7 @@ import Loader from './components/Loader';
 import BurnWallet from './components/BurnWallet'
 import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
+import { withTransactionStore } from './contexts/TransactionStore';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 
@@ -489,9 +490,7 @@ class App extends Component {
         }else{
           this.setState({possibleNewPrivateKey:false,newPrivateKey:this.state.possibleNewPrivateKey})
           localStorage.setItem(this.state.account+"loadedBlocksTop","")
-          localStorage.setItem(this.state.account+"recentTxs","")
-          localStorage.setItem(this.state.account+"transactionsByAddress","")
-          this.setState({recentTxs:[],transactionsByAddress:{},fullRecentTxs:[],fullTransactionsByAddress:{}})
+          this.props.resetTransactionStore(this.state.account);
         }
       }
     }else{
@@ -699,7 +698,7 @@ goBack(){
   this.changeView('main')
   setTimeout(()=>{window.scrollTo(0,0)},60)
 }
-async parseBlocks(parseBlock,recentTxs,transactionsByAddress){
+async parseBlocks(parseBlock){
   let block = await this.state.web3.eth.getBlock(parseBlock)
   let updatedTxs = false
   if(block){
@@ -738,7 +737,7 @@ async parseBlocks(parseBlock,recentTxs,transactionsByAddress){
               smallerTx.data = " *** unable to decrypt data *** "
             }
           }
-          updatedTxs = this.addTxIfAccountMatches(recentTxs,transactionsByAddress,smallerTx) || updatedTxs
+          updatedTxs = this.props.addTxIfAccountMatches(this.state.account, smallerTx) || updatedTxs
         }
 
       }
@@ -773,148 +772,7 @@ async decryptInput(input){
   }
   return false
 }
-initRecentTxs(){
-  let recentTxs = []
-  if(this.state.recentTx) recentTxs = recentTxs.concat(this.state.recentTxs)
-  let transactionsByAddress = Object.assign({},this.state.transactionsByAddress)
-  if(!recentTxs||recentTxs.length<=0){
-    recentTxs = localStorage.getItem(this.state.account+"recentTxs")
-    try{
-      recentTxs=JSON.parse(recentTxs)
-    }catch(e){
-      recentTxs=[]
-    }
-  }
-  if(!recentTxs){
-    recentTxs=[]
-  }
-  if(Object.keys(transactionsByAddress).length === 0){
-    transactionsByAddress = localStorage.getItem(this.state.account+"transactionsByAddress")
-    try{
-      transactionsByAddress=JSON.parse(transactionsByAddress)
-    }catch(e){
-      transactionsByAddress={}
-    }
-  }
-  if(!transactionsByAddress){
-    transactionsByAddress={}
-  }
-  return [recentTxs,transactionsByAddress]
-}
-addTxIfAccountMatches(recentTxs,transactionsByAddress,smallerTx){
-  let updatedTxs = false
 
-  let otherAccount = smallerTx.to
-  if(smallerTx.to==this.state.account){
-    otherAccount = smallerTx.from
-  }
-  if(!transactionsByAddress[otherAccount]){
-    transactionsByAddress[otherAccount] = []
-  }
-
-  let found = false
-  if(parseFloat(smallerTx.value)>0.005){
-    for(let r in recentTxs){
-      if(recentTxs[r].hash==smallerTx.hash/* && (!smallerTx.data || recentTxs[r].data == smallerTx.data)*/){
-        found = true
-        if(!smallerTx.data || recentTxs[r].data == smallerTx.data){
-          // do nothing, it exists
-        }else{
-          recentTxs[r].data = smallerTx.data
-          updatedTxs=true
-        }
-      }
-    }
-    if(!found){
-      updatedTxs=true
-      recentTxs.push(smallerTx)
-      //console.log("recentTxs after push",recentTxs)
-    }
-  }
-
-  found = false
-  for(let t in transactionsByAddress[otherAccount]){
-    if(transactionsByAddress[otherAccount][t].hash==smallerTx.hash/* && (!smallerTx.data || recentTxs[r].data == smallerTx.data)*/){
-      found = true
-      if(!smallerTx.data || transactionsByAddress[otherAccount][t].data == smallerTx.data){
-        // do nothing, it exists
-      }else{
-        transactionsByAddress[otherAccount][t].data = smallerTx.data
-        if(smallerTx.encrypted) transactionsByAddress[otherAccount][t].encrypted = true
-        updatedTxs=true
-      }
-    }
-  }
-  if(!found){
-    updatedTxs=true
-    transactionsByAddress[otherAccount].push(smallerTx)
-  }
-
-  return updatedTxs
-}
-sortAndSaveTransactions(recentTxs,transactionsByAddress){
-  recentTxs.sort(sortByBlockNumber)
-
-  for(let t in transactionsByAddress){
-    transactionsByAddress[t].sort(sortByBlockNumberDESC)
-  }
-  recentTxs = recentTxs.slice(0,12)
-  localStorage.setItem(this.state.account+"recentTxs",JSON.stringify(recentTxs))
-  localStorage.setItem(this.state.account+"transactionsByAddress",JSON.stringify(transactionsByAddress))
-
-  this.setState({recentTxs:recentTxs,transactionsByAddress:transactionsByAddress},()=>{
-    if(ERC20TOKEN){
-      this.syncFullTransactions()
-    }
-  })
-}
-async addAllTransactionsFromList(recentTxs,transactionsByAddress,theList){
-  let updatedTxs = false
-
-  for(let e in theList){
-    let thisEvent = theList[e]
-    let cleanEvent = Object.assign({},thisEvent)
-    cleanEvent.to = cleanEvent.to.toLowerCase()
-    cleanEvent.from = cleanEvent.from.toLowerCase()
-    cleanEvent.value = this.state.web3.utils.fromWei(""+cleanEvent.value,'ether')
-    cleanEvent.token = ERC20TOKEN
-    if(cleanEvent.data) {
-      let decrypted = await this.decryptInput(cleanEvent.data)
-      if(decrypted){
-        cleanEvent.data = decrypted
-        cleanEvent.encrypted = true
-      }else{
-        try{
-          cleanEvent.data = this.state.web3.utils.hexToUtf8(cleanEvent.data)
-        }catch(e){}
-      }
-    }
-    updatedTxs = this.addTxIfAccountMatches(recentTxs,transactionsByAddress,cleanEvent) || updatedTxs
-  }
-  return updatedTxs
-}
-syncFullTransactions(){
-  let initResult = this.initRecentTxs()
-  let recentTxs = []
-  recentTxs = recentTxs.concat(initResult[0])
-  let transactionsByAddress = Object.assign({},initResult[1])
-
-  let updatedTxs = false
-  updatedTxs = this.addAllTransactionsFromList(recentTxs,transactionsByAddress,this.state.transferTo) || updatedTxs
-  updatedTxs = this.addAllTransactionsFromList(recentTxs,transactionsByAddress,this.state.transferFrom) || updatedTxs
-  updatedTxs = this.addAllTransactionsFromList(recentTxs,transactionsByAddress,this.state.transferToWithData) || updatedTxs
-  updatedTxs = this.addAllTransactionsFromList(recentTxs,transactionsByAddress,this.state.transferFromWithData) || updatedTxs
-
-  if(updatedTxs||!this.state.fullRecentTxs||!this.state.fullTransactionsByAddress){
-    recentTxs.sort(sortByBlockNumber)
-    for(let t in transactionsByAddress){
-      transactionsByAddress[t].sort(sortByBlockNumberDESC)
-    }
-    recentTxs = recentTxs.slice(0,12)
-    //console.log("FULLRECENT",recentTxs)
-    this.setState({fullRecentTxs:recentTxs,fullTransactionsByAddress:transactionsByAddress})
-  }
-}
 render() {
   let {
     web3, account, tx, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert, send
@@ -1034,6 +892,8 @@ render() {
 
 
         {web3 /*&& this.checkNetwork()*/ && (() => {
+          const { fullTransactionsByAddress, transactionsByAddress, recentTxs, fullRecentTxs } = this.props;
+
           //console.log("VIEW:",view)
 
           let moreButtons = (
@@ -1194,7 +1054,7 @@ render() {
                     buttonStyle={buttonStyle}
                     saveKey={this.saveKey.bind(this)}
                     metaAccount={this.state.metaAccount}
-                    transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                    transactionsByAddress={ERC20TOKEN ? fullTransactionsByAddress : transactionsByAddress}
                     address={account}
                     balance={balance}
                     changeAlert={this.changeAlert}
@@ -1285,11 +1145,11 @@ render() {
                     view={this.state.view}
                     buttonStyle={buttonStyle}
                     ERC20TOKEN={ERC20TOKEN}
-                    transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                    transactionsByAddress={ERC20TOKEN ? fullTransactionsByAddress : transactionsByAddress}
                     changeView={this.changeView}
                     address={account}
                     block={this.state.block}
-                    recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
+                    recentTxs={ERC20TOKEN ? fullRecentTxs : recentTxs}
                   />
                 </div>
                 <Bottom
@@ -1454,10 +1314,8 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
-                    transactionsByAddress={this.state.transactionsByAddress}
-                    fullTransactionsByAddress={this.state.fullTransactionsByAddress}
-                    fullRecentTxs={this.state.fullRecentTxs}
-                    recentTxs={this.state.recentTxs}
+                    fullRecentTxs={fullRecentTxs}
+                    recentTxs={recentTxs}
                   />
                 </div>
                 <Bottom
@@ -1487,10 +1345,8 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
-                    transactionsByAddress={this.state.transactionsByAddress}
-                    fullTransactionsByAddress={this.state.fullTransactionsByAddress}
-                    fullRecentTxs={this.state.fullRecentTxs}
-                    recentTxs={this.state.recentTxs}
+                    fullRecentTxs={fullRecentTxs}
+                    recentTxs={recentTxs}
                   />
                 </div>
                 <Bottom
@@ -1518,8 +1374,8 @@ render() {
                     dollarDisplay={dollarDisplay}
                     transactionsByAddress={this.state.transactionsByAddress}
                     fullTransactionsByAddress={this.state.fullTransactionsByAddress}
-                    fullRecentTxs={this.state.fullRecentTxs}
-                    recentTxs={this.state.recentTxs}
+                    fullRecentTxs={fullRecentTxs}
+                    recentTxs={recentTxs}
                   />
                 </div>
                 <Bottom
@@ -1651,9 +1507,7 @@ render() {
                     if(localStorage&&typeof localStorage.setItem == "function"){
                       localStorage.setItem(this.state.account+"loadedBlocksTop","")
                       localStorage.setItem(this.state.account+"metaPrivateKey","")
-                      localStorage.setItem(this.state.account+"recentTxs","")
-                      localStorage.setItem(this.state.account+"transactionsByAddress","")
-                      this.setState({recentTxs:[],transactionsByAddress:{}})
+                      this.props.resetTransactionStore(this.state.account);
                     }
                   }}
                   />
@@ -1833,11 +1687,6 @@ render() {
                   //parse through recent transactions and store in local storage
 
                   if(localStorage&&typeof localStorage.setItem == "function"){
-
-                    let initResult = this.initRecentTxs()
-                    let recentTxs = initResult[0]
-                    let transactionsByAddress = initResult[1]
-
                     let loadedBlocksTop = this.state.loadedBlocksTop
                     if(!loadedBlocksTop){
                       loadedBlocksTop = localStorage.getItem(this.state.account+"loadedBlocksTop")
@@ -1868,19 +1717,19 @@ render() {
                       if(upperBoundOfSearch<this.state.block){
                         for(let b=this.state.block;b>this.state.block-6;b--){
                           //console.log(" ++ Parsing *CURRENT BLOCK* Block "+b+" for transactions...")
-                          updatedTxs = (await this.parseBlocks(b,recentTxs,transactionsByAddress)) || updatedTxs
+                          updatedTxs = (await this.parseBlocks(b)) || updatedTxs
                         }
                       }
                       console.log(" +++++++======= Parsing from "+loadedBlocksTop+" to "+upperBoundOfSearch+"....")
                       while(loadedBlocksTop<parseBlock){
                         //console.log(" ++ Parsing Block "+parseBlock+" for transactions...")
-                        updatedTxs = (await this.parseBlocks(parseBlock,recentTxs,transactionsByAddress)) || updatedTxs
+                        updatedTxs = (await this.parseBlocks(parseBlock)) || updatedTxs
                         parseBlock--
                       }
                     }
 
-                    if(updatedTxs||!this.state.recentTxs){
-                      this.sortAndSaveTransactions(recentTxs,transactionsByAddress)
+                    if(updatedTxs || !this.props.recentTxs){
+                      this.props.sortAndSaveTransactions(this.state.account);
                     }
 
                     localStorage.setItem(this.state.account+"loadedBlocksTop",upperBoundOfSearch)
@@ -2002,26 +1851,7 @@ async function tokenSend(to,value,gasLimit,txData,cb){
 
 }
 
-let sortByBlockNumberDESC = (a,b)=>{
-  if(b.blockNumber>a.blockNumber){
-    return -1
-  }
-  if(b.blockNumber<a.blockNumber){
-    return 1
-  }
-  return 0
-}
-let sortByBlockNumber = (a,b)=>{
-  if(b.blockNumber<a.blockNumber){
-    return -1
-  }
-  if(b.blockNumber>a.blockNumber){
-    return 1
-  }
-  return 0
-}
-
-export default App;
+export default withTransactionStore(App);
 
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
