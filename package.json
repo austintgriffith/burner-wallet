@@ -16,7 +16,7 @@
     "i18next-browser-languagedetector": "^2.2.4",
     "jimp": "^0.6.0",
     "jsbi-utils": "^1.0.0",
-    "leap-core": "0.29.0",
+    "leap-core": "0.29.1",
     "qrcode-reader": "^1.0.4",
     "qrcode.react": "^0.8.0",
     "query-string": "^6.3.0",
