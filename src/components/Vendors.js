@@ -3,7 +3,10 @@ import { Scaler, Events } from "dapparatus";
 import Blockies from 'react-blockies';
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
-const QRCode = require('qrcode.react');
+import QRCode from 'qrcode.react';
+import { ERC20VENDOR } from '../config';
+import { dollarDisplay } from '../lib';
+
 
 let interval
 
@@ -34,7 +37,7 @@ export default class Advanced extends React.Component {
     let id = 0
     if(this.state.vendor){
      if(!this.state.vendorObject){
-       let vendorData = await this.props.contracts[this.props.ERC20VENDOR].vendors(this.state.vendor).call()
+       let vendorData = await this.props.contracts[ERC20VENDOR].vendors(this.state.vendor).call()
        console.log("vendorData",vendorData)
        vendorData.name = this.props.web3.utils.hexToUtf8(vendorData.name)
        this.setState({vendorObject:vendorData})
@@ -46,7 +49,7 @@ export default class Advanced extends React.Component {
      }
      let found = true
      while(found){
-       let nextProduct = await this.props.contracts[this.props.ERC20VENDOR].products(this.state.vendor,id).call()
+       let nextProduct = await this.props.contracts[ERC20VENDOR].products(this.state.vendor,id).call()
        if(nextProduct.exists){
          products[id++] = nextProduct
        }else{
@@ -60,7 +63,7 @@ export default class Advanced extends React.Component {
     }
   }
   render(){
-    let {mainStyle,contracts,tx,web3,vendors,dollarDisplay,vendorObject} = this.props
+    let { mainStyle, contracts, tx, web3, vendors, vendorObject } = this.props
 
     let {vendor} = this.state
 

@@ -4,6 +4,7 @@ import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import i18n from '../i18n';
 import { DOLLAR_SYMBOL } from '../config';
+import { convertToDollar } from '../lib';
 
 
 export default class SendWithLink extends React.Component {
@@ -35,7 +36,6 @@ export default class SendWithLink extends React.Component {
 
   send = () => {
     let { amount } = this.state;
-    let { convertToDollar } = this.props
 
     if(this.state.canSend){
 

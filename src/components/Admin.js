@@ -4,7 +4,7 @@ import Blockies from 'react-blockies';
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18next from 'i18next';
-const QRCode = require('qrcode.react');
+import { ERC20VENDOR } from '../config';
 
 export default class Advanced extends React.Component {
 
@@ -68,7 +68,7 @@ export default class Advanced extends React.Component {
             changingAllowed[v] = true
             this.setState({changingAllowed})
             //updateVendor(address wallet, bytes32 name, bool newAllowed)
-            tx(contracts[this.props.ERC20VENDOR].updateVendor(vendors[v].vendor,web3.utils.utf8ToHex(vendors[v].name),vendors[v].isActive,!vendors[v].isAllowed),120000,0,0,(result)=>{
+            tx(contracts[ERC20VENDOR].updateVendor(vendors[v].vendor,web3.utils.utf8ToHex(vendors[v].name),vendors[v].isActive,!vendors[v].isAllowed),120000,0,0,(result)=>{
               console.log("ACTIVE:",result)
               setTimeout(()=>{
                 let {changingAllowed} = this.state
@@ -107,7 +107,7 @@ export default class Advanced extends React.Component {
             changingAllowed[v] = true
             this.setState({changingAllowed})
             //updateVendor(address wallet, bytes32 name, bool newAllowed)
-            tx(contracts[this.props.ERC20VENDOR].updateVendor(vendors[v].vendor,web3.utils.utf8ToHex(vendors[v].name),!vendors[v].isActive,vendors[v].isAllowed),120000,0,0,(result)=>{
+            tx(contracts[ERC20VENDOR].updateVendor(vendors[v].vendor,web3.utils.utf8ToHex(vendors[v].name),!vendors[v].isActive,vendors[v].isAllowed),120000,0,0,(result)=>{
               console.log("ACTIVE:",result)
               setTimeout(()=>{
                 let {changingAllowed} = this.state
@@ -191,7 +191,7 @@ export default class Advanced extends React.Component {
           <div className="col-4 p-1">
           <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
             this.setState({addingVendor:true})
-            tx(contracts[this.props.ERC20VENDOR].addVendor(this.state.newVendor,web3.utils.utf8ToHex(this.state.newVendorName)),480000,0,0,(result)=>{
+            tx(contracts[ERC20VENDOR].addVendor(this.state.newVendor,web3.utils.utf8ToHex(this.state.newVendorName)),480000,0,0,(result)=>{
               console.log("VENDOR ADDED",result)
               this.setState({newVendor:"",newVendorName:""})
               setTimeout(()=>{

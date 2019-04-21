@@ -5,6 +5,7 @@ import { Scaler } from "dapparatus";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import i18n from '../i18n';
+import { dollarDisplay } from '../lib';
 
 let pollInterval
 let metaReceiptTracker = {}
@@ -138,7 +139,7 @@ export default class SendToAddress extends React.Component {
                   }}
                   style={this.props.buttonStyle.secondary}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    {this.props.web3.utils.hexToUtf8(prod.name)} {this.props.dollarDisplay(costInDollars)}
+                    {this.props.web3.utils.hexToUtf8(prod.name)} {dollarDisplay(costInDollars)}
                   </Scaler>
                 </button>
               </div>

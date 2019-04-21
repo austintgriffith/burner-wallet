@@ -14,6 +14,9 @@ import i18n from '../i18n';
 import Wyre from '../services/wyre';
 import wyrelogo from '../wyre.png';
 
+import { ERC20TOKEN, ERC20NAME, ERC20IMAGE, ERC20VENDOR } from '../config';
+import { dollarDisplay } from '../lib';
+
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
 
@@ -82,11 +85,17 @@ export default class Exchange extends React.Component {
     let dendaiContract
     let vendorContract
     console.log("NETWORK:",this.props.network)
-    if(props.ERC20TOKEN&&this.props.network=="xDai"){
+    if(ERC20TOKEN && this.props.network=="xDai"){
       try{
-        console.log("Loading "+props.ERC20TOKEN+" Contract...")
-        dendaiContract = new this.props.web3.eth.Contract(require("../contracts/"+props.ERC20TOKEN+".abi.js"),require("../contracts/"+props.ERC20TOKEN+".address.js"))
-        vendorContract = new this.props.web3.eth.Contract(require("../contracts/"+props.ERC20VENDOR+".abi.js"),require("../contracts/"+props.ERC20VENDOR+".address.js"))
+        console.log(`Loading ${ERC20TOKEN} Contract...`)
+        dendaiContract = new this.props.web3.eth.Contract(
+          require(`../contracts/${ERC20TOKEN}.abi.js`),
+          require(`../contracts/${ERC20TOKEN}.address.js`)
+        )
+        vendorContract = new this.props.web3.eth.Contract(
+          require(`../contracts/${ERC20VENDOR}.abi.js`),
+          require(`../contracts/${ERC20VENDOR}.address.js`)
+        )
         console.log("SET vendorContract",vendorContract)
       }catch(e){
         console.log("ERROR LOADING dendaiContract Contract",e)
@@ -275,7 +284,7 @@ export default class Exchange extends React.Component {
 
 
 
-    if(this.props.ERC20TOKEN&&dendaiContract){
+    if(ERC20TOKEN && dendaiContract){
       let denDaiBalance = await dendaiContract.methods.balanceOf(this.state.daiAddress).call()
       denDaiBalance = mainnetweb3.utils.fromWei(denDaiBalance,"ether")
       if(denDaiBalance!=this.state.denDaiBalance){
@@ -814,7 +823,7 @@ export default class Exchange extends React.Component {
     let xdaiToDendaiDisplay =  i18n.t('loading')
 
     let tokenDisplay = ""
-    if(this.props.ERC20TOKEN){
+    if(ERC20TOKEN){
       if(xdaiToDendaiMode=="sending" || xdaiToDendaiMode=="withdrawing" || xdaiToDendaiMode=="depositing"){
         xdaiToDendaiDisplay = (
           <div className="content ops row" style={{position:"relative"}}>
@@ -876,7 +885,7 @@ export default class Exchange extends React.Component {
                     xdaiBalanceAtStart:this.props.xdaiBalance,
                     xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)-parseFloat(this.state.amount),
                     loaderBarColor:"#3efff8",
-                    loaderBarStatusText:"Depositing xDai into "+this.props.ERC20NAME+"...",
+                    loaderBarStatusText: `Depositing xDai into ${ERC20NAME}...`,
                     loaderBarPercent:0,
                     loaderBarStartTime: Date.now(),
                     loaderBarClick:()=>{
@@ -917,9 +926,9 @@ export default class Exchange extends React.Component {
                     });
 
                   }else{
-                    console.log("Use MetaMask to withdraw "+this.props.ERC20NAME+" to xDai")
+                    console.log(`Use MetaMask to withdraw ${ERC20NAME} to xDai`);
                     this.props.tx(
-                      this.props.contracts[this.props.ERC20VENDOR].deposit()
+                      this.props.contracts[ERC20VENDOR].deposit()
                     ,120000,0,amountOfxDaiToDeposit,(receipt)=>{
                       if(receipt){
                         console.log("EXCHANGE COMPLETE?!?",receipt)
@@ -959,7 +968,7 @@ export default class Exchange extends React.Component {
             extraWithdrawInfo = (
               <div className="content ops row" style={{paddingTop:10}}>
                 <div style={{width:"100%",textAlign:'center'}}>
-                  Maximum withdrawal amount: {this.props.dollarDisplay(this.state.maxWithdrawlAmount)}
+                  Maximum withdrawal amount: {dollarDisplay(this.state.maxWithdrawlAmount)}
                 </div>
                 <div style={{width:"100%",textAlign:'center',opacity:0.5}}>
                   ({this.state.withdrawalExplanation})
@@ -996,14 +1005,14 @@ export default class Exchange extends React.Component {
                   <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
 
                     let amountOfxDaiToWithdraw = this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether')
-                    console.log("Using "+this.props.ERC20NAME+" contract to withdraw "+amountOfxDaiToWithdraw+" xDai")
+                    console.log(`Using ${ERC20NAME} contract to withdraw ${amountOfxDaiToWithdraw} xDai`)
 
                     this.setState({
                       xdaiToDendaiMode:"withdrawing",
                       xdaiBalanceAtStart:this.props.xdaiBalance,
                       xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)+parseFloat(this.state.amount),
                       loaderBarColor:"#3efff8",
-                      loaderBarStatusText:"Withdrawing "+this.props.ERC20NAME+" to xDai...",
+                      loaderBarStatusText: `Withdrawing ${ERC20NAME} to xDai...`,
                       loaderBarPercent:0,
                       loaderBarStartTime: Date.now(),
                       loaderBarClick:()=>{
@@ -1044,9 +1053,9 @@ export default class Exchange extends React.Component {
                       });
 
                     }else{
-                      console.log("Use MetaMask to withdraw "+this.props.ERC20NAME+" to xDai")
+                      console.log(`Use MetaMask to withdraw ${ERC20NAME} to xDai`)
                       this.props.tx(
-                        this.props.contracts[this.props.ERC20VENDOR].withdraw(""+amountOfxDaiToWithdraw)
+                        this.props.contracts[ERC20VENDOR].withdraw(""+amountOfxDaiToWithdraw)
                       ,120000,0,0,(receipt)=>{
                         if(receipt){
                           console.log("EXCHANGE COMPLETE?!?",receipt)
@@ -1080,7 +1089,7 @@ export default class Exchange extends React.Component {
                  this.setState({xdaiToDendaiMode:"deposit"})
                }}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-arrow-up"  /> xDai to {this.props.ERC20NAME}
+                    <i className="fas fa-arrow-up"  /> xDai to {ERC20NAME}
                   </Scaler>
                </button>
              </div>
@@ -1090,7 +1099,7 @@ export default class Exchange extends React.Component {
                  this.setState({xdaiToDendaiMode:"withdraw"})
                }}>
                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-arrow-down" /> {this.props.ERC20NAME} to xDai
+                  <i className="fas fa-arrow-down" /> {ERC20NAME} to xDai
                  </Scaler>
                </button>
              </div>
@@ -1100,7 +1109,7 @@ export default class Exchange extends React.Component {
 
       let link = ""
       if(this.props.contracts){
-        link = "https://blockscout.com/poa/dai/address/"+this.props.contracts[this.props.ERC20TOKEN]._address+"/contracts"
+        link = "https://blockscout.com/poa/dai/address/"+this.props.contracts[ERC20TOKEN]._address+"/contracts"
       }
 
       tokenDisplay = (
@@ -1108,15 +1117,15 @@ export default class Exchange extends React.Component {
           <div className="content ops row" style={{paddingBottom:20}}>
             <div className="col-2 p-1">
               <a href={link} target="_blank">
-                <img style={logoStyle} src={this.props.ERC20IMAGE} />
+                <img style={logoStyle} src={ERC20IMAGE} />
               </a>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
-              {this.props.ERC20NAME}
+              {ERC20NAME}
             </div>
             <div className="col-5 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  {this.props.dollarDisplay(this.state.denDaiBalance)}
+                  {dollarDisplay(this.state.denDaiBalance)}
                 </Scaler>
             </div>
             <div className="col-2 p-1" style={{marginTop:8}}>
@@ -1347,7 +1356,7 @@ export default class Exchange extends React.Component {
                 }else{
 
                   //BECAUSE THIS COULD BE ON A TOKEN, THE SEND FUNCTION IS SENDING TOKENS TO THE BRIDGE HAHAHAHA LETs FIX THAT
-                  if(this.props.ERC20TOKEN){
+                  if(ERC20TOKEN){
                     console.log("native sending ",this.state.amount," to ",toDaiBridgeAccount)
                     this.props.nativeSend(toDaiBridgeAccount, this.state.amount, 120000, (result) => {
                       console.log("RESUTL!!!!",result)
@@ -2148,7 +2157,7 @@ export default class Exchange extends React.Component {
 
     let sendXdaiButton
 
-    if(this.props.ERC20TOKEN){
+    if(ERC20TOKEN){
       sendXdaiButton = (
         <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={()=>{this.setState({sendXdai:true})}}>
           <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
@@ -2231,7 +2240,7 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-4 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  {this.props.dollarDisplay(this.props.xdaiBalance)}
+                  {dollarDisplay(this.props.xdaiBalance)}
                 </Scaler>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
@@ -2256,7 +2265,7 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-4 p-1" style={{marginTop:9,whiteSpace:"nowrap"}}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                {this.props.dollarDisplay(this.props.daiBalance)}
+                {dollarDisplay(this.props.daiBalance)}
               </Scaler>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
@@ -2280,7 +2289,7 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-4 p-1" style={{marginTop:10,whiteSpace:"nowrap"}}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                {this.props.dollarDisplay(this.props.ethBalance*this.props.ethprice)}
+                {dollarDisplay(this.props.ethBalance*this.props.ethprice)}
               </Scaler>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>

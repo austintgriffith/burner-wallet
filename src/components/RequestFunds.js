@@ -6,7 +6,8 @@ import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18n from '../i18n';
 import RecentTransactions from './RecentTransactions';
 import { DOLLAR_SYMBOL } from '../config';
-const QRCode = require('qrcode.react');
+import QRCode from 'qrcode.react';
+import { dollarDisplay } from '../lib';
 
 export default class RequestFunds extends React.Component {
 
@@ -37,7 +38,7 @@ export default class RequestFunds extends React.Component {
 
   render() {
     let { canRequest, message, amount, requested } = this.state;
-    const { dollarDisplay, buttonStyle, address, changeView } = this.props
+    const { buttonStyle, address, changeView } = this.props
     if(requested){
 
       let url = window.location.protocol+"//"+window.location.hostname
@@ -75,7 +76,6 @@ export default class RequestFunds extends React.Component {
             </div>
           </CopyToClipboard>
           <RecentTransactions
-            dollarDisplay={dollarDisplay}
             max={5}
             buttonStyle={buttonStyle}
             changeView={changeView}

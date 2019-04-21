@@ -1,8 +1,9 @@
 import React from 'react';
 import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
+import { dollarDisplay } from '../lib';
 
-export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
+export  default ({ icon, text, selected, amount, address }) => {
 
   let opacity = 0.65
   if(text == selected){

@@ -44,7 +44,7 @@ import incogDetect from './services/incogDetect.js'
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
 
-import { DOLLAR_SYMBOL, WEB3_PROVIDER, ERC20TOKEN, ERC20VENDOR, ERC20IMAGE, ERC20NAME, XDAI_PROVIDER, LOADERIMAGE } from './config';
+import { WEB3_PROVIDER, ERC20TOKEN, ERC20VENDOR, ERC20IMAGE, ERC20NAME, XDAI_PROVIDER } from './config';
 
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
@@ -137,20 +137,6 @@ let metaReceiptTracker = {}
 
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
-
-let dollarConversion = 1.0
-//let dollarSymbol = "€"
-//let dollarConversion = 0.88
-let convertToDollar = (amount)=>{
-  return (parseFloat(amount)/dollarConversion)
-}
-let convertFromDollar = (amount)=>{
-  return (parseFloat(amount)*dollarConversion)
-}
-let dollarDisplay = (amount)=>{
-  amount = Math.floor(amount*100)/100
-  return DOLLAR_SYMBOL + convertFromDollar(amount).toFixed(2)
-}
 
 let interval
 let intervalLong
@@ -875,7 +861,6 @@ render() {
         address={this.state.account}
         changeView={this.changeView}
         balance={balance}
-        dollarDisplay={dollarDisplay}
       />
     )
   }
@@ -919,8 +904,6 @@ render() {
               moreButtons = (
                 <div>
                   <Admin
-                    ERC20VENDOR={ERC20VENDOR}
-                    ERC20TOKEN={ERC20TOKEN}
                     vendors={this.state.vendors}
                     buttonStyle={buttonStyle}
                     changeView={this.changeView}
@@ -939,7 +922,6 @@ render() {
               moreButtons = (
                 <div>
                   <Vendor
-                    ERC20VENDOR={ERC20VENDOR}
                     products={this.state.products}
                     address={account}
                     buttonStyle={buttonStyle}
@@ -949,7 +931,6 @@ render() {
                     vendor={this.state.isVendor}
                     tx={this.state.tx}
                     web3={this.state.web3}
-                    dollarDisplay={dollarDisplay}
                   />
                   <MoreButtons
                     buttonStyle={buttonStyle}
@@ -1038,7 +1019,7 @@ render() {
 
           let defaultBalanceDisplay = (
             <div>
-              <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+              <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} />
               <Ruler/>
             </div>
           )
@@ -1047,7 +1028,7 @@ render() {
             selected = ERC20NAME
             extraTokens = (
               <div>
-                <Balance icon={ERC20IMAGE} selected={selected} text={ERC20NAME} amount={this.state.balance} address={account} dollarDisplay={dollarDisplay} />
+                <Balance icon={ERC20IMAGE} selected={selected} text={ERC20NAME} amount={this.state.balance} address={account} />
                 <Ruler/>
               </div>
             )
@@ -1075,11 +1056,11 @@ render() {
                   <div className="main-card card w-100" style={{zIndex:1}}>
                     {extraTokens}
 
-                    <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                    <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} />
                     <Ruler/>
-                    <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                    <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} />
                     <Ruler/>
-                    <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
+                    <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} />
                     <Ruler/>
                     {badgeDisplay}
 
@@ -1090,12 +1071,9 @@ render() {
                       balance={balance}
                       changeAlert={this.changeAlert}
                       changeView={this.changeView}
-                      dollarDisplay={dollarDisplay}
-                      ERC20TOKEN={ERC20TOKEN}
                     />
                     {moreButtons}
                     <RecentTransactions
-                      dollarDisplay={dollarDisplay}
                       buttonStyle={buttonStyle}
                       changeView={this.changeView}
                       address={account}
@@ -1165,7 +1143,6 @@ render() {
                       goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
-                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                   <Bottom
@@ -1193,7 +1170,6 @@ render() {
                       openScanner={this.openScanner.bind(this)}
                       setReceipt={this.setReceipt}
                       changeAlert={this.changeAlert}
-                      dollarDisplay={dollarDisplay}
                       badge={this.state.badges[this.state.selectedBadge]}
                       clearBadges={this.clearBadges.bind(this)}
                     />
@@ -1210,7 +1186,6 @@ render() {
                     <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                     {defaultBalanceDisplay}
                     <SendToAddress
-                      convertToDollar={convertToDollar}
                       parseAndCleanPath={this.parseAndCleanPath.bind(this)}
                       openScanner={this.openScanner.bind(this)}
                       scannerState={this.state.scannerState}
@@ -1225,7 +1200,6 @@ render() {
                       changeView={this.changeView}
                       setReceipt={this.setReceipt}
                       changeAlert={this.changeAlert}
-                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                   <Bottom
@@ -1251,7 +1225,6 @@ render() {
                       goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
-                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                   <Bottom
@@ -1266,7 +1239,6 @@ render() {
                     <NavCard title={i18n.t('receive_title')} goBack={this.goBack.bind(this)}/>
                     {defaultBalanceDisplay}
                     <Receive
-                      dollarDisplay={dollarDisplay}
                       block={this.state.block}
                       ensLookup={this.ensLookup.bind(this)}
                       buttonStyle={buttonStyle}
@@ -1299,7 +1271,6 @@ render() {
                       goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
-                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                   <Bottom
@@ -1398,8 +1369,6 @@ render() {
                       address={account}
                       changeView={this.changeView}
                       goBack={this.goBack.bind(this)}
-                      dollarDisplay={dollarDisplay}
-                      convertToDollar={convertToDollar}
                     />
                   </div>
                   <Bottom
@@ -1419,7 +1388,6 @@ render() {
                     address={account}
                     balance={balance}
                     goBack={this.goBack.bind(this)}
-                    dollarDisplay={dollarDisplay}
                     burnWallet={()=>{
                       burnMetaAccount()
                       if(RNMessageChannel){
@@ -1451,7 +1419,6 @@ render() {
                       address={account}
                       balance={balance}
                       goBack={this.goBack.bind(this)}
-                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                   <Bottom
@@ -1468,10 +1435,6 @@ render() {
                       eth={eth}
                       dai={dai}
                       xdai={xdai}
-                      ERC20NAME={ERC20NAME}
-                      ERC20IMAGE={ERC20IMAGE}
-                      ERC20TOKEN={ERC20TOKEN}
-                      ERC20VENDOR={ERC20VENDOR}
                       ethprice={this.state.ethprice}
                       ethBalance={this.state.ethBalance}
                       daiBalance={this.state.daiBalance}
@@ -1494,7 +1457,6 @@ render() {
                       address={account}
                       balance={balance}
                       goBack={this.goBack.bind(this)}
-                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                   <Bottom
@@ -1508,7 +1470,6 @@ render() {
 
                     <NavCard title={i18n.t('vendors')} goBack={this.goBack.bind(this)}/>
                     <Vendors
-                      ERC20VENDOR={ERC20VENDOR}
                       products={this.state.products}
                       vendorObject={this.state.vendorObject}
                       vendors={this.state.vendors}
@@ -1521,7 +1482,6 @@ render() {
                       web3={this.state.web3}
                       block={this.state.block}
                       goBack={this.goBack.bind(this)}
-                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                   <Bottom
@@ -1535,7 +1495,7 @@ render() {
 
                     <NavCard title={"Sending..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                   </div>
-                  <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+                  <Loader mainStyle={mainStyle}/>
                 </div>
               )}/>
               <Route path="/reader" render={() => (
@@ -1544,7 +1504,7 @@ render() {
 
                     <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                   </div>
-                  <Loader loaderImage={LOADERIMAGE}  mainStyle={mainStyle}/>
+                  <Loader mainStyle={mainStyle}/>
                 </div>
               )}/>
               <Route path="/claimer" render={() => (
@@ -1553,7 +1513,7 @@ render() {
 
                     <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                   </div>
-                <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+                <Loader mainStyle={mainStyle}/>
                 </div>
               )}/>
               <Route path="/account/:address" render={(match) => (
@@ -1579,7 +1539,6 @@ render() {
                       send={this.state.send}
                       web3={this.state.web3}
                       goBack={this.goBack.bind(this)}
-                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                   <Bottom
@@ -1597,7 +1556,7 @@ render() {
         })()}
         { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
           <div>
-            <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+            <Loader mainStyle={mainStyle}/>
           </div>
         }
         { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }

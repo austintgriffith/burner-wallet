@@ -8,7 +8,7 @@ import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
 import axios from 'axios';
-const QRCode = require('qrcode.react');
+import { dollarDisplay } from '../lib';
 
 
 const BockieSize = 12
@@ -50,7 +50,7 @@ export default class Receive extends React.Component {
     }
   }
   render() {
-    let {receipt,buttonStyle,address, balance, changeView, dollarDisplay,account} = this.props
+    let { receipt, buttonStyle, address, balance, changeView, account } = this.props
 
     let message = ""
 
