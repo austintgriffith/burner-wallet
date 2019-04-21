@@ -101,9 +101,9 @@ const RecentTransactions = ({
           txns.push(
             <div key={"green"+count} style={{position:'relative',cursor:'pointer',paddingTop:10,paddingBottom:10}} key={transaction.hash} className="content bridge row" onClick={()=>{
               if(transaction.from==address){
-                changeView("account_"+transaction.to)
+                changeView(`account/${transaction.to}`)
               }else{
-                changeView("account_"+transaction.from)
+                changeView(`account/${transaction.from}`)
               }
             }}>
               <div className="col-3" style={{textAlign:'center'}}>
@@ -129,9 +129,9 @@ const RecentTransactions = ({
           txns.push(
             <div style={{position:'relative',cursor:'pointer'}} key={transaction.hash} className="content bridge row" onClick={()=>{
               if(transaction.from==address){
-                changeView("account_"+transaction.to)
+                changeView(`account/${transaction.to}`)
               }else{
-                changeView("account_"+transaction.from)
+                changeView(`account/${transaction.from}`)
               }
             }}>
               {extraIcon}
