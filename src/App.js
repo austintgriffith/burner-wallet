@@ -1901,7 +1901,7 @@ class App extends Component {
               if (state.xdaiweb3) {
                 let pdaiContract;
                 try{
-                  pdaiContract = new state.xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0xD2D0F8a6ADfF16C2098101087f9548465EC96C98")
+                  pdaiContract = new state.xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),P_DAI_TOKEN_ADDR)
                 }catch(e){
                   console.log("ERROR LOADING DAI Stablecoin Contract",e)
                 }
