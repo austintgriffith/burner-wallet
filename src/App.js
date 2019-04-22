@@ -289,9 +289,6 @@ class App extends Component {
         let rawPK = tempweb3.utils.bytesToHex(base64url.toBuffer(base64encodedPK))
         this.setState({possibleNewPrivateKey:rawPK})
         window.history.pushState({},"", "/");
-      }else if(window.location.pathname.length==43){
-        this.changeView('send_to_address')
-        console.log("CHANGE VIEW")
       }else if(window.location.pathname.length==134){
         let parts = window.location.pathname.split(";")
         let claimId = parts[0].replace("/","")
@@ -1086,9 +1083,35 @@ render() {
             )
           }
 
+          const sendToAddressRedirect = ({ match }) => <Redirect to={{
+            pathname: '/send_to_address',
+            state: match.params,
+          }} />
+
           return (
             <Switch>
-              <Route path="/" render={() => (
+              <Route
+                path="/:toAddress(0x[a-fA-F0-9]{40})"
+                render={sendToAddressRedirect}
+                exact
+              />
+              <Route
+                path="/:toAddress(0x[a-fA-F0-9]{40});:amount([\d\.]+)"
+                render={sendToAddressRedirect}
+                exact
+              />
+              <Route
+                path="/:toAddress(0x[a-fA-F0-9]{40});:amount([\d\.]+);:message([^;]+)"
+                render={sendToAddressRedirect}
+                exact
+              />
+              <Route
+                path="/:toAddress(0x[a-fA-F0-9]{40});:amount([\d\.]+);:message([^;]+);:extraMessage([^;]+)"
+                render={sendToAddressRedirect}
+                exact
+              />
+
+              <Route path="/" exact render={() => (
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
                     {extraTokens}
