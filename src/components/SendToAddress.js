@@ -39,6 +39,9 @@ export default class SendToAddress extends React.Component {
 
     let toAddress = ""
     if(props.scannerState) toAddress = props.scannerState.toAddress
+    if (props.toAddress) {
+      toAddress = props.toAddress;
+    }
     if(!toAddress) {
       toAddress = cookie.load('sendToAddress')
     }else{
@@ -61,11 +64,6 @@ export default class SendToAddress extends React.Component {
     if(window.location.pathname){
       if(window.location.pathname.length==43){
         initialState.toAddress = window.location.pathname.substring(1)
-      }else if(window.location.pathname.length>40) {
-      //    console.log("window.location.pathname",window.location.pathname)
-      //  console.log("parseAndCleanPath...")
-        initialState = Object.assign(initialState, parseAndCleanPath(window.location.pathname))
-      //  console.log("parseAndCleanPath:",initialState)
       }
     }
 
