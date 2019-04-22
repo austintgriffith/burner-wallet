@@ -37,7 +37,7 @@ export default class RequestFunds extends React.Component {
 
   render() {
     let { canRequest, message, amount, requested } = this.state;
-    const { dollarDisplay, view, buttonStyle, address, changeView } = this.props
+    const { dollarDisplay, buttonStyle, address, changeView } = this.props
     if(requested){
 
       let url = window.location.protocol+"//"+window.location.hostname
@@ -76,7 +76,6 @@ export default class RequestFunds extends React.Component {
           </CopyToClipboard>
           <RecentTransactions
             dollarDisplay={dollarDisplay}
-            view={view}
             max={5}
             buttonStyle={buttonStyle}
             changeView={changeView}

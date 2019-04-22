@@ -75,7 +75,6 @@ export default class SendToAddress extends React.Component {
 
     this.state = initialState
   //  console.log("SendToAddress constructor",this.state)
-    window.history.pushState({},"", "/");
 
 
 
