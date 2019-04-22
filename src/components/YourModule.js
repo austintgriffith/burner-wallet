@@ -3,6 +3,7 @@ import { Events, Blockie, Scaler } from "dapparatus";
 import Web3 from 'web3';
 import Ruler from "./Ruler";
 import axios from "axios"
+import { getConnextClient } from "connext/dist/Connext.js";
 
 export default class YourModule extends React.Component {
 
@@ -86,23 +87,15 @@ export default class YourModule extends React.Component {
     return (
       <div>
         <div className="form-group w-100">
-
+          let's get connext integrated into the burner!
           <div style={{width:"100%",textAlign:"center"}}>
-            YOURMODULE DISPLAY HERE
             <Ruler/>
             <div style={{padding:20}}>
-              The logged in user is
               <Blockie
                 address={this.props.address}
                 config={{size:6}}
               />
               {this.props.address.substring(0,8)}
-              <div>
-                {this.props.dollarDisplay(this.props.balance)}<img src={this.props.xdai} style={{maxWidth:22,maxHeight:22}}/>
-              </div>
-              <div>
-                {this.props.dollarDisplay(this.props.daiBalance)}<img src={this.props.dai} style={{maxWidth:22,maxHeight:22}}/>
-              </div>
               <div>
                 {this.props.dollarDisplay(this.props.ethBalance*this.props.ethprice)}<img src={this.props.eth} style={{maxWidth:22,maxHeight:22}}/>
               </div>
@@ -120,58 +113,15 @@ export default class YourModule extends React.Component {
               mainnetweb3 is on block {this.state.mainnetBlockNumber} and version {this.props.mainnetweb3.version}
             </div>
             <div>
-              xdaiweb3 is on block {this.state.xdaiBlockNumber} and version {this.props.xdaiweb3.version}
-            </div>
-            <div>
               The current price of ETH is {this.props.dollarDisplay(this.props.ethprice)}.
             </div>
 
-
             <Ruler/>
-
-            <button className="btn btn-large w-50" style={this.props.buttonStyle.secondary} onClick={async ()=>{
-
-              let hashSigned = this.props.web3.utils.sha3("jabronie pie"+Math.random())
-              let sig
-              //sign the hash using either the meta account OR the etherless account
-              if(this.props.privateKey){
-                sig = this.props.web3.eth.accounts.sign(hashSigned, this.props.privateKey);
-                sig = sig.signature
-              }else{
-                sig = await this.props.web3.eth.personal.sign(""+hashSigned,this.props.address)
-              }
-
-              this.props.tx(this.state.YourContract.sign(hashSigned,sig),50000,0,0,(result)=>{
-                console.log("RESULTsssss@&&&#&#&#&# ",result)
-              })
-
-            }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-pen"></i> {"sign a random hash"}
-              </Scaler>
-            </button>
 
           </div>
 
-          <Events
-            config={{hide:false}}
-            contract={this.state.YourContract}
-            eventName={"Sign"}
-            block={this.props.block}
-            onUpdate={(eventData,allEvents)=>{
-              console.log("EVENT DATA:",eventData)
-              this.setState({signEvents:allEvents})
-            }}
-          />
 
           <Ruler/>
-
-          <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={this.deployYourContract.bind(this)}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-rocket"></i> {"deploy"}
-            </Scaler>
-          </button>
-
 
           <div className="content bridge row">
             <div className="col-4 p-1">
@@ -190,26 +140,6 @@ export default class YourModule extends React.Component {
               </button>
             </div>
             <div className="col-4 p-1">
-            <div style={{padding:20,textAlign:'center'}}>
-              Your contract is
-              <Blockie
-                address={this.state.YourContract._address}
-                config={{size:3}}
-              />
-              {this.state.YourContract._address.substring(0,8)}
-
-              <div style={{padding:5}}>
-                it has {this.props.dollarDisplay(this.state.yourContractBalance)}
-              </div>
-
-              <div style={{padding:5}}>
-                with <b>yourVar:</b>
-                <div>
-                  "{this.state.yourVar}"
-                </div>
-              </div>
-
-            </div>
             </div>
             <div className="col-4 p-1">
             <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
@@ -220,36 +150,6 @@ export default class YourModule extends React.Component {
             }}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-arrow-circle-up"></i> {"withdraw"}
-              </Scaler>
-            </button>
-            </div>
-          </div>
-
-          <div className="content bridge row">
-            <div className="col-4 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                this.clicked("some")
-              }}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-dog"></i> {"some"}
-                </Scaler>
-              </button>
-            </div>
-            <div className="col-4 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                this.clicked("grid")
-              }}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-bone"></i> {"grid"}
-                </Scaler>
-              </button>
-            </div>
-            <div className="col-4 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-              this.clicked("buttons")
-            }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-paw"></i> {"buttons"}
               </Scaler>
             </button>
             </div>
@@ -271,27 +171,6 @@ export default class YourModule extends React.Component {
                   <i style={{color:"#FFFFFF"}} className="fas fa-qrcode" />
                 </span>
               </div>
-            </div>
-          </div>
-
-          <div className="content bridge row">
-            <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                alert('secondary')}
-              }>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-bell"></i> {"secondary"}
-                </Scaler>
-              </button>
-            </div>
-            <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-              alert('actions')}
-            }>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-hand-holding-usd"></i> {"actions"}
-              </Scaler>
-            </button>
             </div>
           </div>
 
