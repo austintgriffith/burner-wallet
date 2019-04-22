@@ -1113,7 +1113,6 @@ render() {
                     <NavCard title={i18n.t('withdraw')} goBack={this.goBack.bind(this)}/>
                     {defaultBalanceDisplay}
                     <WithdrawFromPrivate
-                      ERC20TOKEN={ERC20TOKEN}
                       products={this.state.products}
                       buttonStyle={buttonStyle}
                       balance={balance}

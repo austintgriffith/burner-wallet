@@ -5,6 +5,7 @@ import { Scaler } from "dapparatus";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import i18n from '../i18n';
+import { ERC20TOKEN } from '../config';
 import { dollarDisplay } from '../lib';
 
 let pollInterval
@@ -45,8 +46,8 @@ export default class SendToAddress extends React.Component {
 
   async poll(){
     let fromBalance
-    if(this.props.ERC20TOKEN){
-      fromBalance = await this.props.contracts[this.props.ERC20TOKEN].balanceOf('' + this.state.fromAddress).call()
+    if(ERC20TOKEN){
+      fromBalance = await this.props.contracts[ERC20TOKEN].balanceOf('' + this.state.fromAddress).call()
     }else{
       fromBalance = await this.props.web3.eth.getBalance('' + this.state.fromAddress)
     }
@@ -78,10 +79,10 @@ export default class SendToAddress extends React.Component {
         //console.log("metaAccount",this.state.metaAccount,"amount",this.props.web3.utils.toWei(amount,'ether'))
         let tx
 
-        if(this.props.ERC20TOKEN){
+        if(ERC20TOKEN){
           tx={
-            to:this.props.contracts[this.props.ERC20TOKEN]._address,
-            data: this.props.contracts[this.props.ERC20TOKEN].transfer(this.props.address,this.props.web3.utils.toWei(""+amount,'ether')).encodeABI(),
+            to:this.props.contracts[ERC20TOKEN]._address,
+            data: this.props.contracts[ERC20TOKEN].transfer(this.props.address,this.props.web3.utils.toWei(""+amount,'ether')).encodeABI(),
             gas: 60000,
             gasPrice: Math.round(1100000000)//1.1gwei
           }
