@@ -4,8 +4,10 @@ import FileReaderInput from 'react-file-reader-input';
 import QrCode from 'qrcode-reader';
 import qrimage from '../qrcode.png';
 import RNMessageChannel from 'react-native-webview-messaging';
+import Jimp from "jimp";
 import i18n from "../i18n";
-var Jimp = require("jimp");
+import { parseAndCleanPath } from '../lib';
+
 let interval
 class SendByScan extends Component {
   constructor(props){
@@ -79,7 +81,7 @@ class SendByScan extends Component {
         this.stopRecording();
         console.log("RETURN STATE:",this.props.returnState)
         if(this.props.returnState && this.props.returnState.view!="send_to_address"){
-          let returnState = this.props.parseAndCleanPath(dataAfterColon)
+          let returnState = parseAndCleanPath(dataAfterColon)
           this.props.returnToState(returnState)
           console.log("return state",returnState)
         }else{

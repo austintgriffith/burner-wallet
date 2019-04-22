@@ -8,7 +8,7 @@ import { scroller } from 'react-scroll'
 import { DOLLAR_SYMBOL } from '../config';
 import i18n from '../i18n';
 import queryString from 'query-string';
-import { dollarDisplay, convertToDollar } from '../lib';
+import { dollarDisplay, convertToDollar, parseAndCleanPath } from '../lib';
 
 export default class SendToAddress extends React.Component {
 
@@ -64,7 +64,7 @@ export default class SendToAddress extends React.Component {
       }else if(window.location.pathname.length>40) {
       //    console.log("window.location.pathname",window.location.pathname)
       //  console.log("parseAndCleanPath...")
-        initialState = Object.assign(initialState,this.props.parseAndCleanPath(window.location.pathname))
+        initialState = Object.assign(initialState, parseAndCleanPath(window.location.pathname))
       //  console.log("parseAndCleanPath:",initialState)
       }
     }
