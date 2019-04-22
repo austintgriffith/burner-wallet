@@ -74,6 +74,10 @@ let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
 let FAILCOUNT = 0
 
+// Mainnet DAI by default
+let DAI_TOKEN_ADDR = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
+let P_DAI_TOKEN_ADDR = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
+
 let mainStyle = {
   width:"100%",
   height:"100%",
@@ -92,7 +96,12 @@ let titleImage = (
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
   XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
-  WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
+  WEB3_PROVIDER = "https://rinkeby.infura.io/v3/f039330d8fb747e48a7ce98f51400d65"
+  
+  // LEAP token instead of DAI
+  DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
+  P_DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
+
   CLAIM_RELAY = false;
   ERC20NAME = false;
   ERC20TOKEN = false;
@@ -123,14 +132,35 @@ else if (window.location.hostname.indexOf("xdai") >= 0) {
 else if (window.location.hostname.indexOf("burner.leapdao.org") >= 0) {
   XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
   WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
+  // LEAP token instead of DAI
+  DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
+  P_DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';  
   CLAIM_RELAY = false;
   ERC20NAME = false;
   ERC20TOKEN = false;
   ERC20IMAGE = false;
 }
 else if (window.location.hostname.indexOf("sundai.io") >= 0) {
+  XDAI_PROVIDER = "wss://mainnet-node1.leapdao.org:1443";
+  WEB3_PROVIDER = "wss://mainnet.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
+
+  // mainnet sunDAI for Plasma DAI
+  P_DAI_TOKEN_ADDR = '0x3cC0DF021dD36eb378976142Dc1dE3F5726bFc48';
+  
+  CLAIM_RELAY = false;
+  ERC20NAME = false;
+  ERC20TOKEN = false;
+  ERC20IMAGE = false;
+}
+else if (window.location.hostname.indexOf("sundai.local") >= 0) {
   XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
   WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
+
+  // testnet LEAP for DAI
+  // testnet sunDAI for Plasma DAI
+  DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
+  P_DAI_TOKEN_ADDR = '0xeFb369E2c694Bc0ba31945e0D3ac91Ab8E943be3';
+  
   CLAIM_RELAY = false;
   ERC20NAME = false;
   ERC20TOKEN = false;
@@ -446,7 +476,7 @@ class App extends Component {
     let daiContract;
     let bridgeContract;
     try{
-      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0xD2D0F8a6ADfF16C2098101087f9548465EC96C98")
+      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),DAI_TOKEN_ADDR)
       bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), require("./contracts/Bridge.address.js"))
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
