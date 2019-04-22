@@ -12,14 +12,60 @@ export default class YourModule extends React.Component {
 
     this.state = {
       yourVar: "",
+      connext: false,
       YourContract: false,
       yourContractBalance: 0,
       toAddress: (props.scannerState ? props.scannerState.toAddress : ""),
     }
+
   }
 
+  async initConnext(){
+    // set the client options
+
+    let hubUrl="https://hub.connext.network/api/hub"
+    let ethUrl="https://hub.connext.network/api/eth"
+
+    let connextOptions = {
+      hubUrl,
+      ethUrl,
+      user: this.props.address,
+      origin: "localhost" // the host url of your app
+    }
+
+    if(this.props.privateKey){
+      connextOptions.privateKey = this.props.privateKey
+      //connextOptions.ethUrl = this.props.mainnetweb3._provider.connection.url
+      //connextOptions.ethUrl = "http"
+      //console.log("this.props.mainnetweb3._provider.connection.url",this.props.mainnetweb3._provider.connection.url)
+    }else{
+      connextOptions.web3 = this.props.web3
+    }
+
+    // instantiate a new instance of the client
+    console.log("GET CONNEXT CLIENT: ",connextOptions)
+    const connext = await getConnextClient(connextOptions)
+    console.log("CONNEXT LOADED:",connext)
+
+    // the connext client is an event emitter
+    // start the app, and register a listener
+    connext.on('onStateChange', connext => {
+      console.log('Connext STATE CHANGE:', connext)
+      this.setState({connextInfo:connext})
+    })
+
+    console.log("Starting Connext...")
+    // start connext
+    await connext.start()
+    console.log("STARTED CONNEXT!")
+    this.setState({connext:connext},()=>{
+      console.log("connext set:",this.state)
+    })
+  }
   componentDidMount(){
     console.log("YOUR MODULE MOUNTED, PROPS:",this.props)
+     this.initConnext()
+
     /*
         -- LOAD YOUR CONTRACT --
         Contract files loaded from:
@@ -28,41 +74,19 @@ export default class YourModule extends React.Component {
         src/contracts/YourContract.blocknumber.js // the block number it was deployed at (for efficient event loading)
         src/contracts/YourContract.bytecode.js // if you want to deploy the contract from the module (see deployYourContract())
     */
-    this.setState({
-     YourContract: this.props.contractLoader("YourContract")
-    },()=>{
-     console.log("YOURCONTRACT IS LOADED:",this.state.YourContract)
-    })
 
-    setInterval(this.pollInterval.bind(this),2500)
-    setTimeout(this.pollInterval.bind(this),30)
   }
-
-  async pollInterval(){
-    console.log("POLL")
-    if(this.state && this.state.YourContract){
-      let yourVar = await this.state.YourContract.YourVar().call()
-      let yourContractBalance = await this.props.web3.eth.getBalance(this.state.YourContract._address)
-      //let ensName = await this.props.ensLookup("austingriffith.eth")
-      let mainnetBlockNumber = await this.props.mainnetweb3.eth.getBlockNumber()
-      let xdaiBlockNumber = await this.props.xdaiweb3.eth.getBlockNumber()
-      yourContractBalance = this.props.web3.utils.fromWei(yourContractBalance,'ether')
-      this.setState({yourVar,yourContractBalance,mainnetBlockNumber,xdaiBlockNumber})
-
-    }
-  }
-
   clicked(name){
     console.log("secondary button "+name+" was clicked")
     /*
     Time to make a transaction with YourContract!
     */
-    this.props.tx(this.state.YourContract.updateVar(name),120000,0,0,(result)=>{
-      console.log(result)
-    })
+    //this.props.tx(this.state.YourContract.updateVar(name),120000,0,0,(result)=>{
+    //  console.log(result)
+    // })
 
   }
-  deployYourContract() {
+  /*deployYourContract() {
     console.log("Deploying YourContract...")
     //
     //  as noted above you need src/contracts/YourContract.bytecode.js
@@ -73,14 +97,16 @@ export default class YourModule extends React.Component {
       let yourContract = this.props.contractLoader("YourContract",receipt.contractAddress)
       this.setState({ YourContract: yourContract})
     })
-  }
+  }*/
   render(){
 
-    if(!this.state.YourContract){
-      return (
-        <div>
-          LOADING YOURCONTRACT...
-        </div>
+    let connextState = "loading connext..."
+    console.log("this.state.connext",this.state.connext)
+    if(this.state.connext&& this.state.connextInfo.persistent){
+      connextState = (
+        <pre>
+          {JSON.stringify(this.state.connextInfo.persistent,null, 2)}
+        </pre>
       )
     }
 
@@ -106,6 +132,8 @@ export default class YourModule extends React.Component {
             <div>
               Network {this.props.network} is selected and on block #{this.props.block}.
             </div>
+            connextState:
+            {connextState}
             <div>
               Gas price on {this.props.network} is {this.props.gwei} gwei.
             </div>
@@ -125,14 +153,14 @@ export default class YourModule extends React.Component {
 
           <div className="content bridge row">
             <div className="col-4 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                let toAddress = this.state.YourContract._address
-                let amount = "0.1"
-                this.props.send(toAddress, amount, 120000,"0x00", (result) => {
-                  if(result && result.transactionHash){
-                    console.log("RESULT&&&#&#&#&# ",result)
-                  }
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={async ()=>{
+
+                await this.state.connext.deposit({
+                  amountWei: this.props.web3.utils.toWei("0.01",'ether'),
+                  amountToken: "0", // assumed to be in wei units
                 })
+
+
               }}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-arrow-circle-down"></i> {"deposit"}
@@ -140,13 +168,42 @@ export default class YourModule extends React.Component {
               </button>
             </div>
             <div className="col-4 p-1">
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={async ()=>{
+
+                // exchange wei for dai
+                await this.state.connext.exchange("10000000000000000", "wei");
+
+              }}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  <i className="fas fa-exchange"></i> {"exchange"}
+                </Scaler>
+              </button>
             </div>
             <div className="col-4 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-              let amount = this.props.web3.utils.toWei("0.1",'ether')
+            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={async ()=>{
+              //let amount = this.props.web3.utils.toWei("0.1",'ether')
+              /*
               this.props.tx(this.state.YourContract.withdraw(amount),40000,0,0,(result)=>{
                 console.log("RESULT@@@@@@@@@@@@@@@@@&&&#&#&#&# ",result)
-              })
+              })*/
+
+
+
+              let withdrawObject = {
+                // address to receive withdrawal funds
+                // does not need to have a channel with connext to receive funds
+                recipient: this.props.address,
+                // USD price if using dai
+                exchangeRate: this.state.connextInfo.runtime.exchangeRate.rates.USD,
+                // wei to transfer from the user's balance to 'recipient'
+                withdrawalWeiUser: this.state.connextInfo.persistent.channel.balanceWeiUser,
+                // tokens from channel balance to sell back to hub
+                tokensToSell: this.state.connextInfo.persistent.channel.balanceTokenUser,
+              }
+              console.log("WITHDRAWING",withdrawObject)
+
+              await this.state.connext.withdraw(withdrawObject)
+
             }}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-arrow-circle-up"></i> {"withdraw"}
@@ -175,8 +232,26 @@ export default class YourModule extends React.Component {
           </div>
 
           <button className={'btn btn-lg w-100'} style={this.props.buttonStyle.primary}
-                  onClick={()=>{alert("do something")}}>
-            Primary CTA
+                  onClick={async ()=>{
+
+                    const purchaseId = await this.state.connext.buy({
+                      meta: {
+
+                      },
+                      payments: [
+                        {
+                          recipient: "0xf22c19717c5cd8226b5fd1c59af48c9982c5815a", // payee  address
+                          amount: {
+                            amountToken: "1722900000000000000",//this.props.web3.utils.toWei("1",'ether'),
+                            amountWei: "0" // only token payments are facilitated
+                          },
+                          type: "PT_CHANNEL", // the payment type, see the client docs for more
+                        },
+                      ]
+                    })
+
+                  }}>
+            Buy
           </button>
 
         </div>
