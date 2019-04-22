@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import { Route } from 'react-router-dom';
 import { Scaler, Blockie } from "dapparatus";
 import burnerloader from '../burnerloader.gif';
 import { withRouter } from 'react-router-dom';
@@ -65,10 +66,8 @@ const Header = ({openScanner, network, total, dollarDisplay, ens, title, titleIm
     delete scanButtonStyle.bottom
   }
 
-  let bottomRight = (
-    <div style={scanButtonStyle} onClick={() => {
-      openScanner({view:"send_to_address"})
-    }} >
+  const bottomRight = (
+    <div style={scanButtonStyle} onClick={() => openScanner({view:"send_to_address"}) } >
       <div style={{position:'relative',backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",backgroundColor:mainStyle.mainColor,borderRadius:"50%",width:89,height:89,boxShadow: "0.5px 0.5px 5px #000000"}}>
         <a href="#" style={{color:'#FFFFFF',position:'absolute',left:30,top:28}}>
           <i className="fas fa-qrcode" />
@@ -77,42 +76,39 @@ const Header = ({openScanner, network, total, dollarDisplay, ens, title, titleIm
     </div>
   )
 
-  let opacity = 0.5
-
-
-
-  let topLeft
-
-  if(location.pathname === "/main" || location.pathname === "/exchange"){
-    opacity = 1.0
-    topLeft = (
-      <div style={{zIndex:-2,position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}}  >
-        <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank" style={{color:"#FFFFFF"}}>
-          {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
-        </a>
-      </div>
-    )
-  }else{
-    topLeft = (
-      <div style={{zIndex:-2,position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}} onClick={() => changeView('main')} >
-          {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
-      </div>
-    )
-  }
-
-  let topRight = (
-    <div style={{zIndex:-2,position:"absolute",right:28,top:-4,zIndex:1,fontSize:46,opacity:0.9}}  >
+  const topRight = (
+    <div style={{ position:"absolute", right:28, top:-4, zIndex:1, fontSize:46, opacity:0.9 }} >
       {moneyDisplay}
     </div>
   )
 
-
+  const topLeft = (
+    <Fragment>
+      {blockieDisplay}
+      <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
+    </Fragment>
+  );
   return (
-    <div className="header" style={{opacity}}>
-      {topLeft}
-      {topRight}
-      {bottomRight}
-    </div>
+    <Route path="/(|exchange)" exact>
+      {({ match }) => (
+        <div className="header" style={{ opacity: match ? 1 : 0.5 }}>
+          <div style={{ position:"absolute", left:16, top:4, zIndex:1 }}>
+            {match ? (
+              <a
+                href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"}
+                target="_blank"
+                style={{color:"#FFFFFF"}}
+              >
+                {topLeft}
+              </a>
+            ) : topLeft}
+          </div>
+
+          {topRight}
+          {bottomRight}
+        </div>
+      )}
+    </Route>
   )
 };
 
