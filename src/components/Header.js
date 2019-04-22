@@ -4,7 +4,7 @@ import { Scaler, Blockie } from "dapparatus";
 import burnerloader from '../burnerloader.gif';
 import { withRouter } from 'react-router-dom';
 
-const Header = ({openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, location }) => {
+const Header = ({openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, location }) => {
 
   let sendButtonOpacity = 1.0
   if(location.pathname === "/receive" || location.pathname === "/send_badge"){
@@ -90,9 +90,12 @@ const Header = ({openScanner, network, total, dollarDisplay, ens, title, titleIm
   );
   return (
     <Route path="/(|exchange)" exact>
-      {({ match }) => (
+      {({ match, history }) => (
         <div className="header" style={{ opacity: match ? 1 : 0.5 }}>
-          <div style={{ position:"absolute", left:16, top:4, zIndex:1 }}>
+          <div
+            style={{ position: "absolute", left: 16, top: 4, zIndex: 1, cursor: "pointer" }}
+            onClick={match ? undefined : () => history.push('/main')}
+          >
             {match ? (
               <a
                 href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"}
