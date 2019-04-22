@@ -7,7 +7,8 @@ import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
 import { DOLLAR_SYMBOL } from '../config';
 import i18n from '../i18n';
-const queryString = require('query-string');
+import queryString from 'query-string';
+import { dollarDisplay, convertToDollar, parseAndCleanPath } from '../lib';
 
 export default class SendToAddress extends React.Component {
 
@@ -63,7 +64,7 @@ export default class SendToAddress extends React.Component {
       }else if(window.location.pathname.length>40) {
       //    console.log("window.location.pathname",window.location.pathname)
       //  console.log("parseAndCleanPath...")
-        initialState = Object.assign(initialState,this.props.parseAndCleanPath(window.location.pathname))
+        initialState = Object.assign(initialState, parseAndCleanPath(window.location.pathname))
       //  console.log("parseAndCleanPath:",initialState)
       }
     }
@@ -159,7 +160,7 @@ export default class SendToAddress extends React.Component {
 
   send = async () => {
     let { toAddress, amount } = this.state;
-    let {ERC20TOKEN, dollarDisplay, convertToDollar} = this.props
+    let {ERC20TOKEN} = this.props
 
     amount = convertToDollar(amount)
     console.log("CONVERTED TO DOLLAR AMOUNT",amount)

@@ -5,9 +5,10 @@ import { withTransactionStore } from '../contexts/TransactionStore';
 import { ERC20TOKEN } from '../config';
 import Ruler from "./Ruler";
 import { Scaler } from "dapparatus";
+import { dollarDisplay } from '../lib';
 
 const RecentTransactions = ({
-  dollarDisplay, max, buttonStyle, vendorName, address, block, changeView, recentTxs, fullRecentTxs, location
+  max, buttonStyle, vendorName, address, block, changeView, recentTxs, fullRecentTxs, location
 }) => {
   let txns = []
   let count=0

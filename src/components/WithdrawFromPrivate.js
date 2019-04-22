@@ -5,6 +5,8 @@ import { Scaler } from "dapparatus";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import i18n from '../i18n';
+import { ERC20TOKEN } from '../config';
+import { dollarDisplay } from '../lib';
 
 let pollInterval
 let metaReceiptTracker = {}
@@ -16,7 +18,6 @@ export default class SendToAddress extends React.Component {
     let initialState = {
       amount: "",//props.amount-0.01 ?
       privateKey: props.privateKey,
-      canWithdraw: false,
     }
 
     let tempweb3 = new Web3();
@@ -28,13 +29,10 @@ export default class SendToAddress extends React.Component {
   }
 
   updateState = (key, value) => {
-    this.setState({ [key]: value },()=>{
-      this.setState({ canWithdraw: this.canWithdraw() })
-    });
+    this.setState({ [key]: value });
   };
 
   componentDidMount(){
-    this.setState({ canWithdraw: this.canWithdraw() })
     pollInterval = setInterval(this.poll.bind(this),1500)
     setTimeout(this.poll.bind(this),250)
   }
@@ -44,8 +42,8 @@ export default class SendToAddress extends React.Component {
 
   async poll(){
     let fromBalance
-    if(this.props.ERC20TOKEN){
-      fromBalance = await this.props.contracts[this.props.ERC20TOKEN].balanceOf('' + this.state.fromAddress).call()
+    if(ERC20TOKEN){
+      fromBalance = await this.props.contracts[ERC20TOKEN].balanceOf('' + this.state.fromAddress).call()
     }else{
       fromBalance = await this.props.web3.eth.getBalance('' + this.state.fromAddress)
     }
@@ -55,9 +53,9 @@ export default class SendToAddress extends React.Component {
     console.log("from balance:",fromBalance,"of from address",this.state.fromAddress)
 
     if(typeof this.state.amount == "undefined"){
-      this.setState({fromBalance,canWithdraw:this.canWithdraw(),amount:fromBalance})
+      this.setState({ fromBalance, amount: fromBalance })
     }else{
-      this.setState({fromBalance,canWithdraw:this.canWithdraw()})
+      this.setState({ fromBalance })
     }
   }
 
@@ -69,7 +67,7 @@ export default class SendToAddress extends React.Component {
     let { fromAddress, amount, metaAccount } = this.state;
 
 
-    if(this.state.canWithdraw){
+    if(this.canWithdraw()){
 
         console.log("SWITCH TO LOADER VIEW...")
         this.props.changeView('loader')
@@ -77,10 +75,10 @@ export default class SendToAddress extends React.Component {
         //console.log("metaAccount",this.state.metaAccount,"amount",this.props.web3.utils.toWei(amount,'ether'))
         let tx
 
-        if(this.props.ERC20TOKEN){
+        if(ERC20TOKEN){
           tx={
-            to:this.props.contracts[this.props.ERC20TOKEN]._address,
-            data: this.props.contracts[this.props.ERC20TOKEN].transfer(this.props.address,this.props.web3.utils.toWei(""+amount,'ether')).encodeABI(),
+            to:this.props.contracts[ERC20TOKEN]._address,
+            data: this.props.contracts[ERC20TOKEN].transfer(this.props.address,this.props.web3.utils.toWei(""+amount,'ether')).encodeABI(),
             gas: 60000,
             gasPrice: Math.round(1100000000)//1.1gwei
           }
@@ -115,7 +113,7 @@ export default class SendToAddress extends React.Component {
   };
 
   render() {
-    let { canWithdraw, fromAddress } = this.state;
+    let { fromAddress } = this.state;
 
     let products = []
     for(let p in this.props.products){
@@ -138,7 +136,7 @@ export default class SendToAddress extends React.Component {
                   }}
                   style={this.props.buttonStyle.secondary}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    {this.props.web3.utils.hexToUtf8(prod.name)} {this.props.dollarDisplay(costInDollars)}
+                    {this.props.web3.utils.hexToUtf8(prod.name)} {dollarDisplay(costInDollars)}
                   </Scaler>
                 </button>
               </div>
@@ -198,7 +196,8 @@ export default class SendToAddress extends React.Component {
               </div>
               {products}
             </div>
-            <button style={this.props.buttonStyle.primary} className={`btn btn-success btn-lg w-100 ${canWithdraw ? '' : 'disabled'}`}
+            <button style={this.props.buttonStyle.primary}
+                    className={`btn btn-success btn-lg w-100 ${this.canWithdraw() ? '' : 'disabled'}`}
                     onClick={this.withdraw}>
               {i18n.t('withdraw_from_private.withdraw')}
             </button>

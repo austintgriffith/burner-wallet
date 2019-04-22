@@ -5,7 +5,7 @@ import i18n from '../i18n';
 
 
 
-export default ({mainStyle, address, balance, burnWallet, goBack, dollarDisplay}) => {
+export default ({ mainStyle, address, balance, burnWallet, goBack }) => {
 
   return (
 

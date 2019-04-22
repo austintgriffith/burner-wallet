@@ -2,10 +2,11 @@ import React from 'react';
 import { Scaler } from "dapparatus";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18next from 'i18next';
+import { ERC20TOKEN } from '../config';
 
 
 
-export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
+export default ({ buttonStyle, address, balance, changeAlert, changeView, subBalanceDisplay }) => {
 
 
   var w = window,
