@@ -283,20 +283,6 @@ class App extends Component {
         //console.log("!!! possibleNewPrivateKey",privateKey)
         this.setState({possibleNewPrivateKey:privateKey})
         window.history.pushState({},"", "/");
-      }else{
-        let parts = window.location.pathname.split(";")
-        console.log("PARTS",parts)
-        if(parts.length>=2){
-          let sendToAddress = parts[0].replace("/","")
-          let sendToAmount = parts[1]
-          let extraData = ""
-          if(parts.length>=3){
-            extraData = parts[2]
-          }
-          if((parseFloat(sendToAmount)>0 || extraData) && sendToAddress.length==42){
-            this.changeView('send_to_address')
-          }
-        }
       }
     }
     setTimeout(this.poll.bind(this),150)
@@ -1033,6 +1019,19 @@ render() {
 
           return (
             <Switch>
+              <Route
+                path="/:toAddress(0x[a-fA-F0-9]{40});:amount([\d\.]+):message(;[^;]+)?:extraMessage(;[^;]+)?"
+                render={({ match }) => <Redirect to={{
+                  pathname: '/send_to_address',
+                  state: {
+                    ...match.params,
+                    message: match.params.message && match.params.message.substr(1),
+                    extraMessage: match.params.extraMessage && match.params.extraMessage.substr(1),
+                  },
+                }} />}
+              />
+
+
               <Route path="/" exact render={() => (
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
@@ -1160,7 +1159,7 @@ render() {
                   />
                 </div>
               )}/>
-              <Route path="/send_to_address" render={() => (
+              <Route path="/send_to_address" render={({ location }) => (
                 <div>
                   <div className="send-to-address card w-100" style={{zIndex:1}}>
                     <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
@@ -1179,6 +1178,7 @@ render() {
                       changeView={this.changeView}
                       setReceipt={this.setReceipt}
                       changeAlert={this.changeAlert}
+                      {...location.state}
                     />
                   </div>
                   <Bottom
