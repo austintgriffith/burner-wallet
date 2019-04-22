@@ -77,7 +77,7 @@ export default class SendToAddress extends React.Component {
           fromAddress,
           address,
           weiAmount,
-          0,
+          1,
           xdaiweb3,
           web3,
           metaAccount.privateKey
