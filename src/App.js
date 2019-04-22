@@ -1070,7 +1070,7 @@ render() {
 
           return (
             <Switch>
-              <Route path="/main" render={() => (
+              <Route path="/" exact render={() => (
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
                     {extraTokens}
@@ -1589,7 +1589,7 @@ render() {
                   />
                 </div>
               )}/>
-              <Redirect from="/" to="/main" exact />
+              <Redirect from="/main" to="/" exact />
               <Route render={() => (<div>unknown view</div>)} />
             </Switch>
           );
