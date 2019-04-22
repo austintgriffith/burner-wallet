@@ -4,7 +4,6 @@ import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "
 import Web3 from 'web3';
 import axios from 'axios';
 import i18n from './i18n';
-import gasless from 'tabookey-gasless';
 import './App.scss';
 import Header from './components/Header';
 import NavCard from './components/NavCard';
@@ -54,7 +53,6 @@ import xdai from './xdai.jpg';
 import Wyre from './services/wyre';
 
 let base64url = require('base64url')
-const EthCrypto = require('eth-crypto');
 
 let FAILCOUNT = 0
 
@@ -512,6 +510,7 @@ class App extends Component {
     }
   }
   async ensLookup(name){
+    const namehash = await import('eth-ens-namehash');
     let hash = namehash.hash(name)
     console.log("namehash",name,hash)
     let resolver = await this.state.ensContract.methods.resolver(hash).call()
@@ -600,6 +599,7 @@ class App extends Component {
           console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
 
           this.setState({sending: true})
+        const gasless = await import('tabookey-gasless');
         let relayClient = new gasless.RelayClient(this.state.web3);
 
         if(this.state.metaAccount && this.state.metaAccount.privateKey){
@@ -728,6 +728,7 @@ async decryptInput(input){
   }else{
     if(this.state.metaAccount){
       try{
+        const EthCrypto = await import('eth-crypto');
         let parsedData = EthCrypto.cipher.parse(input.substring(2))
         const endMessage = await EthCrypto.decryptWithPrivateKey(
           this.state.metaAccount.privateKey, // privateKey
