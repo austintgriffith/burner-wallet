@@ -824,7 +824,6 @@ render() {
         titleImage={titleImage}
         mainStyle={mainStyle}
         address={this.state.account}
-        changeView={this.changeView}
         balance={balance}
       />
     )
