@@ -155,10 +155,16 @@ contract Links is Ownable, Vault, RelayRecipient, RecipientUtils {
     {
         if(isFundValid(_id) && _signature.length == 65){
             address signer = address(0);
+            uint nonce = funds[_id].nonce;
             bool expired = isClaimExpired(_id);
-            // _claimHash - keccak256(_id,_destination,nonce,address(this)) is a unique key
+            // keccak256(_id,_destination,nonce,address(this)) is a unique key
             // remains unique if the id gets reused after fund deletion
-            signer = ECDSA.recover(_claimHash.toEthSignedMessageHash(),_signature);
+            bytes32 claimHash1 = keccak256(abi.encodePacked(_id,_destination,nonce,address(this)));
+            if(_claimHash == claimHash1){
+                signer = ECDSA.recover(claimHash1.toEthSignedMessageHash(),_signature);
+            } else{
+                return false;
+            } 
             return (
                 signer != address(0) &&
                 (

@@ -9,9 +9,9 @@ import "openzeppelin-solidity/contracts/token/ERC721/IERC721Receiver.sol";
 contract Vault is IERC721Receiver{
     
     // Token Selectors
-    bytes4 internal constant NATIVE_TOKEN = bytes4(keccak256("NATIVE")); //0xfdae1ba7
-    bytes4 internal constant ERC20TOKEN = bytes4(keccak256("ERC20"));    //0x8ae85d84
-    bytes4 internal constant ERC721TOKEN = bytes4(keccak256("ERC721"));  //0x73ad2146
+    bytes4 internal constant NATIVE_TOKEN = 0xfdae1ba7; // bytes4(keccak256("NATIVE"))
+    bytes4 internal constant ERC20TOKEN = 0x8ae85d84;   // bytes4(keccak256("ERC20"))
+    bytes4 internal constant ERC721TOKEN = 0x73ad2146;  // bytes4(keccak256("ERC721"))
 
     event VaultTransfer(address indexed token, bytes4 tokenType, address indexed to, uint256 value, bool status);
     event VaultDeposit(address indexed token, bytes4 tokenType, address indexed sender, uint256 value, bool status);
