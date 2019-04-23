@@ -165,12 +165,6 @@ export default class Exchange extends React.Component {
     setInterval(() => this.updatePendingExits(daiAddress, xdaiweb3), 5000);
   }
 
-  // NOTE: This function promisifies this.props.tx
-  async tx(...args) {
-    console.log(args);
-    return new Promise(resolve => this.props.tx(...args, resolve))
-  }
-
   async maybeApprovePDai(amountWei) {
     
     const pDaiAllowance = await this.props.daiContract.methods.allowance(
@@ -187,7 +181,7 @@ export default class Exchange extends React.Component {
 
       const metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
 
-      const receipt = await this.tx(
+      const receipt = await this.props.pTx(
         metaMaskDaiContract.methods.approve(this.props.pdaiContract._address, amountWei),
         150000, 0, 0,
       );
