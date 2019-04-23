@@ -64,7 +64,7 @@ export default class SendToAddress extends React.Component {
 
   withdraw = async () => {
     let { fromAddress, amount, metaAccount } = this.state
-    const { tokenSendV2, address, web3, xdaiweb3 } = this.props
+    const { tokenSendV2, address, web3, xdaiweb3, pDaiTokenAddr } = this.props
 
     if(this.state.canWithdraw){
         console.log("SWITCH TO LOADER VIEW...")
@@ -73,11 +73,13 @@ export default class SendToAddress extends React.Component {
         //console.log("metaAccount",this.state.metaAccount,"amount",this.props.web3.utils.toWei(amount,'ether'))
 
         const weiAmount = web3.utils.toWei(amount, "ether")
+        const color = await xdaiweb3.getColor(pDaiTokenAddr);
+
         await tokenSendV2(
           fromAddress,
           address,
           weiAmount,
-          2,
+          color,
           xdaiweb3,
           web3,
           metaAccount.privateKey
