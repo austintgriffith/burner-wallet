@@ -16,7 +16,7 @@ export default class Advanced extends React.Component {
     }
   }
   render(){
-    let {isVendor, balance, address, privateKey, changeAlert, changeView, goBack, setPossibleNewPrivateKey} = this.props
+    let {isVendor, balance, address, privateKey, changeAlert, changeView, setPossibleNewPrivateKey} = this.props
 
     let url = window.location.protocol+"//"+window.location.hostname
     if(window.location.port&&window.location.port!=80&&window.location.port!=443){
@@ -119,11 +119,11 @@ export default class Advanced extends React.Component {
         {inputSeedEyeButton}
         <div className="col-6 p-1">
           <button className="btn btn-large w-100" style={this.props.buttonStyle.primary}
-                  onClick={()=>{
+                  onClick={async ()=>{
                     if(!this.state.newSeedPhrase){
                       changeAlert({type: 'warning', message: 'Invalid seed phrase.'})
                     }else{
-                      let pkutils = require("ethereum-mnemonic-privatekey-utils")
+                      const pkutils = await import("ethereum-mnemonic-privatekey-utils");
                       const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(this.state.newSeedPhrase)
                       changeView('main')
                       setPossibleNewPrivateKey("0x"+newPrivateKey)

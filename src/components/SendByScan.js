@@ -7,6 +7,7 @@ import RNMessageChannel from 'react-native-webview-messaging';
 import Jimp from "jimp";
 import i18n from "../i18n";
 import { parseAndCleanPath } from '../lib';
+import BackButton from './BackButton';
 
 let interval
 class SendByScan extends Component {
@@ -104,14 +105,13 @@ class SendByScan extends Component {
     this.setState({legacyMode:true})
     this.props.onError(error);
   };
-  onClose = () => {
-    console.log("SCAN CLOSE")
-    this.stopRecording();
-    this.props.goBack(this.props.returnState.goBackView);
-  };
-  componentDidMount(){
+
+  async componentDidMount() {
     interval = setInterval(this.loadMore.bind(this),750)
+    this.jimp = await import('jimp');
+    this.QrCode = await import('qrcode-reader');
   }
+
   componentWillUnmount() {
     clearInterval(interval)
     this.stopRecording();
@@ -127,16 +127,25 @@ class SendByScan extends Component {
       const [e, file] = result;
       let reader = new FileReader();
       reader.onload = (e) => {
-      //  this.props.changeView('send_by_scan',()=>{
-          console.log("")
           this.setState({imageData:e.target.result})
-          Jimp.read(Buffer.from(e.target.result.replace(/^data:image\/png;base64,/, "").replace(/^data:image\/jpeg;base64,/, ""), 'base64'),(err, image) => {
+
+          if (!this.jimp || !this.QrCode) {
+            console.log('Jimp not loaded yet...');
+            return;
+          }
+
+          const image = Buffer.from(
+              e.target.result
+                .replace(/^data:image\/png;base64,/, "")
+                .replace(/^data:image\/jpeg;base64,/, ""),
+              'base64');
+          this.jimp.read(image, (err, image) => {
               if (err) {
                   alert("ERR1")
                   console.error("ERR1",err);
                   this.setState({scanFail:err.toString()})
               }
-              var qr = new QrCode();
+              var qr = new this.QrCode();
               qr.callback = (err, value) => {
                   this.setState({isLoading:false})
                   if (err) {
@@ -256,9 +265,9 @@ class SendByScan extends Component {
 
     return (
       <div style={{  position: "fixed",top:0,left:0,right:0,bottom:0,zIndex:5,margin:'0 auto !important',background:"#000000"}}>
-        <div style={{ position: 'absolute',zIndex: 256,top:20,right:20,fontSize:80,paddingRight:20,color:"#FFFFFF",cursor:'pointer'}} onClick={this.onClose} >
+        <BackButton style={{ position: 'absolute',zIndex: 256,top:20,right:20,fontSize:80,paddingRight:20,color:"#FFFFFF",cursor:'pointer'}}>
           <i className="fa fa-times" aria-hidden="true"></i>
-        </div>
+        </BackButton>
         {displayedReader}
         <div style={{position: 'absolute',zIndex:11,bottom:20,fontSize:12,left:20,color:"#FFFFFF",opacity:0.333}}>
           {navigator.userAgent} - {JSON.stringify(navigator.mediaDevices)}

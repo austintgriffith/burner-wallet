@@ -2,13 +2,11 @@ import React from 'react';
 import Ruler from "./Ruler";
 import Balance from "./Balance";
 import i18n from '../i18n';
+import BackButton from './BackButton';
 
-
-
-export default ({ mainStyle, address, balance, burnWallet, goBack }) => {
+export default ({ mainStyle, address, balance, burnWallet }) => {
 
   return (
-
     <div>
       <div style={{textAlign:"center",width:"100%",fontWeight:'bold',fontSize:30}}>
         {i18n.t('burn_wallet.burn_private_key_question')}
@@ -21,9 +19,9 @@ export default ({ mainStyle, address, balance, burnWallet, goBack }) => {
         <div className="content ops row">
 
             <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor}} onClick={goBack} >
+              <BackButton className="btn btn-large w-100" style={{backgroundColor:mainStyle.mainColor}} >
                   <i className="fas fa-arrow-left"  /> {i18n.t('burn_wallet.cancel')}
-              </button>
+              </BackButton>
             </div>
 
           <div className="col-6 p-1">

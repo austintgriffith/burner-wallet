@@ -7,6 +7,7 @@ import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
 import Badge from './Badge';
 import i18n from '../i18n';
+import gasless from 'tabookey-gasless';
 
 export default class SendBadge extends React.Component {
   constructor(props) {
@@ -78,7 +79,6 @@ export default class SendBadge extends React.Component {
   }
   send = async () => {
     let { toAddress, amount } = this.state;
-
     if(this.state.canSend){
 
       console.log("SWITCH TO LOADER VIEW...",amount)
@@ -88,20 +88,47 @@ export default class SendBadge extends React.Component {
       console.log("web3",this.props.web3)
 
       cookie.remove('sendBadgeToAddress', { path: '/' })
-      this.props.tx(
-        this.props.contracts.Badges.transferFrom(this.props.address,this.state.toAddress,this.props.badge.id)
-        ,240000,0,0,(receipt)=>{
-          if(receipt){
-
-            console.log("SEND BADGE COMPLETE?!?",receipt)
-            this.props.goBack();
-            window.history.pushState({},"", "/");
-            this.props.setReceipt({to:toAddress,from:receipt.from,badge:this.props.badge,result:receipt})
-            this.props.changeView("receipt");
-            this.props.clearBadges()
+      if (this.state.balance > 0.001) {
+        this.props.tx(
+          this.props.contracts.Badges.transferFrom(this.props.address,this.state.toAddress,this.props.badge.id)
+          ,240000,0,0,(receipt)=>{
+            if(receipt){
+  
+              console.log("SEND BADGE COMPLETE?!?",receipt)
+              this.props.setReceipt({to:toAddress,from:receipt.from,badge:this.props.badge,result:receipt})
+              this.props.clearBadges();
+              this.props.history.push('/receipt');
+            }
           }
+        )
+      } else {
+        let relayClient = new gasless.RelayClient(this.state.web3);
+
+        if(this.state.metaAccount && this.state.metaAccount.privateKey){
+          relayClient.useKeypairForSigning(this.state.metaAccount)
         }
-      )
+          console.log("Calling encodeABU on transferFrom() ",this.props.address,this.state.toAddress,this.props.badge.id)
+          let transferData = this.props.contracts.Badges.transferFrom(this.props.address,this.state.toAddress,this.props.badge.id).encodeABI()
+          let options = {
+            from: this.state.account,
+            to: this.state.contracts.Badges._address,
+            txfee: 12,
+            gas_limit: 150000,
+            gas_price: Math.trunc(1000000000 * 25)
+          }
+          console.log("Hitting relayClient with relayTransaction()",transferData, options)
+          relayClient.relayTransaction(transferData, options).then((transaction) => {
+            console.log("TX REALYED: ", transaction)
+            this.setState({claimed: true})
+            setTimeout(() => {
+              this.setState({sending: false}, () => {
+                //alert("DONE")
+                window.location = "/"
+              })
+            }, 2000)
+          })
+      }
+
       /*this.props.send(toAddress, value, 120000, txData, (result) => {
         if(result && result.transactionHash){
           this.props.goBack();

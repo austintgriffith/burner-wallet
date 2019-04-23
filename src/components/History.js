@@ -9,9 +9,7 @@ import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18next from 'i18next';
 import QRCode from 'qrcode.react';
-import Transaction from "ethereumjs-tx";
 import EthUtil from 'ethereumjs-util';
-import EthCrypto from 'eth-crypto';
 import { ERC20TOKEN } from '../config';
 import { dollarDisplay } from '../lib';
 
@@ -70,6 +68,11 @@ export default class History extends React.Component {
           //try to find a transacition that is from the target
           for(let t in theseTransactionsByAddress){
             if(theseTransactionsByAddress[t].from == target){
+                const [Transaction, EthUtil] = await Promise.all([
+                  import('ethereumjs-tx'),
+                  import('ethereumjs-util'),
+                ]);
+
               //console.log("FOUND TRANSACTION from target",theseTransactionsByAddress[t])
               let theTx = await this.props.web3.eth.getTransaction(theseTransactionsByAddress[t].hash)
               let rawText = ""
@@ -133,6 +136,8 @@ export default class History extends React.Component {
     let wasEncrypted = false
     if(targetPublicKey){
       //encrypt!
+      const EthCrypto = await import('eth-crypto');
+
       console.log("ecrypting message with public key",targetPublicKey)
       const encrypted = await EthCrypto.encryptWithPublicKey(
           targetPublicKey.substring(2), // publicKey
@@ -166,7 +171,7 @@ export default class History extends React.Component {
     })
   }
   render(){
-    let {address,changeView,block,goBack,target,buttonStyle} = this.props
+    let { address, block, target, buttonStyle } = this.props;
     const transactionsByAddress = ERC20TOKEN ? this.props.fullTransactionsByAddress : this.props.transactionsByAddress;
 
     let theseTransactionsByAddress = []

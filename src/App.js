@@ -4,7 +4,6 @@ import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "
 import Web3 from 'web3';
 import axios from 'axios';
 import i18n from './i18n';
-import gasless from 'tabookey-gasless';
 import './App.scss';
 import Header from './components/Header';
 import NavCard from './components/NavCard';
@@ -54,7 +53,6 @@ import xdai from './xdai.jpg';
 import Wyre from './services/wyre';
 
 let base64url = require('base64url')
-const EthCrypto = require('eth-crypto');
 
 let FAILCOUNT = 0
 
@@ -487,7 +485,7 @@ class App extends Component {
   longPoll() {
     axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
      .then((response)=>{
-       let ethprice = response.data.data.quotes.USD.price
+       let ethprice = 174//esponse.data.quotes.USD.price
        this.setState({ethprice})
      })
   }
@@ -559,6 +557,7 @@ class App extends Component {
     }
   }
   async ensLookup(name){
+    const namehash = await import('eth-ens-namehash');
     let hash = namehash.hash(name)
     console.log("namehash",name,hash)
     let resolver = await this.state.ensContract.methods.resolver(hash).call()
@@ -574,14 +573,14 @@ class App extends Component {
 
     let fund = await contracts.Links.funds(this.state.claimId).call()
     console.log("FUND FOR "+this.state.claimId+" IS: ", fund)
-    if (parseInt(fund[5].toString())>0) {
+    if (parseInt(fund[6].toString())>0) {
       this.setState({fund: fund})
 
 
       let claimHash = this.state.web3.utils.soliditySha3(
         {type: 'bytes32', value: this.state.claimId}, // fund id
         {type: 'address', value: this.state.account}, // destination address
-        {type: 'uint256', value: fund[5]}, // nonce
+        {type: 'uint256', value: fund[6]}, // nonce
         {type: 'address', value: contracts.Links._address} // contract address
       )
       console.log("claimHash", claimHash)
@@ -626,14 +625,14 @@ class App extends Component {
   async relayClaim() {
     console.log("DOING CLAIM THROUGH RELAY")
     let fund = await this.state.contracts.Links.funds(this.state.claimId).call()
-      if (parseInt(fund[5].toString())>0) {
+      if (parseInt(fund[6].toString())>0) {
         this.setState({fund: fund})
         console.log("FUND: ", fund)
 
         let claimHash = this.state.web3.utils.soliditySha3(
           {type: 'bytes32', value: this.state.claimId}, // fund id
           {type: 'address', value: this.state.account}, // destination address
-          {type: 'uint256', value: fund[5]}, // nonce
+          {type: 'uint256', value: fund[6]}, // nonce
           {type: 'address', value: this.state.contracts.Links._address} // contract address
         )
         console.log("claimHash", claimHash)
@@ -647,6 +646,7 @@ class App extends Component {
           console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
 
           this.setState({sending: true})
+        const gasless = await import('tabookey-gasless');
         let relayClient = new gasless.RelayClient(this.state.web3);
 
         if(this.state.metaAccount && this.state.metaAccount.privateKey){
@@ -710,11 +710,7 @@ changeAlert = (alert, hide=true) => {
     }, 2000);
   }
 };
-goBack(view="main"){
-  console.log("GO BACK")
-  this.changeView(view)
-  setTimeout(()=>{window.scrollTo(0,0)},60)
-}
+
 async parseBlocks(parseBlock){
   let block = await this.state.web3.eth.getBlock(parseBlock)
   let updatedTxs = false
@@ -775,6 +771,7 @@ async decryptInput(input){
   }else{
     if(this.state.metaAccount){
       try{
+        const EthCrypto = await import('eth-crypto');
         let parsedData = EthCrypto.cipher.parse(input.substring(2))
         const endMessage = await EthCrypto.decryptWithPrivateKey(
           this.state.metaAccount.privateKey, // privateKey
@@ -1138,9 +1135,7 @@ render() {
                   <Bottom
                     icon={"wrench"}
                     text={i18n.t('advance_title')}
-                    action={()=>{
-                      this.changeView('advanced')
-                    }}
+                    action={() => this.changeView('advanced')}
                   />
                 </div>
               )} />
@@ -1148,7 +1143,7 @@ render() {
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                    <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
+                    <NavCard title={i18n.t('advance_title')} />
                     <Advanced
                       isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
                       buttonStyle={buttonStyle}
@@ -1157,15 +1152,10 @@ render() {
                       changeView={this.changeView}
                       privateKey={metaAccount.privateKey}
                       changeAlert={this.changeAlert}
-                      goBack={this.goBack.bind(this)}
                       setPossibleNewPrivateKey={this.setPossibleNewPrivateKey.bind(this)}
                     />
                   </div>
-                  <Bottom
-                    action={()=>{
-                      this.changeView('main')
-                    }}
-                  />
+                  <Bottom />
                 </div>
               )}/>
               <Route path="/send_by_scan" render={() => (
@@ -1173,7 +1163,6 @@ render() {
                   returnToState={this.returnToState.bind(this)}
                   returnState={this.state.returnState}
                   mainStyle={mainStyle}
-                  goBack={this.goBack.bind(this)}
                   changeView={this.changeView}
                   onError={(error) =>{
                     this.changeAlert("danger",error)
@@ -1183,7 +1172,7 @@ render() {
               <Route path="/withdraw_from_private" render={() => (
                 <div>
                   <div className="send-to-address card w-100" style={{zIndex:1}}>
-                    <NavCard title={i18n.t('withdraw')} goBack={this.goBack.bind(this)}/>
+                    <NavCard title={i18n.t('withdraw')} />
                     {defaultBalanceDisplay}
                     <WithdrawFromPrivate
                       products={this.state.products}
@@ -1193,22 +1182,20 @@ render() {
                       contracts={this.state.contracts}
                       web3={web3}
                       privateKey={this.state.withdrawFromPrivateKey}
-                      goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
                     />
                   </div>
-                  <Bottom
-                    action={()=>{
-                      this.changeView('main')
-                    }}
-                  />
+                  <Bottom />
                 </div>
               )}/>
               <Route path="/send_badge" render={() => (
                 <div>
                   <div className="send-to-address card w-100" style={{zIndex:1}}>
-                    <NavCard title={this.state.badges[this.state.selectedBadge].name} titleLink={this.state.badges[this.state.selectedBadge].external_url} goBack={this.goBack.bind(this)}/>
+                    <NavCard
+                      title={this.state.badges[this.state.selectedBadge].name}
+                      titleLink={this.state.badges[this.state.selectedBadge].external_url}
+                    />
                     <SendBadge
                       changeView={this.changeView}
                       ensLookup={this.ensLookup.bind(this)}
@@ -1219,7 +1206,6 @@ render() {
                       address={account}
                       scannerState={this.state.scannerState}
                       tx={this.state.tx}
-                      goBack={this.goBack.bind(this)}
                       openScanner={this.openScanner.bind(this)}
                       setReceipt={this.setReceipt}
                       changeAlert={this.changeAlert}
@@ -1228,16 +1214,13 @@ render() {
                       clearBadges={this.clearBadges.bind(this)}
                     />
                   </div>
-                  <Bottom
-                    text={i18n.t('done')}
-                    action={this.goBack.bind(this)}
-                  />
+                  <Bottom text={i18n.t('done')}/>
                 </div>
               )}/>
               <Route path="/send_to_address" render={({ location }) => (
                 <div>
                   <div className="send-to-address card w-100" style={{zIndex:1}}>
-                    <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
+                    <NavCard title={i18n.t('send_to_address_title')} />
                     {defaultBalanceDisplay}
                     <SendToAddress
                       openScanner={this.openScanner.bind(this)}
@@ -1249,24 +1232,20 @@ render() {
                       web3={this.state.web3}
                       address={account}
                       send={send}
-                      goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       setReceipt={this.setReceipt}
                       changeAlert={this.changeAlert}
                       {...location.state}
                     />
                   </div>
-                  <Bottom
-                    text={i18n.t('cancel')}
-                    action={this.goBack.bind(this)}
-                  />
+                  <Bottom text={i18n.t('cancel')} />
                 </div>
               )}/>
               <Route path="/receipt" render={() => (
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                    <NavCard title={i18n.t('receipt_title')} goBack={this.goBack.bind(this)}/>
+                    <NavCard title={i18n.t('receipt_title')} />
                     <Receipt
                       receipt={this.state.receipt}
                       block={this.state.block}
@@ -1276,21 +1255,18 @@ render() {
                       web3={this.state.web3}
                       address={account}
                       send={send}
-                      goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
                     />
                   </div>
-                  <Bottom
-                    action={this.goBack.bind(this)}
-                  />
+                  <Bottom />
                 </div>
               )}/>
               <Route path="/receive" render={() => (
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                    <NavCard title={i18n.t('receive_title')} goBack={this.goBack.bind(this)}/>
+                    <NavCard title={i18n.t('receive_title')} />
                     {defaultBalanceDisplay}
                     <Receive
                       block={this.state.block}
@@ -1300,21 +1276,18 @@ render() {
                       web3={this.state.web3}
                       address={account}
                       send={send}
-                      goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
                     />
                   </div>
-                  <Bottom
-                    action={this.goBack.bind(this)}
-                  />
+                  <Bottom />
                 </div>
               )}/>
               <Route path="/request_funds" render={() => (
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                    <NavCard title={i18n.t('request_funds_title')} goBack={this.goBack.bind(this)}/>
+                    <NavCard title={i18n.t('request_funds_title')} />
                     {defaultBalanceDisplay}
                     <RequestFunds
                       mainStyle={mainStyle}
@@ -1322,14 +1295,11 @@ render() {
                       balance={balance}
                       address={account}
                       send={send}
-                      goBack={this.goBack.bind(this)}
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
                     />
                   </div>
-                  <Bottom
-                    action={this.goBack.bind(this)}
-                  />
+                  <Bottom />
                 </div>
               )}/>
               <Route path="/share" render={() => {
@@ -1342,7 +1312,7 @@ render() {
                   <div>
                     <div className="main-card card w-100" style={{zIndex:1}}>
 
-                      <NavCard title={url} goBack={this.goBack.bind(this)} />
+                      <NavCard title={url} />
                       <Share
                         title={url}
                         url={url}
@@ -1352,12 +1322,9 @@ render() {
                         balance={balance}
                         address={account}
                         changeAlert={this.changeAlert}
-                        goBack={this.goBack.bind(this)}
                       />
                     </div>
-                    <Bottom
-                      action={this.goBack.bind(this)}
-                    />
+                    <Bottom />
                   </div>
                 );
               }}/>
@@ -1365,129 +1332,114 @@ render() {
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                    <NavCard title={'Share Link'} goBack={this.goBack.bind(this)} />
+                    <NavCard title={'Share Link'} />
                       <ShareLink
                         sendKey={this.state.sendKey}
                         sendLink={this.state.sendLink}
                         balance={balance}
                         address={account}
                         changeAlert={this.changeAlert}
-                        goBack={this.goBack.bind(this)}
                       />
                   </div>
-                  <Bottom
-                    action={this.goBack.bind(this)}
-                  />
+                  <Bottom />
                 </div>
               )}/>
               <Route path="/send_with_link" render={() => (
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                    <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
-                    {defaultBalanceDisplay}
-                    <SendWithLink balance={balance}
-                      buttonStyle={buttonStyle}
-                      changeAlert={this.changeAlert}
-                      sendWithLink={(amount,cb)=>{
-                        let randomHash = this.state.web3.utils.sha3(""+Math.random())
-                        let randomWallet = this.state.web3.eth.accounts.create()
-                        let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
-                        console.log("STATE",this.state,this.state.contracts)
-                        // Use xDai as default token
-                        const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
-                        // -- Temp hacks
-                        const expirationTime = 365; // Hard-coded to 1 year link expiration.
-                        const amountToSend = amount*10**18 ; // Conversion to wei
-                        // --
-                        if(!ERC20TOKEN)
-                        {
-                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (receipt)=>{
+                  <NavCard title={'Send with Link'} />
+                  {defaultBalanceDisplay}
+                  <SendWithLink balance={balance}
+                    buttonStyle={buttonStyle}
+                    changeAlert={this.changeAlert}
+                    sendWithLink={(amount,cb)=>{
+                      let randomHash = this.state.web3.utils.sha3(""+Math.random())
+                      let randomWallet = this.state.web3.eth.accounts.create()
+                      let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
+                      console.log("STATE",this.state,this.state.contracts)
+                      // Use xDai as default token
+                      const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
+                      // -- Temp hacks
+                      const expirationTime = 365; // Hard-coded to 1 year link expiration. 
+                      const amountToSend = amount*10**18 ; // Conversion to wei
+                      // --
+                      if(!ERC20TOKEN)
+                      {
+                        //0xfdae1ba7 - bytes4(keccak256("NATIVE"))
+                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,"0xfdae1ba7",amountToSend,expirationTime),300000,false,amountToSend,async (receipt)=>{
+                          this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
+                            console.log("STATE SAVED",this.state)
+                          })
+                          cb(receipt)
+                        })
+                      } else{
+                        //0x8ae85d84 - bytes4(keccak256("ERC20"))
+                        this.state.tx(this.state.contracts[ERC20TOKEN].approve(this.state.contracts.Links._address, amountToSend),21000,false,0,async (approveReceipt)=>{
+                          //cb(approveReceipt)
+                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,"0x8ae85d84",amountToSend,expirationTime),300000,false,amountToSend,async (sendReceipt)=>{
                             this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
                               console.log("STATE SAVED",this.state)
                             })
-                            cb(receipt)
+                            cb(sendReceipt)
                           })
-                        } else{
-                          this.state.tx(this.state.contracts[ERC20TOKEN].approve(this.state.contracts.Links._address, amountToSend),21000,false,0,async (approveReceipt)=>{
-                            //cb(approveReceipt)
-                            this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (sendReceipt)=>{
-                              this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
-                                console.log("STATE SAVED",this.state)
-                              })
-                              cb(sendReceipt)
-                            })
-                          })
-                        }
-                      }}
+                        })
+                      }
+                    }}
                       address={account}
                       changeView={this.changeView}
-                      goBack={this.goBack.bind(this)}
                     />
                   </div>
-                  <Bottom
-                    text={i18n.t('cancel')}
-                    action={this.goBack.bind(this)}
-                  />
+                  <Bottom text={i18n.t('cancel')} />
                 </div>
               )}/>
               <Route path="/burn-wallet" render={() => (
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                  <NavCard title={"Burn Private Key"} goBack={this.goBack.bind(this)}/>
-                  {defaultBalanceDisplay}
-                  <BurnWallet
-                  mainStyle={mainStyle}
-                  address={account}
-                  balance={balance}
-                  goBack={this.goBack.bind(this)}
-                  dollarDisplay={dollarDisplay}
-                  burnWallet={()=>{
-                    burnMetaAccount()
-                    if(window.isReactNative) {
-                      window.ReactNativeWebView.postMessage("burn")
-                    }
-                    if(localStorage&&typeof localStorage.setItem == "function"){
-                      localStorage.setItem(this.state.account+"loadedBlocksTop","")
-                      localStorage.setItem(this.state.account+"metaPrivateKey","")
-                      localStorage.setItem(this.state.account+"recentTxs","")
-                      localStorage.setItem(this.state.account+"transactionsByAddress","")
-                      this.setState({recentTxs:[],transactionsByAddress:{}})
-                    }
-                  }}
-                  />
+                    <NavCard title={"Burn Private Key"} />
+                    {defaultBalanceDisplay}
+                    <BurnWallet
+                    mainStyle={mainStyle}
+                    address={account}
+                    balance={balance}
+                    burnWallet={()=>{
+                      burnMetaAccount()
+                      if(window.isReactNative) {
+                        window.ReactNativeWebView.postMessage("burn")
+                      }
+                      if(localStorage&&typeof localStorage.setItem == "function"){
+                        localStorage.setItem(this.state.account+"loadedBlocksTop","")
+                        localStorage.setItem(this.state.account+"metaPrivateKey","")
+                        this.props.resetTransactionStore(this.state.account);
+                      }
+                    }}
+                    />
                   </div>
-                  <Bottom
-                    text={i18n.t('cancel')}
-                    action={this.goBack.bind(this)}
-                  />
+                  <Bottom text={i18n.t('cancel')} />
                 </div>
               )}/>
               <Route path="/cash_out" render={() => (
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                    <NavCard title={"Cash Out"} goBack={this.goBack.bind(this)}/>
+                    <NavCard title="Cash Out" />
                     {defaultBalanceDisplay}
                     <CashOut
                       buttonStyle={buttonStyle}
                       changeView={this.changeView}
                       address={account}
                       balance={balance}
-                      goBack={this.goBack.bind(this)}
                     />
                   </div>
-                  <Bottom
-                    action={this.goBack.bind(this)}
-                  />
+                  <Bottom />
                 </div>
               )}/>
               <Route path="/exchange" render={() => (
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                    <NavCard title={i18n.t('exchange_title')} goBack={this.goBack.bind(this)}/>
+                    <NavCard title={i18n.t('exchange_title')} />
                     <Exchange
                       eth={eth}
                       dai={dai}
@@ -1513,19 +1465,16 @@ render() {
                       nativeSend={this.state.nativeSend}
                       address={account}
                       balance={balance}
-                      goBack={this.goBack.bind(this)}
                     />
                   </div>
-                  <Bottom
-                    action={this.goBack.bind(this)}
-                  />
+                  <Bottom />
                 </div>
               )}/>
               <Route path="/vendors" render={() => (
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                    <NavCard title={i18n.t('vendors')} goBack={this.goBack.bind(this)}/>
+                    <NavCard title={i18n.t('vendors')} />
                     <Vendors
                       products={this.state.products}
                       vendorObject={this.state.vendorObject}
@@ -1538,19 +1487,16 @@ render() {
                       tx={this.state.tx}
                       web3={this.state.web3}
                       block={this.state.block}
-                      goBack={this.goBack.bind(this)}
                     />
                   </div>
-                  <Bottom
-                    action={this.goBack.bind(this)}
-                  />
+                  <Bottom />
                 </div>
               )}/>
               <Route path="/loader" render={() => (
                 <div>
                   <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
 
-                    <NavCard title={"Sending..."} goBack={this.goBack.bind(this)} darkMode={true}/>
+                    <NavCard title="Sending..." darkMode={true}/>
                   </div>
                   <Loader mainStyle={mainStyle}/>
                 </div>
@@ -1559,7 +1505,7 @@ render() {
                 <div>
                   <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
 
-                    <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)} darkMode={true}/>
+                    <NavCard title="Reading QRCode..." darkMode={true}/>
                   </div>
                   <Loader mainStyle={mainStyle}/>
                 </div>
@@ -1568,7 +1514,7 @@ render() {
                 <div>
                   <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
 
-                    <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
+                    <NavCard title="Claiming..." darkMode={true}/>
                   </div>
                 <Loader mainStyle={mainStyle}/>
                 </div>
@@ -1577,11 +1523,7 @@ render() {
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
 
-                    <NavCard title={(
-                      <div>
-                        {i18n.t('history_chat')}
-                      </div>
-                    )} goBack={this.goBack.bind(this)}/>
+                    <NavCard title={i18n.t('history_chat')} />
                     {defaultBalanceDisplay}
                     <History
                       buttonStyle={buttonStyle}
@@ -1595,14 +1537,9 @@ render() {
                       block={this.state.block}
                       send={this.state.send}
                       web3={this.state.web3}
-                      goBack={this.goBack.bind(this)}
                     />
                   </div>
-                  <Bottom
-                    action={()=>{
-                      this.changeView('main')
-                    }}
-                  />
+                  <Bottom />
                 </div>
               )}/>
               <Redirect from="/main" to="/" exact />
