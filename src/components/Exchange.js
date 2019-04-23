@@ -111,7 +111,7 @@ export default class Exchange extends React.Component {
     let daiAddress = false
     let xdaiAddress = false
     if(pk&&pk!="0"){
-      mainnetMetaAccount =  mainnetweb3.eth.accounts.privateKeyToAccount(pk)
+      mainnetMetaAccount = mainnetweb3.eth.accounts.privateKeyToAccount(pk)
       daiAddress = mainnetMetaAccount.address.toLowerCase();
       xdaiMetaAccount = xdaiweb3.eth.accounts.privateKeyToAccount(pk)
       xdaiAddress = xdaiMetaAccount.address.toLowerCase();
@@ -580,6 +580,8 @@ export default class Exchange extends React.Component {
     }
 
     if(gwei !== undefined){
+      const color = await this.state.xdaiweb3.getColor(this.props.pdaiContract._address);
+
       if(this.state.mainnetMetaAccount){
         //send funds using metaaccount on mainnet
         const amountWei = this.state.mainnetweb3.utils.toWei(""+amount,"ether")
@@ -1507,18 +1509,19 @@ export default class Exchange extends React.Component {
       )
 
     }else if(ethToDaiMode=="deposit"){
-      if(!this.state.mainnetMetaAccount && this.props.network!="Mainnet"){
+
+      if(this.props.ethBalance<=0){
         ethToDaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
-              Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>Mainnet</span>
+              Error: You don't have any ether
               <a href="#" onClick={()=>{this.setState({ethToDaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
                 <i className="fas fa-times"/> dismiss
               </a>
             </div>
           </div>
-        )
-      }else{
+        );
+      }else {
         ethToDaiDisplay = (
           <div className="content ops row">
 
