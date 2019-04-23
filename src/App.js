@@ -319,9 +319,6 @@ class App extends Component {
         let rawPK = tempweb3.utils.bytesToHex(base64url.toBuffer(base64encodedPK))
         this.setState({possibleNewPrivateKey:rawPK})
         window.history.pushState({},"", "/");
-      }else if(window.location.pathname.length==43){
-        this.changeView('send_to_address')
-        console.log("CHANGE VIEW")
       }else if(window.location.pathname.length==134){
         let parts = window.location.pathname.split(";")
         let claimId = parts[0].replace("/","")
@@ -345,20 +342,6 @@ class App extends Component {
         //console.log("!!! possibleNewPrivateKey",privateKey)
         this.setState({possibleNewPrivateKey:privateKey})
         window.history.pushState({},"", "/");
-      }else{
-        let parts = window.location.pathname.split(";")
-        console.log("PARTS",parts)
-        if(parts.length>=2){
-          let sendToAddress = parts[0].replace("/","")
-          let sendToAmount = parts[1]
-          let extraData = ""
-          if(parts.length>=3){
-            extraData = parts[2]
-          }
-          if((parseFloat(sendToAmount)>0 || extraData) && sendToAddress.length==42){
-            this.changeView('send_to_address')
-          }
-        }
       }
     }
     setTimeout(this.poll.bind(this),150)
@@ -905,7 +888,6 @@ render() {
         titleImage={titleImage}
         mainStyle={mainStyle}
         address={this.state.account}
-        changeView={this.changeView}
         balance={balance}
       />
     )
@@ -1095,8 +1077,35 @@ render() {
             )
           }
 
+          const sendToAddressRedirect = ({ match }) => <Redirect to={{
+            pathname: '/send_to_address',
+            state: match.params,
+          }} />
+
           return (
             <Switch>
+              <Route
+                path="/:toAddress(0x[a-fA-F0-9]{40})"
+                render={sendToAddressRedirect}
+                exact
+              />
+              <Route
+                path="/:toAddress(0x[a-fA-F0-9]{40});:amount([\d\.]+)"
+                render={sendToAddressRedirect}
+                exact
+              />
+              <Route
+                path="/:toAddress(0x[a-fA-F0-9]{40});:amount([\d\.]+);:message([^;]+)"
+                render={sendToAddressRedirect}
+                exact
+              />
+              <Route
+                path="/:toAddress(0x[a-fA-F0-9]{40});:amount([\d\.]+);:message([^;]+);:extraMessage([^;]+)"
+                render={sendToAddressRedirect}
+                exact
+              />
+
+
               <Route path="/" exact render={() => (
                 <div>
                   <div className="main-card card w-100" style={{zIndex:1}}>
@@ -1225,7 +1234,7 @@ render() {
                   />
                 </div>
               )}/>
-              <Route path="/send_to_address" render={() => (
+              <Route path="/send_to_address" render={({ location }) => (
                 <div>
                   <div className="send-to-address card w-100" style={{zIndex:1}}>
                     <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
@@ -1244,6 +1253,7 @@ render() {
                       changeView={this.changeView}
                       setReceipt={this.setReceipt}
                       changeAlert={this.changeAlert}
+                      {...location.state}
                     />
                   </div>
                   <Bottom
