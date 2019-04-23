@@ -76,7 +76,8 @@ export default class SendToAddress extends React.Component {
   //  console.log("SendToAddress constructor",this.state)
     window.history.pushState({},"", "/"); // MAY BREAK STUFF
     window.updateToAddress = (dest) => {
-      this.state.toAddress = dest
+      // console.log("updating")
+      this.setState({toAddress: dest});
     } 
   }
 

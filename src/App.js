@@ -184,12 +184,12 @@ class App extends Component {
     // }
     // function to be called by ReactNative webview once it decodes a QR code
     // console.log("CACHED VIEW",view)
-    window.sendToAddress = (dest) => { 
+    window.sendToAddress = (dest) => {
+      // console.log("Sending!")
       this.setState({
         scannerState: {toAddress: dest},
-        view: "send_to_address"
-      })
-      // this.returnToState({toAddress:dest}) // set the dest address received by QR code reader
+      },() => this.props.history.push('/send_to_address'));
+       // redirect to send_to_address
     }
     super(props);
     this.state = {
@@ -208,7 +208,7 @@ class App extends Component {
       hasUpdateOnce: false,
       badges: {},
       selectedBadge: false,
-      ignoreIdenticalPK:false // used to toggle the 'Identical PK warning'
+      ignoreIdenticalPK: false // used to toggle the 'Identical PK warning'
     };
     this.alertTimeout = null;
     try{
@@ -244,7 +244,7 @@ class App extends Component {
   openScanner(returnState){
     if(window.isReactNative) {
       window.ReactNativeWebView.postMessage("qr");
-      this.props.history.push('/send_by_scan');
+      // this.props.history.push('/send_by_scan');
     } else {
       this.setState({ returnState });
       this.props.history.push('/send_by_scan');
