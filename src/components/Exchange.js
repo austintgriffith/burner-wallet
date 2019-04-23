@@ -583,7 +583,6 @@ export default class Exchange extends React.Component {
 
     if(gwei !== undefined){
       const color = await this.state.xdaiweb3.getColor(this.props.pdaiContract._address);
-
       if(this.state.mainnetMetaAccount){
         //send funds using metaaccount on mainnet
         const amountWei = this.state.mainnetweb3.utils.toWei(""+amount,"ether")
