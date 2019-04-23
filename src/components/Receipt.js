@@ -8,6 +8,7 @@ import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
 import axios from 'axios';
+import BackButton from './BackButton';
 import { dollarDisplay } from '../lib';
 
 
@@ -110,9 +111,9 @@ export default class Receive extends React.Component {
         </div>
         <div name="theVeryBottom" className="text-center bottom-text">
           <span style={{padding:10}}>
-            <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{this.props.goBack()}}>
+            <BackButton style={{color:"#FFFFFF"}}>
               <i className="fas fa-times"/> {i18n.t('done')}
-            </a>
+            </BackButton>
           </span>
         </div>
       </div>

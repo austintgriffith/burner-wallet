@@ -7,6 +7,7 @@ import RNMessageChannel from 'react-native-webview-messaging';
 import Jimp from "jimp";
 import i18n from "../i18n";
 import { parseAndCleanPath } from '../lib';
+import BackButton from './BackButton';
 
 let interval
 class SendByScan extends Component {
@@ -103,11 +104,6 @@ class SendByScan extends Component {
     console.error(error);
     this.setState({legacyMode:true})
     this.props.onError(error);
-  };
-  onClose = () => {
-    console.log("SCAN CLOSE")
-    this.stopRecording();
-    this.props.goBack(this.props.returnState.goBackView);
   };
 
   async componentDidMount() {
@@ -269,9 +265,9 @@ class SendByScan extends Component {
 
     return (
       <div style={{  position: "fixed",top:0,left:0,right:0,bottom:0,zIndex:5,margin:'0 auto !important',background:"#000000"}}>
-        <div style={{ position: 'absolute',zIndex: 256,top:20,right:20,fontSize:80,paddingRight:20,color:"#FFFFFF",cursor:'pointer'}} onClick={this.onClose} >
+        <BackButton style={{ position: 'absolute',zIndex: 256,top:20,right:20,fontSize:80,paddingRight:20,color:"#FFFFFF",cursor:'pointer'}}>
           <i className="fa fa-times" aria-hidden="true"></i>
-        </div>
+        </BackButton>
         {displayedReader}
         <div style={{position: 'absolute',zIndex:11,bottom:20,fontSize:12,left:20,color:"#FFFFFF",opacity:0.333}}>
           {navigator.userAgent} - {JSON.stringify(navigator.mediaDevices)}

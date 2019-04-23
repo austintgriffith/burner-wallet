@@ -94,11 +94,9 @@ export default class SendBadge extends React.Component {
           if(receipt){
 
             console.log("SEND BADGE COMPLETE?!?",receipt)
-            this.props.goBack();
-            window.history.pushState({},"", "/");
             this.props.setReceipt({to:toAddress,from:receipt.from,badge:this.props.badge,result:receipt})
-            this.props.changeView("receipt");
-            this.props.clearBadges()
+            this.props.clearBadges();
+            this.props.history.push('/receipt');
           }
         }
       )

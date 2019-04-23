@@ -16,7 +16,7 @@ export default class Advanced extends React.Component {
     }
   }
   render(){
-    let {isVendor, balance, address, privateKey, changeAlert, changeView, goBack, setPossibleNewPrivateKey} = this.props
+    let {isVendor, balance, address, privateKey, changeAlert, changeView, setPossibleNewPrivateKey} = this.props
 
     let url = window.location.protocol+"//"+window.location.hostname
     if(window.location.port&&window.location.port!=80&&window.location.port!=443){
