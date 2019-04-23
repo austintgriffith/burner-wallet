@@ -78,6 +78,8 @@ let FAILCOUNT = 0
 let DAI_TOKEN_ADDR = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
 let P_DAI_TOKEN_ADDR = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
 
+let leapNetwork;
+
 let mainStyle = {
   width:"100%",
   height:"100%",
@@ -97,7 +99,7 @@ let titleImage = (
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
   XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
   WEB3_PROVIDER = "https://rinkeby.infura.io/v3/f039330d8fb747e48a7ce98f51400d65"
-  
+  leapNetwork = "Leap Testnet";
   // LEAP token instead of DAI
   DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
   P_DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
@@ -135,6 +137,7 @@ else if (window.location.hostname.indexOf("burner.leapdao.org") >= 0) {
   // LEAP token instead of DAI
   DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
   P_DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';  
+  leapNetwork = "Leap Testnet";
   CLAIM_RELAY = false;
   ERC20NAME = false;
   ERC20TOKEN = false;
@@ -143,6 +146,7 @@ else if (window.location.hostname.indexOf("burner.leapdao.org") >= 0) {
 else if (window.location.hostname.indexOf("sundai.io") >= 0) {
   XDAI_PROVIDER = "wss://mainnet-node1.leapdao.org:1443";
   WEB3_PROVIDER = "wss://mainnet.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
+  leapNetwork = "Leap Mainnet";
 
   // mainnet sunDAI for Plasma DAI
   P_DAI_TOKEN_ADDR = '0x3cC0DF021dD36eb378976142Dc1dE3F5726bFc48';
@@ -155,6 +159,7 @@ else if (window.location.hostname.indexOf("sundai.io") >= 0) {
 else if (window.location.hostname.indexOf("sundai.local") >= 0) {
   XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
   WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
+  leapNetwork = "Leap Testnet";
 
   // testnet LEAP for DAI
   // testnet sunDAI for Plasma DAI
@@ -1164,7 +1169,7 @@ render() {
     header = (
       <Header
         openScanner={this.openScanner.bind(this)}
-        network={this.state.network}
+        network={leapNetwork || this.state.network}
         total={totalBalance}
         ens={this.state.ens}
         title={this.state.title}
