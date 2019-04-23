@@ -78,6 +78,9 @@ let FAILCOUNT = 0
 let DAI_TOKEN_ADDR = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
 let P_DAI_TOKEN_ADDR = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
 
+// Mainnet Leap Bridge(ExitHandler)
+let BRIDGE_ADDR = '0x0036192587fD788B75829fbF79BE7F06E4F23B21';
+
 let leapNetwork;
 
 let mainStyle = {
@@ -103,6 +106,9 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   // LEAP token instead of DAI
   DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
   P_DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
+
+  // Testnet Leap Bridge(ExitHandler)
+  BRIDGE_ADDR = '0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530';
 
   CLAIM_RELAY = false;
   ERC20NAME = false;
@@ -138,6 +144,9 @@ else if (window.location.hostname.indexOf("burner.leapdao.org") >= 0) {
   DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
   P_DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';  
   leapNetwork = "Leap Testnet";
+  // Testnet Leap Bridge(ExitHandler)
+  BRIDGE_ADDR = '0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530';
+
   CLAIM_RELAY = false;
   ERC20NAME = false;
   ERC20TOKEN = false;
@@ -166,6 +175,9 @@ else if (window.location.hostname.indexOf("sundai.local") >= 0) {
   DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
   P_DAI_TOKEN_ADDR = '0xeFb369E2c694Bc0ba31945e0D3ac91Ab8E943be3';
   
+  // Testnet Leap Bridge(ExitHandler)
+  BRIDGE_ADDR = '0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530';
+
   CLAIM_RELAY = false;
   ERC20NAME = false;
   ERC20TOKEN = false;
@@ -482,7 +494,7 @@ class App extends Component {
     let bridgeContract;
     try{
       daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),DAI_TOKEN_ADDR)
-      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), require("./contracts/Bridge.address.js"))
+      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), BRIDGE_ADDR)
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
