@@ -181,7 +181,7 @@ export default class Exchange extends React.Component {
       console.log(rsp);
       const pendingValue = rsp.reduce((sum, v) => add(sum, bi(v.value)), bi(0));
       const pendingTokens = parseInt(String(divide(pendingValue, bi(10 ** 16)))) / 100;
-      const pendingMsg = "Pending exits of " + pendingTokens.toString() + " pDAI";
+      const pendingMsg = "Pending exits of " + pendingTokens.toString() + " sunDAI";
       this.setState({
         pendingMsg
       });
@@ -1171,7 +1171,7 @@ export default class Exchange extends React.Component {
                  this.setState({xdaiToDendaiMode:"deposit"})
                }}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-arrow-up"  /> sunDai to {this.props.ERC20NAME}
+                    <i className="fas fa-arrow-up"  /> sunDAI to {this.props.ERC20NAME}
                   </Scaler>
                </button>
              </div>
@@ -1181,7 +1181,7 @@ export default class Exchange extends React.Component {
                  this.setState({xdaiToDendaiMode:"withdraw"})
                }}>
                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-arrow-down" /> {this.props.ERC20NAME} to sunDai
+                  <i className="fas fa-arrow-down" /> {this.props.ERC20NAME} to sunDAI
                  </Scaler>
                </button>
              </div>
