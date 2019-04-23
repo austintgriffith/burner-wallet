@@ -109,9 +109,13 @@ class SendByScan extends Component {
     this.stopRecording();
     this.props.goBack(this.props.returnState.goBackView);
   };
-  componentDidMount(){
+
+  async componentDidMount() {
     interval = setInterval(this.loadMore.bind(this),750)
+    this.jimp = await import('jimp');
+    this.QrCode = await import('qrcode-reader');
   }
+
   componentWillUnmount() {
     clearInterval(interval)
     this.stopRecording();
@@ -127,16 +131,25 @@ class SendByScan extends Component {
       const [e, file] = result;
       let reader = new FileReader();
       reader.onload = (e) => {
-      //  this.props.changeView('send_by_scan',()=>{
-          console.log("")
           this.setState({imageData:e.target.result})
-          Jimp.read(Buffer.from(e.target.result.replace(/^data:image\/png;base64,/, "").replace(/^data:image\/jpeg;base64,/, ""), 'base64'),(err, image) => {
+
+          if (!this.jimp || !this.QrCode) {
+            console.log('Jimp not loaded yet...');
+            return;
+          }
+
+          const image = Buffer.from(
+              e.target.result
+                .replace(/^data:image\/png;base64,/, "")
+                .replace(/^data:image\/jpeg;base64,/, ""),
+              'base64');
+          this.jimp.read(image, (err, image) => {
               if (err) {
                   alert("ERR1")
                   console.error("ERR1",err);
                   this.setState({scanFail:err.toString()})
               }
-              var qr = new QrCode();
+              var qr = new this.QrCode();
               qr.callback = (err, value) => {
                   this.setState({isLoading:false})
                   if (err) {
