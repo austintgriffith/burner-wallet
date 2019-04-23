@@ -16,6 +16,7 @@ import wyrelogo from '../wyre.png';
 
 import { ERC20TOKEN, ERC20NAME, ERC20IMAGE, ERC20VENDOR } from '../config';
 import { dollarDisplay } from '../lib';
+import BackButton from './BackButton';
 
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
@@ -1129,11 +1130,11 @@ export default class Exchange extends React.Component {
                 </Scaler>
             </div>
             <div className="col-2 p-1" style={{marginTop:8}}>
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={this.props.goBack}>
+              <BackButton className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-arrow-right"></i>
                 </Scaler>
-              </button>
+              </BackButton>
             </div>
 
           </div>
@@ -2167,11 +2168,11 @@ export default class Exchange extends React.Component {
       )
     }else{
       sendXdaiButton = (
-        <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={this.props.goBack}>
+        <BackButton className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary}>
           <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
             <i className="fas fa-arrow-right"></i>
           </Scaler>
-        </button>
+        </BackButton>
       )
     }
 

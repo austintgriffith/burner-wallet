@@ -5,6 +5,7 @@ import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
+import BackButton from './BackButton';
 import i18n from '../i18n';
 const QRCode = require('qrcode.react');
 
@@ -47,9 +48,9 @@ export default class Receive extends React.Component {
         </div>
         <div name="theVeryBottom" className="text-center bottom-text">
           <span style={{padding:10}}>
-            <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{this.props.goBack()}}>
+            <BackButton style={{color:"#FFFFFF"}}>
               <i className="fas fa-times"/> {i18n.t('cancel')}
-            </a>
+            </BackButton>
           </span>
         </div>
       </div>

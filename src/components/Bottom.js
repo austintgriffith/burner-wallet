@@ -1,23 +1,33 @@
 import React from 'react';
 import i18n from '../i18n';
+import BackButton from './BackButton';
 
-export default class Receive extends React.Component {
-  render() {
-    let {icon,text,action} = this.props
+const buttonStyle = {
+  backgroundColor:"#666666",
+  color:"#FFFFFF",
+  padding:10,
+  whiteSpace:"nowrap",
+};
 
-    if(!icon) icon = "times"
-    if(!text) text = i18n.t('done')
+const Bottom = ({ icon, text, action }) => (
+  <div name="theVeryBottom" className="text-center bottom-text" style={{marginBottom:20}}>
+    <span style={{padding:59}}>
+      {action ? (
+        <button className={"btn btn-large w-50"} style={buttonStyle} onClick={action}>
+          <i className={`fas fa-${icon}`}/> {text}
+        </button>
+      ) : (
+        <BackButton className={"btn btn-large w-50"} style={buttonStyle}>
+          <i className={`fas fa-${icon}`}/> {text}
+        </BackButton>
+      )}
+    </span>
+  </div>
+)
 
-    icon = "fas fa-"+icon
+Bottom.defaultProps = {
+  icon: 'times',
+  text: i18n.t('done'),
+};
 
-    return (
-      <div name="theVeryBottom" className="text-center bottom-text" style={{marginBottom:20}}>
-        <span style={{padding:59}}>
-          <button className={"btn btn-large w-50"} style={{backgroundColor:"#666666",color:"#FFFFFF",padding:10,whiteSpace:"nowrap"}} onClick={()=>{action()}}>
-            <i className={icon}/> {text}
-          </button>
-        </span>
-      </div>
-    )
-  }
-}
+export default Bottom;

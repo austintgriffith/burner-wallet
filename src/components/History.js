@@ -171,7 +171,7 @@ export default class History extends React.Component {
     })
   }
   render(){
-    let {address,changeView,block,goBack,target,buttonStyle} = this.props
+    let { address, block, target, buttonStyle } = this.props;
     const transactionsByAddress = ERC20TOKEN ? this.props.fullTransactionsByAddress : this.props.transactionsByAddress;
 
     let theseTransactionsByAddress = []

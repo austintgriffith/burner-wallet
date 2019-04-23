@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import Ruler from "./Ruler";
 import Balance from "./Balance";
 import cookie from 'react-cookies'
@@ -10,7 +11,7 @@ import i18n from '../i18n';
 import queryString from 'query-string';
 import { dollarDisplay, convertToDollar, parseAndCleanPath } from '../lib';
 
-export default class SendToAddress extends React.Component {
+class SendToAddress extends React.Component {
 
   constructor(props) {
     super(props);
@@ -206,8 +207,7 @@ export default class SendToAddress extends React.Component {
 
         this.props.send(toAddress, value, 120000, txData, (result) => {
           if(result && result.transactionHash){
-            this.props.goBack();
-            window.history.pushState({},"", "/");
+            this.props.history.push('/');
             /*
             this.props.changeAlert({
               type: 'success',
@@ -321,3 +321,5 @@ export default class SendToAddress extends React.Component {
     )
   }
 }
+
+export default withRouter(SendToAddress);

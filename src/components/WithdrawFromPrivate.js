@@ -2,6 +2,7 @@ import React from 'react';
 import Web3 from 'web3';
 import Ruler from "./Ruler";
 import { Scaler } from "dapparatus";
+import { withRouter } from 'react-router-dom';
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import i18n from '../i18n';
@@ -11,7 +12,7 @@ import { dollarDisplay } from '../lib';
 let pollInterval
 let metaReceiptTracker = {}
 
-export default class SendToAddress extends React.Component {
+class WithdrawFromPrivate extends React.Component {
 
   constructor(props) {
     super(props);
@@ -96,8 +97,7 @@ export default class SendToAddress extends React.Component {
               console.log("META RECEIPT",receipt)
               if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
                 metaReceiptTracker[receipt.transactionHash] = true
-                this.props.goBack();
-                window.history.pushState({},"", "/");
+                this.props.history.push('/');
                 this.props.changeAlert({
                   type: 'success',
                   message: 'Withdrawn! '+receipt.transactionHash,
@@ -206,3 +206,5 @@ export default class SendToAddress extends React.Component {
     )
   }
 }
+
+export default withRouter(WithdrawFromPrivate);
