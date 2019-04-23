@@ -1,16 +1,18 @@
 pragma solidity ^0.4.24;
 
-import "openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Enumerable.sol";
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721MetadataMintable.sol";
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Metadata.sol";
+import "../ERC721MetaTx/ERC721MetaTx.sol";
+
 /**
  * @title Full ERC721 Token
  * This implementation includes all the required and some optional functionality of the ERC721 standard
  * Moreover, it includes approve all functionality using operator terminology
  * @dev see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md
  */
-contract Badges is ERC721, ERC721Enumerable, ERC721Metadata, ERC721MetadataMintable {
+contract Badges is ERC721MetaTx, ERC721Enumerable, ERC721Metadata, ERC721MetadataMintable {
     constructor (string memory name, string memory symbol) public ERC721Metadata(name, symbol) {
         // solhint-disable-previous-line no-empty-blocks
     }

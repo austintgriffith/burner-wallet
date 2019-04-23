@@ -7,19 +7,24 @@ import "openzeppelin-solidity/contracts/token/ERC721/IERC721Receiver.sol";
 /// @title Storage vault to send with a link.
 /// @author Ricardo Rius  - <ricardo@rius.info>
 contract Vault is IERC721Receiver{
+    
+    // Token Selectors
+    bytes4 internal constant NATIVE_TOKEN = 0xfdae1ba7; // bytes4(keccak256("NATIVE"))
+    bytes4 internal constant ERC20TOKEN = 0x8ae85d84;   // bytes4(keccak256("ERC20"))
+    bytes4 internal constant ERC721TOKEN = 0x73ad2146;  // bytes4(keccak256("ERC721"))
 
-    address internal constant NATIVE_TOKEN = address(0);
-    bytes4 internal constant ERC20TOKEN = bytes4(keccak256("ERC20"));
-    bytes4 internal constant ERC721TOKEN = bytes4(keccak256("ERC721"));
+    event VaultTransfer(address indexed token, bytes4 tokenType, address indexed to, uint256 value, bool status);
+    event VaultDeposit(address indexed token, bytes4 tokenType, address indexed sender, uint256 value, bool status);
 
-    event VaultTransfer(address indexed token, address indexed to, uint256 amount, uint256 tokenId, bool status);
-    event VaultDeposit(address indexed token, address indexed sender, uint256 amount, uint256 tokenId, bool status);
-
-    function balance(address _token, address _from) public view returns (uint256) {
-        if (_token == NATIVE_TOKEN) {
-            return address(_from).balance;
-        } else {
-            return ERC20(_token).balanceOf(_from);
+    function vaultBalance(address _token, bytes4 _tokenType) public view returns (uint256) {
+        if (_tokenType == NATIVE_TOKEN && _token == address(0)) {
+            return address(this).balance;
+        } else if(_tokenType == ERC20TOKEN && _token != address(0)) {
+            return ERC20(_token).balanceOf(address(this));
+        } else if(_tokenType == ERC721TOKEN && _token != address(0)){
+            return ERC721(_token).balanceOf(address(this));
+        } else{
+            revert("Vault::vaultBalance - Invalid token");
         }
     }
 
@@ -34,63 +39,62 @@ contract Vault is IERC721Receiver{
 
     /// @notice vaultDeposit `_value` `_token` to the vault
     /// @param _token Address of the token being transferred
-    /// @param _value Amount of tokens being transferred
+    /// @param _value Tokens being transferred
     /// @param _sender Token holder
-    function _linkDeposit(address _token, bytes4 _type, uint256 _value,  uint256 _tokenId, address _sender) internal {
-        _vaultDeposit(_token, _type, _value,  _tokenId, _sender);
+    function _linkDeposit(address _token, bytes4 _tokenType, address _sender, uint256 _value) internal {
+        _vaultDeposit(_token, _tokenType, _sender, _value);
     }
 
     /// @notice vaultTransfer `_value` `_token` from the Vault to `_to`
     /// @param _token Address of the token being transferred
     /// @param _to Address of the recipient of tokens
-    /// @param _value Amount of tokens being transferred
-    function _linkTransfer(address _token, bytes4 _type, address _to, uint256 _value, uint256 _tokenId) internal returns(bool){
-        return _vaultTransfer(_token, _type, _to, _value, _tokenId);
+    /// @param _value Tokens being transferred
+    function _linkTransfer(address _token, bytes4 _tokenType, address _to, uint256 _value) internal returns(bool){
+        return _vaultTransfer(_token, _tokenType, _to, _value);
     }
 
     /// @notice Transfer `_value` `_token` from the Vault to `_to`
     /// @param _token Address of the token being transferred
     /// @param _to Address of the recipient of tokens
-    /// @param _value Amount of tokens being transferred
+    /// @param _value Tokens being transferred
     /* solium-disable-next-line function-order */
-    function _vaultTransfer(address _token, bytes4 _type, address _to, uint256 _value, uint256 _tokenId) private returns(bool status) {
+    function _vaultTransfer(address _token, bytes4 _tokenType, address _to, uint256 _value) private returns(bool status) {
 
         status = false;
-        if (_token == NATIVE_TOKEN) {
+        if (_tokenType == NATIVE_TOKEN && _token == address(0)) {
             require(_value > 0, "Vault::_vaultTransfer - Invalid transfer");
             status = _to.send(_value);
-        } else if(_type == ERC20TOKEN) {
+        } else if(_tokenType == ERC20TOKEN && _token != address(0)) {
             require(_value > 0, "Vault::_vaultTransfer - Invalid transfer");
             status = ERC20(_token).transfer(_to, _value);
-        } else if(_type == ERC721TOKEN){
-            ERC721(_token).safeTransferFrom(address(this), _to, _tokenId);
+        } else if(_tokenType == ERC721TOKEN && _token != address(0)){
+            ERC721(_token).safeTransferFrom(address(this), _to, _value);
             status = true;
         } else{
             revert("Vault::_vaultTransfer - Invalid token");
         }
-        emit VaultTransfer(_token, _to, _value, _tokenId, status);
+        emit VaultTransfer(_token, _tokenType, _to, _value, status);
     }
 
     /// @notice Deposit `_value` `_token` to the vault
     /// @param _token Address of the token being transferred
     /// @param _value Amount of tokens being transferred
     /// @param _sender Token holder
-    function _vaultDeposit(address _token, bytes4 _type, uint256 _value, uint256 _tokenId, address _sender) private {
+    /// @dev Vault contract needs to be approved by the token holder before calling this function. 
+    /// ERC#(_token).approve(address(this), _value)
+    function _vaultDeposit(address _token, bytes4 _tokenType, address _sender, uint256 _value) private {
 
-        if (_token == NATIVE_TOKEN) {
+        if (_tokenType == NATIVE_TOKEN && _token == address(0)) {
             require(_value > 0, "Vault::_vaultDeposit - Invalid deposit");
-            // Deposit is implicit in this case
             require(msg.value == _value, "Vault::_vaultDeposit - Value mismatch");
-        }  else if(_type == ERC20TOKEN) {
+        }  else if(_tokenType == ERC20TOKEN && _token != address(0)) {
             require(_value > 0, "Vault::_vaultDeposit - Invalid deposit");
-            // The Vault contract needs to be approved by the token holder before this transaction takes place. ERC20(_token).approve(address(this), _value)
             require(ERC20(_token).transferFrom(_sender, address(this), _value), "Vault::_vaultDeposit - Reverted ERC20 token transfer");
-        } else if(_type == ERC721TOKEN){
-            // The Vault contract needs to be approved by the token holder before this transaction takes place. ERC721(_token).approve(address(this), _tokenId)
-            ERC721(_token).safeTransferFrom(_sender, address(this), _tokenId);
+        } else if(_tokenType == ERC721TOKEN && _token != address(0)){
+            ERC721(_token).safeTransferFrom(_sender, address(this), _value);
         } else{
             revert("Vault::_vaultDeposit - Invalid token");
         }
-        emit VaultDeposit(_token, _sender, _value, _tokenId, true);
+        emit VaultDeposit(_token, _tokenType, _sender, _value, true);
     }
 }

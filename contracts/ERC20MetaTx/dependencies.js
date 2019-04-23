@@ -11,5 +11,4 @@ module.exports = {
   'tabookey-gasless/contracts/RelayHubApi.sol': fs.readFileSync('./node_modules/tabookey-gasless/contracts/RelayHubApi.sol', 'utf8'),
   'tabookey-gasless/contracts/RLPReader.sol': fs.readFileSync('./node_modules/tabookey-gasless/contracts/RLPReader.sol', 'utf8'),
   'tabookey-gasless/contracts/RelayHub.sol': fs.readFileSync('./node_modules/tabookey-gasless/contracts/RelayHub.sol', 'utf8'),
-  'ERC20MetaTx/ERC20MetaTx.sol': fs.readFileSync('./contracts/ERC20MetaTx/ERC20MetaTx.sol', 'utf8')
 }
