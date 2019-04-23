@@ -179,7 +179,6 @@ else if (window.location.hostname.indexOf("sundai.local") >= 0 ||
   WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
   leapNetwork = "Leap Testnet";
 
-  // testnet LEAP for DAI
   // testnet sunDAI for Plasma DAI
   DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
   P_DAI_TOKEN_ADDR = '0xeFb369E2c694Bc0ba31945e0D3ac91Ab8E943be3';
@@ -188,7 +187,6 @@ else if (window.location.hostname.indexOf("sundai.local") >= 0 ||
   BRIDGE_ADDR = '0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530';
 
   MARKET_MAKER = 'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet';
-
   CLAIM_RELAY = false;
   ERC20NAME = false;
   ERC20TOKEN = false;
@@ -2042,7 +2040,6 @@ async function tokenSend(to, value, gasLimit, txData, cb) {
     // burner wallet will react with not resolving the "sending" view. This is
     // not ideal and should be changed in the future. We opened an issue on the
     // upstream repo: https://github.com/austintgriffith/burner-wallet/issues/157
-  }
 }
 
 async function tokenSendV2(from, to, value, color, xdaiweb3, web3, privateKey) {
