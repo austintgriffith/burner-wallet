@@ -165,9 +165,41 @@ export default class Exchange extends React.Component {
     setInterval(() => this.updatePendingExits(daiAddress, xdaiweb3), 5000);
   }
 
+  // NOTE: This function promisifies this.props.tx
+  async tx(...args) {
+    console.log(args);
+    return new Promise(resolve => this.props.tx(...args, resolve))
+  }
+
+  async maybeApprovePDai(amountWei) {
+    
+    const pDaiAllowance = await this.props.daiContract.methods.allowance(
+      this.state.daiAddress,
+      this.props.pdaiContract._address,
+    ).call({ from: this.state.daiAddress })
+
+    // Only trigger allowance dialogue when amount is more than allowance
+    if (new BN(pDaiAllowance).lt(new BN(amountWei))) {
+      this.setState({
+        loaderBarColor:"#f5eb4a",
+        loaderBarStatusText: "Approving sunDai amount for Plasma bridge"
+      })
+
+      const metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
+
+      const receipt = await this.tx(
+        metaMaskDaiContract.methods.approve(this.props.pdaiContract._address, amountWei),
+        150000, 0, 0,
+      );
+
+      console.log(receipt);
+      return receipt;
+    }
+  }
+
   updatePendingExits(daiAddress, xdaiweb3) {
     const account = daiAddress;
-    const tokenAddr = this.props.daiContract._address;
+    const tokenAddr = this.props.pdaiContract._address;
                     
     xdaiweb3.getColor(tokenAddr)
     .then(color => {
