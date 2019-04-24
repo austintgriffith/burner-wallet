@@ -1292,6 +1292,7 @@ render() {
                     <NavCard title={i18n.t('request_funds_title')} />
                     {defaultBalanceDisplay}
                     <RequestFunds
+                      block={block}
                       mainStyle={mainStyle}
                       buttonStyle={buttonStyle}
                       balance={balance}
