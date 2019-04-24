@@ -2116,10 +2116,6 @@ export default class Exchange extends React.Component {
       )
     }
 
-
-
-
-
     let sendEthButton = (
       <OutlineButton
         width={1}
@@ -2403,7 +2399,7 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
-              {sendEthButton}
+              {this.state.mainnetMetaAccount ? sendEthButton : null}
             </div>
           </div>
 
