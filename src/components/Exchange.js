@@ -745,7 +745,7 @@ export default class Exchange extends React.Component {
             color,
           ),
           ///TODO LET ME PASS IN A CERTAIN AMOUNT OF GAS INSTEAD OF LEANING BACK ON THE <GAS> COMPONENT!!!!!
-          150000,
+          200000,
           0,
           0
         )
