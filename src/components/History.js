@@ -150,7 +150,7 @@ export default class History extends React.Component {
       message = this.props.web3.utils.utf8ToHex(this.state.newChat)
     }
     console.log("message:",message)
-    this.props.send(this.props.target, value, 240000, message, (result) => {
+    this.props.send(this.props.target, value, 240000, message, (err, result) => {
       if(result && result.transactionHash){
         this.props.changeAlert({type: 'success', message: 'Sent '+result.transactionHash})
         console.log("Sent tx "+result.transactionHash)
@@ -335,7 +335,7 @@ export default class History extends React.Component {
         <button className="btn btn-large w-100" style={buttonStyle.primary}
                 onClick={()=>{
                   this.setState({waving:true})
-                  this.props.send(this.props.target, 0, 120000, this.props.web3.utils.utf8ToHex(":wave:"), (result) => {
+                  this.props.send(this.props.target, 0, 120000, this.props.web3.utils.utf8ToHex(":wave:"), (err, result) => {
                     if(result && result.transactionHash){
                       this.setState({waving:false})
                     }

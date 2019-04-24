@@ -166,7 +166,7 @@ export default class Exchange extends React.Component {
   }
 
   async maybeApprovePDai(amountWei) {
-    
+
     const pDaiAllowance = await this.props.daiContract.methods.allowance(
       this.state.daiAddress,
       this.props.pdaiContract._address,
@@ -194,7 +194,7 @@ export default class Exchange extends React.Component {
   updatePendingExits(daiAddress, xdaiweb3) {
     const account = daiAddress;
     const tokenAddr = this.props.pdaiContract._address;
-                    
+
     xdaiweb3.getColor(tokenAddr)
     .then(color => {
       return fetch(
@@ -879,7 +879,7 @@ export default class Exchange extends React.Component {
           destination,
           amount,
           240000,
-          (receipt)=>{
+          (err, receipt)=>{
           if(receipt){
             console.log("SEND COMPLETE?!?",receipt)
             cb(receipt)
@@ -1455,7 +1455,7 @@ export default class Exchange extends React.Component {
                   //BECAUSE THIS COULD BE ON A TOKEN, THE SEND FUNCTION IS SENDING TOKENS TO THE BRIDGE HAHAHAHA LETs FIX THAT
                   if(this.props.ERC20TOKEN){
                     console.log("native sending ",this.state.amount," to ",toDaiBridgeAccount)
-                    this.props.nativeSend(toDaiBridgeAccount, this.state.amount, 120000, (result) => {
+                    this.props.nativeSend(toDaiBridgeAccount, this.state.amount, 120000, (err, result) => {
                       console.log("RESUTL!!!!",result)
                       if(result && result.transactionHash){
                         this.setState({
@@ -1472,7 +1472,7 @@ export default class Exchange extends React.Component {
                     // TODO: get real decimals
                     const amount = bi(this.state.amount * 10 ** 18);
                     const tokenAddr = this.props.pdaiContract._address;
-                    
+
                     this.state.xdaiweb3.getColor(tokenAddr)
                       .then(color =>
                         Exit.fastSellAmount(

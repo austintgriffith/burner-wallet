@@ -189,15 +189,14 @@ export default class SendToAddress extends React.Component {
         cookie.remove('sendToStartMessage', { path: '/' })
         cookie.remove('sendToAddress', { path: '/' })
 
-        this.props.send(toAddress, value, 120000, txData, result => {
+        this.props.send(toAddress, value, 120000, txData, (err, result) => {
           if(result && result.hash){
             this.props.goBack();
             window.history.pushState({},"", "/");
-            /*
-            this.props.changeAlert({
-              type: 'success',
-              message: 'Sent! '+result.transactionHash,
-            });*/
+            // this.props.changeAlert({
+            //   type: 'success',
+            //   message: 'Sent! '+result.transactionHash,
+            // });
 
             let receiptObj = {to:toAddress,from:result.from,amount:parseFloat(amount),message:this.state.message,result:result}
 
@@ -205,7 +204,24 @@ export default class SendToAddress extends React.Component {
               receiptObj.params = this.state.params
             }
 
-          //  console.log("CHECKING SCANNER STATE FOR ORDER ID",this.props.scannerState)
+            //  console.log("CHECKING SCANNER STATE FOR ORDER ID",this.props.scannerState)
+            if(this.props.scannerState&&this.props.scannerState.daiposOrderId){
+              receiptObj.daiposOrderId = this.props.scannerState.daiposOrderId
+            }
+
+            //console.log("SETTING RECEPITE STATE",receiptObj)
+            this.props.setReceipt(receiptObj)
+            this.props.changeView("receipt");
+          } else {
+            this.props.goBack();
+            window.history.pushState({},"", "/");
+            let receiptObj = {to:toAddress,from:err.request.account,amount:parseFloat(amount),message:err.error.message,result:err}
+
+            if(this.state.params){
+              receiptObj.params = this.state.params
+            }
+
+            //  console.log("CHECKING SCANNER STATE FOR ORDER ID",this.props.scannerState)
             if(this.props.scannerState&&this.props.scannerState.daiposOrderId){
               receiptObj.daiposOrderId = this.props.scannerState.daiposOrderId
             }

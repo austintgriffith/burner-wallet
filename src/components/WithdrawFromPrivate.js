@@ -77,15 +77,25 @@ export default class SendToAddress extends React.Component {
         const weiAmount = web3.utils.toWei(""+amount, "ether")
         const color = await xdaiweb3.getColor(pDaiTokenAddr);
 
-        await tokenSendV2(
-          fromAddress,
-          address,
-          weiAmount,
-          color,
-          xdaiweb3,
-          web3,
-          metaAccount.privateKey
-        )
+        try {
+          await tokenSendV2(
+            fromAddress,
+            address,
+            weiAmount,
+            color,
+            xdaiweb3,
+            web3,
+            metaAccount.privateKey
+          )
+        } catch(err) {
+          this.props.goBack();
+          window.history.pushState({},"", "/");
+          this.props.changeAlert({
+            type: 'warning',
+            message: 'Transaction was rejected by the node. Please try again or contract an administrator.'
+          });
+          return;
+        }
 
         this.props.goBack();
         window.history.pushState({},"", "/");
