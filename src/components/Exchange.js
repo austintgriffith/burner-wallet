@@ -251,9 +251,10 @@ export default class Exchange extends React.Component {
         }
       }
     }
+    const xDaiToEthGasStationEnabled = false;
 
     //console.log("checking extraGasUpDisplay",parseFloat(this.props.daiBalance),parseFloat(this.props.ethBalance),parseFloat(this.props.xdaiBalance))
-    if(false || parseFloat(this.props.daiBalance)>0 && parseFloat(this.props.ethBalance)<=0.001 && parseFloat(this.props.xdaiBalance) > 0 ){
+    if(xDaiToEthGasStationEnabled && parseFloat(this.props.daiBalance)>0 && parseFloat(this.props.ethBalance)<=0.001 && parseFloat(this.props.xdaiBalance) > 0){
       let getGasText = (
         <div>
           ⛽ xDai -> ETH
