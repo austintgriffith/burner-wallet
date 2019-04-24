@@ -136,15 +136,59 @@ let metaReceiptTracker = {}
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
 
+let dollarDisplay = (amount)=>{
+  let floatAmount = parseFloat(amount)
+  amount = Math.floor(amount*100)/100
+  return amount.toFixed(2)
+}
+//Function that returns an object with all the URL encoded (?..&..&) parametrers in a given path
+let parseURLParams = (path) => {
+  let splitPath = path.split('?')
+  if(splitPath.length == 1){ // if there was no params
+    return undefined 
+  }
+  let plainParams = splitPath[1].split('&')
+  var parameters = {}
+  // Create an object with each key-value pair from the params
+  for(var i = 0; i < plainParams.length; i++){
+    let key = plainParams[i].split('=')[0]
+    let value = plainParams[i].split('=')[1]
+    if(value == 'true'){
+      parameters[key] = true
+    } else if(value == 'false'){
+      parameters[key] = false
+    } else {
+      parameters[key] = value
+    }
+  }
+  return parameters
+}
+
 let interval
 let intervalLong
 let originalStyle = {}
 
 class App extends Component {
+
   constructor(props) {
-
-
     console.log("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[["+title+"]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
+    // let view = 'main'
+    // let cachedView = localStorage.getItem("view")
+    // let cachedViewSetAge = Date.now() - localStorage.getItem("viewSetTime")
+    // if(HARDCODEVIEW){
+    //   view = HARDCODEVIEW
+    // }else if(cachedViewSetAge < 300000 && cachedView&&cachedView!=0){
+    //   view = cachedView
+    // }
+    // function to be called by ReactNative webview once it decodes a QR code
+    // console.log("CACHED VIEW",view)
+    window.sendToAddress = (dest) => {
+      // console.log("Sending!")
+      this.setState({
+        scannerState: {toAddress: dest},
+      },() => this.props.history.push('/send_to_address'));
+       // redirect to send_to_address
+    }
     super(props);
     this.state = {
       web3: false,
@@ -162,9 +206,9 @@ class App extends Component {
       hasUpdateOnce: false,
       badges: {},
       selectedBadge: false,
+      ignoreIdenticalPK: false // used to toggle the 'Identical PK warning'
     };
     this.alertTimeout = null;
-
     try{
       RNMessageChannel.on('json', update => {
         try{
@@ -181,6 +225,13 @@ class App extends Component {
       })
     }catch(e){console.log(e)}
 
+    window.addEventListener('message', (message) => {
+      if(message.data == 'burn'){
+        JSON.parse(message.data)
+        console.log('Got newPK')
+      }
+    })
+
   }
 
   selectBadge(id){
@@ -189,8 +240,13 @@ class App extends Component {
     })
   }
   openScanner(returnState){
-    this.setState({ returnState });
-    this.props.history.push('/send_by_scan');
+    if(window.isReactNative) {
+      window.ReactNativeWebView.postMessage("qr");
+      // this.props.history.push('/send_by_scan');
+    } else {
+      this.setState({ returnState });
+      this.props.history.push('/send_by_scan');
+    }
   }
   returnToState(scannerState){
     let updateState = Object.assign({scannerState:scannerState}, this.state.returnState);
@@ -251,7 +307,13 @@ class App extends Component {
       console.log("PATH",window.location.pathname,window.location.pathname.length,window.location.hash)
       if(window.location.pathname.indexOf("/pk")>=0){
         let tempweb3 = new Web3();
-        let base64encodedPK = window.location.hash.replace("#","")
+        let path = window.location.hash.replace("#","") // get URL path
+        let URLParams = parseURLParams(path)  // parse the URL params
+        if (URLParams && URLParams.ignoreIdenticalPK){ // only if ignoreIdenticalPK toggle
+          console.log(URLParams)
+          this.setState({ignoreIdenticalPK: true})
+        }
+        let base64encodedPK = path.split('?')[0] // whatever is before the '?' is part the pk
         let rawPK = tempweb3.utils.bytesToHex(base64url.toBuffer(base64encodedPK))
         this.setState({possibleNewPrivateKey:rawPK})
         window.history.pushState({},"", "/");
@@ -435,7 +497,8 @@ class App extends Component {
   async dealWithPossibleNewPrivateKey(){
     //this happens as page load and you need to wait until
     if(this.state && this.state.hasUpdateOnce){
-      if(this.state.metaAccount && this.state.metaAccount.privateKey.replace("0x","") == this.state.possibleNewPrivateKey.replace("0x","")){
+      // check if should ignore warning based on state from URL params
+      if(!(this.state.ignoreIdenticalPK) && this.state.metaAccount && this.state.metaAccount.privateKey.replace("0x","") == this.state.possibleNewPrivateKey.replace("0x","")){
         this.setState({possibleNewPrivateKey:false})
         this.changeAlert({
           type: 'warning',
@@ -451,7 +514,7 @@ class App extends Component {
         console.log("this.state.isVendor",this.state.isVendor)
 
 
-        if(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed)){
+        if(!(this.state.ignoreIdenticalPK) && (!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed))){
           this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
             this.changeView('withdraw_from_private')
           })
@@ -459,6 +522,7 @@ class App extends Component {
           this.setState({possibleNewPrivateKey:false,newPrivateKey:this.state.possibleNewPrivateKey})
           localStorage.setItem(this.state.account+"loadedBlocksTop","")
           this.props.resetTransactionStore(this.state.account);
+          this.changeView('main')
         }
       }
     }else{
@@ -1145,6 +1209,7 @@ render() {
                       openScanner={this.openScanner.bind(this)}
                       setReceipt={this.setReceipt}
                       changeAlert={this.changeAlert}
+                      dollarDisplay={dollarDisplay}
                       badge={this.state.badges[this.state.selectedBadge]}
                       clearBadges={this.clearBadges.bind(this)}
                     />
@@ -1340,8 +1405,8 @@ render() {
                     balance={balance}
                     burnWallet={()=>{
                       burnMetaAccount()
-                      if(RNMessageChannel){
-                        RNMessageChannel.send("burn")
+                      if(window.isReactNative) {
+                        window.ReactNativeWebView.postMessage("burn")
                       }
                       if(localStorage&&typeof localStorage.setItem == "function"){
                         localStorage.setItem(this.state.account+"loadedBlocksTop","")
