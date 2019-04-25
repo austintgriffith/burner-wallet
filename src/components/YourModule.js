@@ -18,6 +18,8 @@ const aztecContractArtifacts = require('@aztec/contract-artifacts');
 //(this will take in the address of ERC20)
 //docs: https://github.com/AztecProtocol/AZTEC/blob/develop/packages/protocol/test/ERC1724/ZkAssetMintable.js#L157
 
+//more info:
+//https://medium.com/aztec-protocol/how-to-code-your-own-confidential-token-on-ethereum-4a8c045c8651
 
 const aztecAddresses = {
   "ACE": "0x606eDBb42422a1eeBCac46cfdA5A4EA200e85f4f",
