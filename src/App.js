@@ -2043,50 +2043,64 @@ async function tokenSendV2(from, to, value, color, xdaiweb3, web3, privateKey) {
   }
 
   const signedTx = privateKey ? await transaction.signAll(privateKey) : await transaction.signWeb3(web3);
-
-  let receipt;
-  try {
-    receipt = await xdaiweb3.eth.sendSignedTransaction(signedTx.hex())
-  } catch(err) {
-      // NOTE: Leap's node currently doesn't implement the "newBlockHeaders"
-      // JSON-RPC call. When a transaction is rejected by a node,
-      // sendSignedTransaction hence throws an error. We simply ignore this
-      // error here and use the polling tactic below. For more details see:
-      // https://github.com/leapdao/leap-node/issues/255
-
-      const messageToIgnore = "Failed to subscribe to new newBlockHeaders to confirm the transaction receipts.";
-      // NOTE: In the case where we want to ignore web3's error message, there's
-      // "\r\n {}" included in the error message, which is why we cannot
-      // compare with the equal operator, but have to use String.includes.
-      if (!err.message.includes(messageToIgnore)) {
-        throw err;
-      }
-  }
+  const rawTx = signedTx.hex();
 
   // NOTE: Leapdao's Plasma implementation currently doesn't return receipts.
   // We hence have to periodically query the leap node to check whether our
   // transaction has been included into the chain. We assume that if it hasn't
   // been included after 5000ms (50 rounds at a 100ms timeout), it failed.
   // Unfortunately, at this point we cannot provide an error message for why
-  // the transaction wasn't included as the leap node doesn't provide one.
+
+  let receipt;
   let rounds = 50;
-  let txIncluded = false;
+
   while (rounds--) {
-      const res = await xdaiweb3.eth.getTransaction(signedTx.hash())
+    // redundancy rules ✊
+    try {
+      // web3 hangs here on invalid txs, trying to get receipt?
+      // await this.web3.eth.sendSignedTransaction(tx.hex());
+      await new Promise(
+        (resolve, reject) => {
+          xdaiweb3.currentProvider.send(
+            { jsonrpc: '2.0', id: 42, method: 'eth_sendRawTransaction', 'params': [rawTx] },
+            (err, res) => { if (err) { return reject(err); } resolve(res); }
+          );
+        }
+      );
+    } catch(err) {
+      // ignore for now
+      console.log(err);
+      // NOTE: Leap's node currently doesn't implement the "newBlockHeaders"
+      // JSON-RPC call. When a transaction is rejected by a node,
+      // sendSignedTransaction hence throws an error. We simply ignore this
+      // error here and use the polling tactic below. For more details see:
+      // https://github.com/leapdao/leap-node/issues/255
 
-      if (res && res.blockHash) {
-          txIncluded = true;
-          break;
-      } else {
-        setTimeout(null, 100);
-      }
+      // const messageToIgnore = "Failed to subscribe to new newBlockHeaders to confirm the transaction receipts.";
+      // NOTE: In the case where we want to ignore web3's error message, there's
+      // "\r\n {}" included in the error message, which is why we cannot
+      // compare with the equal operator, but have to use String.includes.
+      // if (!err.message.includes(messageToIgnore)) {
+      //  throw err;
+      // }
+    }
+
+    let res = await xdaiweb3.eth.getTransaction(signedTx.hash())
+
+    if (res && res.blockHash) {
+      receipt = res;
+      break;
+    }
+
+    // wait ~100ms
+    await new Promise((resolve) => setTimeout(() => resolve(), 100));
   }
 
-  if (txIncluded) {
+  if (receipt) {
     return receipt;
-  } else {
-    throw new Error("Transaction wasn't included into a block.");
   }
+
+  throw new Error("Transaction wasn't included into a block.");
 }
 
 let sortByBlockNumberDESC = (a,b)=>{
