@@ -3,6 +3,10 @@ import { Events, Blockie, Scaler } from "dapparatus";
 import Web3 from 'web3';
 import Ruler from "./Ruler";
 import axios from "axios"
+import Portis from '@portis/web3';
+
+const portis = new Portis('YOUR_DAPP_ID', 'xdai');
+const web3 = new Web3(portis.provider);
 
 export default class YourModule extends React.Component {
 
