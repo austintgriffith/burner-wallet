@@ -4,6 +4,22 @@ import Web3 from 'web3';
 import Ruler from "./Ruler";
 import axios from "axios"
 
+//const aztec = require('aztec.js');
+//const aztecDevUtils = require('@aztec/dev-utils');
+//const aztecContractArtifacts = require('@aztec/contract-artifacts');
+
+
+const aztecAddresses = {
+  "ACE": "0x606eDBb42422a1eeBCac46cfdA5A4EA200e85f4f",
+  "AdjustSupply": "0x4Ed21f3b9092ED2EBC9B02937362505f7d82832E",
+  "BilateralSwap": "0xAB685Be76346494e84eBa2883fc7C44ad66a1e84",
+  "DividendComputation": "0x27ca006a0BB5c4d68A7a7698970374dE01ee5722",
+  "ERC20Mintable": "0x4c9343CC183760244d4adbA8884eBB118A3d4BC0",
+  "JoinSplit": "0x0652a14d71CA555FAd45A2B6B1D278324c5019dc",
+  "ZkAsset": "0x717dBEd26D79EFcc435FDB02b4Abf31Aed2e38D2"
+}
+
+
 export default class YourModule extends React.Component {
 
   constructor(props) {
@@ -88,8 +104,6 @@ export default class YourModule extends React.Component {
         <div className="form-group w-100">
 
           <div style={{width:"100%",textAlign:"center"}}>
-            YOURMODULE DISPLAY HERE
-            <Ruler/>
             <div style={{padding:20}}>
               The logged in user is
               <Blockie
@@ -125,179 +139,11 @@ export default class YourModule extends React.Component {
             <div>
               The current price of ETH is {this.props.dollarDisplay(this.props.ethprice)}.
             </div>
-
-
-            <Ruler/>
-
-            <button className="btn btn-large w-50" style={this.props.buttonStyle.secondary} onClick={async ()=>{
-
-              let hashSigned = this.props.web3.utils.sha3("jabronie pie"+Math.random())
-              let sig
-              //sign the hash using either the meta account OR the etherless account
-              if(this.props.privateKey){
-                sig = this.props.web3.eth.accounts.sign(hashSigned, this.props.privateKey);
-                sig = sig.signature
-              }else{
-                sig = await this.props.web3.eth.personal.sign(""+hashSigned,this.props.address)
-              }
-
-              this.props.tx(this.state.YourContract.sign(hashSigned,sig),50000,0,0,(result)=>{
-                console.log("RESULTsssss@&&&#&#&#&# ",result)
-              })
-
-            }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-pen"></i> {"sign a random hash"}
-              </Scaler>
-            </button>
-
-          </div>
-
-          <Events
-            config={{hide:false}}
-            contract={this.state.YourContract}
-            eventName={"Sign"}
-            block={this.props.block}
-            onUpdate={(eventData,allEvents)=>{
-              console.log("EVENT DATA:",eventData)
-              this.setState({signEvents:allEvents})
-            }}
-          />
-
-          <Ruler/>
-
-          <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={this.deployYourContract.bind(this)}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-rocket"></i> {"deploy"}
-            </Scaler>
-          </button>
-
-
-          <div className="content bridge row">
-            <div className="col-4 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                let toAddress = this.state.YourContract._address
-                let amount = "0.1"
-                this.props.send(toAddress, amount, 120000,"0x00", (result) => {
-                  if(result && result.transactionHash){
-                    console.log("RESULT&&&#&#&#&# ",result)
-                  }
-                })
-              }}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-arrow-circle-down"></i> {"deposit"}
-                </Scaler>
-              </button>
-            </div>
-            <div className="col-4 p-1">
-            <div style={{padding:20,textAlign:'center'}}>
-              Your contract is
-              <Blockie
-                address={this.state.YourContract._address}
-                config={{size:3}}
-              />
-              {this.state.YourContract._address.substring(0,8)}
-
-              <div style={{padding:5}}>
-                it has {this.props.dollarDisplay(this.state.yourContractBalance)}
-              </div>
-
-              <div style={{padding:5}}>
-                with <b>yourVar:</b>
-                <div>
-                  "{this.state.yourVar}"
-                </div>
-              </div>
-
-            </div>
-            </div>
-            <div className="col-4 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-              let amount = this.props.web3.utils.toWei("0.1",'ether')
-              this.props.tx(this.state.YourContract.withdraw(amount),40000,0,0,(result)=>{
-                console.log("RESULT@@@@@@@@@@@@@@@@@&&&#&#&#&# ",result)
-              })
-            }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-arrow-circle-up"></i> {"withdraw"}
-              </Scaler>
-            </button>
-            </div>
-          </div>
-
-          <div className="content bridge row">
-            <div className="col-4 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                this.clicked("some")
-              }}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-dog"></i> {"some"}
-                </Scaler>
-              </button>
-            </div>
-            <div className="col-4 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                this.clicked("grid")
-              }}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-bone"></i> {"grid"}
-                </Scaler>
-              </button>
-            </div>
-            <div className="col-4 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-              this.clicked("buttons")
-            }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-paw"></i> {"buttons"}
-              </Scaler>
-            </button>
-            </div>
-          </div>
-
-          <Ruler/>
-
-          <div className="content row">
-            <label htmlFor="amount_input">{"EXAMPLE ADDRESS INPUT:"}</label>
-            <div className="input-group">
-              <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
-                ref={(input) => { this.addressInput = input; }}
-                onChange={event => this.updateState('toAddress', event.target.value)}
-              />
-              <div className="input-group-append" onClick={() => {
-                this.props.openScanner({view:"yourmodule"})
-              }}>
-                <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.primary}>
-                  <i style={{color:"#FFFFFF"}} className="fas fa-qrcode" />
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="content bridge row">
-            <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                alert('secondary')}
-              }>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-bell"></i> {"secondary"}
-                </Scaler>
-              </button>
-            </div>
-            <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-              alert('actions')}
-            }>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-hand-holding-usd"></i> {"actions"}
-              </Scaler>
-            </button>
-            </div>
           </div>
 
           <button className={'btn btn-lg w-100'} style={this.props.buttonStyle.primary}
                   onClick={()=>{alert("do something")}}>
-            Primary CTA
+            Do Something
           </button>
 
         </div>
