@@ -4,9 +4,19 @@ import Web3 from 'web3';
 import Ruler from "./Ruler";
 import axios from "axios"
 
-//const aztec = require('aztec.js');
-//const aztecDevUtils = require('@aztec/dev-utils');
-//const aztecContractArtifacts = require('@aztec/contract-artifacts');
+const { abiEncoder, note, proof, secp256k1, sign } = require('aztec.js');
+const aztecDevUtils = require('@aztec/dev-utils');
+const aztecContractArtifacts = require('@aztec/contract-artifacts');
+
+//docs:
+//https://github.com/AztecProtocol/AZTEC/blob/develop/packages/aztec.js/test/proof/joinSplit/proof.spec.js
+//https://github.com/AztecProtocol/AZTEC/blob/develop/packages/protocol/test/ERC1724/ZkAsset.js
+
+
+//todo:
+//deploy https://github.com/AztecProtocol/AZTEC/blob/develop/packages/protocol/contracts/ERC1724/ZkAssetMintable.sol
+//(this will take in the address of ERC20)
+//docs: https://github.com/AztecProtocol/AZTEC/blob/develop/packages/protocol/test/ERC1724/ZkAssetMintable.js#L157
 
 
 const aztecAddresses = {
@@ -30,7 +40,19 @@ export default class YourModule extends React.Component {
       YourContract: false,
       yourContractBalance: 0,
       toAddress: (props.scannerState ? props.scannerState.toAddress : ""),
+      aztecAccounts: [...new Array(10)].map(() => secp256k1.generateAccount())
     }
+
+
+  }
+
+  async createNotes(){
+    console.log("Creating notes...")
+    let notes = await Promise.all([
+        ...this.state.aztecAccounts.map(({ publicKey }, i) => note.create(publicKey, i * 10)),
+        ...this.state.aztecAccounts.map(({ publicKey }, i) => note.create(publicKey, i * 10)),
+    ]);
+    console.log("NOTES GENERATED",notes)
   }
 
   componentDidMount(){
@@ -43,11 +65,11 @@ export default class YourModule extends React.Component {
         src/contracts/YourContract.blocknumber.js // the block number it was deployed at (for efficient event loading)
         src/contracts/YourContract.bytecode.js // if you want to deploy the contract from the module (see deployYourContract())
     */
-    this.setState({
+    /*this.setState({
      YourContract: this.props.contractLoader("YourContract")
     },()=>{
      console.log("YOURCONTRACT IS LOADED:",this.state.YourContract)
-    })
+   })*/
 
     setInterval(this.pollInterval.bind(this),2500)
     setTimeout(this.pollInterval.bind(this),30)
@@ -55,7 +77,7 @@ export default class YourModule extends React.Component {
 
   async pollInterval(){
     console.log("POLL")
-    if(this.state && this.state.YourContract){
+    /*if(this.state && this.state.YourContract){
       let yourVar = await this.state.YourContract.YourVar().call()
       let yourContractBalance = await this.props.web3.eth.getBalance(this.state.YourContract._address)
       //let ensName = await this.props.ensLookup("austingriffith.eth")
@@ -64,7 +86,7 @@ export default class YourModule extends React.Component {
       yourContractBalance = this.props.web3.utils.fromWei(yourContractBalance,'ether')
       this.setState({yourVar,yourContractBalance,mainnetBlockNumber,xdaiBlockNumber})
 
-    }
+    }*/
   }
 
   clicked(name){
@@ -72,9 +94,9 @@ export default class YourModule extends React.Component {
     /*
     Time to make a transaction with YourContract!
     */
-    this.props.tx(this.state.YourContract.updateVar(name),120000,0,0,(result)=>{
+    /*this.props.tx(this.state.YourContract.updateVar(name),120000,0,0,(result)=>{
       console.log(result)
-    })
+    })*/
 
   }
   deployYourContract() {
@@ -83,21 +105,13 @@ export default class YourModule extends React.Component {
     //  as noted above you need src/contracts/YourContract.bytecode.js
     //  to be there for this to work:
     //
-    let code = require("../contracts/YourContract.bytecode.js")
+    /*let code = require("../contracts/YourContract.bytecode.js")
     this.props.tx(this.state.YourContract._contract.deploy({data:code}),640000,(receipt)=>{
       let yourContract = this.props.contractLoader("YourContract",receipt.contractAddress)
       this.setState({ YourContract: yourContract})
-    })
+    })*/
   }
   render(){
-
-    if(!this.state.YourContract){
-      return (
-        <div>
-          LOADING YOURCONTRACT...
-        </div>
-      )
-    }
 
     return (
       <div>
@@ -122,6 +136,10 @@ export default class YourModule extends React.Component {
               </div>
             </div>
 
+            <pre>
+              {JSON.stringify(this.state.aztecAccounts,null,2)}
+            </pre>
+
             <Ruler/>
 
             <div>
@@ -142,8 +160,8 @@ export default class YourModule extends React.Component {
           </div>
 
           <button className={'btn btn-lg w-100'} style={this.props.buttonStyle.primary}
-                  onClick={()=>{alert("do something")}}>
-            Do Something
+                  onClick={this.createNotes.bind(this)}>
+            Generate Notes
           </button>
 
         </div>
