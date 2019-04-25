@@ -1640,7 +1640,6 @@ export default class App extends Component {
                           setReceipt={this.setReceipt}
                           changeAlert={this.changeAlert}
                           changeView={this.changeView}
-                          target={targetAddress}
                           block={this.state.block}
                           send={this.state.send}
                           web3={this.state.web3}
