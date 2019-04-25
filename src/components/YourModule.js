@@ -6,7 +6,7 @@ import axios from "axios"
 import Portis from '@portis/web3';
 
 const portis = new Portis('YOUR_DAPP_ID', 'xdai');
-const web3 = new Web3(portis.provider);
+const portisweb3 = new Web3(portis.provider);
 
 export default class YourModule extends React.Component {
 
