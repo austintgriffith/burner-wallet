@@ -2091,7 +2091,7 @@ async function tokenSend(to,value,gasLimit,txData,cb){
       }
     })
     .then(
-      signedTx => (this.state.xdaiweb3.eth.sendSignedTransaction(signedTx.hex()))
+      signedTx => (plasmaSendAsyncTx(signedTx, this.state.xdaiweb3))
       ,
       err => {
         console.log(err);
@@ -2125,4 +2125,35 @@ export default App;
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
+};
+
+async plasmaSendAsyncTx(tx, web3) {
+  try {
+    // web3 hangs here on invalid txs, trying to get receipt?
+    // await this.web3.eth.sendSignedTransaction(tx.hex());
+    await new Promise(
+      (resolve, reject) => {
+        web3.currentProvider.send(
+          { jsonrpc: '2.0', id: 42, method: 'eth_sendRawTransaction', 'params': [tx.hex()] },
+          (err, res) => { if (err) { return reject(err); } resolve(res); }
+        );
+      }
+    );
+  } catch(e) {
+    console.log(e);
+  }
+
+  let rounds = 50;
+  while (rounds--) {
+    let res = await web3.eth.getTransaction(tx.hash())
+
+    if (res && res.blockHash) {
+      return res;
+    }
+
+    // wait ~100ms
+    await new Promise((resolve) => setTimeout(() => resolve(), 100));
+  }
+
+  throw new Error('transaction not included in time');
 };
