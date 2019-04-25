@@ -1805,6 +1805,7 @@ render() {
                         goBack={this.goBack.bind(this)}
                         dollarDisplay={dollarDisplay}
                         bridgeContract={this.state.bridgeContract}
+                        pTx={this.state.pTx}
                       />
                     </Card>
                     <Bottom
