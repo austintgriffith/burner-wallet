@@ -2152,20 +2152,13 @@ async function tokenSend(to,value,gasLimit,txData,cb){
       }
     })
     .then(
-      signedTx => {
-        return {
-          futureReceipt: this.state.xdaiweb3.eth.sendSignedTransaction(
-            signedTx.hex()
-          ),
-        };
-      },
+      signedTx => (this.state.xdaiweb3.eth.sendSignedTransaction(signedTx.hex()))
+      ,
       err => {
         console.log(err);
       }
-    )
-    .then(receipt => {
-      console.log('RES: ', receipt);      
-      cb(result)
+    ).then(receipt => {
+      cb(receipt);
     });
 
 }
