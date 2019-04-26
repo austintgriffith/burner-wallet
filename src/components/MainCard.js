@@ -63,24 +63,6 @@ export default ({
           </Button>
         </Box>
       </Flex>
-      <Flex mx={-2}>
-        <Box width={[1, 1/2, 1/2]} m={2}>
-          <OutlineButton fullWidth onClick={() => changeView("share")}>
-            <Flex alignItems="center">
-              <Icon name="Share" mr={2} />
-              {i18next.t("main_card.share")}
-            </Flex>
-          </OutlineButton>
-        </Box>
-        <Box width={[1, 1/2, 1/2]} m={2}>
-          <OutlineButton fullWidth onClick={() => changeView("send_with_link")}>
-            <Flex alignItems="center">
-              <Icon name="AttachMoney" mr={2} />
-              {i18next.t("main_card.link")}
-            </Flex>
-          </OutlineButton>
-        </Box>
-      </Flex>
     </Box>
   );
 
