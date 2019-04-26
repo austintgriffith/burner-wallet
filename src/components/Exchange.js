@@ -225,6 +225,27 @@ export default class Exchange extends React.Component {
     interval = setInterval(this.poll.bind(this),1500)
     setTimeout(this.poll.bind(this),250)
   }
+  async getWrappedDaiBalance() {
+    // not a sundai, return immediatelly
+    if (this.state.notSundai) return true;
+
+    const rootPdai = new this.state.mainnetweb3.eth.Contract(
+      require("../contracts/SunDai.abi.js"),
+      this.props.pdaiContract._address
+    );
+
+    try {
+      const daiBalance = await rootPdai.methods.daiBalance(this.state.daiAddress).call();
+      return parseInt(daiBalance);
+    } catch (e) {
+      // no daiBalance function = not a sundai contract, so skipping this check
+      if (e.message.indexOf('Returned values aren\'t valid') >= 0) {
+        this.setState({ notSundai: true });
+        return 0;
+      }
+      throw e;
+    }
+  }
   async poll(){
     let { vendorContract, dendaiContract, mainnetweb3, xdaiweb3, xdaiAddress} = this.state
     /*let { daiContract } = this.props

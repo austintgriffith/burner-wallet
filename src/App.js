@@ -100,7 +100,10 @@ let titleImage = (
 )
 
 //<i className="fas fa-fire" />
-if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
+if (window.location.hostname.indexOf("localhost") >= 0 ||
+    window.location.hostname.indexOf("10.0.0.107") >= 0 ||
+    // For Tim to debug
+    window.location.hostname.indexOf("sundai.fritz.box") >= 0) {
   XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
   WEB3_PROVIDER = "https://rinkeby.infura.io/v3/f039330d8fb747e48a7ce98f51400d65"
   leapNetwork = "Leap Testnet";
@@ -661,6 +664,7 @@ export default class App extends Component {
         console.log("this.state.isVendor",this.state.isVendor)
 
 
+        console.log(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed))
         if(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed)){
           this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
             this.changeView('withdraw_from_private')
@@ -1621,36 +1625,34 @@ export default class App extends Component {
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card p={3} style={{zIndex:1}}>
-                        <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
+                        <NavCard title={i18n.t('withdraw')} goBack={this.goBack.bind(this)}/>
                         {defaultBalanceDisplay}
-                        <SendToAddress
-                          parseAndCleanPath={this.parseAndCleanPath.bind(this)}
-                          openScanner={this.openScanner.bind(this)}
-                          scannerState={this.state.scannerState}
-                          ensLookup={this.ensLookup.bind(this)}
+                        <WithdrawFromPrivate
                           ERC20TOKEN={ERC20TOKEN}
+                          products={this.state.products}
                           buttonStyle={buttonStyle}
                           balance={balance}
-                          web3={this.state.web3}
                           address={account}
-                          send={send}
+                          contracts={this.state.contracts}
+                          web3={this.state.web3}
+                          xdaiweb3={this.state.xdaiweb3}
+                          pdaiContract={this.state.pdaiContract}
+                          pDaiTokenAddr={P_DAI_TOKEN_ADDR}
+                          //amount={false}
+                          privateKey={this.state.withdrawFromPrivateKey}
                           goBack={this.goBack.bind(this)}
                           changeView={this.changeView}
-                          setReceipt={this.setReceipt}
                           changeAlert={this.changeAlert}
-                          changeView={this.changeView}
                           block={this.state.block}
                           send={this.state.send}
-                          web3={this.state.web3}
-                          goBack={this.goBack.bind(this)}
                           dollarDisplay={dollarDisplay}
-                          convertToDollar={convertToDollar}
-                          pDaiTokenAddr={P_DAI_TOKEN_ADDR}
+                          tokenSendV2={tokenSendV2.bind(this)}
                         />
                       </Card>
                       <Bottom
-                        text={i18n.t('cancel')}
-                        action={this.goBack.bind(this)}
+                        action={()=>{
+                          this.changeView('main')
+                        }}
                       />
                     </div>
                   );
