@@ -1446,6 +1446,7 @@ class App extends Component {
                         changeAlert={this.changeAlert}
                         dollarDisplay={dollarDisplay}
                         tokenSendV2={tokenSendV2.bind(this)}
+                        convertToDollar={convertToDollar}
                       />
                       <Ruler/>
                     </div>
