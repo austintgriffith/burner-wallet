@@ -1240,29 +1240,7 @@ export default class App extends Component {
                       </div>
                     )
                   }
-  
-  
-  
-                let selected = "xDai"
-                let extraTokens = ""
-  
-                let defaultBalanceDisplay = (
-                  <div>
-                    <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
-                    <Ruler/>
-                  </div>
-                )
-  
-                if(ERC20TOKEN){
-                  selected = ERC20NAME
-                  extraTokens = (
-                    <div>
-                      <Balance icon={ERC20IMAGE} selected={selected} text={ERC20NAME} amount={this.state.balance} address={account} dollarDisplay={dollarDisplay} />
-                      <Ruler/>
-                    </div>
-                  )
-                  defaultBalanceDisplay = extraTokens
-                }
+
                 if(this.state.isAdmin){
                   moreButtons = (
                     <div>
@@ -1319,7 +1297,29 @@ export default class App extends Component {
                 }else{
                   moreButtons = ""
                 }
-
+  
+  
+  
+                let selected = "xDai"
+                let extraTokens = ""
+  
+                let defaultBalanceDisplay = (
+                  <div>
+                    <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+                    <Ruler/>
+                  </div>
+                )
+  
+                if(ERC20TOKEN){
+                  selected = ERC20NAME
+                  extraTokens = (
+                    <div>
+                      <Balance icon={ERC20IMAGE} selected={selected} text={ERC20NAME} amount={this.state.balance} address={account} dollarDisplay={dollarDisplay} />
+                      <Ruler/>
+                    </div>
+                  )
+                  defaultBalanceDisplay = extraTokens
+                }
   
   
                 let badgeDisplay = ""
