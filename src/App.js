@@ -82,7 +82,6 @@ let P_DAI_TOKEN_ADDR = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
 let BRIDGE_ADDR = '0x0036192587fD788B75829fbF79BE7F06E4F23B21';
 
 let MARKET_MAKER;
-
 let leapNetwork;
 
 let mainStyle = {
