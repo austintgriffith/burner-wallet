@@ -132,7 +132,8 @@ export default class SendToAddress extends React.Component {
         toAddress: resolvedAddress
       })
     }*/
-    return (this.state.toAddress && this.state.toAddress.length === 42 && (this.state.amount>0 || this.state.message))
+    const { toAddress, amount, message } = this.state;
+    return (toAddress && toAddress.length === 42 && (amount>0 || message))
   }
 
   scrollToBottom(){
@@ -310,7 +311,7 @@ export default class SendToAddress extends React.Component {
             />
           </Field>
         </Box>
-        <Button size={'large'} width={1} disabled={canSend} onClick={this.send}>
+        <Button size={'large'} width={1} disabled={!canSend} onClick={this.send}>
           Send
         </Button>
       </div>
