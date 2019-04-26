@@ -26,7 +26,7 @@ export default ({
           changeView("exchange");
         }}
       >
-        <Flex alignItems="center">
+        <Flex mx={-2} alignItems="center">
           <Icon name="Shuffle" mr={2} />
           {i18n.t("more_buttons.exchange")}
         </Flex>
@@ -40,7 +40,7 @@ export default ({
           changeView("cash_out");
         }}
       >
-        <Flex alignItems="center">
+        <Flex mx={-2} alignItems="center">
           <Icon name="CreditCard" mr={2} />
           {"Cash Out"}
         </Flex>
