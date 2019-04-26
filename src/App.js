@@ -1442,6 +1442,7 @@ render() {
                       {moreButtons}
 
                       <RecentTransactions
+                        dollarDisplay={dollarDisplay}
                         view={this.state.view}
                         buttonStyle={buttonStyle}
                         ERC20TOKEN={ERC20TOKEN}
@@ -1572,6 +1573,7 @@ render() {
                         setReceipt={this.setReceipt}
                         changeAlert={this.changeAlert}
                         dollarDisplay={dollarDisplay}
+                        convertToDollar={convertToDollar}
                       />
                     </Card>
                     <Bottom
@@ -1748,6 +1750,7 @@ render() {
                         changeView={this.changeView}
                         goBack={this.goBack.bind(this)}
                         dollarDisplay={dollarDisplay}
+                        convertToDollar={convertToDollar}
                       />
                     </Card>
                     <Bottom
