@@ -18,7 +18,7 @@ export let ERC20NAME;
 
 WEB3_PROVIDER = 'https://dai.poa.network';
 ERC20NAME = 'TRML';
-ERC20VENDOR = 'VendingMachine'
+ERC20VENDOR = 'TerminalVending'
 ERC20TOKEN = 'Terminal';
 ERC20IMAGE = terminal;
 LOADERIMAGE = terminal;

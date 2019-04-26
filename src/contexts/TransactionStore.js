@@ -32,7 +32,8 @@ export default class TransactionStoreProvider extends Component {
   };
 
   initRecentTxs(account){
-    let recentTxs = [...this.state.recentTx];
+    let recentTxs = [];
+    if (this.state.recentTx){ recentTxs = [...this.state.recentTx];}
 
     let transactionsByAddress = { ...this.state.transactionsByAddress };
     if(recentTxs.length === 0) {

@@ -5,7 +5,7 @@ clevis.json
 relayhttpprovider.env
 cloudfront.id.1
 cloudfront.id.2
-src/contracts/*
+
 deploy.network
 aws.json
 backend/redisdata

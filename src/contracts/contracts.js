@@ -1,1 +1,1 @@
-module.exports = ["Links","ERC20Vendable","VendingMachine","Burner","BurnerVendor","Badges"]
+module.exports = ["TerminalVending","Terminal"]
