@@ -40,7 +40,7 @@ export default {
     disabled: 0.4
   },
   colors: {
-    primary: '#4E3FCE',
+    primary: 'black',
     blue: '#007ce0',
     navy: '#004175',
     copyColor: '#3F3D4B',
