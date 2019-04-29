@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+  - 'lts/*'
+cache: npm
+install:
+  - npm install
+jobs:
+  include:
+    - stage: lint
+      script: npm run lint
+    - stage: deploy
+      script: ./scripts/ci_deploy.sh
+      if: branch = master
