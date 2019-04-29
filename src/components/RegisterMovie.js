@@ -4,6 +4,7 @@ import i18n from '../i18n';
 import ipfsClient from 'ipfs-http-client';
 import {Buffer} from 'buffer';
 import axios from 'axios';
+import {Input, Button, OutlineButton} from 'rimble-ui';
 
 import Uploader from './Uploader';
 
@@ -229,9 +230,9 @@ export default class RegisterMovie extends React.Component {
           <div className="form-group w-100">
             <label>{i18n.t('mint.movie.name')}</label>
             <div className="input-group">
-              <input
+              <Input
+                width={1}
                 type="text"
-                className="form-control"
                 placeholder="2001: A Space Odyssey..."
                 ref="movieName"
               />
@@ -240,9 +241,9 @@ export default class RegisterMovie extends React.Component {
           <div className="form-group w-100">
             <label>{i18n.t('mint.rightholder.name')}</label>
             <div className="input-group">
-              <input
+              <Input
+                width={1}
                 type="text"
-                className="form-control"
                 placeholder="Stanley Kubrick..."
                 ref="rightholderName"
               />
@@ -251,25 +252,22 @@ export default class RegisterMovie extends React.Component {
           <div className="form-group w-100">
             <label>{i18n.t('mint.rightholder.address')}</label>
             <div className="input-group">
-              <input
+              <Input
+                width={1}
                 type="text"
-                className="form-control"
                 placeholder="0x..."
                 ref="rightholderAddress"
                 defaultValue={rightholderAddress}
               />
-              <div
-                className="input-group-append"
+              <OutlineButton
+                icon={'CenterFocusWeak'}
+                mb={4}
+                width={1}
                 onClick={() => {
                   this.props.openScanner({view: 'mint', goBackView: 'mint'});
                 }}>
-                <span
-                  className="input-group-text"
-                  id="basic-addon2"
-                  style={this.props.buttonStyle.primary}>
-                  <i style={{color: '#FFFFFF'}} className="fas fa-qrcode" />
-                </span>
-              </div>
+                Scan QR Code
+              </OutlineButton>
             </div>
           </div>
           <div className="form-group w-100">
@@ -287,14 +285,14 @@ export default class RegisterMovie extends React.Component {
               uploadStatus={this.uploadStatus('movies')}
             />
           </div>
-          <button
+          <Button
+            size={'large'}
+            width={1}
             disabled={!(uploader && uploader.posters && uploader.movies)}
             name="theVeryBottom"
-            className={`btn btn-lg w-100`}
-            style={this.props.buttonStyle.primary}
             onClick={this.submit}>
             Register
-          </button>
+          </Button>
         </div>
       </div>
     );
