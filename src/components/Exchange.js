@@ -1323,20 +1323,13 @@ export default class Exchange extends React.Component {
             <div className="col-6 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
-                 <div className="input-group-append" onClick={() => {
-                    this.setState({amount: Math.floor(this.props.daiBalance*100)/100 },()=>{
-                      this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                    })
-                 }}>
-                   <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                     max
-                   </span>
-                 </div>
+                <RInput
+                  width={1}
+                  type="number"
+                  step="0.1"
+                  placeholder="$0.00"
+                  value={this.state.amount}
+                  onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               </Scaler>
             </div>
@@ -1408,20 +1401,13 @@ export default class Exchange extends React.Component {
             <div className="col-6 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
-                   <div className="input-group-append" onClick={() => {
-                      this.setState({amount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 },()=>{
-                        this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                      })
-                   }}>
-                     <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                       max
-                     </span>
-                   </div>
+                <RInput
+                  width={1}
+                  type="number"
+                  step="0.1"
+                  placeholder="$0.00"
+                  value={this.state.amount}
+                  onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               </Scaler>
             </div>
@@ -1607,40 +1593,13 @@ export default class Exchange extends React.Component {
             <div className="col-6 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
-                 <div className="input-group-append" onClick={() => {
-
-                   console.log("Getting gas price...")
-                   gasPrice()
-                   .catch((err)=>{
-                     console.log("Error getting gas price",err)
-                   })
-                   .then(gwei => {
-                      console.log(gwei)
-
-                      let IDKAMOUNTTOLEAVE = gwei*(1111000000*2) * 201000 // idk maybe enough for a couple transactions?
-
-                      console.log("let's leave ",IDKAMOUNTTOLEAVE,this.props.ethBalance)
-
-                      let gasInEth = this.props.web3.utils.fromWei(""+IDKAMOUNTTOLEAVE,'ether')
-                      console.log("gasInEth",gasInEth)
-
-                      let adjustedEthBalance = (parseFloat(this.props.ethBalance) - parseFloat(gasInEth))
-                      console.log(adjustedEthBalance)
-
-                      this.setState({amount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 },()=>{
-                        this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                      })
-                   })
-                 }}>
-                   <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                     max
-                   </span>
-                 </div>
+                <RInput
+                  width={1}
+                  type="number"
+                  step="0.1"
+                  placeholder="$0.00"
+                  value={this.state.amount}
+                  onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               </Scaler>
             </div>
@@ -1766,20 +1725,13 @@ export default class Exchange extends React.Component {
             <div className="col-6 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
-               <div className="input-group-append" onClick={() => {
-                  this.setState({amount: Math.floor((this.props.daiBalance)*100)/100 },()=>{
-                    this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                  })
-               }}>
-                 <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                   max
-                 </span>
-               </div>
+                <RInput
+                  width={1}
+                  type="number"
+                  step="0.1"
+                  placeholder="$0.00"
+                  value={this.state.amount}
+                  onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               </Scaler>
             </div>
