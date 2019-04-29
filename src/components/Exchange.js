@@ -2309,7 +2309,7 @@ export default class Exchange extends React.Component {
           icon={'ArrowForward'}
           icononly
           disabled={buttonsDisabled}
-          onClick={this.props.goBack}
+          onClick={() => this.props.goBack("send_to_address")}
         />
       )
     }
