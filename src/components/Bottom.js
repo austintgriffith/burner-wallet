@@ -13,7 +13,7 @@ export default class Receive extends React.Component {
 
     return (
       <div name="theVeryBottom" className="text-center bottom-text" style={{marginBottom:20}}>
-        <Button onClick={()=>{action()}}>
+        <Button style={{backgroundColor: "white"}} color="black" onClick={()=>{action()}}>
           <Flex alignItems="center">
             <Icon name={icon} mr={2} />
             {text}
