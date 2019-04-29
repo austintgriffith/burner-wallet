@@ -39,6 +39,7 @@ import { withTransactionStore } from './contexts/TransactionStore';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 import incogDetect from './services/incogDetect.js'
+import { getTokensOfOwner } from "erc721-balance";
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
@@ -342,8 +343,7 @@ class App extends Component {
         window.history.pushState({},"", "/");
       }
     }
-    setTimeout(this.poll.bind(this),150)
-    setTimeout(this.poll.bind(this),650)
+    this.poll.bind(this)();
     interval = setInterval(this.poll.bind(this),1500)
     intervalLong = setInterval(this.longPoll.bind(this),45000)
     setTimeout(this.longPoll.bind(this),150)
@@ -365,40 +365,36 @@ class App extends Component {
     window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
   async poll() {
+    const { web3, contracts, account } = this.state;
+    let { badgeBalance } = this.state;
 
-    let badgeBalance = 0
-    if(this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown") && this.state.contracts.Badges){
-      //check for badges for this user
-      badgeBalance = await this.state.contracts.Badges.balanceOf(this.state.account).call()
-      if(badgeBalance>0){
-        let update = false
-        for(let b = 0;b<badgeBalance;b++){
-          let thisBadgeId = await this.state.contracts.Badges.tokenOfOwnerByIndex(this.state.account,b).call()
-          if(!this.state.badges[thisBadgeId]){
-
-            let thisBadgeData = await this.state.contracts.Badges.tokenURI(thisBadgeId).call()
-            //console.log("BADGE",b,thisBadgeId,thisBadgeData)
-            if(!this.state.badges[thisBadgeId]){
-              console.log("Getting badge data ",thisBadgeData)
-              let response = axios.get(thisBadgeData).then((response)=>{
-                console.log("RESPONSE:",response)
-                if(response && response.data){
-                  this.state.badges[thisBadgeId] = response.data
-                  this.state.badges[thisBadgeId].id = thisBadgeId
-                  update=true
-                }
-              })
-
-            }
-          }
-        }
-        if(update){
-          //console.log("Saving badges state...")
-          this.setState({badges:this.state.badges})
-        }
-
+    if (contracts  && (this.state.network=="xDai" || this.state.network=="Unknown") && contracts.Badges) {
+      let tokens;
+      try {
+        tokens = await getTokensOfOwner(
+          web3,
+          contracts.Badges._address,
+          account
+        )
+      } catch(err) {
+        this.changeAlert({
+          type: 'warning',
+          message: "Couldn't load ERC721 data.",
+        });
+        console.log(err)
       }
+      if (badgeBalance !== tokens.length) {
+        badgeBalance = tokens.length;
 
+        const badges = tokens.reduce((initVal, currVal) => {
+          const { raw, tokenId } = currVal;
+          initVal[tokenId] = raw;
+          initVal[tokenId].id = tokenId;
+          return initVal;
+        }, {});
+
+        this.setState({badges});
+      }
     }
 
 
