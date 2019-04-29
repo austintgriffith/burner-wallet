@@ -1347,8 +1347,8 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-3 p-1">
 
-              <button className="btn btn-large w-100"  disabled={buttonsDisabled}
-                style={this.props.buttonStyle.primary}
+              <Button
+                disabled={buttonsDisabled}
                 onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
 
@@ -1379,7 +1379,7 @@ export default class Exchange extends React.Component {
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-up" /> Send
                 </Scaler>
-              </button>
+              </Button>
 
             </div>
           </div>
@@ -1431,7 +1431,7 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
+              <Button disabled={buttonsDisabled} onClick={async ()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
                 console.log("Withdrawing to ",toDaiBridgeAccount)
 
@@ -1534,7 +1534,7 @@ export default class Exchange extends React.Component {
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-down" /> Send
                 </Scaler>
-              </button>
+              </Button>
 
             </div>
           </div>
@@ -1650,7 +1650,7 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
+              <Button disabled={buttonsDisabled} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move ETH to DAI")
 
@@ -1726,7 +1726,7 @@ export default class Exchange extends React.Component {
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-up" /> Send
                 </Scaler>
-              </button>
+              </Button>
 
             </div>
           </div>
@@ -1789,7 +1789,7 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
+              <Button disabled={buttonsDisabled} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move DAI to ETH")
 
@@ -2054,7 +2054,7 @@ export default class Exchange extends React.Component {
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-down" /> Send
                 </Scaler>
-              </button>
+              </Button>
             </div>
           </div>
         )
