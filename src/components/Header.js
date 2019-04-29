@@ -71,12 +71,15 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
       onClick={() => {
         openScanner({view:"send_to_address"})
       }}
+      style={{backgroundColor: "white"}}
+      color="black"
       borderRadius={"50%"} 
       height={"auto"} 
       width={"auto"} 
       p={0} m={0}
       position={"absolute"}
-      bottom={3} right={3}
+      bottom={3}
+      right={3}
     >
       <Icon name="CenterFocusWeak" size={90} p={3} />
     </Button>
