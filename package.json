@@ -21,6 +21,7 @@
     "ethers": "^4.0.20",
     "ethjs-ens": "^2.0.1",
     "express": "^4.16.4",
+    "fortmatic": "^0.7.0",
     "fs": "0.0.1-security",
     "helmet": "^3.14.0",
     "i18next": "^13.1.5",
