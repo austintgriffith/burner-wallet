@@ -7,29 +7,18 @@ import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
 import Badge from './Badge';
 import i18n from '../i18n';
+import {
+  Input,
+  Button,
+  OutlineButton
+} from "rimble-ui";
 
 export default class SendBadge extends React.Component {
   constructor(props) {
     super(props);
-
-    let toAddress = ""
-    if(props.scannerState) toAddress = props.scannerState.toAddress
-    if(!toAddress) {
-      toAddress = cookie.load('sendBadgeToAddress')
-    }else{
-      cookie.save('sendBadgeToAddress', toAddress, { path: '/', maxAge: 60 })
-      setTimeout(()=>{
-        this.scrollToBottom()
-      },30)
-    }
-
     this.state = {
-      canSend: false,
-      toAddress: toAddress
-    }
-    setTimeout(()=>{
-      this.setState({ canSend: this.canSend() })
-    },1000)
+      canSend: false
+    };
   }
   componentDidMount = () => {
     window.addEventListener('scroll', this.handleOnScroll.bind(this))
@@ -39,6 +28,13 @@ export default class SendBadge extends React.Component {
   }
   handleOnScroll = () => {
       this.forceUpdate()
+  }
+  componentWillReceiveProps(newProps) {
+    if (this.props.scannerState !== newProps.scannerState) {
+        this.setState(Object.assign(this.state, newProps.scannerState), () => {
+          this.setState({canSend: this.canSend()});	
+	});
+    }
   }
   updateState = async (key, value) => {
     if(key=="toAddress"){
@@ -140,30 +136,27 @@ export default class SendBadge extends React.Component {
             <div className="form-group w-100">
               <label htmlFor="amount_input">{i18n.t('send_to_address.to_address')}</label>
               <div className="input-group">
-                <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
+                <Input
+                  width={1}
+                  type="text"
+                  placeholder="0x..."
+                  value={this.state.toAddress}
                   ref={(input) => { this.addressInput = input; }}
-                       onChange={event => this.updateState('toAddress', event.target.value)} />
-                <div className="input-group-append" onClick={() => this.props.openScanner({view:'send_badge'})}>
-                  <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.primary}>
-                    <i style={{color:"#FFFFFF"}} className="fas fa-qrcode" />
-                  </span>
-                </div>
+                  onChange={event => this.updateState('toAddress', event.target.value)} />
+                  <OutlineButton icon={'CenterFocusWeak'} mb={4} width={1} onClick={() => {this.props.openScanner({view:"send_badge", goBackView:"send_badge"})}}>
+                    Scan QR Code
+                  </OutlineButton>
               </div>
             </div>
-
-            <div>  { this.state.toAddress && this.state.toAddress.length==42 &&
-              <CopyToClipboard text={toAddress.toLowerCase()}>
-                <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
-                  <div style={{opacity:0.33}}>{this.state.fromEns}</div>
-                  <Blockies seed={toAddress.toLowerCase()} scale={10}/>
-                </div>
-              </CopyToClipboard>
-            }</div>
           </div>
-          <button name="theVeryBottom" className={`btn btn-lg w-100 ${canSend ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}
-                  onClick={this.send}>
+          <Button
+            size="large"
+            width={1}
+            name="theVeryBottom"
+            disabled={!canSend}
+            onClick={this.send}>
             Send
-          </button>
+          </Button>
         </div>
       </div>
     )
