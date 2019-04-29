@@ -16,41 +16,9 @@ export default ({
   dollarDisplay,
   subBalanceDisplay
 }) => {
-  let exchangeButton;
-
-  if (!isVendor) {
-    exchangeButton = (
-      <OutlineButton
-        fullWidth
-        onClick={() => {
-          changeView("exchange");
-        }}
-      >
-        <Flex mx={-2} alignItems="center">
-          <Icon name="Shuffle" mr={2} />
-          {i18n.t("more_buttons.exchange")}
-        </Flex>
-      </OutlineButton>
-    );
-  } else {
-    exchangeButton = (
-      <OutlineButton
-        fullWidth
-        onClick={() => {
-          changeView("cash_out");
-        }}
-      >
-        <Flex mx={-2} alignItems="center">
-          <Icon name="CreditCard" mr={2} />
-          {"Cash Out"}
-        </Flex>
-      </OutlineButton>
-    );
-  }
-
   return (
     <Flex mx={-2}>
-      <Box width={[1, 1/2, 1/2]} m={2}>
+      <Box width={[1, 1, 1]} m={2}>
         <OutlineButton
           fullWidth
           onClick={() => {
@@ -63,7 +31,6 @@ export default ({
           </Flex>
         </OutlineButton>
       </Box>
-      <Box width={[1, 1/2, 1/2]} m={2}>{exchangeButton}</Box>
     </Flex>
   );
 };
