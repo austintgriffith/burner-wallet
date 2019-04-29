@@ -1411,7 +1411,6 @@ export default class App extends Component {
               let defaultBalanceDisplay = (
                 <div>
                   <Balance icon={xdai} selected={false} text={"MNY"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
-                  <Ruler/>
                 </div>
               )
 
@@ -1420,7 +1419,6 @@ export default class App extends Component {
                 extraTokens = (
                   <div>
                     <Balance icon={ERC20IMAGE} selected={selected} text={"MNY"} amount={this.state.balance} address={account} dollarDisplay={dollarDisplay} />
-                    <Ruler/>
                   </div>
                 )
                 defaultBalanceDisplay = extraTokens
