@@ -4,12 +4,20 @@ import i18n from '../i18n';
 import ipfsClient from 'ipfs-http-client';
 import {Buffer} from 'buffer';
 import axios from 'axios';
+import jsonp from 'jsonp';
+import qs from 'qs';
 import {Input, Button, OutlineButton} from 'rimble-ui';
 
 import Uploader from './Uploader';
 
 // Taken from Exchange.js
 const GASBOOSTPRICE = 0.25;
+
+const MAILCHIMP = {
+  LIST: '94805126b3',
+  REGION: 'us18',
+  USER: '74327b20b5a290dfc1f6bf3f1',
+};
 
 export default class RegisterMovie extends React.Component {
   constructor(props) {
@@ -51,6 +59,41 @@ export default class RegisterMovie extends React.Component {
     }
   }
 
+  // NOTE: I had to do some horrible shit to make this work :(
+  // Hidden inputs etc. :shrug:
+  async registerEmail(email, address, rightholderName) {
+    const params = qs.stringify({
+      u: MAILCHIMP.USER,
+      id: MAILCHIMP.LIST,
+      EMAIL: email,
+      name: rightholderName,
+      address,
+      b_123abc123abc123abc123abc123abc123abc: '',
+      _: '1556635256096',
+    });
+    const url = `https://berlin.${
+      MAILCHIMP.REGION
+    }.list-manage.com/subscribe/post-json?${params}`;
+
+    let data;
+    try {
+      // NOTE: Unfortunately, Mailchimp only allows the above URL to be queried
+      // with jsonp. axios doesn't implement jsonp. Hence we're using this
+      // separate library.
+      data = await new Promise((resolve, reject) => {
+        jsonp(url, {param: 'c'}, (err, data) => {
+          if (err) return reject(err);
+          return resolve(data);
+        });
+      });
+    } catch (err) {
+      // NOTE: We're not reporting this error back to the user, as we're not
+      // deeming it important.
+      console.log(err);
+    }
+    console.log(data);
+  }
+
   async submit() {
     const {
       mainnetweb3,
@@ -60,7 +103,13 @@ export default class RegisterMovie extends React.Component {
       setReceipt,
       changeView,
     } = this.props;
-    const {image, movieName, rightholderAddress, rightholderName} = this.refs;
+    const {
+      image,
+      movieName,
+      rightholderAddress,
+      rightholderName,
+      email,
+    } = this.refs;
     const {provider, meta, uploader} = this.state;
 
     changeView('loader');
@@ -121,7 +170,6 @@ export default class RegisterMovie extends React.Component {
         badge: token,
         result: receipt,
       });
-      changeView('receipt');
     } else {
       const method = ERC721Full.mint(
         rightholderAddress.value,
@@ -136,8 +184,21 @@ export default class RegisterMovie extends React.Component {
         badge: token,
         result: receipt,
       });
-      changeView('receipt');
     }
+
+    try {
+      await this.registerEmail(
+        email.value,
+        rightholderAddress.value,
+        rightholderName.value,
+      );
+    } catch (err) {
+      // NOTE: We're not throwing an error to the UI here, as email registration
+      // is not that important.
+      console.log(err);
+    }
+
+    changeView('receipt');
   }
 
   async getGasAverage() {
@@ -233,6 +294,21 @@ export default class RegisterMovie extends React.Component {
       <div>
         <div className="content row">
           <div className="form-group w-100">
+            <label>{i18n.t('mint.movie_title')}</label>
+            <Uploader
+              destinationBucket="cinemarket-videos"
+              fileType="video"
+              uploadStatus={this.uploadStatus('movies')}
+            />
+          </div>
+          <div className="form-group w-100">
+            <label>{i18n.t('mint.image_title')}</label>
+            <Uploader
+              fileType="image"
+              uploadStatus={this.uploadStatus('posters')}
+            />
+          </div>
+          <div className="form-group w-100">
             <label>{i18n.t('mint.movie.name')}</label>
             <div className="input-group">
               <Input
@@ -251,6 +327,17 @@ export default class RegisterMovie extends React.Component {
                 type="text"
                 placeholder="Stanley Kubrick..."
                 ref="rightholderName"
+              />
+            </div>
+          </div>
+          <div className="form-group w-100">
+            <label>Email</label>
+            <div className="input-group">
+              <Input
+                width={1}
+                type="text"
+                placeholder="Stanley@kubrick.com"
+                ref="email"
               />
             </div>
           </div>
@@ -274,21 +361,6 @@ export default class RegisterMovie extends React.Component {
                 Scan QR Code
               </OutlineButton>
             </div>
-          </div>
-          <div className="form-group w-100">
-            <label>{i18n.t('mint.image_title')}</label>
-            <Uploader
-              fileType="image"
-              uploadStatus={this.uploadStatus('posters')}
-            />
-          </div>
-          <div className="form-group w-100">
-            <label>{i18n.t('mint.movie_title')}</label>
-            <Uploader
-              destinationBucket="cinemarket-videos"
-              fileType="video"
-              uploadStatus={this.uploadStatus('movies')}
-            />
           </div>
           <Button
             size={'large'}
