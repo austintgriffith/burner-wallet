@@ -65,6 +65,8 @@ export default class YourModule extends React.Component {
           0
       );
       console.log("CALL buy(",outcome,",",cost.toNumber(),",",10 * 1e18,")")
+
+      console.log("OUTCOME:" + outcome + "COST" + cost + "max" + 10 * 1e18) 
       //console.log("market:",market)
       //console.log("Getting txn...")
       //let txn = await market.buy(outcome, cost.toNumber(), 10 * 1e18)
@@ -88,8 +90,8 @@ export default class YourModule extends React.Component {
   		],
        */
       this.props.tx(
-        this.props.contracts.Market.buy(outcome,cost.toNumber(),10 * 1e18)
-        ,240000,0,0,(receipt)=>{
+        this.props.contracts.Market.buy(outcome, cost.toNumber(), 10 * 1e18),
+        1042570, 0, 0,(receipt)=>{
           if(receipt){
 
             console.log("BET COMPLETE?!?",receipt)
