@@ -26,7 +26,7 @@ import MainCard from './components/MainCard';
 import History from './components/History';
 import Advanced from './components/Advanced';
 import BottomLinks from './components/BottomLinks';
-import MoreButtons from './components/MoreButtons';
+//import MoreButtons from './components/MoreButtons';
 import Admin from './components/Admin';
 import Vendor from './components/Vendor';
 import Vendors from './components/Vendors';
@@ -35,7 +35,7 @@ import Footer from './components/Footer';
 import Loader from './components/Loader';
 import burnerlogo from './burnerwallet.png';
 import BurnWallet from './components/BurnWallet'
-import Exchange from './components/Exchange'
+//import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
@@ -46,12 +46,12 @@ import RNMessageChannel from 'react-native-webview-messaging';
 import YourModule from './components/YourModule'
 
 
-import bufficorn from './bufficorn.png';
-import cypherpunk from './cypherpunk.png';
+//import bufficorn from './bufficorn.png';
+//import cypherpunk from './cypherpunk.png';
 import eth from './ethereum.png';
 import dai from './dai.jpg';
 import xdai from './xdai.jpg';
-import Wyre from './services/wyre';
+//import Wyre from './services/wyre';
 
 import helena from './helena.jpg';
 
@@ -138,8 +138,8 @@ else if (window.location.hostname.indexOf("buffidai") >= 0) {
   ERC20NAME = 'BUFF'
   ERC20VENDOR = 'VendingMachine'
   ERC20TOKEN = 'ERC20Vendable'
-  ERC20IMAGE = bufficorn
-  LOADERIMAGE = bufficorn
+  ERC20IMAGE = false
+  LOADERIMAGE = false
 }
 else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   WEB3_PROVIDER = POA_XDAI_NODE;
@@ -147,8 +147,8 @@ else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
   ERC20NAME = 'BURN'
   ERC20VENDOR = 'BurnerVendor'
   ERC20TOKEN = 'Burner'
-  ERC20IMAGE = cypherpunk
-  LOADERIMAGE = cypherpunk
+  ERC20IMAGE = false
+  LOADERIMAGE = false
 }
 else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
@@ -165,7 +165,7 @@ if(ERC20NAME=="BUFF"){
   mainStyle.mainColorAlt = "#de3ec3"
   title = "BuffiDai.io"
   titleImage = (
-    <img src={bufficorn} style={{
+    <img src={false} style={{
       maxWidth:50,
       maxHeight:50,
       marginRight:15,
@@ -179,7 +179,7 @@ if(ERC20NAME=="BUFF"){
   mainStyle.mainColorAlt = "#f948b8"
   title = "Burner"
   titleImage = (
-    <img src={cypherpunk} style={{
+    <img src={false} style={{
       maxWidth:50,
       maxHeight:50,
       marginRight:15,
@@ -345,7 +345,7 @@ class App extends Component {
   }
   componentDidMount(){
 
-    Wyre.configure();
+    //Wyre.configure();
 
 
     document.body.style.backgroundColor = mainStyle.backgroundColor
@@ -1128,13 +1128,7 @@ render() {
         {web3 /*&& this.checkNetwork()*/ && (() => {
           //console.log("VIEW:",view)
 
-          let moreButtons = (
-            <MoreButtons
-              buttonStyle={buttonStyle}
-              changeView={this.changeView}
-              isVendor={this.state.isVendor&&this.state.isVendor.isAllowed}
-            />
-          )
+          let moreButtons = false
 
           let subBalanceDisplay = ""
           if(ERC20TOKEN){
@@ -1162,11 +1156,7 @@ render() {
                     tx={this.state.tx}
                     web3={this.state.web3}
                   />
-                  <MoreButtons
-                    buttonStyle={buttonStyle}
-                    changeView={this.changeView}
-                    isVendor={false}
-                  />
+
                 </div>
               )
             }else if(this.state.isVendor&&this.state.isVendor.isAllowed){
@@ -1185,11 +1175,7 @@ render() {
                     web3={this.state.web3}
                     dollarDisplay={dollarDisplay}
                   />
-                  <MoreButtons
-                    buttonStyle={buttonStyle}
-                    changeView={this.changeView}
-                    isVendor={true}
-                  />
+
                 </div>
               )
             }else if(ERC20TOKEN){
@@ -1233,7 +1219,7 @@ render() {
                     filter={{to:this.state.account}}
                     onUpdate={(eventData,allEvents)=>{this.setState({transferToWithData:allEvents},this.syncFullTransactions)}}
                   />
-                  
+
                 </div>
               )
             }
@@ -1829,50 +1815,7 @@ render() {
               </div>
             );
 
-            case 'exchange':
-            return (
-              <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
 
-                  <NavCard title={i18n.t('exchange_title')} goBack={this.goBack.bind(this)}/>
-                  <Exchange
-                    eth={eth}
-                    dai={dai}
-                    xdai={xdai}
-                    ERC20NAME={ERC20NAME}
-                    ERC20IMAGE={ERC20IMAGE}
-                    ERC20TOKEN={ERC20TOKEN}
-                    ERC20VENDOR={ERC20VENDOR}
-                    ethprice={this.state.ethprice}
-                    ethBalance={this.state.ethBalance}
-                    daiBalance={this.state.daiBalance}
-                    xdaiBalance={this.state.xdaiBalance}
-                    mainnetweb3={this.state.mainnetweb3}
-                    xdaiweb3={this.state.xdaiweb3}
-                    daiContract={this.state.daiContract}
-                    ensContract={this.state.ensContract}
-                    isVendor={this.state.isVendor}
-                    isAdmin={this.state.isAdmin}
-                    contracts={this.state.contracts}
-                    buttonStyle={buttonStyle}
-                    changeAlert={this.changeAlert}
-                    setGwei={this.setGwei}
-                    network={this.state.network}
-                    tx={this.state.tx}
-                    web3={this.state.web3}
-                    send={this.state.send}
-                    nativeSend={this.state.nativeSend}
-                    address={account}
-                    balance={balance}
-                    goBack={this.goBack.bind(this)}
-                    dollarDisplay={dollarDisplay}
-                  />
-                </div>
-                <Bottom
-                  action={this.goBack.bind(this)}
-                />
-              </div>
-            );
             case 'vendors':
             return (
               <div>
