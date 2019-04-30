@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@frontier-token-research/pm-contracts": "^1.2.2",
+    "@frontier-token-research/pm-js": "^2.2.12",
     "autolinker": "^2.2.1",
     "axios": "^0.18.0",
     "base64url": "^3.0.1",

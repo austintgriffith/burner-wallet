@@ -70,6 +70,15 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
     sendButtons = (
       <div>
         <div className="content ops row">
+          <div className="col-12 p-1" onClick={() => changeView('yourmodule')}>
+            <button className="btn btn-large w-100" onClick={() => changeView('yourmodule')} style={buttonStyle.secondary}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                {"Helena Prediction Markets"}
+              </Scaler>
+            </button>
+          </div>
+        </div>
+        <div className="content ops row">
           <div className="col-6 p-1" onClick={() => changeView('receive')}>
             <button className="btn btn-large w-100" style={buttonStyle.primary}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
@@ -81,22 +90,6 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
             <button className="btn btn-large w-100" onClick={() => changeView('send_to_address')} style={buttonStyle.primary}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-paper-plane"/> {i18next.t('main_card.send')}
-              </Scaler>
-            </button>
-          </div>
-        </div>
-        <div className="content ops row">
-          <div className="col-6 p-1" onClick={() => changeView('share')}>
-            <button className="btn btn-large w-100" onClick={() => changeView('share')} style={buttonStyle.secondary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-share"/> {i18next.t('main_card.share')}
-              </Scaler>
-            </button>
-          </div>
-          <div className="col-6 p-1" onClick={() => changeView('vendors')}>
-            <button className="btn btn-large w-100" style={buttonStyle.secondary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-money-bill-alt"  /> {i18next.t('main_card.vendors')}
               </Scaler>
             </button>
           </div>

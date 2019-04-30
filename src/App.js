@@ -53,6 +53,8 @@ import dai from './dai.jpg';
 import xdai from './xdai.jpg';
 import Wyre from './services/wyre';
 
+import helena from './helena.jpg';
+
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
 
@@ -71,14 +73,16 @@ let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW = "yourmodule"// = "loader"// = "receipt"
 let FAILCOUNT = 0
 
+let gnosis
+
 let mainStyle = {
   width:"100%",
   height:"100%",
   backgroundImage:"linear-gradient(#292929, #191919)",
   backgroundColor:"#191919",
-  hotColor:"#F69E4D",
-  mainColorAlt:"#fa7d36",
-  mainColor:"#F76B1C",
+  hotColor:"#e1c963",
+  mainColorAlt:"#d3b64d",
+  mainColor:"#e1c963",
 }
 
 let title = i18n.t('app_name')
@@ -89,20 +93,20 @@ let titleImage = (
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
   //XDAI_PROVIDER = "http://localhost:8545"
-  WEB3_PROVIDER = "http://localhost:8545";
+  WEB3_PROVIDER = "https://dai.poa.network";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(true){
+  if(false){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
   }else{
-    ERC20NAME = 'BUFF'
+    ERC20NAME = 'xP+'
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
-    ERC20IMAGE = bufficorn
+    ERC20IMAGE = helena
     //XDAI_PROVIDER = "http://localhost:8545"
-    WEB3_PROVIDER = "http://localhost:8545";
-    LOADERIMAGE = bufficorn
+    WEB3_PROVIDER = "https://dai.poa.network";
+    LOADERIMAGE = helena
   }
 
 }
@@ -229,6 +233,11 @@ let convertFromDollar = (amount)=>{
   return (parseFloat(amount)*dollarConversion)
 }
 let dollarDisplay = (amount)=>{
+  let floatAmount = parseFloat(amount)
+  amount = Math.floor(amount*1000)/1000
+  return convertFromDollar(amount).toFixed(3)
+}
+let dollarDisplayCash = (amount)=>{
   let floatAmount = parseFloat(amount)
   amount = Math.floor(amount*100)/100
   return dollarSymbol+convertFromDollar(amount).toFixed(2)
@@ -466,9 +475,9 @@ class App extends Component {
       tokenBalance = this.state.web3.utils.fromWei(""+tokenBalance,'ether')
 
       //console.log("Getting admin from ",this.state.contracts[ERC20VENDOR])
-      let isAdmin = await this.state.contracts[ERC20VENDOR].isAdmin(this.state.account).call()
+      let isAdmin = false; //await this.state.contracts[ERC20VENDOR].isAdmin(this.state.account).call()
       //console.log("ISADMIN",this.state.account,isAdmin)
-      let isVendor = await this.state.contracts[ERC20VENDOR].vendors(this.state.account).call()
+      let isVendor = false //await this.state.contracts[ERC20VENDOR].vendors(this.state.account).call()
       //console.log("isVendor",isVendor)
 
       let vendorObject = this.state.vendorObject
@@ -1184,15 +1193,7 @@ render() {
                 </div>
               )
             }else if(ERC20TOKEN){
-              moreButtons = (
-                <div>
-                  <MoreButtons
-                    buttonStyle={buttonStyle}
-                    changeView={this.changeView}
-                    isVendor={false}
-                  />
-                </div>
-              )
+              moreButtons = ""
             }else{
               moreButtons = ""
             }
@@ -1232,26 +1233,7 @@ render() {
                     filter={{to:this.state.account}}
                     onUpdate={(eventData,allEvents)=>{this.setState({transferToWithData:allEvents},this.syncFullTransactions)}}
                   />
-                  <Events
-                    config={{hide:true}}
-                    contract={this.state.contracts[ERC20VENDOR]}
-                    eventName={"UpdateVendor"}
-                    block={this.state.block}
-                    onUpdate={(vendor, all)=>{
-                      let {vendors} = this.state
-                      console.log("VENDOR",vendor)
-                      if(!vendors[vendor.vendor] || vendors[vendor.vendor].blockNumber<vendor.blockNumber){
-                        vendors[vendor.vendor] = {
-                          name: this.state.web3.utils.hexToUtf8(vendor.name),
-                          isAllowed: vendor.isAllowed,
-                          isActive: vendor.isActive,
-                          vendor: vendor.vendor,
-                          blockNumber: vendor.blockNumber
-                        }
-                      }
-                      this.setState({vendors})
-                    }}
-                  />
+                  
                 </div>
               )
             }
@@ -1344,7 +1326,9 @@ render() {
               return (
                 <div>
                   <div className="send-to-address card w-100" style={{zIndex:1}}>
-                    <NavCard title={"YOURMODULE NAV TITLE"} titleLink={""} goBack={this.goBack.bind(this)}/>
+
+                    <NavCard title={"Prediction Markets"} titleLink={""} goBack={this.goBack.bind(this)}/>
+                    {defaultBalanceDisplay}
                     <YourModule
                       privateKey={metaAccount.privateKey}
 
@@ -1398,7 +1382,7 @@ render() {
                     />
                   </div>
                   <Bottom
-                    text={"buttom button"}
+                    text={"done"}
                     action={this.goBack.bind(this)}
                   />
                 </div>
@@ -1410,25 +1394,19 @@ render() {
               <div>
                 <div className="main-card card w-100" style={{zIndex:1}}>
 
-
+                <div style={{cursor:"pointer"}} onClick={()=>{
+                  this.changeView('yourmodule')
+                }}>
                   {extraTokens}
-
-                  <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+  </div>
+                  <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplayCash}/>
                   <Ruler/>
 
-
-
-
-                  <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance icon={dai} selected={false} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplayCash}/>
                   <Ruler/>
-                  <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance icon={eth} selected={false} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplayCash}/>
                   <Ruler/>
-                  <div style={{cursor:"pointer"}} onClick={()=>{
-                    this.changeView('yourmodule')
-                  }}>
-                  <Balance icon={cypherpunk} selected={"YOURMODULE"} text={"YOURMODULE"} amount={8.16} address={account} dollarDisplay={dollarDisplay}/>
-                  <Ruler/>
-                  </div>
+
                   {badgeDisplay}
 
                   <MainCard
