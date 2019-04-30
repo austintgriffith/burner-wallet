@@ -37,8 +37,8 @@ export default class YourModule extends React.Component {
   }
 
   async pollInterval(){
-      const marketInfo = await this.getMarketInfo(this.state.address)
-      //console.log("GOT INFO:",marketInfo)
+      const marketInfo = await this.getMarketInfo(this.props.contracts.Market._address)
+      console.log("GOT INFO:",marketInfo)
       const outcomeTokensSold = marketInfo.netOutcomeTokensSold
       const title = marketInfo.event.oracle.eventDescription.title
       const odds = marketInfo.marginalPrices;
@@ -71,6 +71,22 @@ export default class YourModule extends React.Component {
       //console.log("TXN",txn)
       //let txnresult = await this.props.tx(txn, 50000, 0, 0)
       //console.log("txnresult:",txnresult)
+      /*
+      "inputs": [
+  			{
+  				"name": "outcomeTokenIndex",
+  				"type": "uint8"
+  			},
+  			{
+  				"name": "outcomeTokenCount",
+  				"type": "uint256"
+  			},
+  			{
+  				"name": "maxCost",
+  				"type": "uint256"
+  			}
+  		],
+       */
       this.props.tx(
         this.props.contracts.Market.buy(outcome,cost.toNumber(),10 * 1e18)
         ,240000,0,0,(receipt)=>{
