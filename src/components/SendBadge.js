@@ -116,12 +116,6 @@ export default class SendBadge extends React.Component {
 
   render() {
     let { canSend, toAddress } = this.state;
-    var h = document.documentElement,
-    b = document.body,
-    st = 'scrollTop',
-    sh = 'scrollHeight';
-    var percent = (h[st]||b[st]) / ((h[sh]||b[sh]) - h.clientHeight) * 100;
-    let angle = Math.round(-28 + 75*percent/100)
     return (
       <Box mb={4}>
         <Badge

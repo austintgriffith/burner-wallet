@@ -1627,7 +1627,7 @@ export default class App extends Component {
                   <div>
                     {this.state.scannerOpen ? sendByScan : null}
                     <Card p={3} style={{zIndex:1}}>
-                      <NavCard title={this.state.badges[this.state.selectedBadge].name} titleLink={this.state.badges[this.state.selectedBadge].external_url} goBack={this.goBack.bind(this)}/>
+                      <NavCard title="Transfer Movie" titleLink={this.state.badges[this.state.selectedBadge].external_url} goBack={this.goBack.bind(this)}/>
                       <SendBadge
                         changeView={this.changeView}
                         ensLookup={this.ensLookup.bind(this)}

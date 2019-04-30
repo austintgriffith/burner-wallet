@@ -1,87 +1,94 @@
+// @format
 import React from 'react';
 import Blockies from 'react-blockies';
-import { Scaler } from "dapparatus";
+import {Scaler} from 'dapparatus';
+import {Input, Field, Box} from 'rimble-ui';
 
-export  default ({id,angle,image,selectBadge,large}) => {
-
-  let displayAngle = 28
-  if(angle){
-    displayAngle=angle
+export default ({
+  id,
+  angle,
+  image,
+  selectBadge,
+  large,
+  mp4,
+  rightholderName,
+  name,
+}) => {
+  let displayAngle = 28;
+  if (angle) {
+    displayAngle = angle;
   }
-  let zIndex = 1
+  let zIndex = 1;
 
-  if(large){
+  if (large) {
     return (
-        <div className="coin__container_large" style={{cursor:"pointer"}}>
-            <div className="coin_large is-slam" style={{
-                zIndex: zIndex,
-                transform:"rotateX("+displayAngle+"deg)"
-            }}>
-                <div className="coin__front_large" style={{
-                  backgroundImage: 'url("'+image+'")',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: "center",
-                  backgroundSize: "cover",
-                }}></div>
-                <div className="coin__back_large"></div>
-                <div className="coin__side_large">
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                    <div className="coin__c_large"></div>
-                </div>
-            </div>
-       </div>
-    )
-  }else {
+      <div>
+        <video
+          style={{
+            width: '100%',
+            height: 'auto',
+          }}
+          poster={image}
+          width="320"
+          height="240"
+          controls>
+          <source src={mp4} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <Box mb={4}>
+          <Field mb={3} label="Movie Title">
+            {name}
+          </Field>
+          <Field mb={3} label="Rightholder">
+            {rightholderName}
+          </Field>
+        </Box>
+      </div>
+    );
+  } else {
     return (
-        <div className="coin__container" style={{cursor:"pointer"}} onClick={()=>{
-          selectBadge(id)
+      <div
+        className="coin__container"
+        style={{cursor: 'pointer'}}
+        onClick={() => {
+          selectBadge(id);
         }}>
-            <div className="coin is-slam" style={{
-                zIndex: zIndex,
-                transform:"rotateX("+displayAngle+"deg)"
-            }}>
-                <div className="coin__front" style={{
-                    backgroundImage: 'url("'+image+'")',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                }}></div>
-                <div className="coin__back"></div>
-                <div className="coin__side">
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                    <div className="coin__c"></div>
-                </div>
-            </div>
-       </div>
-    )
+        <div
+          className="coin is-slam"
+          style={{
+            zIndex: zIndex,
+            transform: 'rotateX(' + displayAngle + 'deg)',
+          }}>
+          <div
+            className="coin__front"
+            style={{
+              backgroundImage: 'url("' + image + '")',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              backgroundSize: 'cover',
+            }}
+          />
+          <div className="coin__back" />
+          <div className="coin__side">
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+            <div className="coin__c" />
+          </div>
+        </div>
+      </div>
+    );
   }
-
 };
