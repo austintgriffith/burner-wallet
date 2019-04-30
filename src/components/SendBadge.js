@@ -8,6 +8,8 @@ import { scroller } from 'react-scroll'
 import Badge from './Badge';
 import i18n from '../i18n';
 import {
+  Box,
+  Field,
   Input,
   Button,
   OutlineButton
@@ -121,44 +123,37 @@ export default class SendBadge extends React.Component {
     var percent = (h[st]||b[st]) / ((h[sh]||b[sh]) - h.clientHeight) * 100;
     let angle = Math.round(-28 + 75*percent/100)
     return (
-      <div>
-        <div className="content row" onClick={()=>{
-          window.open(this.props.badge.external_url,'_blank')
-        }}>
-            <Badge large={true} angle={angle} key={"b"+this.props.badge.id} id={this.props.badge.id} image={this.props.badge.image}/>
-        </div>
-        <div style={{fontSize:14,width:"100%",textAlign:"center"}}>
-          {this.props.badge.description}
-        </div>
+      <Box mb={4}>
+        <Badge
+          large={true}
+          key={this.props.badge.id}
+          id={this.props.badge.id}
+          image={this.props.badge.image}
+          mp4={this.props.badge.movie.mp4} 
+          rightholderName={this.props.badge.rightholder.name}
+          name={this.props.badge.name} />
         <Ruler />
-        <div className="content row">
-          <div className="form-group w-100">
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">{i18n.t('send_to_address.to_address')}</label>
-              <div className="input-group">
-                <Input
-                  width={1}
-                  type="text"
-                  placeholder="0x..."
-                  value={this.state.toAddress}
-                  ref={(input) => { this.addressInput = input; }}
-                  onChange={event => this.updateState('toAddress', event.target.value)} />
-                  <OutlineButton icon={'CenterFocusWeak'} mb={4} width={1} onClick={() => {this.props.openScanner({view:"send_badge", goBackView:"send_badge"})}}>
-                    Scan QR Code
-                  </OutlineButton>
-              </div>
-            </div>
-          </div>
-          <Button
-            size="large"
+        <Field mb={3} label="To Address">
+          <Input
             width={1}
-            name="theVeryBottom"
-            disabled={!canSend}
-            onClick={this.send}>
-            Send
-          </Button>
-        </div>
-      </div>
+            type="text"
+            placeholder="0x..."
+            value={toAddress}
+            ref={(input) => { this.addressInput = input; }}
+            onChange={event => this.updateState('toAddress', event.target.value)} />
+          <OutlineButton icon={'CenterFocusWeak'} mb={4} width={1} onClick={() => {this.props.openScanner({view:"send_badge", goBackView:"send_badge"})}}>
+            Scan QR Code
+          </OutlineButton>
+        </Field>
+        <Button
+          size="large"
+          width={1}
+          name="theVeryBottom"
+          disabled={!canSend}
+          onClick={this.send}>
+          Send
+        </Button>
+      </Box>
     )
   }
 }
