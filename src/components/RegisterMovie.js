@@ -66,8 +66,11 @@ export default class RegisterMovie extends React.Component {
       u: MAILCHIMP.USER,
       id: MAILCHIMP.LIST,
       EMAIL: email,
-      name: rightholderName,
-      address,
+      // MERGE1 is first name on Mailchimp
+      MERGE1: rightholderName,
+      // MERGE2 is last name on Mailchimp. We cannot use MERGE3 as it doesn't
+      // accept an ethereum address. Hence we use MERGE2
+      MERGE2: address,
       b_123abc123abc123abc123abc123abc123abc: '',
       _: '1556635256096',
     });
