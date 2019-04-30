@@ -63,6 +63,11 @@ export default class RegisterMovie extends React.Component {
     const {image, movieName, rightholderAddress, rightholderName} = this.refs;
     const {provider, meta, uploader} = this.state;
 
+    changeView('loader');
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 60);
+
     const token = {
       name: movieName.value,
       description: 'A movie registered by the Burner Wallet',
