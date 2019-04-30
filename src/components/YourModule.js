@@ -89,7 +89,7 @@ export default class YourModule extends React.Component {
        */
       this.props.tx(
         this.props.contracts.Market.buy(outcome,cost.toNumber(),10 * 1e18)
-        ,240000,0,0,(receipt)=>{
+        ,1200000,0,0,(receipt)=>{
           if(receipt){
 
             console.log("BET COMPLETE?!?",receipt)
