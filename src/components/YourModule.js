@@ -11,7 +11,7 @@ const YES = 0;
 const NO = 1;
 
 const baseDomain = "https://olympia-api.helena.network";
-const marketAddress = "0x858c01c4db1b9f4baa7ebc8e14b84138a3f7d207";
+/*const marketAddress = "0x858c01c4db1b9f4baa7ebc8e14b84138a3f7d207";*/
 const timeInterval = 4500;
 const timeTimeOut = 300;
 
@@ -21,7 +21,7 @@ export default class YourModule extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      address: marketAddress,
+      /*address: marketAddress,*/
       odds: [50, 50],
       outcomeTokensSold:[0, 0],
       title: "",
@@ -42,7 +42,7 @@ export default class YourModule extends React.Component {
       const outcomeTokensSold = marketInfo.netOutcomeTokensSold
       const title = marketInfo.event.oracle.eventDescription.title
       const odds = marketInfo.marginalPrices;
-      this.setState({marketAddress, odds, outcomeTokensSold, title})
+      this.setState({/*marketAddress, */odds, outcomeTokensSold, title})
   }
 
   async getMarketInfo(address){
@@ -52,10 +52,11 @@ export default class YourModule extends React.Component {
   }
 
   bet(outcome) {
-    Gnosis.create(
-      {ethereum: this.props.web3.provider}
-    ).then(async (result) => {
-      const market =  result.contracts.Market.at(this.state.address);
+    //Gnosis.create(
+    //  {ethereum: this.props.xdaiweb3.provider}
+    //).then(async (result) => {
+      console.log("BETTING...")
+      //const market =  result.contracts.Market.at(this.state.address);
       const cost = Gnosis.calcLMSROutcomeTokenCount(
           this.state.outcomeTokensSold,
           1000e18,
@@ -63,8 +64,29 @@ export default class YourModule extends React.Component {
           this.state.amount * 1e18,
           0
       );
-      this.props.tx(await market.buy(outcome, cost.toNumber(), 10 * 1e18), 50000, 0, 0);
-    })
+      console.log("CALL buy(",outcome,",",cost.toNumber(),",",10 * 1e18,")")
+      //console.log("market:",market)
+      //console.log("Getting txn...")
+      //let txn = await market.buy(outcome, cost.toNumber(), 10 * 1e18)
+      //console.log("TXN",txn)
+      //let txnresult = await this.props.tx(txn, 50000, 0, 0)
+      //console.log("txnresult:",txnresult)
+      this.props.tx(
+        this.props.contracts.Market.buy(outcome,cost.toNumber(),10 * 1e18)
+        ,240000,0,0,(receipt)=>{
+          if(receipt){
+
+            console.log("BET COMPLETE?!?",receipt)
+            //this.props.goBack();
+          //  window.history.pushState({},"", "/");
+            //this.props.setReceipt({to:toAddress,from:receipt.from,badge:this.props.badge,result:receipt})
+            //this.props.changeView("receipt");
+            //this.props.clearBadges()
+          }
+        }
+      )
+    //})
+
   }
   render(){
     return (

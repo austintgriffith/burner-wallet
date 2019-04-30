@@ -1,1 +1,1 @@
-module.exports = ["ERC20Vendable"]
+module.exports = ["ERC20Vendable","Market"]
