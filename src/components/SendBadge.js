@@ -139,6 +139,9 @@ export default class SendBadge extends React.Component {
           key={this.props.badge.id}
           id={this.props.badge.id}
           image={this.props.badge.image} />
+          onClick={()=>{
+            window.open(this.props.badge.external_url,'_blank')
+          }}
         <Ruler />
         <Field mb={3} label="To Address">
           <Input
@@ -148,7 +151,7 @@ export default class SendBadge extends React.Component {
             value={toAddress}
             ref={(input) => { this.addressInput = input; }}
             onChange={event => this.updateState('toAddress', event.target.value)} />
-          <OutlineButton icon={'CenterFocusWeak'} mb={4} width={1} onClick={() => {this.props.openScanner({view:"send_badge", goBackView:"send_badge"})}}>
+          <OutlineButton icon={'CenterFocusWeak'} mb={4} width={1} onClick={() => {this.props.openScanner({view:"send_badge"})}}>
             Scan QR Code
           </OutlineButton>
         </Field>
