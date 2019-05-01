@@ -32,11 +32,11 @@ export default class YourModule extends React.Component {
     setTimeout(this.pollInterval.bind(this), timeTimeOut)
     this.firstApprove();
   }
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearInterval(interval)
   }
 
-  async pollInterval(){
+  async pollInterval() {
       const marketInfo = await this.getMarketInfo(this.props.contracts.Market._address)
       const outcomeTokensSold = marketInfo.netOutcomeTokensSold
       const title = marketInfo.event.oracle.eventDescription.title
@@ -44,16 +44,16 @@ export default class YourModule extends React.Component {
       this.setState({/*marketAddress, */odds, outcomeTokensSold, title})
   }
 
-  async getMarketInfo(address){
+  async getMarketInfo(address) {
       const response = await fetch(baseDomain +`/api/markets/${address}/`)
       const json = await response.json();
       return json;
   }
 
-  async firstApprove(){
+  async firstApprove() {
     const allowance = await this.props.contracts.ERC20Vendable.allowance(this.props.address, this.props.contracts.Market._address).call();
     console.log(allowance)
-    if(allowance == 0) {
+    if(allowance === 0) {
       this.props.tx(
         this.props.contracts.ERC20Vendable.approve(this.props.contracts.Market._address, -1),
         50000, 0, 0,(approveReceipt)=>{
@@ -61,8 +61,6 @@ export default class YourModule extends React.Component {
     }
     return true;
   }
-
-  
 
   bet(outcome) {
       const cost = Gnosis.calcLMSROutcomeTokenCount(
@@ -94,6 +92,7 @@ export default class YourModule extends React.Component {
             </div>
             </div>
           </div>
+
           <div className="content row">
             <div className="input-group">
               <input type="text" className="form-control" placeholder="xP+ amount" value={this.state.value}
@@ -101,6 +100,7 @@ export default class YourModule extends React.Component {
               />
             </div>
           </div>
+
           <div className="content bridge row">
             <div className="col-6 p-1">
               <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={() => {
