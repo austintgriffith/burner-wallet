@@ -130,7 +130,7 @@ export default class YourModule extends React.Component {
                 this.bet(YES)}
               }>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-check"></i> {"YES (" + this.state.odds[0] * 100 + "%)"}
+                  <i className="fas fa-check"></i> {"YES (" + Math.round(this.state.odds[0] * 100 *1000)/1000 + "%)"}
                 </Scaler>
               </button>
             </div>
@@ -139,7 +139,7 @@ export default class YourModule extends React.Component {
                 this.bet(NO)}
             }>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-times"></i> {"NO (" + this.state.odds[1] * 100 + "%)"}
+                <i className="fas fa-times"></i> {"NO (" + Math.round(this.state.odds[1] * 100 *1000)/1000 + "%)"}
               </Scaler>
             </button>
             </div>
