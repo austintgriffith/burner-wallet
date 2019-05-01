@@ -43,7 +43,7 @@ import namehash from 'eth-ens-namehash'
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
 
-import YourModule from './components/YourModule'
+import ScavengerHunt from './components/ScavengerHunt'
 
 
 import bufficorn from './bufficorn.png';
@@ -68,7 +68,7 @@ let ERC20VENDOR
 let ERC20IMAGE
 let ERC20NAME
 let LOADERIMAGE = burnerlogo
-let HARDCODEVIEW = "yourmodule"// = "loader"// = "receipt"
+let HARDCODEVIEW = "scavengerhunt"// = "loader"// = "receipt"
 let FAILCOUNT = 0
 
 let mainStyle = {
@@ -1337,15 +1337,15 @@ render() {
 
 
           switch(view) {
-            case 'yourmodule':
+            case 'scavengerhunt':
             if(!this.state || !this.state.customLoader || !this.state.tx || !this.state.contracts || !this.state.network){
               return <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
             }else{
               return (
                 <div>
                   <div className="send-to-address card w-100" style={{zIndex:1}}>
-                    <NavCard title={"YOURMODULE NAV TITLE"} titleLink={""} goBack={this.goBack.bind(this)}/>
-                    <YourModule
+                    <NavCard title={"SCAVENGER HUNT"} titleLink={""} goBack={this.goBack.bind(this)}/>
+                    <ScavengerHunt
                       privateKey={metaAccount.privateKey}
 
                       web3={this.state.web3}
@@ -1424,9 +1424,9 @@ render() {
                   <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
                   <div style={{cursor:"pointer"}} onClick={()=>{
-                    this.changeView('yourmodule')
+                    this.changeView('scavengerhunt')
                   }}>
-                  <Balance icon={cypherpunk} selected={"YOURMODULE"} text={"YOURMODULE"} amount={8.16} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance icon={cypherpunk} selected={"SCAVENGERHUNT"} text={"SCAVENGERHUNT"} amount={8.16} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
                   </div>
                   {badgeDisplay}
