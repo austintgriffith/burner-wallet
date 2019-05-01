@@ -10,7 +10,7 @@ import axios from "axios"
 const YES = 0;
 const NO = 1;
 
-const baseDomain = "https://olympia-api.helena.network";
+const baseDomain = "https://burner-api.helena.network/";
 /*const marketAddress = "0x858c01c4db1b9f4baa7ebc8e14b84138a3f7d207";*/
 const timeInterval = 4500;
 const timeTimeOut = 300;
@@ -38,7 +38,6 @@ export default class YourModule extends React.Component {
 
   async pollInterval(){
       const marketInfo = await this.getMarketInfo(this.props.contracts.Market._address)
-      console.log("GOT INFO:",marketInfo)
       const outcomeTokensSold = marketInfo.netOutcomeTokensSold
       const title = marketInfo.event.oracle.eventDescription.title
       const odds = marketInfo.marginalPrices;
@@ -52,11 +51,6 @@ export default class YourModule extends React.Component {
   }
 
   bet(outcome) {
-    //Gnosis.create(
-    //  {ethereum: this.props.xdaiweb3.provider}
-    //).then(async (result) => {
-      console.log("BETTING...")
-      //const market =  result.contracts.Market.at(this.state.address);
       const cost = Gnosis.calcLMSROutcomeTokenCount(
           this.state.outcomeTokensSold,
           1000e18,
@@ -64,48 +58,21 @@ export default class YourModule extends React.Component {
           this.state.amount * 1e18,
           0
       );
-      console.log("CALL buy(",outcome,",",cost.toNumber(),",",10 * 1e18,")")
-
-      console.log("OUTCOME:" + outcome + "COST" + cost + "max" + 10 * 1e18) 
-      //console.log("market:",market)
-      //console.log("Getting txn...")
-      //let txn = await market.buy(outcome, cost.toNumber(), 10 * 1e18)
-      //console.log("TXN",txn)
-      //let txnresult = await this.props.tx(txn, 50000, 0, 0)
-      //console.log("txnresult:",txnresult)
-      /*
-      "inputs": [
-  			{
-  				"name": "outcomeTokenIndex",
-  				"type": "uint8"
-  			},
-  			{
-  				"name": "outcomeTokenCount",
-  				"type": "uint256"
-  			},
-  			{
-  				"name": "maxCost",
-  				"type": "uint256"
-  			}
-  		],
-       */
       this.props.tx(
-        this.props.contracts.Market.buy(outcome, cost.toNumber(), 10 * 1e18),
-        1042570, 0, 0,(receipt)=>{
-          if(receipt){
-
-            console.log("BET COMPLETE?!?",receipt)
-            //this.props.goBack();
-          //  window.history.pushState({},"", "/");
-            //this.props.setReceipt({to:toAddress,from:receipt.from,badge:this.props.badge,result:receipt})
-            //this.props.changeView("receipt");
-            //this.props.clearBadges()
-          }
-        }
-      )
-    //})
-
+        this.props.contracts.ERC20Vendable.approve(this.props.contracts.Market._address, -1),
+        50000, 0, 0,(approveReceipt)=>{
+          this.props.tx(
+            this.props.contracts.Market.buy(outcome, cost.toNumber(), 10 * 1e18),
+            1042570, 0, 0,(buyReceipt)=>{
+              if(buyReceipt){
+                console.log("BET COMPLETE?!?", buyReceipt)
+              }
+            }
+        );
+    });
   }
+
+  
   render(){
     return (
       <div>
