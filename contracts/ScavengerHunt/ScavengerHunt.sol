@@ -176,6 +176,11 @@ contract ScavengerHunt {
     return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
   }
 
+  /// @dev return number of questions
+  function getQuestions() public constant returns(uint count) {
+    return answers.length;
+  }
+
   /// @dev kills contract and returns funds
   function kill() public onlyOwner() {
       selfdestruct(msg.sender);
