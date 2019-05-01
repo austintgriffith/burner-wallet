@@ -20,6 +20,7 @@ import ShareLink from './components/ShareLink'
 import Balance from "./components/Balance";
 import Badges from "./components/Badges";
 import Ruler from "./components/Ruler";
+import RulerDark from "./components/RulerDark";
 import Receipt from "./components/Receipt";
 import CashOut from "./components/CashOut";
 import MainCard from './components/MainCard';
@@ -1318,7 +1319,7 @@ render() {
                     <YourModule
                       privateKey={metaAccount.privateKey}
 
-                      marketAddress={"0x858c01c4db1b9f4baa7ebc8e14b84138a3f7d207"}
+                      marketAddress={"0xfaca5beb569244d37b1ec4d67811b527210a9988"}
 
                       web3={this.state.web3}
                       tx={this.state.tx}
@@ -1368,6 +1369,63 @@ render() {
                       goBack={this.goBack.bind(this)}
                       dollarDisplay={dollarDisplay}
                     />
+
+                    <RulerDark/>
+
+                    <YourModule
+                      privateKey={metaAccount.privateKey}
+
+                      marketAddress={"0xb9e1302d81836e8280ad528d200059e4b3f471c1"}
+
+                      web3={this.state.web3}
+                      tx={this.state.tx}
+                      send={this.state.send}
+
+                      address={account}
+                      balance={balance}
+
+                      network={this.state.network}
+                      block={this.state.block}
+
+                      contracts={this.state.contracts}
+                      contractLoader={this.state.customLoader}
+
+                      mainnetweb3={this.state.mainnetweb3}
+                      xdaiweb3={this.state.xdaiweb3}
+
+                      daiContract={this.state.daiContract}
+                      ensContract={this.state.ensContract}
+                      ensLookup={this.ensLookup.bind(this)}
+
+                      ethBalance={this.state.ethBalance}
+                      daiBalance={this.state.daiBalance}
+                      xdaiBalance={this.state.xdaiBalance}
+
+                      eth={eth}
+                      dai={dai}
+                      xdai={xdai}
+                      ERC20NAME={ERC20NAME}
+                      ERC20IMAGE={ERC20IMAGE}
+                      ERC20TOKEN={ERC20TOKEN}
+                      ERC20VENDOR={ERC20VENDOR}
+                      ethprice={this.state.ethprice}
+
+                      isVendor={this.state.isVendor}
+                      isAdmin={this.state.isAdmin}
+
+                      setGwei={this.setGwei}
+                      gwei={this.state.gwei}
+
+                      openScanner={this.openScanner.bind(this)}
+                      scannerState={this.state.scannerState}
+
+                      buttonStyle={buttonStyle}
+                      changeAlert={this.changeAlert}
+                      nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
+                      goBack={this.goBack.bind(this)}
+                      dollarDisplay={dollarDisplay}
+                    />
+
                   </div>
                   <Bottom
                     text={"done"}
