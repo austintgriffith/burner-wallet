@@ -15,6 +15,9 @@ export default class ScavengerHunt extends React.Component {
       status: props.web3.utils.utf8ToHex('Pending'),
       winner: 0x0,
       yourVar: "",
+      isOwner: false,
+      salt: "0x60fb72749db3983e5bd1ac4fcc9951184523512de258a5bb4902421e2fe5f616",
+      questions: 0,
       YourContract: false,
       yourContractBalance: 0,
       toAddress: (props.scannerState ? props.scannerState.toAddress : ""),
@@ -44,9 +47,12 @@ export default class ScavengerHunt extends React.Component {
   async pollInterval(){
     console.log("POLL")
     if(this.state && this.state.YourContract){
+      let owner = await this.state.YourContract.owner().call();
+      let isOwner = (owner == this.props.address);
       let status = await this.state.YourContract.status().call();
       let gameEndTime = await this.state.YourContract.gameEndTime().call();
       let revealEndTime = await this.state.YourContract.revealEndTime().call();
+      let questions = await this.state.YourContract.getQuestions().call();
       let winner = await this.state.YourContract.winner().call();
       let yourVar = await this.state.YourContract.YourVar().call()
       let yourContractBalance = await this.props.web3.eth.getBalance(this.state.YourContract._address)
@@ -54,13 +60,30 @@ export default class ScavengerHunt extends React.Component {
       let mainnetBlockNumber = await this.props.mainnetweb3.eth.getBlockNumber()
       let xdaiBlockNumber = await this.props.xdaiweb3.eth.getBlockNumber()
       yourContractBalance = this.props.web3.utils.fromWei(yourContractBalance,'ether')
-      this.setState({status, gameEndTime, revealEndTime, winner, yourVar,yourContractBalance,mainnetBlockNumber,xdaiBlockNumber})
-
+      this.setState({status, gameEndTime, revealEndTime, winner, isOwner, questions, yourVar,yourContractBalance,mainnetBlockNumber,xdaiBlockNumber})
     }
   }
 
+  async submitAnswer(question, answer) {
+    console.log('answer', answer)
+    let hashedAnswer = await this.state.YourContract.getSaltedHash(this.props.web3.utils.utf8ToHex(answer), this.state.salt).call();
+    this.props.tx(this.state.YourContract.commitAnswer(hashedAnswer, question), 160000, 0, 0, (result)=> {
+      console.log(result);
+    })
+  }
+
   clicked(name){
-    console.log("secondary button "+name+" was clicked")
+    switch (name) {
+      case "findWinner":
+        break;
+      case "endGame":
+        this.props.tx(this.state.YourContract.findWinner(), 120000, 0, 0, (result)=> {
+          console.log(result);
+        })
+        break;
+      default: console.log("secondary button "+name+" was clicked")
+    }
+    
     /*
     Time to make a transaction with YourContract!
     */
@@ -119,18 +142,21 @@ export default class ScavengerHunt extends React.Component {
             <Ruler/>
 
             <div>
-              Game Status: {this.props.web3.utils.hexToString(this.state.status)}
+              <h3>Status: {this.props.web3.utils.hexToString(this.state.status)} </h3>
             </div>
             <div>
-              Game End Time: {this.state.gameEndTime} 
+              <h4>Number of Questions: {this.state.questions} </h4>
             </div>
             <div>
-              Reveal End Time: {this.state.revealEndTime} 
+              Game End Time: {(new Date(this.state.gameEndTime * 1000)).toString()}
+            </div>
+            <div>
+              Reveal End Time: {(new Date(this.state.revealEndTime * 1000)).toString()} 
             </div>
             <div>
               Winner: {this.state.winner} 
             </div>
-            <div>
+            {/* <div>
               Network {this.props.network} is selected and on block #{this.props.block}.
             </div>
             <div>
@@ -144,8 +170,102 @@ export default class ScavengerHunt extends React.Component {
             </div>
             <div>
               The current price of ETH is {this.props.dollarDisplay(this.props.ethprice)}.
+            </div> */}
+
+            <div className="content bridge row">
+              <div className="input-group">
+                <div className="col-6 p-1">
+                <div>
+                <input type="text" className="form-control" placeholder="Question 1" id="q1" 
+                /></div>
+                </div>
+                <div className="col-6 p-1">
+                <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={(event)=>{
+                  this.submitAnswer(0, document.getElementById("q1").value)
+                }}>
+                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                    <i className="fas fa-dog"></i> {"submit Question 1"}
+                  </Scaler>
+                </button>
+                </div>
+              </div>
             </div>
 
+            <div className="content bridge row">
+              <div className="input-group">
+                <div className="col-6 p-1">
+                <div>
+                <input type="text" className="form-control" placeholder="Question 2" id="q2" 
+                /></div>
+                </div>
+                <div className="col-6 p-1">
+                <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={(event)=>{
+                  this.submitAnswer(1, document.getElementById("q2").value)
+                }}>
+                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                    <i className="fas fa-dog"></i> {"submit Question 2"}
+                  </Scaler>
+                </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="content bridge row">
+              <div className="input-group">
+                <div className="col-6 p-1">
+                <div>
+                <input type="text" className="form-control" placeholder="Question 3" id="q3" 
+                /></div>
+                </div>
+                <div className="col-6 p-1">
+                <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={(event)=>{
+                  this.submitAnswer(0, document.getElementById("q3").value)
+                }}>
+                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                    <i className="fas fa-dog"></i> {"submit Question 3"}
+                  </Scaler>
+                </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="content bridge row">
+              <div className="input-group">
+                <div className="col-6 p-1">
+                <div>
+                <input type="text" className="form-control" placeholder="Question 4" id="q4" 
+                /></div>
+                </div>
+                <div className="col-6 p-1">
+                <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={(event)=>{
+                  this.submitAnswer(0, document.getElementById("q4").value)
+                }}>
+                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                    <i className="fas fa-dog"></i> {"submit Question 4"}
+                  </Scaler>
+                </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="content bridge row">
+              <div className="input-group">
+                <div className="col-6 p-1">
+                <div>
+                <input type="text" className="form-control" placeholder="Question 5" id="q5" 
+                /></div>
+                </div>
+                <div className="col-6 p-1">
+                <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={(event)=>{
+                  this.submitAnswer(0, document.getElementById("q5").value)
+                }}>
+                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                    <i className="fas fa-dog"></i> {"submit Question 5"}
+                  </Scaler>
+                </button>
+                </div>
+              </div>
+            </div>
 
             <Ruler/>
 
@@ -191,7 +311,6 @@ export default class ScavengerHunt extends React.Component {
               <i className="fas fa-rocket"></i> {"deploy"}
             </Scaler>
           </button>
-
 
           <div className="content bridge row">
             <div className="col-4 p-1">
