@@ -1368,6 +1368,7 @@ render() {
                       nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
                       goBack={this.goBack.bind(this)}
                       dollarDisplay={dollarDisplay}
+                      changeView={this.changeView}
                     />
 
                     <RulerDark/>
@@ -1424,6 +1425,7 @@ render() {
                       nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
                       goBack={this.goBack.bind(this)}
                       dollarDisplay={dollarDisplay}
+                      changeView={this.changeView}
                     />
 
                   </div>

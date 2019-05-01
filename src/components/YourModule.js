@@ -4,7 +4,6 @@ import { Events, Blockie, Scaler } from "dapparatus";
 import Web3 from 'web3';
 import Gnosis from '@frontier-token-research/pm-js/'
 import Ruler from "./Ruler";
-import axios from "axios"
 
 
 const YES = 0;
@@ -80,6 +79,7 @@ export default class YourModule extends React.Component {
           this.state.amount * 1e18,
           0
       );
+      this.props.changeView('loader')
       this.props.tx(
 
         this.props.contracts.ERC20Vendable.approve(this.props.marketAddress, -1),
@@ -89,6 +89,7 @@ export default class YourModule extends React.Component {
             1042570, 0, 0,(buyReceipt)=>{
               if(buyReceipt){
                 console.log("BET COMPLETE?!?", buyReceipt)
+                this.props.changeView('yourmodule')
               }
             }
           )
@@ -114,7 +115,7 @@ export default class YourModule extends React.Component {
 
           <div className="content row">
             <div className="input-group">
-              <input type="text" className="form-control" placeholder="xP+ amount" value={this.state.value}
+              <input type="text" className="form-control" placeholder="xP+ amount you want to bet" value={this.state.value}
                 onChange={event => this.setState({'amount': event.target.value})}
               />
             </div>
