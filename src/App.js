@@ -1318,6 +1318,8 @@ render() {
                     <YourModule
                       privateKey={metaAccount.privateKey}
 
+                      marketAddress={"0x858c01c4db1b9f4baa7ebc8e14b84138a3f7d207"}
+
                       web3={this.state.web3}
                       tx={this.state.tx}
                       send={this.state.send}

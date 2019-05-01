@@ -11,7 +11,6 @@ const YES = 0;
 const NO = 1;
 
 const baseDomain = "https://burner-api.helena.network/";
-/*const marketAddress = "0x858c01c4db1b9f4baa7ebc8e14b84138a3f7d207";*/
 const timeInterval = 4500;
 const timeTimeOut = 300;
 
@@ -31,13 +30,18 @@ export default class YourModule extends React.Component {
   componentDidMount(){
     interval = setInterval(this.pollInterval.bind(this), timeInterval)
     setTimeout(this.pollInterval.bind(this), timeTimeOut)
+    this.setState({
+      MarketContract: this.props.contractLoader("Market",this.props.marketAddress)
+    },()=>{
+      console.log("YOURCONTRACT IS LOADED:",this.state.YourContract)
+    })
   }
   componentWillUnmount(){
     clearInterval(interval)
   }
 
   async pollInterval(){
-      const marketInfo = await this.getMarketInfo(this.props.contracts.Market._address)
+      const marketInfo = await this.getMarketInfo(this.props.marketAddress)
       const outcomeTokensSold = marketInfo.netOutcomeTokensSold
       const title = marketInfo.event.oracle.eventDescription.title
       const odds = marketInfo.marginalPrices;
@@ -60,10 +64,10 @@ export default class YourModule extends React.Component {
       );
       this.props.tx(
 
-        this.props.contracts.ERC20Vendable.approve(this.props.contracts.Market._address, -1),
+        this.props.contracts.ERC20Vendable.approve(this.props.marketAddress, -1),
         50000, 0, 0,(approveReceipt)=>{
           this.props.tx(
-            this.props.contracts.Market.buy(outcome, cost.toNumber(), 10 * 1e18),
+            this.state.MarketContract.buy(outcome, cost.toNumber(), 10 * 1e18),
             1042570, 0, 0,(buyReceipt)=>{
               if(buyReceipt){
                 console.log("BET COMPLETE?!?", buyReceipt)
@@ -74,7 +78,7 @@ export default class YourModule extends React.Component {
 
   }
 
-  
+
   render(){
     return (
       <div>
