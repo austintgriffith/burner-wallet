@@ -48,10 +48,10 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
         </div>
       </div>
       <div className="content ops row">
-        <div className="col-6 p-1" onClick={() => changeView('yourmodule')}>
-          <button className="btn btn-large w-100" onClick={() => changeView('yourmodule')} style={buttonStyle.secondary}>
+        <div className="col-6 p-1" onClick={() => changeView('scavengerhunt')}>
+          <button className="btn btn-large w-100" onClick={() => changeView('scavengerhunt')} style={buttonStyle.secondary}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-share"/> {'Your Module'}
+              <i className="fas fa-share"/> {'Scavenger Hunt'}
             </Scaler>
           </button>
         </div>
