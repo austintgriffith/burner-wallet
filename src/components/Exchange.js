@@ -1193,20 +1193,13 @@ export default class Exchange extends React.Component {
             <div className="col-6 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
-                 <div className="input-group-append" onClick={() => {
-                    this.setState({amount: Math.floor(this.props.daiBalance*100)/100 },()=>{
-                      this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                    })
-                 }}>
-                   <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                     max
-                   </span>
-                 </div>
+                <Input
+                  width={1}
+                  type="number"
+                  step="0.1"
+                  placeholder="$0.00"
+                  value={this.state.amount}
+                  onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               </Scaler>
             </div>
@@ -1217,8 +1210,8 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-3 p-1">
 
-              <button className="btn btn-large w-100"  disabled={buttonsDisabled}
-                style={this.props.buttonStyle.primary}
+              <Button
+                disabled={buttonsDisabled}
                 onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
 
@@ -1249,7 +1242,7 @@ export default class Exchange extends React.Component {
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-up" /> Send
                 </Scaler>
-              </button>
+              </Button>
 
             </div>
           </div>
@@ -1278,20 +1271,13 @@ export default class Exchange extends React.Component {
             <div className="col-6 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
-                   <div className="input-group-append" onClick={() => {
-                      this.setState({amount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 },()=>{
-                        this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                      })
-                   }}>
-                     <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                       max
-                     </span>
-                   </div>
+                <Input
+                  width={1}
+                  type="number"
+                  step="0.1"
+                  placeholder="$0.00"
+                  value={this.state.amount}
+                  onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               </Scaler>
             </div>
@@ -1301,7 +1287,7 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={()=>{
+              <Button disabled={buttonsDisabled} onClick={async ()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
                 this.setState({
                   daiToXdaiMode:"withdrawing",
@@ -1396,7 +1382,7 @@ export default class Exchange extends React.Component {
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-down" /> Send
                 </Scaler>
-              </button>
+              </Button>
 
             </div>
           </div>
@@ -1461,48 +1447,13 @@ export default class Exchange extends React.Component {
             <div className="col-6 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
-                 <div className="input-group-append" onClick={() => {
-
-                   console.log("Getting gas price...")
-                   axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
-                   .catch((err)=>{
-                     console.log("Error getting gas price",err)
-                   })
-                   .then((response)=>{
-                     if(response && response.data.average>0&&response.data.average<200){
-                       response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
-                       let gwei = Math.round(response.data.average*100)/1000
-
-                       console.log(gwei)
-
-
-                       let IDKAMOUNTTOLEAVE = gwei*(1111000000*2) * 201000 // idk maybe enough for a couple transactions?
-
-                       console.log("let's leave ",IDKAMOUNTTOLEAVE,this.props.ethBalance)
-
-                       let gasInEth = this.props.web3.utils.fromWei(""+IDKAMOUNTTOLEAVE,'ether')
-                       console.log("gasInEth",gasInEth)
-
-                       let adjustedEthBalance = (parseFloat(this.props.ethBalance) - parseFloat(gasInEth))
-                       console.log(adjustedEthBalance)
-
-                       this.setState({amount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 },()=>{
-                         this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                       })
-
-                     }
-                   })
-
-                 }}>
-                   <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                     max
-                   </span>
-                 </div>
+                <Input
+                  width={1}
+                  type="number"
+                  step="0.1"
+                  placeholder="$0.00"
+                  value={this.state.amount}
+                  onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               </Scaler>
             </div>
@@ -1512,7 +1463,7 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
+              <Button disabled={buttonsDisabled} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move ETH to DAI")
 
@@ -1588,7 +1539,7 @@ export default class Exchange extends React.Component {
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-up" /> Send
                 </Scaler>
-              </button>
+              </Button>
 
             </div>
           </div>
@@ -1628,20 +1579,13 @@ export default class Exchange extends React.Component {
             <div className="col-6 p-1" style={colStyle}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
-               <div className="input-group-append" onClick={() => {
-                  this.setState({amount: Math.floor((this.props.daiBalance)*100)/100 },()=>{
-                    this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                  })
-               }}>
-                 <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
-                   max
-                 </span>
-               </div>
+                <Input
+                  width={1}
+                  type="number"
+                  step="0.1"
+                  placeholder="$0.00"
+                  value={this.state.amount}
+                  onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               </Scaler>
             </div>
@@ -1651,7 +1595,7 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1">
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
+              <Button disabled={buttonsDisabled} onClick={async ()=>{
 
                 console.log("Using uniswap exchange to move DAI to ETH")
 
@@ -1928,7 +1872,7 @@ export default class Exchange extends React.Component {
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-down" /> Send
                 </Scaler>
-              </button>
+              </Button>
             </div>
           </div>
         )

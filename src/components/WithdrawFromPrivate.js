@@ -5,6 +5,10 @@ import { Scaler } from "dapparatus";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import i18n from '../i18n';
+import {
+  Button,
+  Input
+} from 'rimble-ui'
 
 let pollInterval
 let metaReceiptTracker = {}
@@ -172,7 +176,11 @@ export default class SendToAddress extends React.Component {
             <div className="form-group w-100">
               <div className="form-group w-100">
                 <label htmlFor="amount_input">{i18n.t('withdraw_from_private.from_address')}</label>
-                <input type="text" className="form-control" placeholder="0x..." value={fromAddress} />
+                <Input
+                  width={1}
+                  type="text"
+                  placeholder="0x..."
+                  value={fromAddress} />
               </div>
 
               <div className="content bridge row">
@@ -190,18 +198,22 @@ export default class SendToAddress extends React.Component {
 
               <label htmlFor="amount_input">{i18n.t('withdraw_from_private.amount')}</label>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
+                <Input 
+                  width={1}
+                  type="number"
+                  placeholder="$0.00"
+                  value={this.state.amount}
+                  onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               {products}
             </div>
-            <button style={this.props.buttonStyle.primary} className={`btn btn-success btn-lg w-100 ${canWithdraw ? '' : 'disabled'}`}
-                    onClick={this.withdraw}>
+            <Button 
+              size={'large'}
+              width={1}
+              disabled={!canWithdraw}
+              onClick={this.withdraw}>
               {i18n.t('withdraw_from_private.withdraw')}
-            </button>
+            </Button>
           </div>
       </div>
     )
