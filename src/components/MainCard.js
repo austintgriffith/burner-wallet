@@ -124,6 +124,17 @@ export default ({SUPERSIMPLEVIEW,buttonStyle,ERC20TOKEN,address, balance, change
             </button>
           </div>
         </div>
+        <div className="content ops row">
+          <div className="col-12 p-1">
+            <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
+              changeView('exchange')}
+            }>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fa fa-random"></i> {i18next.t('more_buttons.exchange')}
+              </Scaler>
+            </button>
+          </div>
+        </div>
       </div>
     )
   }

@@ -121,6 +121,7 @@ contract VendingMachine is AdminRole, WhitelistedRole {
   * Will buy tokens at a 1-to-1 ratio. User will also be given an allowance to withdraw the same amount.
   */
   function deposit() public payable {
+    revert();
     _addAllowance(msg.sender, msg.value);
 
     tokenContract.mint(msg.sender, msg.value);
