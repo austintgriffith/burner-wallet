@@ -85,7 +85,7 @@ export default class YourModule extends React.Component {
         this.props.contracts.ERC20Vendable.approve(this.props.marketAddress, -1),
         50000, 0, 0,(approveReceipt)=>{
           this.props.tx(
-            this.state.MarketContract.buy(outcome, cost.toNumber(), 1000 * 1e18),
+            this.state.MarketContract.buy(outcome, cost.toNumber(), 400 * 1e18),
             1042570, 0, 0,(buyReceipt)=>{
               if(buyReceipt){
                 console.log("BET COMPLETE?!?", buyReceipt)
