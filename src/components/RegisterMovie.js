@@ -50,6 +50,7 @@ export default class RegisterMovie extends React.Component {
         },
       },
       uploader: {},
+      canRegister: false,
     };
   }
 
@@ -106,13 +107,7 @@ export default class RegisterMovie extends React.Component {
       setReceipt,
       changeView,
     } = this.props;
-    const {
-      image,
-      movieName,
-      rightholderAddress,
-      rightholderName,
-      email,
-    } = this.refs;
+    const {movieName, rightholderAddress, rightholderName, email} = this.refs;
     const {provider, meta, uploader} = this.state;
 
     changeView('loader');
@@ -287,11 +282,29 @@ export default class RegisterMovie extends React.Component {
           [uploaderId]: urls,
         }),
       );
+      this.canRegister();
     };
   }
 
+  canRegister() {
+    const {uploader} = this.state;
+    const {movieName, rightholderAddress, rightholderName, email} = this.refs;
+    const canRegister = !(
+      uploader &&
+      uploader.posters &&
+      uploader.movies &&
+      movieName.value &&
+      rightholderAddress.value &&
+      rightholderName.value &&
+      email.value
+    );
+    this.setState({
+      canRegister,
+    });
+  }
+
   render() {
-    const {rightholderAddress, uploader} = this.state;
+    const {rightholderAddress, uploader, canRegister} = this.state;
 
     return (
       <div>
@@ -319,6 +332,7 @@ export default class RegisterMovie extends React.Component {
                 type="text"
                 placeholder="2001: A Space Odyssey..."
                 ref="movieName"
+                onChange={this.canRegister.bind(this)}
               />
             </div>
           </div>
@@ -330,6 +344,7 @@ export default class RegisterMovie extends React.Component {
                 type="text"
                 placeholder="Stanley Kubrick..."
                 ref="rightholderName"
+                onChange={this.canRegister.bind(this)}
               />
             </div>
           </div>
@@ -341,6 +356,7 @@ export default class RegisterMovie extends React.Component {
                 type="text"
                 placeholder="Stanley@kubrick.com"
                 ref="email"
+                onChange={this.canRegister.bind(this)}
               />
             </div>
           </div>
@@ -353,6 +369,7 @@ export default class RegisterMovie extends React.Component {
                 placeholder="0x..."
                 ref="rightholderAddress"
                 defaultValue={rightholderAddress}
+                onChange={this.canRegister.bind(this)}
               />
               <OutlineButton
                 icon={'CenterFocusWeak'}
@@ -368,8 +385,7 @@ export default class RegisterMovie extends React.Component {
           <Button
             size={'large'}
             width={1}
-            disabled={!(uploader && uploader.posters && uploader.movies)}
-            name="theVeryBottom"
+            disabled={canRegister}
             onClick={this.submit}>
             Register
           </Button>
