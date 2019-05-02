@@ -240,12 +240,39 @@ module.exports = {
 
   ////----------------------------------------------------------------------------///////////////////
 
+  inspect:()=>{
+    describe('#inspect() ', function() {
+      it('should inspect', async function() {
+        this.timeout(600000)
+        let addresses = require("fs").readFileSync("./addresses.txt").toString().split("\n")
+        console.log("addresses:",addresses)
+        for(let index in addresses){
+          let address = addresses[index]
+          if(address){
+            let result = await clevis('contract', 'allowance', 'VendingMachine', address)
+            if(result!=100000000000000000000){
+              console.log(address.blue+", "+(100 - (parseInt(result)/1000000000000000000)))
+            }
+          }
+        }
+        // contract addAllowance VendingMachine 0 0x9a28F8BA87574F0794aC0a88636D85F1Dd92e3b8 100000000000000000000
 
+        /*
+
+        printTxResult(result)
+        //assert(result==0,"deploy ERRORS")
+        //addAdmin
+        result = await clevis("contract","addAdmin","VendingMachine","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")
+        printTxResult(result)*/
+
+      });
+    });
+  },
 
   ////    AIRDROP TESTING  <<<<<<<<--------------------------------
   airdrop:()=>{
     describe('#airdrop() ', function() {
-      it('update vending machine address', async function() {
+      it('should set an offramp allowance for each user', async function() {
         this.timeout(600000)
         let addresses = require("fs").readFileSync("./addresses.txt").toString().split("\n")
         console.log("addresses:",addresses)
@@ -253,7 +280,7 @@ module.exports = {
           let address = addresses[index]
           if(address){
             console.log("ADDING ALLOWANCE FOR ",address)
-            let result = await clevis('contract', 'addAllowance', 'VendingMachine', 0, address, 100000000000000000000)
+            let result = await clevis('contract', 'addAllowance', 'VendingMachine', 0, address, 30000000000000000000)
             console.log("RESULT",result)
           }
         }
