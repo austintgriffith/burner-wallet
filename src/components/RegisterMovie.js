@@ -131,7 +131,7 @@ export default class RegisterMovie extends React.Component {
     try {
       tokenHash = await this.upload(Buffer(JSON.stringify(token)));
     } catch (err) {
-      this.changeAlert({
+      this.props.changeAlert({
         type: 'warning',
         message: "Couldn't upload token",
       });
@@ -155,7 +155,7 @@ export default class RegisterMovie extends React.Component {
           meta.mainnet.account.privateKey,
         );
       } catch (err) {
-        this.changeAlert({
+        this.props.changeAlert({
           type: 'warning',
           message: "Couldn't send transaction",
         });
@@ -271,7 +271,7 @@ export default class RegisterMovie extends React.Component {
     const {uploader} = this.state;
     return (err, urls) => {
       if (err) {
-        this.changeAlert({
+        this.props.changeAlert({
           type: 'warning',
           message: err.message,
         });
