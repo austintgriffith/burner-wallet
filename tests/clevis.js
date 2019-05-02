@@ -87,8 +87,10 @@ module.exports = {
         if(!fs.existsSync(clevisConfig.CRA_FOLDER + "/contracts")){
           fs.mkdirSync(clevisConfig.CRA_FOLDER + "/contracts");
         }
-        for(let c in module.exports.contracts){
-          let thisContract = module.exports.contracts[c]
+        console.log("hardcode publish token and vendingmachine...")
+        let contractArray = ["ERC20Vendable","VendingMachine"]
+        for(let c in contractArray){
+          let thisContract =contractArray[c]
           console.log(tab,thisContract.magenta)
           let address = fs.readFileSync(clevisConfig.CONTRACTS_FOLDER + "/" + thisContract+"/"+thisContract+".address").toString().trim()
           console.log(tab,"ADDRESS:",address.blue)
@@ -103,7 +105,7 @@ module.exports = {
           let bytecode = fs.readFileSync(clevisConfig.CONTRACTS_FOLDER + "/" + thisContract +"/"+thisContract+".bytecode").toString().trim()
           fs.writeFileSync(clevisConfig.CRA_FOLDER + "/contracts/" + thisContract+".bytecode.js","module.exports = \""+bytecode+"\"");
         }
-        fs.writeFileSync(clevisConfig.CRA_FOLDER + "/contracts/contracts.js","module.exports = "+JSON.stringify(module.exports.contracts));
+        fs.writeFileSync(clevisConfig.CRA_FOLDER + "/contracts/contracts.js","module.exports = "+JSON.stringify(contractArray));
         module.exports.reload()
       });
     });

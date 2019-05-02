@@ -113,7 +113,7 @@ contract VendingMachine is AdminRole, WhitelistedRole {
 
   //Fallback. Just send currency here to deposit
   function () external payable {
-    deposit();
+    //deposit();
   }
 
   /**

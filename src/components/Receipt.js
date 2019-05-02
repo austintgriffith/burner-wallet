@@ -1,6 +1,6 @@
 import React from 'react';
 import Ruler from "./Ruler";
-import Badge from './Badge';
+
 import Balance from "./Balance";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import { Blockie } from "dapparatus";
@@ -58,7 +58,7 @@ export default class Receive extends React.Component {
     if(receipt.badge){
       sendAmount = (
         <div>
-          <Badge key={"sentbadge"} id={receipt.badge.id} image={receipt.badge.image}/>
+        
         </div>
       )
     }else{
