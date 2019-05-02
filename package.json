@@ -16,7 +16,7 @@
     "identity-obj-proxy": "3.0.0",
     "jsbi-utils": "^1.0.0",
     "jsonp": "^0.2.1",
-    "leap-core": "0.29.1",
+    "leap-core": "^0.30.1",
     "qrcode-reader": "^1.0.4",
     "qrcode.react": "^0.8.0",
     "query-string": "^6.3.0",
