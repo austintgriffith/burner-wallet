@@ -23,6 +23,7 @@ export default class YourModule extends React.Component {
       outcomeTokensSold:[0, 0],
       title: "",
       amount : 0,
+      bets: []
     }
   }
   componentDidMount() {
@@ -44,6 +45,8 @@ export default class YourModule extends React.Component {
 
   async pollInterval(){
       const marketInfo = await this.getMarketInfo(this.props.marketAddress)
+      const bets = await this.getBets(this.props.marketAddress)
+
       if(marketInfo&&marketInfo.event){
         const outcomeTokensSold = marketInfo.netOutcomeTokensSold
         const title = marketInfo.event.oracle.eventDescription.title
@@ -51,12 +54,36 @@ export default class YourModule extends React.Component {
         this.setState({/*marketAddress, */odds, outcomeTokensSold, title})
       }
 
+      let updateBets = []
+      updateBets[0] = 0
+      updateBets[1] = 0
+      if(bets){
+        for(let b in bets['results']){
+          //console.log(bets['results'][b])
+          let amount = this.props.web3.utils.fromWei(bets['results'][b].cost,'ether')
+          amount = Math.round(parseFloat(amount)*1000)/1000
+          let outcome = bets['results'][b].outcomeToken.index
+          console.log("AMOUNT:",amount,"RESULT:",outcome)
+          updateBets[outcome] += amount
+        }
+        this.setState({bets:updateBets})
+      }
+
+
   }
 
   async getMarketInfo(address) {
       const response = await fetch(baseDomain +`/api/markets/${address}/`)
       const json = await response.json();
       return json;
+  }
+
+  async getBets(address) {
+    let url = `https://burner-api.helena.network/api/markets/${address}/trades/${this.props.address}/`
+    const response = await fetch(url)
+    const json = await response.json();
+    console.log("json",json)
+    return json;
   }
 
   async firstApprove() {
@@ -102,6 +129,11 @@ export default class YourModule extends React.Component {
     if(!this.state.title){
       return (<div>loading market...</div>)
     }
+
+    let betOpacity = 0.1
+    if(this.state.bets[0]>0 || this.state.bets[1]>0){
+      betOpacity = 0.6
+    }
     return (
       <div>
         <div className="form-group w-100">
@@ -139,6 +171,14 @@ export default class YourModule extends React.Component {
                 <i className="fas fa-times"></i> {"NO (" + Math.round(this.state.odds[1] * 100 *1000)/1000 + "%)"}
               </Scaler>
             </button>
+            </div>
+          </div>
+          <div className="content bridge row">
+            <div className="col-6 p-1" style={{textAlign:'center', opacity:betOpacity, fontSize: 12}}>
+              {this.state.bets[0]} xP+
+            </div>
+            <div className="col-6 p-1" style={{textAlign:'center', opacity:betOpacity, fontSize: 12}}>
+              {this.state.bets[1]} xP+
             </div>
           </div>
 
