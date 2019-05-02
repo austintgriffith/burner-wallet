@@ -23,6 +23,7 @@ import Loader from './components/Loader';
 import burnerlogo from './burnerwallet.png';
 import BurnWallet from './components/BurnWallet'
 import Bottom from './components/Bottom';
+import Exchange from './components/Exchange'
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 
@@ -1627,7 +1628,33 @@ render() {
                 <div className="main-card card w-100" style={{zIndex:1}}>
 
                   <NavCard title={i18n.t('exchange_title')} goBack={this.goBack.bind(this)}/>
-
+                  <Exchange
+                     eth={eth}
+                     dai={dai}
+                     xdai={xdai}
+                     dollarDisplay={dollarDisplay}
+                     ethprice={this.state.ethprice}
+                     ethBalance={this.state.ethBalance}
+                     daiBalance={this.state.daiBalance}
+                     xdaiBalance={this.state.xdaiBalance}
+                     mainnetweb3={this.state.mainnetweb3}
+                     xdaiweb3={this.state.xdaiweb3}
+                     daiContract={this.state.daiContract}
+                     ensContract={this.state.ensContract}
+                     isVendor={this.state.isVendor}
+                     isAdmin={this.state.isAdmin}
+                     contracts={this.state.contracts}
+                     buttonStyle={buttonStyle}
+                     changeAlert={this.changeAlert}
+                     setGwei={this.setGwei}
+                     network={this.state.network}
+                     tx={this.state.tx}
+                     web3={this.state.web3}
+                     send={this.state.send}
+                     nativeSend={this.state.nativeSend}
+                     address={account}
+                     balance={balance}
+                   />
                 </div>
                 <Bottom
                   action={this.goBack.bind(this)}
