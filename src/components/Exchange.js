@@ -282,7 +282,7 @@ export default class Exchange extends React.Component {
         this.setState({denDaiBalance})
       }
 
-      console.log("vendorContract",vendorContract)
+      //console.log("vendorContract",vendorContract)
       let maxWithdrawlAmount = await vendorContract.methods.allowance(this.state.daiAddress).call()
       maxWithdrawlAmount = mainnetweb3.utils.fromWei(maxWithdrawlAmount,"ether")
       if(maxWithdrawlAmount!=this.state.maxWithdrawlAmount){
