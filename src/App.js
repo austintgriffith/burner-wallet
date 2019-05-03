@@ -174,6 +174,7 @@ let dollarDisplay = (amount)=>{
 
 let interval
 let intervalLong
+let blockinterval
 
 class App extends Component {
   constructor(props) {
@@ -208,6 +209,7 @@ class App extends Component {
       badges: {},
       selectedBadge: false,
       isLoading:[],
+      blockpercent:100
     };
     this.alertTimeout = null;
 
@@ -323,6 +325,7 @@ class App extends Component {
     setTimeout(this.poll.bind(this),650)
     interval = setInterval(this.poll.bind(this),1500)
     intervalLong = setInterval(this.longPoll.bind(this),45000)
+    blockinterval = setInterval(this.loadMore.bind(this),250)
     setTimeout(this.longPoll.bind(this),150)
 
     let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
@@ -340,6 +343,11 @@ class App extends Component {
     clearInterval(interval)
     clearInterval(intervalLong)
     window.removeEventListener("resize", this.updateDimensions.bind(this));
+  }
+  loadMore(){
+    let newPercent = this.state.blockpercent+5
+    if(newPercent>100) newPercent=100
+    this.setState({blockpercent:newPercent})
   }
   async poll() {
 
@@ -1014,6 +1022,7 @@ render() {
   if(web3){
     header = (
       <Header
+
         openScanner={this.openScanner.bind(this)}
         network={this.state.network}
         total={totalBalance}
@@ -1030,6 +1039,9 @@ render() {
     )
   }
 
+  let shadowAmount = 100
+  let shadowColor = mainStyle.mainColor
+
   return (
     <I18nextProvider i18n={i18n}>
     <div style={mainStyle}>
@@ -1040,6 +1052,13 @@ render() {
 
         <div>
           {header}
+
+          <div style={{position:'absolute',top:30,left:"40%",color:"#FFaaaa",width:"20%"}}>
+            <div style={{width:"100%",height:1,backgroundColor:"#444444",marginLeft:"10%"}}>
+              <div style={{width:this.state.blockpercent+"%",height:1,backgroundColor:mainStyle.mainColorAlt,boxShadow:"0 0 "+shadowAmount/40+"px "+shadowColor+", 0 0 "+shadowAmount/30+"px "+shadowColor+", 0 0 "+shadowAmount/20+"px "+shadowColor+", 0 0 "+shadowAmount/10+"px #ffffff, 0 0 "+shadowAmount/5+"px "+shadowColor+", 0 0 "+shadowAmount/3+"px "+shadowColor+", 0 0 "+shadowAmount/1+"px "+shadowColor+""}}>
+              </div>
+            </div>
+          </div>
 
 
 
@@ -1632,7 +1651,10 @@ render() {
                      eth={eth}
                      dai={dai}
                      xdai={xdai}
-                     dollarDisplay={dollarDisplay}
+                     ERC20NAME={ERC20NAME}
+                     ERC20IMAGE={ERC20IMAGE}
+                     ERC20TOKEN={ERC20TOKEN}
+                     ERC20VENDOR={ERC20VENDOR}
                      ethprice={this.state.ethprice}
                      ethBalance={this.state.ethBalance}
                      daiBalance={this.state.daiBalance}
@@ -1654,6 +1676,8 @@ render() {
                      nativeSend={this.state.nativeSend}
                      address={account}
                      balance={balance}
+                     goBack={this.goBack.bind(this)}
+                     dollarDisplay={dollarDisplay}
                    />
                 </div>
                 <Bottom
@@ -1732,6 +1756,11 @@ render() {
         newPrivateKey={this.state.newPrivateKey}
         fallbackWeb3Provider={WEB3_PROVIDER}
         onUpdate={async (state) => {
+
+          if(state.block!=this.state.block){
+            state.blockpercent = 0
+          }
+
           //console.log("DAPPARATUS UPDATE",state)
           if(ERC20TOKEN){
             delete state.balance
