@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ContractLoader, Dapparatus, Transactions, Gas, Events } from "dapparatus";
-import { helpers, Tx, Input, Output } from 'leap-core';
+import { helpers, Tx, Input, Output, Util } from 'leap-core';
 import { equal, bi } from 'jsbi-utils';
 import Web3 from 'web3';
 import { I18nextProvider } from 'react-i18next';
@@ -1374,7 +1374,6 @@ export default class App extends Component {
                         changeView={this.changeView}
                         changeAlert={this.changeAlert}
                         dollarDisplay={dollarDisplay}
-                        tokenSendV2={tokenSendV2.bind(this)}
                         selectBadge={this.selectBadge.bind(this)}
                         contracts={this.state.contracts}
                         web3={this.state.web3}
@@ -1636,6 +1635,8 @@ export default class App extends Component {
                         dollarDisplay={dollarDisplay}
                         badge={this.state.badges[this.state.selectedBadge]}
                         clearBadges={this.clearBadges.bind(this)}
+                        tokenSendV2={tokenSendV2.bind(this)}
+                        metaAccount={this.state.metaAccount}
                       />
                     </Card>
                     <Bottom
@@ -1693,6 +1694,7 @@ export default class App extends Component {
                         buttonStyle={buttonStyle}
                         balance={balance}
                         web3={this.state.web3}
+                        xdaiweb3={this.state.xdaiweb3}
                         contracts={this.state.contracts}
                         address={account}
                         scannerState={this.state.scannerState}
@@ -2180,8 +2182,6 @@ export default class App extends Component {
 }
 
 //<iframe id="galleassFrame" style={{zIndex:99,position:"absolute",left:0,top:0,width:800,height:600}} src="https://galleass.io" />
-const NFT_COLOR_BASE = 32769; // 2^15 + 1
-const isNFT = (color: Number): boolean => color >= NFT_COLOR_BASE;
 
 // NOTE: This function is used heavily by legacy code. We've reimplemented it's
 // body though.
@@ -2227,14 +2227,14 @@ async function tokenSendV2(from, to, value, color, xdaiweb3, web3, privateKey) {
   const unspent = await xdaiweb3.getUnspent(from)
 
   let transaction;
-  if (isNFT(color)) {
-    const { outpoint } = unspent.find(
+  if (Util.isNST(color)) {
+    const { outpoint, output: { data }} = unspent.find(
       ({ output }) =>
         Number(output.color) === Number(color) &&
         equal(bi(output.value), bi(value))
     );
     const inputs = [new Input(outpoint)];
-    const outputs = [new Output(value, to, color)];
+    const outputs = [new Output(value, to, color, data)];
     transaction = Tx.transfer(inputs, outputs);
   } else {
     transaction = Tx.transferFromUtxos(unspent, from, to, value, color)

@@ -76,8 +76,20 @@ export default class SendBadge extends React.Component {
   }
   send = async () => {
     let { toAddress, amount } = this.state;
-    let {ERC20TOKEN} = this.props
-
+    let {
+      ERC20TOKEN,
+      address,
+      badge,
+      tokenSendV2,
+      metaAccount,
+      xdaiweb3,
+      web3,
+      goBack,
+      changeAlert,
+      setReceipt,
+      changeView,
+      clearBadges
+    } = this.props
 
     if(this.state.canSend){
 
@@ -87,31 +99,44 @@ export default class SendBadge extends React.Component {
 
       console.log("web3",this.props.web3)
 
-      cookie.remove('sendBadgeToAddress', { path: '/' })
-      this.props.tx(
-        this.props.contracts.ERC721Full.transferFrom(this.props.address,this.state.toAddress,this.props.badge.id)
-        ,240000,0,0,(receipt)=>{
-          if(receipt){
+      const color = 49154;
+      let receipt;
+      console.log(
 
-            console.log("SEND BADGE COMPLETE?!?",receipt)
-            this.props.goBack();
-            window.history.pushState({},"", "/");
-            this.props.setReceipt({to:toAddress,from:receipt.from,badge:this.props.badge,result:receipt})
-            this.props.changeView("receipt");
-            this.props.clearBadges()
-          }
-        }
-      )
-      /*this.props.send(toAddress, value, 120000, txData, (result) => {
-        if(result && result.transactionHash){
-          this.props.goBack();
-          window.history.pushState({},"", "/");
-          this.props.setReceipt({to:toAddress,from:result.from,amount:parseFloat(amount),message:this.state.message,result:result})
-          this.props.changeView("receipt");
-        }
-      })*/
+          address,
+          toAddress,
+          badge.id,
+          color,
+          xdaiweb3,
+          web3,
+          metaAccount && metaAccount.privateKey
+        );
+      try {
+        receipt = await tokenSendV2(
+          address,
+          toAddress,
+          badge.id,
+          color,
+          xdaiweb3,
+          web3,
+          metaAccount && metaAccount.privateKey
+        )
+      } catch(err) {
+        console.log(err);
+        goBack();
+        changeAlert({
+          type: 'warning',
+          message: "Couldn't send token",
+        });
+        return;
+      }
+      console.log("SEND BADGE COMPLETE?!?",receipt)
+      goBack();
+      window.history.pushState({},"", "/");
+      setReceipt({to:toAddress,from:receipt.from,badge:badge,result:receipt})
+      changeView("receipt");
+      clearBadges();
     }
-
   };
 
   render() {
