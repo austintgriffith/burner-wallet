@@ -61,7 +61,9 @@ class Uploader extends Component {
           const id = uuidv4();
           try {
             data = (await axios.post(signer, {
-              filename: `${folder}${id}-${file.name}`,
+              // NOTE: A file name cannot contain chars like spaces, as
+              // otherwise convertion will fail.
+              filename: `${folder}${id}-${file.name.replace(/\s+/g, '')}`,
               contentType: file.type,
             })).data;
           } catch (err) {
@@ -94,7 +96,9 @@ class Uploader extends Component {
     const {uploadStatus, destinationBucket} = this.props;
 
     while (true) {
-      setTimeout(null, 100);
+      // NOTE: When we query the lambda too much, we'll get 500 "Too Many
+      // Requests" errors.
+      await new Promise(resolve => setTimeout(() => resolve(), 500));
       let status;
       try {
         status = await this.fetchJob(fileName);
@@ -133,7 +137,17 @@ class Uploader extends Component {
   }
 
   async fetchJob(fileName) {
-    let jobs = await (await axios.get(jobsQueue)).data.jobs;
+    let jobs;
+    try {
+      jobs = await (await axios.get(jobsQueue)).data.jobs;
+    } catch (err) {
+      // NOTE: We ignore 500s as they're likely "Too Many Requests" errors.
+      if (err.message.indexOf('status code 500') >= 0) {
+        return 'PROGRESSING';
+      } else {
+        throw err;
+      }
+    }
     jobs = jobs.filter(job => job.fileInput === fileName);
 
     if (jobs.length > 1) {
