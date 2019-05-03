@@ -1086,58 +1086,38 @@ render() {
             if(this.state.contracts){
               eventParser = (
                 <div style={{color:"#000000"}}>
-                  <Events
-                    config={{hide:true}}
-                    contract={this.state.contracts[ERC20TOKEN]}
-                    eventName={"Transfer"}
-                    block={this.state.block}
-                    filter={{from:this.state.account}}
-                    onUpdate={(eventData,allEvents)=>{this.setState({transferFrom:allEvents},this.syncFullTransactions)}}
-                  />
-                  <Events
-                    config={{hide:true}}
-                    contract={this.state.contracts[ERC20TOKEN]}
-                    eventName={"Transfer"}
-                    block={this.state.block}
-                    filter={{to:this.state.account}}
-                    onUpdate={(eventData,allEvents)=>{this.setState({transferTo:allEvents},this.syncFullTransactions)}}
-                  />
-                  <Events
-                    config={{hide:true}}
-                    contract={this.state.contracts[ERC20TOKEN]}
-                    eventName={"TransferWithData"}
-                    block={this.state.block}
-                    filter={{from:this.state.account}}
-                    onUpdate={(eventData,allEvents)=>{this.setState({transferFromWithData:allEvents},this.syncFullTransactions)}}
-                  />
-                  <Events
-                    config={{hide:true}}
-                    contract={this.state.contracts[ERC20TOKEN]}
-                    eventName={"TransferWithData"}
-                    block={this.state.block}
-                    filter={{to:this.state.account}}
-                    onUpdate={(eventData,allEvents)=>{this.setState({transferToWithData:allEvents},this.syncFullTransactions)}}
-                  />
-                  <Events
-                    config={{hide:true}}
-                    contract={this.state.contracts[ERC20VENDOR]}
-                    eventName={"UpdateVendor"}
-                    block={this.state.block}
-                    onUpdate={(vendor, all)=>{
-                      let {vendors} = this.state
-                      console.log("VENDOR",vendor)
-                      if(!vendors[vendor.vendor] || vendors[vendor.vendor].blockNumber<vendor.blockNumber){
-                        vendors[vendor.vendor] = {
-                          name: this.state.web3.utils.hexToUtf8(vendor.name),
-                          isAllowed: vendor.isAllowed,
-                          isActive: vendor.isActive,
-                          vendor: vendor.vendor,
-                          blockNumber: vendor.blockNumber
-                        }
-                      }
-                      this.setState({vendors})
-                    }}
-                  />
+                <Events
+                  config={{hide:true}}
+                  contract={this.state.contracts[ERC20TOKEN]}
+                  eventName={"Transfer"}
+                  block={this.state.block}
+                  filter={{from:this.state.account}}
+                  onUpdate={(eventData,allEvents)=>{this.setState({transferFrom:allEvents},this.syncFullTransactions)}}
+                />
+                <Events
+                  config={{hide:true}}
+                  contract={this.state.contracts[ERC20TOKEN]}
+                  eventName={"Transfer"}
+                  block={this.state.block}
+                  filter={{to:this.state.account}}
+                  onUpdate={(eventData,allEvents)=>{this.setState({transferTo:allEvents},this.syncFullTransactions)}}
+                />
+                <Events
+                  config={{hide:true}}
+                  contract={this.state.contracts[ERC20TOKEN]}
+                  eventName={"TransferWithData"}
+                  block={this.state.block}
+                  filter={{from:this.state.account}}
+                  onUpdate={(eventData,allEvents)=>{this.setState({transferFromWithData:allEvents},this.syncFullTransactions)}}
+                />
+                <Events
+                  config={{hide:true}}
+                  contract={this.state.contracts[ERC20TOKEN]}
+                  eventName={"TransferWithData"}
+                  block={this.state.block}
+                  filter={{to:this.state.account}}
+                  onUpdate={(eventData,allEvents)=>{this.setState({transferToWithData:allEvents},this.syncFullTransactions)}}
+                />
                 </div>
               )
             }

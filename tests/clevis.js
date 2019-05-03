@@ -275,14 +275,14 @@ module.exports = {
   airdrop:()=>{
     describe('#airdrop() ', function() {
       it('should set an offramp allowance for each user', async function() {
-        this.timeout(600000)
+        this.timeout(6000000)
         let addresses = require("fs").readFileSync("./addresses.txt").toString().split("\n")
         console.log("addresses:",addresses)
         for(let index in addresses){
           let address = addresses[index]
           if(address){
             console.log("ADDING ALLOWANCE FOR ",address)
-            let result = await clevis('contract', 'addAllowance', 'VendingMachine', 0, address, 30000000000000000000)
+            let result = await clevis('contract', 'addAllowance', 'VendingMachine', 0, address, 50000000000000000000)
             console.log("RESULT",result)
           }
         }

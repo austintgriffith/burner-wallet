@@ -48,7 +48,7 @@ export  default ({totalFunds, noimage, mainStyle, setLoading, loading, isLoading
               tx(
                 //function buyEmoji(uint8 index)
                 contracts.ERC20Vendable.buyEmoji(emojiIndex)
-                ,240000,0,0,(receipt)=>{
+                ,100000,0,0,(receipt)=>{
                   if(receipt){
                     console.log("DONE WITH BUY EMOJI?")
                     setLoading(emojiIndex,false)
@@ -70,7 +70,7 @@ export  default ({totalFunds, noimage, mainStyle, setLoading, loading, isLoading
               tx(
                 //function buyEmoji(uint8 index)
                 contracts.ERC20Vendable.sellEmoji(emojiIndex)
-                ,240000,0,0,(receipt)=>{
+                ,100000,0,0,(receipt)=>{
                   if(receipt){
                     console.log("DONE WITH BUY EMOJI?")
                     setLoading(emojiIndex,false)
