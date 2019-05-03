@@ -1076,7 +1076,7 @@ export default class Exchange extends React.Component {
            <div className="content ops row">
 
              <div className="col-6 p-1">
-               <button className="btn btn-large w-100"  style={this.props.buttonStyle.primary} disabled={buttonsDisabled}  onClick={()=>{
+               <button className="btn btn-large w-100"  style={this.props.buttonStyle.primary} disabled={true}  onClick={()=>{
                  this.setState({xdaiToDendaiMode:"deposit"})
                }}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
