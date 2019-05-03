@@ -43,7 +43,7 @@ import namehash from 'eth-ens-namehash'
 import incogDetect from './services/incogDetect.js'
 import { Card, Box, ThemeProvider } from 'rimble-ui';
 import theme from "./theme"
-import { getTokensOfOwner } from "erc721-balance";
+import bs58 from "bs58";
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
@@ -60,6 +60,8 @@ const EthCrypto = require('eth-crypto');
 
 //const POA_XDAI_NODE = "https://dai-b.poa.network"
 const POA_XDAI_NODE = "https://dai.poa.network"
+
+const NST_COLOR_BASE = 49153;
 
 let XDAI_PROVIDER = POA_XDAI_NODE
 
@@ -514,39 +516,95 @@ export default class App extends Component {
     clearInterval(intervalLong)
     window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
-  async poll() {
-    const { web3, contracts, account } = this.state;
-    let { badgeBalance } = this.state;
 
-    if (contracts && contracts.ERC721Full) {
-      let tokens;
-      try {
-        tokens = await getTokensOfOwner(
-          web3,
-          contracts.ERC721Full._address,
-          account
-        )
-      } catch(err) {
-        this.changeAlert({
-          type: 'warning',
-          message: "Couldn't load ERC721 data.",
-        });
-        console.log(err)
-      }
-      if (badgeBalance !== tokens.length) {
-        badgeBalance = tokens.length;
+  async fetchBadgesPlasma(color) {
+    const {xdaiweb3, account, badgeBalance} = this.state;
+    if (xdaiweb3) {
+      const queenId =
+        '0x000000000000000000000000000000000000000000000000000000000000053A';
 
-        const badges = tokens.reduce((initVal, currVal) => {
-          const { raw, tokenId } = currVal;
-          initVal[tokenId] = raw;
-          initVal[tokenId].id = tokenId;
-          return initVal;
-        }, {});
+      const colors = await new Promise((resolve, reject) => {
+        xdaiweb3.currentProvider.send(
+          {
+            jsonrpc: '2.0',
+            id: 42,
+            method: 'plasma_getColors',
+            params: [false, true],
+          },
+          (err, {result}) => {
+            if (err) {
+              return reject(err);
+            }
+            return resolve(result);
+          },
+        );
+      });
+      const tokenAddr = colors[color - NST_COLOR_BASE]
+        .replace('0x', '')
+        .toLowerCase();
 
-        this.setState({badges});
+      const unspent = await new Promise((resolve, reject) => {
+        xdaiweb3.currentProvider.send(
+          {
+            jsonrpc: '2.0',
+            id: 42,
+            method: 'plasma_unspent',
+            params: [account, color],
+          },
+          (err, {result}) => {
+            if (err) {
+              return reject(err);
+            }
+            return resolve(result);
+          },
+        );
+      });
+      const badges = unspent.reduce((initVal, currVal) => {
+        const tokenId = currVal.output.value;
+        initVal[tokenId] = {
+          hash: this.toIPFSHash(currVal.output.data),
+          id: tokenId
+        }
+        return initVal;
+      }, {});
+
+      let tokenIds = Object.keys(badges);
+
+      if (badgeBalance !== tokenIds.length) {
+        for (let i = 0; i < tokenIds.length; i++) {
+          const tokenId = tokenIds[i];
+          const hash = badges[tokenId].hash;
+          badges[tokenId] = Object.assign(
+            {id: tokenId},
+            (await axios.get(`https://ipfs.infura.io/ipfs/${hash}`)).data
+          )
+        }
+        this.setState({badges, badgeBalance: tokenIds.length});
       }
     }
+  }
 
+  toIPFSHash(data) {
+    // NOTE: We currently hard code the IPFS hash to SHA2-256
+    const algorithm = "12";
+    const size = "20";
+    data = data.substring(2, data.length);
+    data = algorithm + size + data;
+    return bs58.encode(Buffer.from(data, "hex"));
+  }
+
+  async poll() {
+    const { web3, contracts, account } = this.state;
+
+    try {
+        await this.fetchBadgesPlasma(49154);
+    } catch(err) {
+      this.changeAlert({
+        type: 'warning',
+        message: "Couldn't load ERC721 data.",
+      });
+      console.log(err);
+    }
 
     //console.log(">>>>>>> <<< >>>>>> Looking into iframe...")
     //console.log(document.getElementById('galleassFrame').contentWindow['web3'])
@@ -621,7 +679,7 @@ export default class App extends Component {
         xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
       }
 
-      this.setState({ethBalance,daiBalance,xdaiBalance,balance:xdaiBalance,badgeBalance,hasUpdateOnce:true})
+      this.setState({ethBalance,daiBalance,xdaiBalance,balance:xdaiBalance,hasUpdateOnce:true})
     }
 
 
