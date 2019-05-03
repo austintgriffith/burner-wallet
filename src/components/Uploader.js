@@ -37,7 +37,7 @@ class Uploader extends Component {
         autoProceed: true,
       });
       this.uppy.use(XHRUpload, {
-        endpoint: `${infura}:5001/api/v0/add`,
+        endpoint: `${infura}:5001/api/v0/add?pin=true`,
         formData: true,
         metaFields: [],
       });
