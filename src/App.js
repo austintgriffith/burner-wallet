@@ -325,7 +325,7 @@ class App extends Component {
     setTimeout(this.poll.bind(this),650)
     interval = setInterval(this.poll.bind(this),1500)
     intervalLong = setInterval(this.longPoll.bind(this),45000)
-    blockinterval = setInterval(this.loadMore.bind(this),250)
+    blockinterval = setInterval(this.loadMore.bind(this),125)
     setTimeout(this.longPoll.bind(this),150)
 
     let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
@@ -345,7 +345,7 @@ class App extends Component {
     window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
   loadMore(){
-    let newPercent = this.state.blockpercent+5
+    let newPercent = this.state.blockpercent+2.5
     if(newPercent>100) newPercent=100
     this.setState({blockpercent:newPercent})
   }
