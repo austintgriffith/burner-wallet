@@ -1053,7 +1053,7 @@ render() {
         <div>
           {header}
 
-          <div style={{position:'absolute',top:30,left:"40%",color:"#FFaaaa",width:"20%"}}>
+          <div style={{position:'absolute',top:30,left:"37%",color:"#FFaaaa",width:"20%"}}>
             <div style={{width:"100%",height:1,backgroundColor:"#444444",marginLeft:"10%"}}>
               <div style={{width:this.state.blockpercent+"%",height:1,backgroundColor:mainStyle.mainColorAlt,boxShadow:"0 0 "+shadowAmount/40+"px "+shadowColor+", 0 0 "+shadowAmount/30+"px "+shadowColor+", 0 0 "+shadowAmount/20+"px "+shadowColor+", 0 0 "+shadowAmount/10+"px #ffffff, 0 0 "+shadowAmount/5+"px "+shadowColor+", 0 0 "+shadowAmount/3+"px "+shadowColor+", 0 0 "+shadowAmount/1+"px "+shadowColor+""}}>
               </div>
