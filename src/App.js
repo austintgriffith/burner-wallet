@@ -2030,6 +2030,7 @@ export default class App extends Component {
                       <NavCard title={i18n.t('mint.title')} goBack={this.goBack.bind(this)}/>
                       <RegisterMovie
                         mainnetweb3={this.state.mainnetweb3}
+	                xdaiweb3={this.state.xdaiweb3}
                         ERC721Full={this.state.contracts.ERC721Full}
                         scannerState={this.state.scannerState}
                         openScanner={this.openScanner.bind(this)}

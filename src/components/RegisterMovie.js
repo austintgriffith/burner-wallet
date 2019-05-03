@@ -6,18 +6,32 @@ import {Buffer} from 'buffer';
 import axios from 'axios';
 import jsonp from 'jsonp';
 import qs from 'qs';
-import {Input, Button, OutlineButton} from 'rimble-ui';
-
+import {Input as RInput, Button, OutlineButton} from 'rimble-ui';
 import Uploader from './Uploader';
+import {Tx, Input, Output, Outpoint} from 'leap-core';
+import bs58 from 'bs58';
+import * as utils from 'ethereumjs-util';
+import {BigInt, subtract} from 'jsbi-utils';
 
 // Taken from Exchange.js
+// TODO: Remove
 const GASBOOSTPRICE = 0.25;
+
+const NST_COLOR_BASE = 49153;
+const BREED_COND =
+  '6080604052348015600f57600080fd5b5060043610602b5760e060020a6000350463451da9f981146030575b600080fd5b605f60048036036060811015604457600080fd5b50803590600160a060020a0360208201351690604001356061565b005b6040805160e060020a63451da9f902815260048101859052600160a060020a038416602482015260448101839052905173123333333333333333333333333333333333333391829163451da9f99160648082019260009290919082900301818387803b15801560cf57600080fd5b505af115801560e2573d6000803e3d6000fd5b505050505050505056fea165627a7a72305820a41e3a0e694cf54b47c2c04a682a2894cd1d00fc915a711bd650de34c3288e060029';
+const TOKEN_TEMPLATE = '1233333333333333333333333333333333333333';
+const BREED_GAS_COST = BigInt(12054948 + 2148176);
 
 const MAILCHIMP = {
   LIST: '94805126b3',
   REGION: 'us18',
   USER: '74327b20b5a290dfc1f6bf3f1',
 };
+
+function replaceAll(str, find, replace) {
+  return str.replace(new RegExp(find, 'g'), replace.replace('0x', ''));
+}
 
 export default class RegisterMovie extends React.Component {
   constructor(props) {
@@ -95,7 +109,6 @@ export default class RegisterMovie extends React.Component {
       // deeming it important.
       console.log(err);
     }
-    console.log(data);
   }
 
   async submit() {
@@ -137,52 +150,28 @@ export default class RegisterMovie extends React.Component {
       });
       console.log(err);
     }
-
-    if (meta.mainnet.account) {
-      let receipt;
-      try {
-        receipt = await this.sendMetaTx(
-          mainnetweb3,
-          ERC721Full,
-          'mint',
-          [
-            rightholderAddress.value,
-            `https://${this.ipfsEndpoint}/ipfs/${tokenHash}`,
-          ],
-          meta.mainnet.address,
-          ERC721Full._address,
-          0,
-          meta.mainnet.account.privateKey,
-        );
-      } catch (err) {
-        this.props.changeAlert({
-          type: 'warning',
-          message: "Couldn't send transaction",
-        });
-        console.log(err);
-      }
-      console.log('metareceipt', receipt);
-      setReceipt({
-        to: rightholderAddress.value,
-        from: ERC721Full._address,
-        badge: token,
-        result: receipt,
-      });
-    } else {
-      const method = ERC721Full.mint(
+    const rawHash = this.extractHash(tokenHash);
+    let receipt;
+    try {
+      receipt = await this.mintPlasma(
         rightholderAddress.value,
-        `https://${this.ipfsEndpoint}/ipfs/${tokenHash}`,
+        rawHash,
+        meta.mainnet.account && meta.mainnet.account.privateKey,
       );
-      const gas = await method.estimateGas({from: provider.mainnet.address});
-      const receipt = await pTx(method, gas, 0, 0);
-      console.log('receipt', receipt);
-      setReceipt({
-        to: rightholderAddress.value,
-        from: ERC721Full._address,
-        badge: token,
-        result: receipt,
+    } catch (err) {
+      this.props.changeAlert({
+        type: 'warning',
+        message: "Transaction wasn't included in block",
       });
+      console.log(err);
     }
+    console.log('receipt', receipt);
+    setReceipt({
+      to: rightholderAddress.value,
+      from: ERC721Full._address,
+      badge: token,
+      result: receipt,
+    });
 
     try {
       await this.registerEmail(
@@ -199,62 +188,175 @@ export default class RegisterMovie extends React.Component {
     changeView('receipt');
   }
 
-  async getGasAverage() {
-    try {
-      return (await axios.get(
-        'https://ethgasstation.info/json/ethgasAPI.json',
-        {crossdomain: true},
-      )).data.average;
-    } catch (err) {
-      console.log('Error getting gas price', err);
-      return err;
-    }
+  async getUtxos(address, color) {
+    const {xdaiweb3} = this.props;
+    return (await new Promise((resolve, reject) => {
+      xdaiweb3.currentProvider.send(
+        {
+          jsonrpc: '2.0',
+          id: 42,
+          method: 'plasma_unspent',
+          params: [address],
+        },
+        (err, {result}) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(result);
+        },
+      );
+    }))
+      .filter(utxo => utxo.output.color === color)
+      .map(utxo => {
+        console.log('utxos', utxo);
+        return {
+          outpoint: Outpoint.fromRaw(utxo.outpoint),
+          output: Output.fromJSON(utxo.output),
+        };
+      });
   }
 
-  async sendMetaTx(
-    web3,
-    contract,
-    methodName,
-    params,
-    from,
-    to,
-    value,
-    privateKey,
-  ) {
-    let average;
-    try {
-      average = await this.getGasAverage();
-    } catch (err) {
-      return err;
-    }
+  extractHash(hash) {
+    const bytes = bs58.decode(hash).toString('hex');
+    return '0x' + bytes.substring(4, bytes.length);
+  }
 
-    if (average > 0 && average < 200) {
-      // NOTE: We boost the gas price by 25%. Taken from other Burner Wallet
-      // code
-      average += average * GASBOOSTPRICE;
-      const gwei = Math.round(average * 100) / 1000;
+  async mintPlasma(to, data, privateKey) {
+    const {xdaiweb3, web3} = this.props;
+    const color = 49154;
+    const queenId =
+      '0x000000000000000000000000000000000000000000000000000000000000053A';
 
-      const method = contract[methodName](...params);
-      const data = method.encodeABI();
-      const gas = await method.estimateGas({from});
-      const tx = {
-        from,
-        data,
-        to,
-        value,
-        gas,
-        gasPrice: Math.round(gwei * 1000000000),
-      };
-      const signed = await web3.eth.accounts.signTransaction(tx, privateKey);
-      const raw = signed.rawTransaction;
-      try {
-        return await web3.eth.sendSignedTransaction(raw);
-      } catch (err) {
-        return err;
-      }
+    const colors = await new Promise((resolve, reject) => {
+      xdaiweb3.currentProvider.send(
+        {
+          jsonrpc: '2.0',
+          id: 42,
+          method: 'plasma_getColors',
+          params: [false, true],
+        },
+        (err, {result}) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(result);
+        },
+      );
+    });
+    const tokenAddr = colors[color - NST_COLOR_BASE]
+      .replace('0x', '')
+      .toLowerCase();
+    const tmp = replaceAll(BREED_COND, TOKEN_TEMPLATE, tokenAddr);
+    const script = Buffer.from(tmp, 'hex');
+    const scriptHash = utils.ripemd160(script);
+    const condAddr = `0x${scriptHash.toString('hex')}`;
+
+    const queenUtxos = await this.getUtxos(condAddr, color);
+    const queenUtxo = queenUtxos[0];
+
+    const gasUtxos = await this.getUtxos(condAddr, 0);
+    // todo: better selection
+    // todo: check value > BREED_GAS_COST
+    const gasUtxo = gasUtxos[0];
+
+    const buffer = Buffer.alloc(64, 0);
+    buffer.write(queenId.replace('0x', ''), 0, 'hex');
+    buffer.write(queenUtxo.output.data.replace('0x', ''), 32, 'hex');
+    const predictedId = utils.keccak256(buffer).toString('hex');
+    const counter = Buffer.from(
+      queenUtxo.output.data.replace('0x', ''),
+      'hex',
+    ).readUInt32BE(28);
+    const buffer2 = Buffer.alloc(32, 0);
+    buffer2.writeUInt32BE(counter + 1, 28);
+
+    const condition = Tx.spendCond(
+      [
+        new Input({
+          prevout: gasUtxo.outpoint,
+          script,
+        }),
+        new Input({
+          prevout: queenUtxo.outpoint,
+        }),
+      ],
+      [
+        new Output(queenId, condAddr, color, '0x' + buffer2.toString('hex')),
+        new Output(`0x${predictedId}`, to, color, data),
+        new Output(subtract(gasUtxo.output.value, BREED_GAS_COST), condAddr, 0),
+      ],
+    );
+
+    const msgData = `0x451da9f9${queenId.replace(
+      '0x',
+      '',
+    )}000000000000000000000000${to.replace('0x', '')}${data.replace('0x', '')}`;
+
+    condition.inputs[0].setMsgData(msgData);
+
+    if (privateKey) {
+      condition.signAll(privateKey);
     } else {
-      return new Error('Error response from gassstation');
+      await condition.signWeb3(web3);
     }
+
+    const {outputs} = await new Promise((resolve, reject) => {
+      xdaiweb3.currentProvider.send(
+        {
+          jsonrpc: '2.0',
+          id: 42,
+          method: 'checkSpendingCondition',
+          params: [condition.hex()],
+        },
+        (err, {result}) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(result);
+        },
+      );
+    });
+    // NOTE: We replace the gas output that we've created with the one that
+    // the node returns to us.
+    condition.outputs[2].value = outputs[2].value;
+
+    await new Promise((resolve, reject) => {
+      xdaiweb3.currentProvider.send(
+        {
+          jsonrpc: '2.0',
+          id: 42,
+          method: 'eth_sendRawTransaction',
+          params: [condition.hex()],
+        },
+        (err, {result}) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(result);
+        },
+      );
+    });
+    let receipt;
+    let rounds = 50;
+
+    while (rounds--) {
+      // redundancy rules ✊
+      let res = await xdaiweb3.eth.getTransaction(condition.hash());
+
+      if (res && res.blockHash) {
+        receipt = res;
+        break;
+      }
+
+      // wait ~100ms
+      await new Promise(resolve => setTimeout(() => resolve(), 100));
+    }
+
+    if (receipt) {
+      return receipt;
+    }
+
+    throw new Error("Transaction wasn't included into a block.");
   }
 
   async upload(buf) {
@@ -327,7 +429,7 @@ export default class RegisterMovie extends React.Component {
           <div className="form-group w-100">
             <label>{i18n.t('mint.movie.name')}</label>
             <div className="input-group">
-              <Input
+              <RInput
                 width={1}
                 type="text"
                 placeholder="2001: A Space Odyssey..."
@@ -339,7 +441,7 @@ export default class RegisterMovie extends React.Component {
           <div className="form-group w-100">
             <label>{i18n.t('mint.rightholder.name')}</label>
             <div className="input-group">
-              <Input
+              <RInput
                 width={1}
                 type="text"
                 placeholder="Stanley Kubrick..."
@@ -351,7 +453,7 @@ export default class RegisterMovie extends React.Component {
           <div className="form-group w-100">
             <label>Email</label>
             <div className="input-group">
-              <Input
+              <RInput
                 width={1}
                 type="text"
                 placeholder="Stanley@kubrick.com"
@@ -363,7 +465,7 @@ export default class RegisterMovie extends React.Component {
           <div className="form-group w-100">
             <label>{i18n.t('mint.rightholder.address')}</label>
             <div className="input-group">
-              <Input
+              <RInput
                 width={1}
                 type="text"
                 placeholder="0x..."
