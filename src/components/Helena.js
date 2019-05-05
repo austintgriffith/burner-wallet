@@ -15,7 +15,7 @@ const timeTimeOut = 300;
 
 let interval = false
 
-export default class YourModule extends React.Component {
+export default class Helena extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -63,7 +63,7 @@ export default class YourModule extends React.Component {
           let amount = this.props.web3.utils.fromWei(bets['results'][b].cost,'ether')
           amount = Math.round(parseFloat(amount)*1000)/1000
           let outcome = bets['results'][b].outcomeToken.index
-          console.log("AMOUNT:",amount,"RESULT:",outcome)
+          //console.log("AMOUNT:",amount,"RESULT:",outcome)
           updateBets[outcome] += amount
         }
         this.setState({bets:updateBets})
@@ -117,7 +117,7 @@ export default class YourModule extends React.Component {
             1042570, 0, 0,(buyReceipt)=>{
               if(buyReceipt){
                 console.log("BET COMPLETE?!?", buyReceipt)
-                this.props.changeView('yourmodule')
+                this.props.changeView('helena')
               }
             }
           )

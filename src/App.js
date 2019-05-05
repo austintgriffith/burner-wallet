@@ -53,7 +53,7 @@ let ERC20VENDOR
 let ERC20IMAGE
 let ERC20NAME
 let LOADERIMAGE = false
-let HARDCODEVIEW = "helena"// = "loader"// = "receipt"
+let HARDCODEVIEW// = "helena"// = "loader"// = "receipt"
 let FAILCOUNT = 0
 
 let mainStyle = {
@@ -85,9 +85,11 @@ let HELENAERC20NAME = "xP+"
 let HELENAERC20IMAGE = helena
 let HELENAERC20TOKEN = "Proton"
 
+
+
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "http://localhost:8545"
+  XDAI_PROVIDER = POA_XDAI_NODE
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
   if(false){
@@ -229,6 +231,33 @@ class App extends Component {
     }catch(e){console.log(e)}*/
 
   }
+  helenaContractLoader(contractName,customAddress){
+
+      let {DEBUG} = this.state.config
+      let resultingContract
+      console.log("helena contract loading ",contractName)
+      try{
+        let contractObject = {
+          address:require("./contracts/"+contractName+".address.js"),
+          abi:require("./contracts/"+contractName+".abi.js"),
+          blocknumber:require("./contracts/"+contractName+".blocknumber.js"),
+        }
+        console.log("helena contract object", contractObject)
+        if(customAddress){
+          contractObject.address = customAddress
+        }
+        if(DEBUG) console.log("ContractLoader - Loading ",contractName,contractObject)
+        let contract = new this.state.xdaiweb3.eth.Contract(contractObject.abi,contractObject.address)
+        resultingContract = contract.methods
+        resultingContract._blocknumber = contractObject.blocknumber
+        resultingContract._address = contractObject.address
+        resultingContract._abi = contractObject.abi
+        resultingContract._contract = contract
+      }catch(e){
+        console.log("ERROR LOADING CONTRACT "+contractName,e)
+      }
+      return resultingContract
+    }
   parseAndCleanPath(path){
     let parts = path.split(";")
     //console.log("PARTS",parts)
@@ -427,7 +456,7 @@ class App extends Component {
     if(this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown") && this.state.contracts.Proton){
       //check for badges for this user
       let protonBalance = await this.state.contracts.Proton.balanceOf(this.state.account).call()
-      this.setState({protonBalance:protonBalance})
+      this.setState({protonBalance:this.state.web3.utils.fromWei(protonBalance,'ether')})
     }
 
 
@@ -1012,8 +1041,8 @@ render() {
           console.log("Contracts Are Ready:", contracts)
           this.checkClaim(tx, contracts);
           let currentContracts = this.state.contracts
-          currentContracts["Proton"] = customLoader("Proton")
-          currentContracts["Market"] = customLoader("Market")
+          currentContracts["Proton"] = this.helenaContractLoader("Proton")
+          currentContracts["Market"] = this.helenaContractLoader("Market")
           this.setState({contracts,currentContracts})
         })
       }}
@@ -1246,8 +1275,12 @@ render() {
 
                   {extraTokens}
 
+                  <div style={{cursor:"pointer"}} onClick={()=>{
+                    this.changeView('helena')
+                  }}>
                   <Balance icon={helena} selected={false} text={"xP+"} amount={this.state.protonBalance} address={account} dollarDisplay={dollarDisplayHelena} />
                   <Ruler/>
+                  </div>
 
                   <Balance icon={"⛽"} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplayCash}/>
                   <Ruler/>
@@ -1528,7 +1561,7 @@ render() {
                   <div>
                     <div className="send-to-address card w-100" style={{zIndex:1}}>
 
-                      <NavCard title={"Prediction Markets"} titleLink={""} goBack={this.goBack.bind(this)}/>
+                      <NavCard title={"Helena Prediction Markets"} titleLink={""} goBack={this.goBack.bind(this)}/>
                       <Balance icon={helena} selected={"xP+"} text={"xP+"} amount={this.state.protonBalance} address={account} dollarDisplay={dollarDisplayHelena} />
                       <Ruler/>
                       <Helena
@@ -1536,7 +1569,7 @@ render() {
 
                         marketAddress={"0xfaca5beb569244d37b1ec4d67811b527210a9988"}
 
-                        web3={this.state.web3}
+                        web3={this.state.xdaiweb3}
                         tx={this.state.tx}
                         send={this.state.send}
 
