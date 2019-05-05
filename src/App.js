@@ -114,6 +114,8 @@ let innerStyle = {
 
 let buttonStyle = {
   primary: {
+    paddingTop:16,
+    paddingBottom:16,
     backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",
     backgroundColor:mainStyle.mainColor,
     color:"#FFFFFF",
