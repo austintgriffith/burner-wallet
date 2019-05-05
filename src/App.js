@@ -73,12 +73,22 @@ let FAILCOUNT = 0
 let mainStyle = {
   width:"100%",
   height:"100%",
-  backgroundImage:"linear-gradient(#292929, #191919)",
-  backgroundColor:"#191919",
-  hotColor:"#F69E4D",
-  mainColorAlt:"#fa7d36",
-  mainColor:"#F76B1C",
+  //backgroundImage:"linear-gradient(#292929, #191919)",
+  //backgroundColor:"#191919",
+  hotColor:"#ff2c5e",
+  mainColorAlt:"#f9d831",
+  mainColor:"#fc8323",
 }
+
+/*
+mainColorAlt:"#81379d",
+mainColor:"#fc1051",
+ */
+/*
+mainColorAlt:"#5041b9",
+mainColor:"#20c797",
+ */
+
 
 let title = i18n.t('app_name')
 let titleImage = (
@@ -90,99 +100,29 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(true){
+  if(false){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
   }else{
-    ERC20NAME = 'BUFF'
+    ERC20NAME = "RAD"
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
-    ERC20IMAGE = bufficorn
+    ERC20IMAGE = "🍕"
     XDAI_PROVIDER = "http://localhost:8545"
     WEB3_PROVIDER = "http://localhost:8545";
-    LOADERIMAGE = bufficorn
+    LOADERIMAGE = ""
   }
-
 }
-else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
+else if (window.location.hostname.indexOf("radwallet.io") >= 0) {
   WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false//'Burner'
-}
-else if (window.location.hostname.indexOf("wallet.galleass.io") >= 0) {
-  //WEB3_PROVIDER = "https://rinkeby.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac";
-  WEB3_PROVIDER = "http://localhost:8545"
-  //CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false//'Burner'
-  document.domain = 'galleass.io'
-}
-else if (window.location.hostname.indexOf("qreth") >= 0) {
-  WEB3_PROVIDER = "https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac"
-  CLAIM_RELAY = false
-  ERC20TOKEN = false
-}
-else if (window.location.hostname.indexOf("xdai") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false
-}
-else if (window.location.hostname.indexOf("buffidai") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20NAME = 'BUFF'
+  ERC20NAME = "RAD"
   ERC20VENDOR = 'VendingMachine'
   ERC20TOKEN = 'ERC20Vendable'
-  ERC20IMAGE = bufficorn
-  LOADERIMAGE = bufficorn
+  ERC20IMAGE = "🍕"
+  XDAI_PROVIDER = POA_XDAI_NODE
+  LOADERIMAGE = ""
 }
-else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20NAME = 'BURN'
-  ERC20VENDOR = 'BurnerVendor'
-  ERC20TOKEN = 'Burner'
-  ERC20IMAGE = cypherpunk
-  LOADERIMAGE = cypherpunk
-}
-else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
-  ERC20NAME = false
-  ERC20TOKEN = false
-  ERC20IMAGE = false
-}
-
-
-if(ERC20NAME=="BUFF"){
-  mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
-  mainStyle.backgroundColor = "#20012d"
-  mainStyle.mainColor = "#b6299e"
-  mainStyle.mainColorAlt = "#de3ec3"
-  title = "BuffiDai.io"
-  titleImage = (
-    <img src={bufficorn} style={{
-      maxWidth:50,
-      maxHeight:50,
-      marginRight:15,
-      marginTop:-10
-    }}/>
-  )
-} else if(ERC20NAME=="BURN"){
-  mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
-  mainStyle.backgroundColor = "#6c0664"
-  mainStyle.mainColor = "#e72da3"
-  mainStyle.mainColorAlt = "#f948b8"
-  title = "Burner"
-  titleImage = (
-    <img src={cypherpunk} style={{
-      maxWidth:50,
-      maxHeight:50,
-      marginRight:15,
-      marginTop:-10
-    }}/>
-  )
-}
-
 
 let innerStyle = {
   maxWidth:740,
@@ -229,10 +169,14 @@ let convertFromDollar = (amount)=>{
 }
 let dollarDisplay = (amount)=>{
   let floatAmount = parseFloat(amount)
+  amount = Math.floor(amount*1000)/1000
+  return convertFromDollar(amount).toFixed(0)
+}
+let dollarDisplayCash = (amount)=>{
+  let floatAmount = parseFloat(amount)
   amount = Math.floor(amount*100)/100
   return dollarSymbol+convertFromDollar(amount).toFixed(2)
 }
-
 let interval
 let intervalLong
 let originalStyle = {}
@@ -337,7 +281,7 @@ class App extends Component {
   detectContext(){
     console.log("DETECTING CONTEXT....")
     //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
-    incogDetect((result)=>{
+    /*incogDetect((result)=>{
       if(result){
         console.log("INCOG")
         document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
@@ -359,7 +303,7 @@ class App extends Component {
           contextElement.innerHTML = 'WEB3';
         }
       }
-    })
+    })*/
   }
   componentDidMount(){
 
@@ -1334,7 +1278,7 @@ render() {
 
           let defaultBalanceDisplay = (
             <div>
-              <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+              <Balance icon={"⛽"} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
               <Ruler/>
             </div>
           )
@@ -1373,12 +1317,9 @@ render() {
 
                   {extraTokens}
 
-                  <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance icon={"⛽"} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
-                  <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
-                  <Ruler/>
-                  <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
-                  <Ruler/>
+
                   {badgeDisplay}
 
                   <MainCard

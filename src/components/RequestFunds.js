@@ -94,16 +94,14 @@ export default class RequestFunds extends React.Component {
             <div className="form-group w-100">
               <label htmlFor="amount_input">{i18n.t('request_funds.amount')}</label>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">{dollarSymbol}</div>
-                </div>
-                <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
+
+                <input type="number" className="form-control" placeholder="0" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
             </div>
             <div className="form-group w-100">
               <label htmlFor="amount_input">{i18n.t('request_funds.item_message')}</label>
-              <input type="text" className="form-control" placeholder="Hot Dogs" value={this.state.message}
+              <input type="text" className="form-control" placeholder="Pizza" value={this.state.message}
                      onChange={event => this.updateState('message', event.target.value)} />
             </div>
             <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canRequest ? '' : 'disabled'}`}
