@@ -59,8 +59,8 @@ let mainStyle = {
   //backgroundImage:"linear-gradient(#292929, #191919)",
   //backgroundColor:"#191919",
   hotColor:"#ff2c5e",
-  mainColorAlt:"#f9d831",
-  mainColor:"#fc8323",
+  mainColorAlt:"#130094",
+  mainColor:"#371bb5",
 }
 
 /*
