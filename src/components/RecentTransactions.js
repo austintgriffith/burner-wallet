@@ -16,27 +16,7 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
         extraUp=-10
       }
       let extraIcon = ""
-      if(recentTxs[r].data){
-        extraIcon = (
-          <div style={{position:'absolute',right:-3,top:extraUp}}>
-            <button className="btn btn-large w-100" style={buttonStyle.primary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-comment"></i>
-              </Scaler>
-            </button>
-          </div>
-        )
-      }else{
-        extraIcon = (
-          <div style={{position:'absolute',right:-3,top:extraUp}}>
-            <button className="btn btn-large w-100" style={buttonStyle.secondary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-comment"></i>
-              </Scaler>
-            </button>
-          </div>
-        )
-      }
+      
 
       let dollarView
       if(ERC20TOKEN){
@@ -93,13 +73,7 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
 
         if(blockAge<=1&&recentTxs[r].to==address){
           txns.push(
-            <div key={"green"+count} style={{position:'relative',cursor:'pointer',paddingTop:10,paddingBottom:10}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
-              if(recentTxs[r].from==address){
-                changeView("account_"+recentTxs[r].to)
-              }else{
-                changeView("account_"+recentTxs[r].from)
-              }
-            }}>
+            <div key={"green"+count} style={{position:'relative',cursor:'pointer',paddingTop:10,paddingBottom:10}} key={recentTxs[r].hash} className="content bridge row" >
               <div className="col-3" style={{textAlign:'center'}}>
                 <i className="fas fa-check-circle" style={{color:"#39e917",fontSize:70,opacity:.7}}></i>
               </div>
@@ -121,13 +95,7 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
           )
         }else{
           txns.push(
-            <div key={count} style={{position:'relative',cursor:'pointer'}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
-              if(recentTxs[r].from==address){
-                changeView("account_"+recentTxs[r].to)
-              }else{
-                changeView("account_"+recentTxs[r].from)
-              }
-            }}>
+            <div key={count} style={{position:'relative',cursor:'pointer'}} key={recentTxs[r].hash} className="content bridge row">
               {extraIcon}
               <div className="col-3 p-1" style={{textAlign:'center'}}>
                 <Blockie
