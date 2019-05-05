@@ -20,8 +20,8 @@ export let ERC20NAME;
 
 
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = POA_XDAI_NODE
-  WEB3_PROVIDER = POA_XDAI_NODE;
+  XDAI_PROVIDER = "http://localhost:8545"
+  WEB3_PROVIDER = "http://localhost:8545"
   CLAIM_RELAY = 'http://localhost:18462'
   if(true){
     ERC20NAME = false

@@ -59,11 +59,11 @@ let FAILCOUNT = 0
 let mainStyle = {
   width:"100%",
   height:"100%",
-  backgroundImage:"linear-gradient(#292929, #191919)",
-  backgroundColor:"#191919",
-  hotColor:"#F69E4D",
-  mainColorAlt:"#fa7d36",
-  mainColor:"#F76B1C",
+  //backgroundImage:"linear-gradient(#292929, #191919)",
+  //backgroundColor:"#191919",
+  hotColor:"#ff2c5e",
+  mainColorAlt:"#5041b9",
+  mainColor:"#20c797",
 }
 
 let title = i18n.t('app_name')
@@ -72,35 +72,6 @@ let titleImage = (
 )
 
 
-if(ERC20NAME=="BUFF"){
-  mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
-  mainStyle.backgroundColor = "#20012d"
-  mainStyle.mainColor = "#b6299e"
-  mainStyle.mainColorAlt = "#de3ec3"
-  title = "BuffiDai.io"
-  titleImage = (
-    <img src={bufficorn} style={{
-      maxWidth:50,
-      maxHeight:50,
-      marginRight:15,
-      marginTop:-10
-    }}/>
-  )
-} else if(ERC20NAME=="BURN"){
-  mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
-  mainStyle.backgroundColor = "#6c0664"
-  mainStyle.mainColor = "#e72da3"
-  mainStyle.mainColorAlt = "#f948b8"
-  title = "Burner"
-  titleImage = (
-    <img src={cypherpunk} style={{
-      maxWidth:50,
-      maxHeight:50,
-      marginRight:15,
-      marginTop:-10
-    }}/>
-  )
-}
 
 
 let innerStyle = {
@@ -145,7 +116,7 @@ let dollarDisplay = (amount)=>{
 let parseURLParams = (path) => {
   let splitPath = path.split('?')
   if(splitPath.length == 1){ // if there was no params
-    return undefined 
+    return undefined
   }
   let plainParams = splitPath[1].split('&')
   var parameters = {}
@@ -270,23 +241,32 @@ class App extends Component {
     console.log("DETECTING CONTEXT....")
     //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
     incogDetect((result)=>{
+      /*
+      document.getElementById("main").style.backgroundImage = 'url("ethereal-ny-rad-wallet.png")'
+      document.getElementById("main").style.height = "100%"
+      document.getElementById("main").style.backgroundPosition = "center"
+      document.getElementById("main").style.backgroundRepeat = "no-repeat"
+      document.getElementById("main").style.backgroundSize = "cover"
+
+      */
+
       if(result){
         console.log("INCOG")
-        document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
-        document.body.style.backgroundColor = "#671c1c"
+        //document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
+        //document.body.style.backgroundColor = "#671c1c"
         var contextElement = document.getElementById("context")
         contextElement.innerHTML = 'INCOGNITO';
       }else if (typeof web3 !== 'undefined') {
         console.log("NOT INCOG",this.state.metaAccount)
         if (window.web3.currentProvider.isMetaMask === true) {
-          document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
-          document.body.style.backgroundColor = "#ca6e28"
+          //document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
+          //document.body.style.backgroundColor = "#ca6e28"
           var contextElement = document.getElementById("context")
           contextElement.innerHTML = 'METAMASK';
         } else if(this.state.account && !this.state.metaAccount) {
           console.log("~~~*** WEB3",this.state.metaAccount,result)
-          document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
-          document.body.style.backgroundColor = "#305582"
+          //document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
+          //document.body.style.backgroundColor = "#305582"
           var contextElement = document.getElementById("context")
           contextElement.innerHTML = 'WEB3';
         }
@@ -1364,7 +1344,7 @@ render() {
                       // Use xDai as default token
                       const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
                       // -- Temp hacks
-                      const expirationTime = 365; // Hard-coded to 1 year link expiration. 
+                      const expirationTime = 365; // Hard-coded to 1 year link expiration.
                       const amountToSend = amount*10**18 ; // Conversion to wei
                       // --
                       if(!ERC20TOKEN)
