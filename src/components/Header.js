@@ -68,9 +68,9 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     <div style={scanButtonStyle} onClick={() => {
       openScanner({view:"send_to_address"})
     }} >
-      <div style={{position:'relative',backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",backgroundColor:mainStyle.mainColor,borderRadius:"50%",width:89,height:89,boxShadow: "0.5px 0.5px 5px #000000"}}>
-        <a href="#" style={{color:'#FFFFFF',position:'absolute',left:30,top:28}}>
-          <i className="fas fa-qrcode" />
+      <div style={{position:'relative',backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",backgroundColor:mainStyle.mainColor,borderRadius:"50%",width:100,height:100,boxShadow: "0.5px 0.5px 5px #000000"}}>
+        <a href="#" style={{color:'#FFFFFF',position:'absolute',left:26,top:26}}>
+          <svg p="3" display="block" class="sc-ipXKqB enlWbz" viewBox="0 0 24 24" width="50" height="50" fill="currentcolor"><path d="M5 15H3v4c0 1.1.9 2 2 2h4v-2H5v-4zM5 5h4V3H5c-1.1 0-2 .9-2 2v4h2V5zm14-2h-4v2h4v4h2V5c0-1.1-.9-2-2-2zm0 16h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4zM12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"></path></svg>
         </a>
       </div>
     </div>
