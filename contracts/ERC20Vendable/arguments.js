@@ -5,5 +5,5 @@
 
 module.exports = [
   "Ethereal2019RadCoin",
-  "RAD"
+  "🍕 RAD"
 ]
