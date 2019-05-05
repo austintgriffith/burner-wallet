@@ -23,18 +23,18 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(true){
+  if(false){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
   }else{
-    ERC20NAME = 'BUFF'
+    ERC20NAME = 'RAD'
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
-    ERC20IMAGE = bufficorn
+    ERC20IMAGE = "🍕"
     XDAI_PROVIDER = "http://localhost:8545"
     WEB3_PROVIDER = "http://localhost:8545";
-    LOADERIMAGE = bufficorn
+    LOADERIMAGE = ""
   }
 
 }

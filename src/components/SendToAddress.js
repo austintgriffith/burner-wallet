@@ -261,13 +261,13 @@ export default class SendToAddress extends React.Component {
 
 
     let amountInputDisplay = (
-      <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
+      <input type="number" className="form-control" placeholder="0" value={this.state.amount}
           ref={(input) => { this.amountInput = input; }}
              onChange={event => this.updateState('amount', event.target.value)} />
     )
     if(this.props.scannerState&&this.props.scannerState.daiposOrderId){
       amountInputDisplay = (
-        <input type="number" readOnly className="form-control" placeholder="0.00" value={this.state.amount}
+        <input type="number" readOnly className="form-control" placeholder="0" value={this.state.amount}
             ref={(input) => { this.amountInput = input; }}
                onChange={event => this.updateState('amount', event.target.value)} />
       )
@@ -302,9 +302,6 @@ export default class SendToAddress extends React.Component {
             }</div>
             <label htmlFor="amount_input">{i18n.t('send_to_address.send_amount')}</label>
             <div className="input-group">
-              <div className="input-group-prepend">
-                <div className="input-group-text">{DOLLAR_SYMBOL}</div>
-              </div>
               {amountInputDisplay}
             </div>
             <div className="form-group w-100" style={{marginTop:20}}>

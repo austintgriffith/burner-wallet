@@ -62,12 +62,21 @@ let FAILCOUNT = 0
 let mainStyle = {
   width:"100%",
   height:"100%",
-  backgroundImage:"linear-gradient(#292929, #191919)",
-  backgroundColor:"#191919",
-  hotColor:"#F69E4D",
-  mainColorAlt:"#fa7d36",
-  mainColor:"#F76B1C",
+  //backgroundImage:"linear-gradient(#292929, #191919)",
+  //backgroundColor:"#191919",
+  hotColor:"#ff2c5e",
+  mainColorAlt:"#f9d831",
+  mainColor:"#fc8323",
 }
+
+/*
+mainColorAlt:"#81379d",
+mainColor:"#fc1051",
+ */
+/*
+mainColorAlt:"#5041b9",
+mainColor:"#20c797",
+ */
 
 let title = i18n.t('app_name')
 let titleImage = (
@@ -139,6 +148,7 @@ let metaReceiptTracker = {}
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
 
+let dollarSymbol = "$"
 let dollarConversion = 1.0
 //let dollarSymbol = "€"
 //let dollarConversion = 0.88
@@ -149,8 +159,14 @@ let convertFromDollar = (amount)=>{
   return (parseFloat(amount)*dollarConversion)
 }
 let dollarDisplay = (amount)=>{
+  let floatAmount = parseFloat(amount)
+  amount = Math.floor(amount*1000)/1000
+  return convertFromDollar(amount).toFixed(0)
+}
+let dollarDisplayCash = (amount)=>{
+  let floatAmount = parseFloat(amount)
   amount = Math.floor(amount*100)/100
-  return DOLLAR_SYMBOL + convertFromDollar(amount).toFixed(2)
+  return dollarSymbol+convertFromDollar(amount).toFixed(2)
 }
 
 let interval
@@ -257,7 +273,7 @@ class App extends Component {
   detectContext(){
     console.log("DETECTING CONTEXT....")
     //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
-    incogDetect((result)=>{
+    /*incogDetect((result)=>{
       if(result){
         console.log("INCOG")
         document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
@@ -279,7 +295,7 @@ class App extends Component {
           contextElement.innerHTML = 'WEB3';
         }
       }
-    })
+    })*/
   }
   componentDidMount(){
 
@@ -1110,7 +1126,7 @@ render() {
 
           let defaultBalanceDisplay = (
             <div>
-              <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+              <Balance icon={"⛽"} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplayCash} />
               <Ruler/>
             </div>
           )
@@ -1149,12 +1165,9 @@ render() {
 
                   {extraTokens}
 
-                  <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance icon={"⛽"} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplayCash}/>
                   <Ruler/>
-                  <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
-                  <Ruler/>
-                  <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
-                  <Ruler/>
+
                   {badgeDisplay}
 
                   <MainCard

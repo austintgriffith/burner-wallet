@@ -14,7 +14,7 @@ export default class SendToAddress extends React.Component {
   constructor(props) {
     super(props);
     let initialState = {
-      amount: "",//props.amount-0.01 ?
+      amount: "1",//props.amount-0.01 ?
       privateKey: props.privateKey,
       canWithdraw: false,
     }
@@ -182,7 +182,7 @@ export default class SendToAddress extends React.Component {
                   <div className="col-6 p-1 w-100">
                     <div style={{fontSize:64,letterSpacing:-2,fontWeight:500,whiteSpace:"nowrap"}}>
                       <Scaler config={{startZoomAt:1000,origin:"0% 50%"}}>
-                        ${this.state.fromBalance}
+                        {this.props.dollarDisplay(this.state.fromBalance)}
                       </Scaler>
                     </div>
                   </div>
@@ -190,10 +190,8 @@ export default class SendToAddress extends React.Component {
 
               <label htmlFor="amount_input">{i18n.t('withdraw_from_private.amount')}</label>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
+
+                <input type="number" className="form-control" placeholder="0" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               {products}
