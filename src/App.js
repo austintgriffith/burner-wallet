@@ -35,6 +35,8 @@ import Loader from './components/Loader';
 import BurnWallet from './components/BurnWallet'
 import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
+import { dollarDisplay, dollarDisplayCash } from './lib';
+
 import { withTransactionStore } from './contexts/TransactionStore';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
@@ -62,9 +64,17 @@ let mainStyle = {
   //backgroundImage:"linear-gradient(#292929, #191919)",
   //backgroundColor:"#191919",
   hotColor:"#ff2c5e",
-  mainColorAlt:"#5041b9",
-  mainColor:"#20c797",
+  mainColorAlt:"#f9d831",
+  mainColor:"#fc8323",
 }
+/*
+mainColorAlt:"#81379d",
+mainColor:"#fc1051",
+ */
+/*
+mainColorAlt:"#5041b9",
+mainColor:"#20c797",
+ */
 
 let title = i18n.t('app_name')
 let titleImage = (
@@ -107,11 +117,6 @@ let metaReceiptTracker = {}
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
 
-let dollarDisplay = (amount)=>{
-  let floatAmount = parseFloat(amount)
-  amount = Math.floor(amount*100)/100
-  return amount.toFixed(2)
-}
 //Function that returns an object with all the URL encoded (?..&..&) parametrers in a given path
 let parseURLParams = (path) => {
   let splitPath = path.split('?')
@@ -768,7 +773,11 @@ async decryptInput(input){
   }
   return false
 }
-
+goBack(){
+  console.log("GO BACK")
+  this.changeView('main')
+  setTimeout(()=>{window.scrollTo(0,0)},60)
+}
 render() {
   let {
     web3, account, tx, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, alert, send
@@ -1026,7 +1035,7 @@ render() {
 
           let defaultBalanceDisplay = (
             <div>
-              <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} />
+              <Balance icon={"⛽"} dollarDisplay={dollarDisplayCash} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} />
               <Ruler/>
             </div>
           )
@@ -1035,7 +1044,7 @@ render() {
             selected = ERC20NAME
             extraTokens = (
               <div>
-                <Balance icon={ERC20IMAGE} selected={selected} text={ERC20NAME} amount={this.state.balance} address={account} />
+                <Balance icon={ERC20IMAGE} dollarDisplay={dollarDisplay} selected={selected} text={ERC20NAME} amount={this.state.balance} address={account} />
                 <Ruler/>
               </div>
             )
@@ -1090,12 +1099,9 @@ render() {
                   <div className="main-card card w-100" style={{zIndex:1}}>
                     {extraTokens}
 
-                    <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} />
+                    <Balance icon={"⛽"} dollarDisplay={dollarDisplayCash} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} />
                     <Ruler/>
-                    <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} />
-                    <Ruler/>
-                    <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} />
-                    <Ruler/>
+
                     {badgeDisplay}
 
                     <MainCard
@@ -1166,6 +1172,7 @@ render() {
                       privateKey={this.state.withdrawFromPrivateKey}
                       changeView={this.changeView}
                       changeAlert={this.changeAlert}
+                      dollarDisplay={dollarDisplay}
                     />
                   </div>
                   <Bottom />
@@ -1179,22 +1186,24 @@ render() {
                       titleLink={this.state.badges[this.state.selectedBadge].external_url}
                     />
                     <SendBadge
-                      changeView={this.changeView}
-                      ensLookup={this.ensLookup.bind(this)}
-                      buttonStyle={buttonStyle}
-                      balance={balance}
-                      web3={this.state.web3}
-                      contracts={this.state.contracts}
-                      address={account}
-                      scannerState={this.state.scannerState}
-                      tx={this.state.tx}
-                      openScanner={this.openScanner.bind(this)}
-                      setReceipt={this.setReceipt}
-                      changeAlert={this.changeAlert}
-                      dollarDisplay={dollarDisplay}
-                      badge={this.state.badges[this.state.selectedBadge]}
-                      clearBadges={this.clearBadges.bind(this)}
-                    />
+                    changeView={this.changeView}
+                    ensLookup={this.ensLookup.bind(this)}
+                    ERC20TOKEN={ERC20TOKEN}
+                    buttonStyle={buttonStyle}
+                    balance={balance}
+                    web3={this.state.web3}
+                    contracts={this.state.contracts}
+                    address={account}
+                    scannerState={this.state.scannerState}
+                    tx={this.state.tx}
+                    goBack={this.goBack.bind(this)}
+                    openScanner={this.openScanner.bind(this)}
+                    setReceipt={this.setReceipt}
+                    changeAlert={this.changeAlert}
+                    dollarDisplay={dollarDisplay}
+                    badge={this.state.badges[this.state.selectedBadge]}
+                    clearBadges={this.clearBadges.bind(this)}
+                  />
                   </div>
                   <Bottom text={i18n.t('done')}/>
                 </div>
@@ -1396,6 +1405,7 @@ render() {
                         localStorage.setItem(this.state.account+"metaPrivateKey","")
                         this.props.resetTransactionStore(this.state.account);
                       }
+                      window.history.pushState({},"", "/");
                     }}
                     />
                   </div>
@@ -1656,7 +1666,7 @@ async function tokenSend(to,value,gasLimit,txData,cb){
 
   let weiValue =  this.state.web3.utils.toWei(""+value, 'ether')
 
-  let setGasLimit = 60000
+  let setGasLimit = 120000
   if(typeof gasLimit == "function"){
     cb=gasLimit
   }else if(gasLimit){

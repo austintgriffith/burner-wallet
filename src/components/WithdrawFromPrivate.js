@@ -7,7 +7,6 @@ import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import i18n from '../i18n';
 import { ERC20TOKEN } from '../config';
-import { dollarDisplay } from '../lib';
 
 let pollInterval
 let metaReceiptTracker = {}
@@ -17,7 +16,7 @@ class WithdrawFromPrivate extends React.Component {
   constructor(props) {
     super(props);
     let initialState = {
-      amount: "",//props.amount-0.01 ?
+      amount: "1",//props.amount-0.01 ?
       privateKey: props.privateKey,
     }
 
@@ -136,7 +135,7 @@ class WithdrawFromPrivate extends React.Component {
                   }}
                   style={this.props.buttonStyle.secondary}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    {this.props.web3.utils.hexToUtf8(prod.name)} {dollarDisplay(costInDollars)}
+                    {this.props.web3.utils.hexToUtf8(prod.name)} {this.props.dollarDisplay(costInDollars)}
                   </Scaler>
                 </button>
               </div>
@@ -180,7 +179,7 @@ class WithdrawFromPrivate extends React.Component {
                   <div className="col-6 p-1 w-100">
                     <div style={{fontSize:64,letterSpacing:-2,fontWeight:500,whiteSpace:"nowrap"}}>
                       <Scaler config={{startZoomAt:1000,origin:"0% 50%"}}>
-                        ${this.state.fromBalance}
+                        {this.props.dollarDisplay(this.state.fromBalance)}
                       </Scaler>
                     </div>
                   </div>
@@ -188,10 +187,8 @@ class WithdrawFromPrivate extends React.Component {
 
               <label htmlFor="amount_input">{i18n.t('withdraw_from_private.amount')}</label>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
+
+                <input type="number" className="form-control" placeholder="0" value={this.state.amount}
                        onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               {products}

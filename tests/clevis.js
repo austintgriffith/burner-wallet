@@ -160,7 +160,7 @@ module.exports = {
         let accounts = await clevis("accounts")
         await clevis('contract', 'adminMint', 'VendingMachine', "0", accounts[1], '10000000000000000000')
 
-        result = await clevis("contract","adminMint","VendingMachine","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb","10000000000000000000")
+        result = await clevis("contract","adminMint","VendingMachine","0","0x155a7de8af0895bda50da4cee35a97251164e286","10000000000000000000")
         printTxResult(result)
 
         result = await clevis("send","0.10","0","0x34aa3f359a9d614239015126635ce7732c18fdf3")///<<<-------- change this to your metamask accounts
@@ -175,29 +175,21 @@ module.exports = {
         result = await clevis("send","0.10","0","0x3baa2f6302ce57eb2ad94c9571b19e1073b079be")///<<<-------- change this to your metamask accounts
         printTxResult(result)
 
-        result = await clevis("send","0.10","0","0x3606affd391d37a0f413c261bd3caf573c6360e1")///<<<-------- change this to your metamask accounts
+        result = await clevis("send","0.10","0","0x155a7de8af0895bda50da4cee35a97251164e286")///<<<-------- change this to your metamask accounts
         printTxResult(result)
 
 
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/burner.json")
-        printTxResult(result)
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/burner.json")
-        printTxResult(result)
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffidai.json")
-        printTxResult(result)
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffidai.json")
-        printTxResult(result)
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffidai.json")
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x155a7de8af0895bda50da4cee35a97251164e286","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
         printTxResult(result)
 
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa0ddb01deab4f240cf6dad304e50b58085055372","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x155a7de8af0895bda50da4cee35a97251164e286","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
         printTxResult(result)
 
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa0ddb01deab4f240cf6dad304e50b58085055372","https://badges.xdai.io/ethdenver/v1/json/gitcoin.json")
-        printTxResult(result)
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa0ddb01deab4f240cf6dad304e50b58085055372","https://badges.xdai.io/ethdenver/v1/json/consensys.json")
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x155a7de8af0895bda50da4cee35a97251164e286","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
         printTxResult(result)
 
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x155a7de8af0895bda50da4cee35a97251164e286","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
+        printTxResult(result)
 
                 result = await clevis("send","0.10","0","0xa0ddb01deab4f240cf6dad304e50b58085055372")///<<<-------- change this to your metamask accounts
                 printTxResult(result)

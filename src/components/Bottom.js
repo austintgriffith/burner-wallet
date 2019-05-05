@@ -10,7 +10,7 @@ const buttonStyle = {
 };
 
 const Bottom = ({ icon, text, action }) => (
-  <div name="theVeryBottom" className="text-center bottom-text" style={{marginBottom:20}}>
+  <div name="theVeryBottom" className="text-center bottom-text" style={{marginBottom:20, cursor: "pointer"}}>
     <span style={{padding:59}}>
       {action ? (
         <button className={"btn btn-large w-50"} style={buttonStyle} onClick={action}>

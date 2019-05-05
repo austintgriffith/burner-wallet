@@ -1,15 +1,13 @@
 pragma solidity 0.4.25;
 
+import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-import "../ERC20MetaTx/ERC20MetaTx.sol";
 
-contract ERC20Vendable is Ownable, ERC20MetaTx {
+contract ERC20Vendable is ERC20, Ownable {
   address public vendingMachine;
   string public name;
   string public symbol;
   uint8 public decimals = 18;
-  
-  event TransferWithData(address indexed from, address indexed to, uint256 value, bytes data);
 
   constructor(string memory _name, string memory _symbol) public {
     name = _name;
@@ -21,12 +19,12 @@ contract ERC20Vendable is Ownable, ERC20MetaTx {
     _;
   }
 
-  // To emulate how we send data with a transaction, we do that here on a token transfer to enable similar chat in the burner
+  //to emulate how we send data with a transaction, we do that here on a token transfer to enable similar chat in the burner
   function transferWithData(address to, uint256 value, bytes data) public returns (bool) {
     emit TransferWithData(msg.sender,to,value,data);
-    return transferFrom(address(this), to, value);
+    return transfer(to, value);
   }
-
+  event TransferWithData(address indexed from, address indexed to, uint256 value, bytes data);
 
   //Ideally the Vending Machine would actually create the ERC20Vendable,
   //and we could make mint and burn onlyCreator.

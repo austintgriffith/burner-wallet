@@ -1,9 +1,8 @@
 import React from 'react';
 import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
-import { dollarDisplay } from '../lib';
 
-export  default ({ icon, text, selected, amount, address }) => {
+export  default ({ dollarDisplay, icon, text, selected, amount, address }) => {
 
   let opacity = 0.65
   if(text == selected){
@@ -19,10 +18,22 @@ export  default ({ icon, text, selected, amount, address }) => {
     opacity=0.05
   }
 
+  let iconDisplay
+
+  if(typeof icon == "string" && icon.length<8){
+    iconDisplay = (
+      <div style={{width:50,height:50,fontSize:42,paddingTop:13}}>
+        {icon}
+      </div>
+    )
+  }else{
+    iconDisplay = <img src={icon} style={{maxWidth:50,maxHeight:50}}/>
+  }
+
   return (
     <div className="balance row" style={{opacity,paddingBottom:0,paddingLeft:20}}>
       <div className="avatar col p-0">
-        <img src={icon} style={{maxWidth:50,maxHeight:50}}/>
+        {iconDisplay}
         <div style={{position:'absolute',left:60,top:12,fontSize:14,opacity:0.77}}>
           {text}
         </div>

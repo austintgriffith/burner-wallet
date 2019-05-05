@@ -4,6 +4,6 @@
 */
 
 module.exports = [
-  "buffiDai",
-  "BUFF"
+  "Ethereal2019RadCoin",
+  "RAD"
 ]

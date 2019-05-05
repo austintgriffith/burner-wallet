@@ -13,8 +13,13 @@ export const convertFromDollar = (amount)=>{
 
 export const dollarDisplay = (amount)=>{
   amount = Math.floor(amount*100)/100
+  return convertFromDollar(amount).toFixed(0)
+}
+export const dollarDisplayCash = (amount)=>{
+  amount = Math.floor(amount*100)/100
   return DOLLAR_SYMBOL + convertFromDollar(amount).toFixed(2)
 }
+
 
 export const parseAndCleanPath = (path) => {
   const parts = path.split(";")

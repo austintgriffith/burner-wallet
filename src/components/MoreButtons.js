@@ -9,30 +9,19 @@ import i18n from '../i18n';
 
 export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
 
-  let exchangeButton
-
-  if(!isVendor){
-    exchangeButton  = (
-      <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
-        changeView('exchange')}
-      }>
-        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-          <i className="fa fa-random"></i> {i18n.t('more_buttons.exchange')}
-        </Scaler>
-      </button>
-    )
-  }else{
-    exchangeButton  = (
-      <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
-        changeView('cash_out')}
-      }>
-        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-          <i className="fa fa-credit-card"></i> {"Cash Out"}
-        </Scaler>
-      </button>
-    )
-  }
-
+  return (
+    <div className="content bridge row">
+      <div className="col-12 p-1">
+        <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
+          changeView('request_funds')}
+        }>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+            <i className="fas fa-hand-holding-usd"></i> {i18n.t('more_buttons.request')}
+          </Scaler>
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="content bridge row">
@@ -46,7 +35,13 @@ export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert,
         </button>
       </div>
       <div className="col-6 p-1">
-        {exchangeButton}
+        <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
+          changeView('helena')}
+        }>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+            <i className="fa fa-fire"></i> {"Predict"}
+          </Scaler>
+        </button>
       </div>
     </div>
   )
