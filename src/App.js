@@ -1520,7 +1520,7 @@ render() {
             case 'request_funds':
             return (
               <div>
-                <Card p={3}>
+                <Card p={3} borderRadius={2}>
 
                   <NavCard title={i18n.t('request_funds_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
@@ -1559,7 +1559,7 @@ render() {
               }else{
                 return (
                   <div>
-                    <div className="send-to-address card w-100" style={{zIndex:1}}>
+                    <Card p={3} borderRadius={2}>
 
                       <NavCard title={"Helena Prediction Markets"} titleLink={""} goBack={this.goBack.bind(this)}/>
                       <Balance icon={helena} selected={"xP+"} text={"xP+"} amount={this.state.protonBalance} address={account} dollarDisplay={dollarDisplayHelena} />
@@ -1674,9 +1674,9 @@ render() {
                         changeView={this.changeView}
                       />
 
-                    </div>
+                    </Card>
                     <Bottom
-                      text={"done"}
+                      text={i18n.t('done')}
                       action={this.goBack.bind(this)}
                     />
                   </div>

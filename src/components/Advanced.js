@@ -8,12 +8,10 @@ import {
   OutlineButton,
   Input,
   Heading,
-  Text,
   Box, 
-  Flex
-} from 'rimble-ui'
-
-const QRCode = require('qrcode.react');
+  Flex,
+  QR as QRCode
+} from "rimble-ui";
 
 export default class Advanced extends React.Component {
 
@@ -37,22 +35,18 @@ export default class Advanced extends React.Component {
     let privateKeyQrDisplay = ""
     if(this.state.privateKeyQr){
       privateKeyQrDisplay = (
-        <div className="main-card card w-100">
-          <div className="content qr row">
-            <QRCode value={qrValue} size={qrSize}/>
-          </div>
-        </div>
+        <Flex p={3}>
+          <QRCode value={qrValue} size={'100%'} renderAs={'svg'} p={3} border={1} borderColor={'grey'} borderRadius={1} />
+        </Flex>
       )
     }
 
     let showingQr = ""
     if(this.state.showingQr){
       showingQr = (
-        <div className="main-card card w-100">
-          <div className="content qr row">
-            <QRCode value={this.state.showingQr} size={qrSize}/>
-          </div>
-        </div>
+        <Flex p={3}>
+          <QRCode value={qrValue} size={'100%'} renderAs={'svg'} p={3} border={1} borderColor={'grey'} borderRadius={1} />
+        </Flex>
       )
     }
 
