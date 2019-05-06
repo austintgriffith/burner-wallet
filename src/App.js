@@ -988,14 +988,14 @@ export default class App extends Component {
       //console.log("transactions",transactions)
       for(let t in transactions){
         //console.log("TX",transactions[t])
-        let tx = await this.state.web3.eth.getTransaction(transactions[t])
+        let tx = await web3.eth.getTransaction(transactions[t])
         if(tx && tx.to && tx.from ){
           //console.log("EEETRTTTTERTETETET",tx)
           let smallerTx = {
             hash:tx.hash,
             to:tx.to.toLowerCase(),
             from:tx.from.toLowerCase(),
-            value:this.state.web3.utils.fromWei(""+tx.value,"ether"),
+            value:web3.utils.fromWei(""+tx.value,"ether"),
             blockNumber:tx.blockNumber
           }
   
@@ -1011,7 +1011,7 @@ export default class App extends Component {
               }
   
               try{
-                smallerTx.data = this.state.web3.utils.hexToUtf8(tx.input)
+                smallerTx.data = web3.utils.hexToUtf8(tx.input)
               }catch(e){}
               //console.log("smallerTx at this point",smallerTx)
               if(!smallerTx.data){
