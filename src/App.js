@@ -1273,7 +1273,7 @@ render() {
             case 'main':
             return (
               <div>
-                <Card p={3}>
+                <Card p={3} borderRadius={2}>
                 {extraTokens}
 
                 <div style={{cursor:"pointer"}} onClick={()=>{
@@ -1324,7 +1324,7 @@ render() {
             case 'advanced':
             return (
               <div>
-                <Card p={3}>
+                <Card p={3} borderRadius={2}>
                   <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
                   <Advanced
                     isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
@@ -1424,7 +1424,7 @@ render() {
             case 'send_to_address':
             return (
               <div>
-                <div className="send-to-address card w-100" style={{zIndex:1}}>
+                <Card p={3} borderRadius={2}>
                   <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <SendToAddress
@@ -1446,7 +1446,7 @@ render() {
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
                   />
-                </div>
+                </Card>
                 <Bottom
                   text={i18n.t('cancel')}
                   action={this.goBack.bind(this)}
@@ -1488,8 +1488,7 @@ render() {
             case 'receive':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
+                <Card p={3} borderRadius={2}>
                   <NavCard title={i18n.t('receive_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <Receive
@@ -1512,7 +1511,7 @@ render() {
                     fullRecentTxs={this.state.fullRecentTxs}
                     recentTxs={this.state.recentTxs}
                   />
-                </div>
+                </Card>
                 <Bottom
                   action={this.goBack.bind(this)}
                 />
@@ -1521,7 +1520,7 @@ render() {
             case 'request_funds':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+                <Card p={3}>
 
                   <NavCard title={i18n.t('request_funds_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
@@ -1542,7 +1541,7 @@ render() {
                     fullRecentTxs={this.state.fullRecentTxs}
                     recentTxs={this.state.recentTxs}
                   />
-                </div>
+                </Card>
                 <Bottom
                   action={this.goBack.bind(this)}
                 />
