@@ -19,6 +19,7 @@
     "i18next-browser-languagedetector": "^2.2.4",
     "jimp": "^0.6.0",
     "node-sass": "^4.11.0",
+    "polished": "^3.3.0",
     "qrcode-reader": "^1.0.4",
     "qrcode.react": "^0.8.0",
     "query-string": "^6.3.0",
