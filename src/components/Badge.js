@@ -47,12 +47,7 @@ export default ({
     );
   } else {
     return (
-      <div
-        className="coin__container"
-        style={{cursor: 'pointer'}}
-        onClick={() => {
-          selectBadge(id);
-        }}>
+      <div className="coin__container" style={{cursor: 'pointer'}}>
         <div
           className="coin is-slam"
           style={{
