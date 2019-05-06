@@ -6,7 +6,7 @@ import {Buffer} from 'buffer';
 import axios from 'axios';
 import jsonp from 'jsonp';
 import qs from 'qs';
-import {Input as RInput, Button, OutlineButton} from 'rimble-ui';
+import {Input as RInput, Button, OutlineButton, Select, Field} from 'rimble-ui';
 import Uploader from './Uploader';
 import {Tx, Input, Output, Outpoint} from 'leap-core';
 import bs58 from 'bs58';
@@ -28,6 +28,26 @@ const MAILCHIMP = {
   REGION: 'us18',
   USER: '74327b20b5a290dfc1f6bf3f1',
 };
+
+const uploadedMovies = [
+  {
+    name: 'Select pre-uploaded movie',
+  },
+  {
+    name: 'Born to be Blue',
+    hls:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-v…111-5314-4efc-9fb7-6968abed4e45-BorntobeBlue.m3u8',
+    mp4:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-v…e111-5314-4efc-9fb7-6968abed4e45-BorntobeBlue.mp4',
+  },
+  {
+    name: 'WAR BOOK',
+    hls:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-v…bb4cd27e-562c-4218-b197-1916f95c98b9-WARBOOK.m3u8',
+    mp4:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-v…/bb4cd27e-562c-4218-b197-1916f95c98b9-WARBOOK.mp4',
+  },
+];
 
 function replaceAll(str, find, replace) {
   return str.replace(new RegExp(find, 'g'), replace.replace('0x', ''));
@@ -405,6 +425,16 @@ export default class RegisterMovie extends React.Component {
     });
   }
 
+  selectMovie(event) {
+    if (event.target.value.indexOf('Select pre-uploaded movie') >= 0) {
+      return;
+    }
+    const urls = uploadedMovies.filter(
+      ({name}) => event.target.value === name,
+    )[0];
+    this.uploadStatus('movies')(null, {mp4: urls.mp4, hls: urls.hls});
+  }
+
   render() {
     const {rightholderAddress, uploader, canRegister} = this.state;
 
@@ -418,6 +448,15 @@ export default class RegisterMovie extends React.Component {
               fileType="video"
               uploadStatus={this.uploadStatus('movies')}
             />
+          </div>
+          <div className="form-group w-100">
+            <Field label="In case movie upload takes too long to upload">
+              <Select
+                items={uploadedMovies.map(movie => movie.name)}
+                onChange={this.selectMovie.bind(this)}
+                required={false}
+              />
+            </Field>
           </div>
           <div className="form-group w-100">
             <label>{i18n.t('mint.image_title')}</label>
