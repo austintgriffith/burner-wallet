@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
+import { Card, Box, ThemeProvider } from 'rimble-ui';
+import theme from './theme';
 import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
@@ -1118,6 +1120,7 @@ render() {
   }
 
   return (
+    <ThemeProvider theme={theme}>
     <I18nextProvider i18n={i18n}>
     <div id="main" style={mainStyle}>
       <div style={innerStyle}>
@@ -1270,46 +1273,45 @@ render() {
             case 'main':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+                <Card p={3}>
+                {extraTokens}
 
-
-                  {extraTokens}
-
-                  <div style={{cursor:"pointer"}} onClick={()=>{
-                    this.changeView('helena')
-                  }}>
-                  <Balance icon={helena} selected={false} text={"xP+"} amount={this.state.protonBalance} address={account} dollarDisplay={dollarDisplayHelena} />
-                  <Ruler/>
-                  </div>
-
-                  <Balance icon={"⛽"} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplayCash}/>
-                  <Ruler/>
-
-                  {badgeDisplay}
-
-                  <MainCard
-                    subBalanceDisplay={subBalanceDisplay}
-                    buttonStyle={buttonStyle}
-                    address={account}
-                    balance={balance}
-                    changeAlert={this.changeAlert}
-                    changeView={this.changeView}
-                    dollarDisplay={dollarDisplay}
-                    ERC20TOKEN={ERC20TOKEN}
-                  />
-                  {moreButtons}
-                  <RecentTransactions
-                    dollarDisplay={dollarDisplay}
-                    view={this.state.view}
-                    buttonStyle={buttonStyle}
-                    ERC20TOKEN={ERC20TOKEN}
-                    transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
-                    changeView={this.changeView}
-                    address={account}
-                    block={this.state.block}
-                    recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
-                  />
+                <div style={{cursor:"pointer"}} onClick={()=>{
+                  this.changeView('helena')
+                }}>
+                <Balance icon={helena} selected={false} text={"xP+"} amount={this.state.protonBalance} address={account} dollarDisplay={dollarDisplayHelena} />
+                <Ruler/>
                 </div>
+
+                <Balance icon={"⛽"} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplayCash}/>
+                <Ruler/>
+
+                {badgeDisplay}
+
+                <MainCard
+                  subBalanceDisplay={subBalanceDisplay}
+                  buttonStyle={buttonStyle}
+                  address={account}
+                  balance={balance}
+                  changeAlert={this.changeAlert}
+                  changeView={this.changeView}
+                  dollarDisplay={dollarDisplay}
+                  ERC20TOKEN={ERC20TOKEN}
+                />
+                {moreButtons}
+                <RecentTransactions
+                  dollarDisplay={dollarDisplay}
+                  view={this.state.view}
+                  buttonStyle={buttonStyle}
+                  ERC20TOKEN={ERC20TOKEN}
+                  transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                  changeView={this.changeView}
+                  address={account}
+                  block={this.state.block}
+                  recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
+                />
+                </Card>
+                
                 <Bottom
                   icon={"wrench"}
                   text={i18n.t('advance_title')}
@@ -1322,8 +1324,7 @@ render() {
             case 'advanced':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
+                <Card p={3}>
                   <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
                   <Advanced
                     isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
@@ -1336,7 +1337,7 @@ render() {
                     goBack={this.goBack.bind(this)}
                     setPossibleNewPrivateKey={this.setPossibleNewPrivateKey.bind(this)}
                   />
-                </div>
+                </Card>
                 <Bottom
                   action={()=>{
                     this.changeView('main')
@@ -1873,6 +1874,7 @@ render() {
       </div>
     </div>
     </I18nextProvider>
+    </ThemeProvider>
   )
 }
 }

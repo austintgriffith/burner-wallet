@@ -1,5 +1,6 @@
 import React from 'react';
 import { Scaler } from "dapparatus";
+import { Flex, Box, OutlineButton } from 'rimble-ui';
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import Balance from "./Balance";
@@ -10,25 +11,27 @@ import i18n from '../i18n';
 export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
 
   return (
-      <div className="content bridge row">
-        <div className="col-6 p-1">
-          <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
-            changeView('request_funds')}
-          }>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-hand-holding-usd"></i> {i18n.t('more_buttons.request')}
-            </Scaler>
-          </button>
-        </div>
-        <div className="col-6 p-1">
-          <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
-            changeView('helena')}
-          }>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-fire"></i> {"Predict"}
-            </Scaler>
-          </button>
-        </div>
-      </div>
-    )
+    <Box>
+      <Flex mx={-2}>
+        <Box width={[1, 1/2, 1/2]} m={2}>
+          <OutlineButton fullWidth onClick={() => changeView("request_funds")}>
+            <Flex alignItems="center">
+              <Box mr={2}>
+                <i className="fas fa-hand-holding-usd"></i>
+              </Box> {i18n.t('more_buttons.request')}
+            </Flex>
+          </OutlineButton>
+        </Box>
+        <Box width={[1, 1/2, 1/2]} m={2}>
+          <OutlineButton fullWidth onClick={() => changeView("helena")}>
+            <Flex alignItems="center">
+              <Box mr={2}>
+                <i className="fas fa-fire"></i>
+              </Box> {"Predict"}
+            </Flex>
+          </OutlineButton>
+        </Box>
+      </Flex>
+    </Box>
+  )
 }
