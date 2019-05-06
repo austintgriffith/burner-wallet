@@ -11,16 +11,16 @@ export  default ({badges,address,selectBadge}) => {
     //console.log("badges",b,badges[b])
     //we have a url description... tons of other meta data if we want to do something else here....
     allBadges.push(
-      <Badge key={"b"+b} id={badges[b].id} image={badges[b].image} selectBadge={selectBadge}/>
+      <Badge key={"b"+b} id={badges[b].id} image={badges[b].image} name={badges[b].name} selectBadge={selectBadge}/>
     )
   }
 
   return (
     <StackGrid
-      gutterHeight={0}
-      gutterWidth={10}
-      columnWidth={60}
-      style={{marginRight:20,marginTop:10,marginBottom:20}}
+      columnWidth={145}
+      gutterHeight={15}
+      gutterWidth={15}
+      style={{marginTop:10,marginBottom:20}}
     >
       {allBadges}
     </StackGrid>

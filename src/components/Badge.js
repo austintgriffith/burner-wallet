@@ -3,6 +3,37 @@ import React from 'react';
 import Blockies from 'react-blockies';
 import {Scaler} from 'dapparatus';
 import {Input, Field, Box} from 'rimble-ui';
+import styled from 'styled-components';
+
+const Poster = styled.div`
+  display: inline-block;
+  cursor: pointer;
+  border: 1px solid black;
+  max-width: 145px;
+  img {
+    width: 100%;
+    height: 210px;
+    filter: drop-shadow(0 0 0.15rem black);
+  }
+`;
+
+const Title = styled.span`
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 145px;
+  height: 25px;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 100;
+  color: white;
+  margin-top: 10px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 5px 0 5px;
+  overflow: hidden;
+`;
 
 export default ({
   id,
@@ -47,48 +78,12 @@ export default ({
     );
   } else {
     return (
-      <div
-        className="coin__container"
-        style={{cursor: 'pointer'}}
-        onClick={() => {
-          selectBadge(id);
-        }}>
-        <div
-          className="coin is-slam"
-          style={{
-            zIndex: zIndex,
-            transform: 'rotateX(' + displayAngle + 'deg)',
-          }}>
-          <div
-            className="coin__front"
-            style={{
-              backgroundImage: 'url("' + image + '")',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              backgroundSize: 'cover',
-            }}
-          />
-          <div className="coin__back" />
-          <div className="coin__side">
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-            <div className="coin__c" />
-          </div>
-        </div>
-      </div>
+      // NOTE: In Receipt, name is not set and there we don't allow the user to
+      // click on the badge.
+      <Poster onClick={() => (name ? selectBadge(id) : null)}>
+        <img src={image} />
+        {name ? <Title>{name}</Title> : null}
+      </Poster>
     );
   }
 };
