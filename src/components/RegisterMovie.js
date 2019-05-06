@@ -39,6 +39,8 @@ const uploadedMovies = [
       'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/0af7e111-5314-4efc-9fb7-6968abed4e45-BorntobeBlue/Default/HLS/0af7e111-5314-4efc-9fb7-6968abed4e45-BorntobeBlue.m3u8',
     mp4:
       'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/0af7e111-5314-4efc-9fb7-6968abed4e45-BorntobeBlue/Default/MP4/0af7e111-5314-4efc-9fb7-6968abed4e45-BorntobeBlue.mp4',
+    image:
+      'https://images-na.ssl-images-amazon.com/images/M/MV5BMjI3NTk0OTM5OF5BMl5BanBnXkFtZTgwOTMxMTE5NzE@._V1_SX300.jpg',
   },
   {
     name: 'WAR BOOK',
@@ -46,6 +48,8 @@ const uploadedMovies = [
       'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/bb4cd27e-562c-4218-b197-1916f95c98b9-WARBOOK/Default/HLS/bb4cd27e-562c-4218-b197-1916f95c98b9-WARBOOK.m3u8',
     mp4:
       'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/bb4cd27e-562c-4218-b197-1916f95c98b9-WARBOOK/Default/MP4/bb4cd27e-562c-4218-b197-1916f95c98b9-WARBOOK.mp4',
+    image:
+      'https://images-na.ssl-images-amazon.com/images/M/MV5BMjI2MDA2ODY1Ml5BMl5BanBnXkFtZTgwNDA0NzcyNDE@._V1_SX300.jpg',
   },
 ];
 
@@ -85,6 +89,7 @@ export default class RegisterMovie extends React.Component {
       },
       uploader: {},
       canRegister: false,
+      upload: true,
     };
   }
 
@@ -436,28 +441,33 @@ export default class RegisterMovie extends React.Component {
 
   selectMovie(event) {
     if (event.target.value.indexOf('Select pre-uploaded movie') >= 0) {
-      return;
+      this.setState({
+        uploader: {},
+        upload: true,
+        movieName: undefined,
+      });
+    } else {
+      const movie = uploadedMovies.filter(
+        ({name}) => event.target.value === name,
+      )[0];
+      this.uploadStatus('movies')(null, {mp4: movie.mp4, hls: movie.hls});
+      this.uploadStatus('posters')(null, movie.image);
+      this.setState({movieName: movie.name, upload: false});
     }
-    const urls = uploadedMovies.filter(
-      ({name}) => event.target.value === name,
-    )[0];
-    this.uploadStatus('movies')(null, {mp4: urls.mp4, hls: urls.hls});
   }
 
   render() {
-    const {rightholderAddress, uploader, canRegister} = this.state;
+    const {
+      rightholderAddress,
+      uploader,
+      canRegister,
+      movieName,
+      upload,
+    } = this.state;
 
     return (
       <div>
         <div className="content row">
-          <div className="form-group w-100">
-            <label>{i18n.t('mint.movie_title')}</label>
-            <Uploader
-              destinationBucket="cinemarket-videos"
-              fileType="video"
-              uploadStatus={this.uploadStatus('movies')}
-            />
-          </div>
           <div className="form-group w-100">
             <Field label="In case movie upload takes too long to upload">
               <Select
@@ -467,13 +477,25 @@ export default class RegisterMovie extends React.Component {
               />
             </Field>
           </div>
-          <div className="form-group w-100">
-            <label>{i18n.t('mint.image_title')}</label>
-            <Uploader
-              fileType="image"
-              uploadStatus={this.uploadStatus('posters')}
-            />
-          </div>
+          {upload
+            ? [
+                <div className="form-group w-100" key="movies">
+                  <label>{i18n.t('mint.movie_title')}</label>
+                  <Uploader
+                    destinationBucket="cinemarket-videos"
+                    fileType="video"
+                    uploadStatus={this.uploadStatus('movies')}
+                  />
+                </div>,
+                <div className="form-group w-100" key="posters">
+                  <label>{i18n.t('mint.image_title')}</label>
+                  <Uploader
+                    fileType="image"
+                    uploadStatus={this.uploadStatus('posters')}
+                  />
+                </div>,
+              ]
+            : null}
           <div className="form-group w-100">
             <label>{i18n.t('mint.movie.name')}</label>
             <div className="input-group">
@@ -482,6 +504,7 @@ export default class RegisterMovie extends React.Component {
                 type="text"
                 placeholder="2001: A Space Odyssey..."
                 ref="movieName"
+                defaultValue={movieName}
                 onChange={this.canRegister.bind(this)}
               />
             </div>
