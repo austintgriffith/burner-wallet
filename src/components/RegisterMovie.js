@@ -36,16 +36,16 @@ const uploadedMovies = [
   {
     name: 'Born to be Blue',
     hls:
-      'https://s3.eu-central-1.amazonaws.com/cinemarket-v…111-5314-4efc-9fb7-6968abed4e45-BorntobeBlue.m3u8',
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/0af7e111-5314-4efc-9fb7-6968abed4e45-BorntobeBlue/Default/HLS/0af7e111-5314-4efc-9fb7-6968abed4e45-BorntobeBlue.m3u8',
     mp4:
-      'https://s3.eu-central-1.amazonaws.com/cinemarket-v…e111-5314-4efc-9fb7-6968abed4e45-BorntobeBlue.mp4',
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/0af7e111-5314-4efc-9fb7-6968abed4e45-BorntobeBlue/Default/MP4/0af7e111-5314-4efc-9fb7-6968abed4e45-BorntobeBlue.mp4',
   },
   {
     name: 'WAR BOOK',
     hls:
-      'https://s3.eu-central-1.amazonaws.com/cinemarket-v…bb4cd27e-562c-4218-b197-1916f95c98b9-WARBOOK.m3u8',
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/bb4cd27e-562c-4218-b197-1916f95c98b9-WARBOOK/Default/HLS/bb4cd27e-562c-4218-b197-1916f95c98b9-WARBOOK.m3u8',
     mp4:
-      'https://s3.eu-central-1.amazonaws.com/cinemarket-v…/bb4cd27e-562c-4218-b197-1916f95c98b9-WARBOOK.mp4',
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/bb4cd27e-562c-4218-b197-1916f95c98b9-WARBOOK/Default/MP4/bb4cd27e-562c-4218-b197-1916f95c98b9-WARBOOK.mp4',
   },
 ];
 
@@ -89,8 +89,17 @@ export default class RegisterMovie extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (this.props.scannerState !== newProps.scannerState) {
-      this.setState({rightholderAddress: newProps.scannerState.toAddress});
+    const {rightholderAddress} = this.state;
+    if (
+      this.props.scannerState !== newProps.scannerState ||
+      newProps.scannerState !== rightholderAddress
+    ) {
+      this.setState(
+        {rightholderAddress: newProps.scannerState.toAddress},
+        () => {
+          this.canRegister();
+        },
+      );
     }
   }
 

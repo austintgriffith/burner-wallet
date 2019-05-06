@@ -105,15 +105,15 @@ if (window.location.hostname.indexOf("localhost") >= 0 ||
     window.location.hostname.indexOf("10.0.0.107") >= 0 ||
     // For Tim to debug
     window.location.hostname.indexOf("sundai.fritz.box") >= 0) {
-  XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
+  XDAI_PROVIDER = "https://staging-testnet.leapdao.org/rpc";
   WEB3_PROVIDER = "https://rinkeby.infura.io/v3/f039330d8fb747e48a7ce98f51400d65"
   leapNetwork = "Leap Testnet";
   // LEAP token instead of DAI
   DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
-  P_DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
+  P_DAI_TOKEN_ADDR = '0x674d3D146453dDbC82aA1Cd46d12E04609408790';
 
   // Testnet Leap Bridge(ExitHandler)
-  BRIDGE_ADDR = '0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530';
+  BRIDGE_ADDR = '0x3c80369bBf392cC1DBA45B2F1d97F7A374f5BB40';
 
   MARKET_MAKER = 'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet';
 
