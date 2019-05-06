@@ -126,7 +126,12 @@ export default class SendToAddress extends React.Component {
   };
   bounceToAmountIfReady(){
     if(this.state.toAddress && this.state.toAddress.length === 42){
-      this.amountInput.focus();
+      try {
+        this.amountInput.focus();
+      }
+      catch(error) {
+        console.log("error", error);
+      }
     }
   }
   componentDidMount(){
@@ -274,14 +279,14 @@ export default class SendToAddress extends React.Component {
         type="number"
         placeholder="$0.00"
         value={this.state.amount}
-        ref={(input) => { this.amountInput = input; }}
+        forwardRef={(input) => { this.amountInput = input; }}
         onChange={event => this.updateState('amount', event.target.value)}
         required
       />
     )
     if(this.props.scannerState&&this.props.scannerState.daiposOrderId){
       amountInputDisplay = (
-        <Input
+        <input
           width={1}
           type="number"
           readOnly

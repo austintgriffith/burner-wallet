@@ -5,6 +5,7 @@ import { Scaler } from "dapparatus";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import i18n from '../i18n';
+import { Flex, Box, Button, Input, Field, Text, Form } from "rimble-ui";
 
 let pollInterval
 let metaReceiptTracker = {}
@@ -152,58 +153,43 @@ export default class SendToAddress extends React.Component {
       products.push(
         <div key={"reset"} className="content bridge row">
           <div className="col-12 p-1">
-            <button className="btn btn-large w-100"
-              onClick={()=>{
-                this.setState({amount:""})
-              }}
-              style={this.props.buttonStyle.secondary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+            <Button onClick={()=>{this.setState({amount:""})}}>
                 Reset
-              </Scaler>
-            </button>
+            </Button>
           </div>
         </div>
       )
     }
 
-    return (
-      <div>
-          <div className="content row">
-            <div className="form-group w-100">
-              <div className="form-group w-100">
-                <label htmlFor="amount_input">{i18n.t('withdraw_from_private.from_address')}</label>
-                <input type="text" className="form-control" placeholder="0x..." value={fromAddress} />
-              </div>
+    return (          
+      <Form>
+        <Box>
+          <Field label={i18n.t('withdraw_from_private.from_address')}>
+            <Input type="text" placeholder="0x..." value={fromAddress} required width={'100%'} />
+          </Field>
 
-              <div className="content bridge row">
-                  <div className="col-6 p-1 w-100">
-                    { <Blockies seed={fromAddress} scale={10} /> }
-                  </div>
-                  <div className="col-6 p-1 w-100">
-                    <div style={{fontSize:64,letterSpacing:-2,fontWeight:500,whiteSpace:"nowrap"}}>
-                      <Scaler config={{startZoomAt:1000,origin:"0% 50%"}}>
-                        {this.props.dollarDisplay(this.state.fromBalance)}
-                      </Scaler>
-                    </div>
-                  </div>
-              </div>
+          <Flex alignItems={'center'} justifyContent={'center'}>
+              <Box mx={2}>
+                <Blockies seed={fromAddress} scale={10} />
+              </Box>
+              
+              <Text fontSize={5} mx={2}>{this.props.dollarDisplay(this.state.fromBalance)}</Text>
+          </Flex>
 
-              <label htmlFor="amount_input">{i18n.t('withdraw_from_private.amount')}</label>
-              <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
-              </div>
-              {products}
-            </div>
-            <button style={this.props.buttonStyle.primary} className={`btn btn-success btn-lg w-100 ${canWithdraw ? '' : 'disabled'}`}
-                    onClick={this.withdraw}>
-              {i18n.t('withdraw_from_private.withdraw')}
-            </button>
-          </div>
-      </div>
+          <Field label={i18n.t('withdraw_from_private.amount')}>
+            <Flex alignItems={'center'}>
+              <Text mr={2}>$</Text>
+              <Input type="number" placeholder="0.00" value={this.state.amount} width={'100%'}
+                onChange={event => this.updateState('amount', event.target.value)} required />
+            </Flex>
+          </Field>
+
+          <Text>{products}</Text>
+        </Box>
+        <Button fullWidth disabled={canWithdraw === false} onClick={this.withdraw}>
+          {i18n.t('withdraw_from_private.withdraw')}
+        </Button>
+      </Form>
     )
   }
 }
