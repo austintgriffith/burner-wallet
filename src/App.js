@@ -1760,7 +1760,7 @@ render() {
         })()}
         { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
           <Flex flexDirection={'column'} justifyContent={'center'}>
-            {/* <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/> */}
+            <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
           </Flex>
         }
         { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
