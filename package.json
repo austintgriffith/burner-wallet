@@ -37,7 +37,6 @@
     "react-stack-grid": "^0.7.1",
     "rimble-ui": "^0.7.1",
     "styled-components": "^4.2.0",
-    "tabookey-gasless": "0.3.3",
     "web3": "1.0.0-beta.33"
   },
   "scripts": {
