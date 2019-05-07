@@ -55,10 +55,10 @@ export default class RequestFunds extends React.Component {
               <Text fontSize={3} textAlign={'center'}>{dollarDisplay(amount)}</Text>
               <Text textAlign={'center'}>{message}</Text>
               <Flex flexDirection={'column'} alignItems={'center'} p={3} border={1} borderColor={'grey'} borderRadius={1}>
-                <QRCode value={address} size={'100%'} renderAs={'svg'} />
+                <QRCode value={qrValue} size={'100%'} renderAs={'svg'} />
               </Flex>
               <Box mt={3}>
-                <PublicAddress address={address} />
+                <PublicAddress address={qrValue} />
               </Box>
             </Box>
           </CopyToClipboard>
