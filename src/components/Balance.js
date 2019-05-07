@@ -4,7 +4,7 @@ import { Scaler } from "dapparatus";
 
 export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
 
-  let opacity = 0.65
+  let opacity = 0.95//0.65
   if(text == selected){
     opacity=0.95
   }
