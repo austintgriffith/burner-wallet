@@ -87,7 +87,7 @@ export default class RequestFunds extends React.Component {
             <Input type="text" placeholder="Pizza" value={this.state.message} width={'100%'}
               onChange={event => this.updateState('message', event.target.value)} required />
           </Field>
-          <Button fullWidth className={`${canRequest ? '' : 'disabled'}`} onClick={this.request} disabled={!canRequest}>
+          <Button size={'large'} width={1} className={`${canRequest ? '' : 'disabled'}`} onClick={this.request} disabled={!canRequest}>
             {i18n.t('request_funds.button')}
           </Button>
         </Form>

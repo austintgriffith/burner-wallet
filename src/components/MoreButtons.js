@@ -14,7 +14,7 @@ export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert,
     <Box>
       <Flex mx={-2}>
         <Box width={[1, 1/2, 1/2]} m={2}>
-          <OutlineButton fullWidth onClick={() => changeView("request_funds")}>
+          <OutlineButton width={1} onClick={() => changeView("request_funds")}>
             <Flex alignItems="center">
               <Box mr={2}>
                 <i className="fas fa-hand-holding-usd"></i>
@@ -23,7 +23,7 @@ export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert,
           </OutlineButton>
         </Box>
         <Box width={[1, 1/2, 1/2]} m={2}>
-          <OutlineButton fullWidth onClick={() => changeView("helena")}>
+          <OutlineButton width={1} onClick={() => changeView("helena")}>
             <Flex alignItems="center">
               <Box mr={2}>
                 <i className="fas fa-fire"></i>

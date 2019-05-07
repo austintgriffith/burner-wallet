@@ -32,7 +32,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
     <Box>
       <Flex mx={-2}>
         <Box width={[1, 1/2, 1/2]} m={2}>
-          <Button fullWidth onClick={() => changeView("receive")}>
+          <Button width={1} onClick={() => changeView("receive")}>
             <Flex alignItems="center">
               <Box mr={2}>
                 <i className="fas fa-qrcode"  />
@@ -41,7 +41,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
           </Button>
         </Box>
         <Box width={[1, 1/2, 1/2]} m={2}>
-          <Button fullWidth onClick={() => changeView("send_to_address")}>
+          <Button width={1} onClick={() => changeView("send_to_address")}>
             <Flex alignItems="center">
               <Box mr={2}>
                 <i className="fas fa-paper-plane"/>
@@ -52,7 +52,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
       </Flex>
       <Flex mx={-2}>
         <Box width={[1, 1/2, 1/2]} m={2}>
-          <OutlineButton fullWidth onClick={() => changeView("share")}>
+          <OutlineButton width={1} onClick={() => changeView("share")}>
             <Flex alignItems="center">
               <Box mr={2}>
                 <i className="fas fa-share"/>
@@ -61,7 +61,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
           </OutlineButton>
         </Box>
         <Box width={[1, 1/2, 1/2]} m={2}>
-          <OutlineButton fullWidth onClick={() => changeView("send_with_link")}>
+          <OutlineButton width={1} onClick={() => changeView("send_with_link")}>
             <Flex alignItems="center">
               <Box mr={2}>
               <i className="fas fa-money-bill-alt"  />
@@ -78,7 +78,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
       <Box>
         <Flex mx={-2}>
           <Box width={[1, 1/2, 1/2]} m={2}>
-            <Button fullWidth onClick={() => changeView("receive")}>
+            <Button width={1} onClick={() => changeView("receive")}>
               <Flex alignItems="center">
                 <Box mr={2}>
                   <i className="fas fa-qrcode"  />
@@ -89,7 +89,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
           </Box>
           <Box width={[1, 1/2, 1/2]} m={2}>
             <Button
-              fullWidth
+              width={1}
               onClick={() => changeView("send_to_address")}
             >
               <Flex alignItems="center">

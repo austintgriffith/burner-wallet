@@ -8,7 +8,7 @@ import {
   OutlineButton,
   Input,
   Heading,
-  Box, 
+  Box,
   Flex,
   QR as QRCode
 } from "rimble-ui";
@@ -57,7 +57,7 @@ export default class Advanced extends React.Component {
     if(this.state.newPrivateKey){
       inputPrivateEyeButton = (
         <div className="col-2 p-1">
-          <OutlineButton fullWidth onClick={()=>{this.setState({privateKeyHidden:!this.state.privateKeyHidden})}}>
+          <OutlineButton width={1} onClick={()=>{this.setState({privateKeyHidden:!this.state.privateKeyHidden})}}>
             <i className="fas fa-eye"></i>
           </OutlineButton>
         </div>
@@ -162,12 +162,12 @@ export default class Advanced extends React.Component {
 
       <div>
         <Heading.h5 fontWeight={2} textAlign={'center'}>Learn More</Heading.h5>
-        
+
         <Box>
           <Flex mx={-2}>
             <Box width={[1, 1/2, 1/2]} m={2}>
               <a href="https://github.com/austintgriffith/burner-wallet" target="_blank">
-                <OutlineButton fullWidth>
+                <OutlineButton width={1}>
                   <Flex alignItems={'center'}>
                     <Box mr={2}>
                       <i className="fas fa-code"/>
@@ -178,7 +178,7 @@ export default class Advanced extends React.Component {
             </Box>
             <Box width={[1, 1/2, 1/2]} m={2}>
               <a href="https://medium.com/gitcoin/ethereum-in-emerging-economies-b235f8dac2f2" target="_blank">
-                <OutlineButton fullWidth>
+                <OutlineButton width={1}>
                   <Flex alignItems={'center'}>
                     <Box mr={2}>
                       <i className="fas fa-info"/>
@@ -196,7 +196,7 @@ export default class Advanced extends React.Component {
         {privateKey && !isVendor &&
         <div>
           <div style={{width:"100%",textAlign:"center"}}><h5>Private Key</h5></div>
-          
+
           <div className="content ops row" style={{marginBottom:10}}>
 
             <div className="col-6 p-1">

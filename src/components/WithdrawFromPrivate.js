@@ -161,7 +161,7 @@ export default class SendToAddress extends React.Component {
       )
     }
 
-    return (          
+    return (
       <Form>
         <Box>
           <Field label={i18n.t('withdraw_from_private.from_address')}>
@@ -172,7 +172,7 @@ export default class SendToAddress extends React.Component {
               <Box mx={2}>
                 <Blockies seed={fromAddress} scale={10} />
               </Box>
-              
+
               <Text fontSize={5} mx={2}>{this.props.dollarDisplay(this.state.fromBalance)}</Text>
           </Flex>
 
@@ -186,7 +186,7 @@ export default class SendToAddress extends React.Component {
 
           <Text>{products}</Text>
         </Box>
-        <Button fullWidth disabled={canWithdraw === false} onClick={this.withdraw}>
+        <Button width={1} disabled={canWithdraw === false} onClick={this.withdraw}>
           {i18n.t('withdraw_from_private.withdraw')}
         </Button>
       </Form>

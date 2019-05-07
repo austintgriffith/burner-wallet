@@ -142,10 +142,10 @@ export default class Helena extends React.Component {
         <Input width={'100%'} type="text" placeholder="xP+ amount you want to bet" value={this.state.value}
           onChange={event => this.setState({'amount': event.target.value})}
         />
-          
+
         <Flex mx={-2}>
           <Box width={[1, 1/2, 1/2]} m={2}>
-            <OutlineButton fullWidth onClick={() => {this.bet(YES)}}>
+            <OutlineButton width={1} onClick={() => {this.bet(YES)}}>
               <Flex alignItems={'center'}>
                 <Box mr={2}>
                   <i className="fas fa-check"></i>
@@ -153,9 +153,9 @@ export default class Helena extends React.Component {
               </Flex>
             </OutlineButton>
           </Box>
-          
+
           <Box width={[1, 1/2, 1/2]} m={2}>
-            <OutlineButton fullWidth onClick={()=>{this.bet(NO)}}>
+            <OutlineButton width={1} onClick={()=>{this.bet(NO)}}>
               <Flex alignItems={'center'}>
                 <Box mr={2}>
                   <i className="fas fa-times"></i>
