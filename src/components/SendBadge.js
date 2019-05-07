@@ -7,6 +7,7 @@ import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
 import Badge from './Badge';
 import i18n from '../i18n';
+import { Card, Text, Flex, Box, Input, Button, OutlineButton, Field } from 'rimble-ui';
 
 export default class SendBadge extends React.Component {
   constructor(props) {
@@ -135,36 +136,39 @@ export default class SendBadge extends React.Component {
           {this.props.badge.description}
         </div>
         <Ruler />
-        <div className="content row">
-          <div className="form-group w-100">
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">{i18n.t('send_to_address.to_address')}</label>
-              <div className="input-group">
-                <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
-                  ref={(input) => { this.addressInput = input; }}
-                       onChange={event => this.updateState('toAddress', event.target.value)} />
-                <div className="input-group-append" onClick={() => this.props.openScanner({view:'send_badge'})}>
-                  <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.primary}>
-                    <i style={{color:"#FFFFFF"}} className="fas fa-qrcode" />
-                  </span>
-                </div>
-              </div>
-            </div>
+        
+        <Box mb={4}>
+          <Field mb={3} label={i18n.t('send_to_address.to_address')}>
+            <Input
+              width={1}
+              type="text"
+              placeholder="0x..."
+              value={this.state.toAddress}
+              ref={(input) => { this.addressInput = input; }}
+              onChange={event => this.updateState('toAddress', event.target.value)}
+              required
+            />
+          </Field>
 
-            <div>  { this.state.toAddress && this.state.toAddress.length==42 &&
+          <OutlineButton icon={'CenterFocusWeak'} mb={4} width={1} onClick={() => this.props.openScanner({view:'send_badge'})}>
+            Scan QR Code
+          </OutlineButton>
+
+          { this.state.toAddress && this.state.toAddress.length==42 &&
+            <Flex alignItems={'center'} justifyContent={'center'} mb={3}>
               <CopyToClipboard text={toAddress.toLowerCase()}>
                 <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
                   <div style={{opacity:0.33}}>{this.state.fromEns}</div>
                   <Blockies seed={toAddress.toLowerCase()} scale={10}/>
                 </div>
               </CopyToClipboard>
-            }</div>
-          </div>
-          <button name="theVeryBottom" className={`btn btn-lg w-100 ${canSend ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}
-                  onClick={this.send}>
+            </Flex>
+          }
+
+          <Button size={'large'} width={1} disabled={canSend === false} onClick={this.send}>
             Send
-          </button>
-        </div>
+          </Button>
+        </Box>
       </div>
     )
   }
