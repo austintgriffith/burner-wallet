@@ -342,7 +342,7 @@ export default class SendToAddress extends React.Component {
             />
           </Field>
         </Box>
-        <Button size={'large'} width={1} disabled={canSend} onClick={this.send}>
+        <Button size={'large'} width={1} disabled={canSend === false} onClick={this.send}>
           Send
         </Button>
       </div>

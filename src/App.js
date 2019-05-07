@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
-import { Card, Box, ThemeProvider } from 'rimble-ui';
+import { Card, Box, ThemeProvider, Flex } from 'rimble-ui';
 import theme from './theme';
 import Web3 from 'web3';
 import axios from 'axios';
@@ -1364,7 +1364,7 @@ render() {
 
               return (
                 <div>
-                  <div className="send-to-address card w-100" style={{zIndex:1}}>
+                  <Card p={3} borderRadius={2}>
                     <NavCard title={i18n.t('withdraw')} goBack={this.goBack.bind(this)}/>
                     {defaultBalanceDisplay}
                     <WithdrawFromPrivate
@@ -1382,7 +1382,7 @@ render() {
                       changeAlert={this.changeAlert}
                       dollarDisplay={dollarDisplay}
                     />
-                  </div>
+                  </Card>
                   <Bottom
                     action={()=>{
                       this.changeView('main')
@@ -1393,7 +1393,7 @@ render() {
             case 'send_badge':
             return (
               <div>
-                <div className="send-to-address card w-100" style={{zIndex:1}}>
+                <Card p={3} borderRadius={2}>
                   <NavCard title={this.state.badges[this.state.selectedBadge].name} titleLink={this.state.badges[this.state.selectedBadge].external_url} goBack={this.goBack.bind(this)}/>
                   <SendBadge
                     changeView={this.changeView}
@@ -1414,7 +1414,7 @@ render() {
                     badge={this.state.badges[this.state.selectedBadge]}
                     clearBadges={this.clearBadges.bind(this)}
                   />
-                </div>
+                </Card>
                 <Bottom
                   text={i18n.t('done')}
                   action={this.goBack.bind(this)}
@@ -1456,7 +1456,7 @@ render() {
             case 'receipt':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+                <Card p={3} borderRadius={2}>
 
                   <NavCard title={i18n.t('receipt_title')} goBack={this.goBack.bind(this)}/>
                   <Receipt
@@ -1479,7 +1479,7 @@ render() {
                     fullRecentTxs={this.state.fullRecentTxs}
                     recentTxs={this.state.recentTxs}
                   />
-                </div>
+                </Card>
                 <Bottom
                   action={this.goBack.bind(this)}
                 />
@@ -1688,7 +1688,7 @@ render() {
             case 'burn-wallet':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+                <Card p={3} borderRadius={2}>
 
                   <NavCard title={"Burn Private Key"} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
@@ -1710,7 +1710,7 @@ render() {
                     }
                   }}
                   />
-                </div>
+                </Card>
                 <Bottom
                   text={i18n.t('cancel')}
                   action={this.goBack.bind(this)}
@@ -1721,45 +1721,47 @@ render() {
 
             case 'loader':
             return (
-              <div>
-                <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
-
-                  <NavCard title={"Sending..."} goBack={this.goBack.bind(this)} darkMode={true}/>
-                </div>
-                <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-              </div>
+              <Card p={3} borderRadius={2}>
+                <NavCard title={"Sending..."} goBack={this.goBack.bind(this)} darkMode={true}/>
+                
+                <Box py={5}>
+                  <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+                </Box>
+              </Card>
             );
             case 'reader':
             return (
-              <div>
-                <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
-
-                  <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)} darkMode={true}/>
-                </div>
-                <Loader loaderImage={LOADERIMAGE}  mainStyle={mainStyle}/>
-              </div>
+              <Card p={3} borderRadius={2}>
+                <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)} darkMode={true} />
+                
+                <Box py={5}>
+                  <Loader loaderImage={LOADERIMAGE}  mainStyle={mainStyle} />
+                </Box>
+              </Card>
             );
             case 'claimer':
             return (
-              <div>
-                <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
-
-                  <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
-                </div>
-              <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-              </div>
+              <Card p={3} borderRadius={2}>
+                <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
+                
+                <Box py={5}>
+                  <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+                </Box>
+              </Card>
             );
             default:
             return (
-              <div>unknown view</div>
+              <Card p={3} borderRadius={2}>
+                <NavCard title={"404 - Sorry, we can't find that"} goBack={this.goBack.bind(this)} darkMode={true} />
+              </Card>
             )
           }
 
         })()}
         { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
-          <div>
-            <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-          </div>
+          <Flex flexDirection={'column'} justifyContent={'center'}>
+            {/* <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/> */}
+          </Flex>
         }
         { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
         </div>
