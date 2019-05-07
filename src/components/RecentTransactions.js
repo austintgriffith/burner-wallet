@@ -17,7 +17,7 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
         extraUp=-10
       }
       let extraIcon = ""
-      
+
 
       let dollarView
       if(ERC20TOKEN){
@@ -71,6 +71,7 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
         //}
 
         let blockAge = block-recentTxs[r].blockNumber
+        if(!blockAge){blockAge=0}
 
         if(blockAge<=1&&recentTxs[r].to==address){
           txns.push(
@@ -85,7 +86,7 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
               {dollarView}
 
               {toBlockie}
-            </Flex>  
+            </Flex>
           )
         }else{
           txns.push(
