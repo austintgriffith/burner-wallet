@@ -143,24 +143,16 @@ export default class Helena extends React.Component {
           onChange={event => this.setState({'amount': event.target.value})}
         />
 
-        <Flex mx={-2}>
-          <Box width={[1, 1/2, 1/2]} m={2}>
-            <OutlineButton width={1} onClick={() => {this.bet(YES)}}>
-              <Flex alignItems={'center'}>
-                <Box mr={2}>
-                  <i className="fas fa-check"></i>
-                </Box> {"YES (" + Math.round(this.state.odds[0] * 100 *1000)/1000 + "%)"}
-              </Flex>
+        <Flex >
+          <Box flex={'1 1 auto'} my={2} mr={2}>
+            <OutlineButton icon={'Check'} width={1} px={2} onClick={() => {this.bet(YES)}}>
+              {"YES (" + Math.round(this.state.odds[0] * 100 *1000)/1000 + "%)"}
             </OutlineButton>
           </Box>
 
-          <Box width={[1, 1/2, 1/2]} m={2}>
-            <OutlineButton width={1} onClick={()=>{this.bet(NO)}}>
-              <Flex alignItems={'center'}>
-                <Box mr={2}>
-                  <i className="fas fa-times"></i>
-                </Box> {"NO (" + Math.round(this.state.odds[1] * 100 *1000)/1000 + "%)"}
-              </Flex>
+          <Box flex={'1 1 auto'} my={2}>
+            <OutlineButton icon={'Close'} width={1} px={2} onClick={()=>{this.bet(NO)}}>
+              {"NO (" + Math.round(this.state.odds[1] * 100 *1000)/1000 + "%)"}
             </OutlineButton>
           </Box>
         </Flex>
