@@ -137,7 +137,12 @@ export default class SendToAddress extends React.Component {
   componentDidMount(){
     this.setState({ canSend: this.canSend() })
     setTimeout(()=>{
-      if(!this.state.toAddress && this.addressInput){
+      console.log("#####Hacky scroll to bottom to get it to work for now")
+      if(this.state.message || this.state.amount){
+        setTimeout(()=>{
+          this.scrollToBottom()
+        },30)
+      }else if(!this.state.toAddress && this.addressInput){
         this.addressInput.focus();
       }else if(!this.state.amount && this.amountInput){
         this.amountInput.focus();
@@ -292,7 +297,7 @@ export default class SendToAddress extends React.Component {
           readOnly
           placeholder="0"
           value={this.state.amount}
-          ref={(input) => { this.amountInput = input; }}
+          forwardRef={(input) => { this.amountInput = input; }}
           onChange={event => this.updateState('amount', event.target.value)}
         />
       )
