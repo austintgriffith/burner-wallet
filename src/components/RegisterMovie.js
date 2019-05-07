@@ -172,6 +172,7 @@ export default class RegisterMovie extends React.Component {
         name: rightholderName.value,
       },
       movie: uploader.movies,
+      created: Math.floor(Date.now() / 1000),
     };
 
     let tokenHash;
