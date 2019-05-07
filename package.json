@@ -19,6 +19,7 @@
     "i18next-browser-languagedetector": "^2.2.4",
     "jimp": "^0.6.0",
     "node-sass": "^4.11.0",
+    "polished": "^3.3.0",
     "qrcode-reader": "^1.0.4",
     "qrcode.react": "^0.8.0",
     "query-string": "^6.3.0",
@@ -34,6 +35,8 @@
     "react-scripts": "^2.1.5",
     "react-scroll": "^1.7.10",
     "react-stack-grid": "^0.7.1",
+    "rimble-ui": "^0.7.1",
+    "styled-components": "^4.2.0",
     "tabookey-gasless": "0.3.3",
     "web3": "1.0.0-beta.33"
   },

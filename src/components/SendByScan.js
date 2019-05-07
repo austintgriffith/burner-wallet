@@ -5,6 +5,8 @@ import QrCode from 'qrcode-reader';
 import qrimage from '../qrcode.png';
 import RNMessageChannel from 'react-native-webview-messaging';
 import i18n from "../i18n";
+import { Icon } from "rimble-ui";
+
 var Jimp = require("jimp");
 let interval
 class SendByScan extends Component {
@@ -255,7 +257,7 @@ class SendByScan extends Component {
     return (
       <div style={{  position: "fixed",top:0,left:0,right:0,bottom:0,zIndex:5,margin:'0 auto !important',background:"#000000"}}>
         <div style={{ position: 'absolute',zIndex: 256,top:20,right:20,fontSize:80,paddingRight:20,color:"#FFFFFF",cursor:'pointer'}} onClick={this.onClose} >
-          <i className="fa fa-times" aria-hidden="true"></i>
+          <Icon name="Close" size="80" />
         </div>
         {displayedReader}
         <div style={{position: 'absolute',zIndex:11,bottom:20,fontSize:12,left:20,color:"#FFFFFF",opacity:0.333}}>

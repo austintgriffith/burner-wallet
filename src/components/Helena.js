@@ -4,7 +4,7 @@ import { Events, Blockie, Scaler } from "dapparatus";
 import Web3 from 'web3';
 import Gnosis from '@frontier-token-research/pm-js/'
 import Ruler from "./Ruler";
-
+import { Box, Text, Input, OutlineButton, Flex, Icon } from "rimble-ui";
 
 const YES = 0;
 const NO = 1;
@@ -128,7 +128,7 @@ export default class Helena extends React.Component {
 
   render(){
     if(!this.state.title){
-      return (<div>loading market...</div>)
+      return (<Text textAlign={'center'}>loading market...</Text>)
     }
 
     let betOpacity = 0.1
@@ -136,55 +136,46 @@ export default class Helena extends React.Component {
       betOpacity = 0.6
     }
     return (
-      <div>
-        <div className="form-group w-100">
-          <div className="content bridge row">
-            <div className="col-12 p-1">
-            <div style={{paddingTop:20,textAlign:'center',fontSize:22}}>
-              {this.state.title}
-            </div>
-            </div>
-          </div>
+      <Box>
+        <Text textAlign={'center'} fontSize={3} mb={3}>{this.state.title}</Text>
 
-          <div className="content row">
-            <div className="input-group">
-              <input type="text" className="form-control" placeholder="xP+ amount you want to bet" value={this.state.value}
-                onChange={event => this.setState({'amount': event.target.value})}
-              />
-            </div>
-          </div>
+        <Input width={'100%'} type="text" placeholder="xP+ amount you want to bet" value={this.state.value}
+          onChange={event => this.setState({'amount': event.target.value})}
+        />
 
-          <div className="content bridge row">
-            <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={() => {
-                this.bet(YES)}
-              }>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-check"></i> {"YES (" + Math.round(this.state.odds[0] * 100 *1000)/1000 + "%)"}
-                </Scaler>
-              </button>
-            </div>
-            <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                this.bet(NO)}
-            }>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-times"></i> {"NO (" + Math.round(this.state.odds[1] * 100 *1000)/1000 + "%)"}
-              </Scaler>
-            </button>
-            </div>
-          </div>
-          <div className="content bridge row">
-            <div className="col-6 p-1" style={{textAlign:'center', opacity:betOpacity, fontSize: 12}}>
-              {this.state.bets[0]} xP+
-            </div>
-            <div className="col-6 p-1" style={{textAlign:'center', opacity:betOpacity, fontSize: 12}}>
-              {this.state.bets[1]} xP+
-            </div>
-          </div>
+        <Flex >
+          <Box flex={'1 1 auto'} my={2} mr={2}>
+            <OutlineButton width={1} p={0} onClick={() => {this.bet(YES)}}>
+              <Text color={'primary'} fontSize={1} fontWeight={3}>
+                <Flex alignItems={'center'} mx={2}>
+                  <Icon name={'Check'} mr={1} size={'18px'} />
+                  {"YES (" + Math.round(this.state.odds[0] * 100 *1000)/1000 + "%)"}
+                </Flex>
+              </Text>
+            </OutlineButton>
+          </Box>
 
-        </div>
-      </div>
+          <Box flex={'1 1 auto'} my={2}>
+            <OutlineButton width={1} p={0} onClick={()=>{this.bet(NO)}}>
+              <Text color={'primary'} fontSize={1} fontWeight={3}>
+                <Flex alignItems={'center'} mx={2}>
+                  <Icon name={'Close'} mr={1} size={'18px'} />
+                  {"NO (" + Math.round(this.state.odds[1] * 100 *1000)/1000 + "%)"}
+                </Flex>
+              </Text>
+            </OutlineButton>
+          </Box>
+        </Flex>
+
+        <Flex justifyContent={'space-around'} pt={1}>
+          <Text fontSize={0} color={'moon-gray'} textAlign={'center'}>
+            {this.state.bets[0]} xP+
+          </Text>
+          <Text fontSize={0} color={'moon-gray'} textAlign={'center'}>
+            {this.state.bets[1]} xP+
+          </Text>
+        </Flex>
+      </Box>
     )
   }
 }

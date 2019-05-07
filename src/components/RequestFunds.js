@@ -5,7 +5,7 @@ import Blockies from 'react-blockies';
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18n from '../i18n';
 import RecentTransactions from './RecentTransactions';
-const QRCode = require('qrcode.react');
+import { Text, Flex, Input, Box, Field, Button, Form, QR as QRCode, PublicAddress } from "rimble-ui";
 
 export default class RequestFunds extends React.Component {
 
@@ -51,27 +51,16 @@ export default class RequestFunds extends React.Component {
           <CopyToClipboard text={qrValue} onCopy={() => {
             this.props.changeAlert({type: 'success', message: 'Request link copied to clipboard'})
           }}>
-          <div style={{width:"100%",textAlign:'center'}}>
-            <div style={{fontSize:30,cursor:"pointer",textAlign:"center",width:"100%"}}>
-              {dollarDisplay(amount)}
-            </div>
-
-            <div style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
-              {message}
-            </div>
-
-            <div style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
-              <QRCode value={qrValue} size={qrSize}/>
-            </div>
-
-            <div className="input-group">
-              <input type="text" className="form-control" value={qrValue} disabled/>
-              <div className="input-group-append">
-                <span className="input-group-text"><i className="fas fa-copy"/></span>
-              </div>
-            </div>
-
-            </div>
+            <Box>
+              <Text fontSize={3} textAlign={'center'}>{dollarDisplay(amount)}</Text>
+              <Text textAlign={'center'}>{message}</Text>
+              <Flex flexDirection={'column'} alignItems={'center'} p={3} border={1} borderColor={'grey'} borderRadius={1}>
+                <QRCode value={address} size={'100%'} renderAs={'svg'} />
+              </Flex>
+              <Box mt={3}>
+                <PublicAddress address={address} />
+              </Box>
+            </Box>
           </CopyToClipboard>
           <RecentTransactions
             dollarDisplay={dollarDisplay}
@@ -89,28 +78,19 @@ export default class RequestFunds extends React.Component {
       )
     }else{
       return (
-        <div>
-          <div className="content row">
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">{i18n.t('request_funds.amount')}</label>
-              <div className="input-group">
-
-                <input type="number" className="form-control" placeholder="0" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
-              </div>
-            </div>
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">{i18n.t('request_funds.item_message')}</label>
-              <input type="text" className="form-control" placeholder="Pizza" value={this.state.message}
-                     onChange={event => this.updateState('message', event.target.value)} />
-            </div>
-            <button style={{backgroundColor:this.props.mainStyle.mainColor}} className={`btn btn-success btn-lg w-100 ${canRequest ? '' : 'disabled'}`}
-                    onClick={this.request}>
-              {i18n.t('request_funds.button')}
-            </button>
-          </div>
-
-        </div>
+        <Form>
+          <Field label={i18n.t('request_funds.amount')}>
+            <Input type="number" placeholder="0" value={this.state.amount} width={'100%'}
+                onChange={event => this.updateState('amount', event.target.value)} required />
+          </Field>
+          <Field label={i18n.t('request_funds.item_message')}>
+            <Input type="text" placeholder="Pizza" value={this.state.message} width={'100%'}
+              onChange={event => this.updateState('message', event.target.value)} required />
+          </Field>
+          <Button size={'large'} width={1} className={`${canRequest ? '' : 'disabled'}`} onClick={this.request} disabled={!canRequest}>
+            {i18n.t('request_funds.button')}
+          </Button>
+        </Form>
       )
     }
 

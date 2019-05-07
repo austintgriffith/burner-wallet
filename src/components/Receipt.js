@@ -8,7 +8,7 @@ import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
 import axios from 'axios';
-const QRCode = require('qrcode.react');
+import { Flex, Icon, Card, Text } from "rimble-ui";
 
 
 const BockieSize = 12
@@ -81,31 +81,26 @@ export default class Receive extends React.Component {
 
     return (
       <div>
-        <div className="send-to-address w-100">
-            <div className="row" style={{cursor:"pointer",width:"100%"}}>
-              <div className="col-12" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
-                <i className="fas fa-check-circle" style={{color:"#39e917",fontSize:180,opacity:.7}}></i>
-              </div>
-            </div>
+        <div>
+          <Flex alignItems={'center'} justifyContent={'center'}>
+            <Icon name="CheckCircle" color={'success'} size={180} />
+          </Flex>
 
-            <div className="row" style={{cursor:"pointer",width:"100%"}}>
-              <div className="col-4" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
-                <Blockie
-                  address={receipt.from}
-                  config={{size:BockieSize}}
-                />
-              </div>
-              <div className="col-4" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1,fontSize:25,paddingTop:28}}>
-                {sendAmount}
-              </div>
-              <div className="col-4" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
-                <Blockie
-                  address={receipt.to}
-                  config={{size:BockieSize}}
-                />
-              </div>
-            </div>
-            {message}
+          <Flex alignItems={'center'} justifyContent={'space-around'}>
+            <Blockie
+              address={receipt.from}
+              config={{size:BockieSize}}
+            />
+
+            <Text textAlign={'center'}>{sendAmount}</Text>
+
+            <Blockie
+              address={receipt.to}
+              config={{size:BockieSize}}
+            />
+          </Flex>
+
+          <Text textAlign={'center'}>{message}</Text>
 
         </div>
         <div name="theVeryBottom" className="text-center bottom-text">

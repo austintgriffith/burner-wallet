@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
+import { Card, Box, ThemeProvider, Flex } from 'rimble-ui';
+import theme from './theme';
 import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
@@ -1118,6 +1120,7 @@ render() {
   }
 
   return (
+    <ThemeProvider theme={theme}>
     <I18nextProvider i18n={i18n}>
     <div id="main" style={mainStyle}>
       <div style={innerStyle}>
@@ -1270,46 +1273,45 @@ render() {
             case 'main':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+                <Card p={3} borderRadius={2}>
+                {extraTokens}
 
-
-                  {extraTokens}
-
-                  <div style={{cursor:"pointer"}} onClick={()=>{
-                    this.changeView('helena')
-                  }}>
-                  <Balance icon={helena} selected={false} text={"xP+"} amount={this.state.protonBalance} address={account} dollarDisplay={dollarDisplayHelena} />
-                  <Ruler/>
-                  </div>
-
-                  <Balance icon={"⛽"} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplayCash}/>
-                  <Ruler/>
-
-                  {badgeDisplay}
-
-                  <MainCard
-                    subBalanceDisplay={subBalanceDisplay}
-                    buttonStyle={buttonStyle}
-                    address={account}
-                    balance={balance}
-                    changeAlert={this.changeAlert}
-                    changeView={this.changeView}
-                    dollarDisplay={dollarDisplay}
-                    ERC20TOKEN={ERC20TOKEN}
-                  />
-                  {moreButtons}
-                  <RecentTransactions
-                    dollarDisplay={dollarDisplay}
-                    view={this.state.view}
-                    buttonStyle={buttonStyle}
-                    ERC20TOKEN={ERC20TOKEN}
-                    transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
-                    changeView={this.changeView}
-                    address={account}
-                    block={this.state.block}
-                    recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
-                  />
+                <div style={{cursor:"pointer"}} onClick={()=>{
+                  this.changeView('helena')
+                }}>
+                <Balance icon={helena} selected={false} text={"xP+"} amount={this.state.protonBalance} address={account} dollarDisplay={dollarDisplayHelena} />
+                <Ruler/>
                 </div>
+
+                <Balance icon={"⛽"} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplayCash}/>
+                <Ruler/>
+
+                {badgeDisplay}
+
+                <MainCard
+                  subBalanceDisplay={subBalanceDisplay}
+                  buttonStyle={buttonStyle}
+                  address={account}
+                  balance={balance}
+                  changeAlert={this.changeAlert}
+                  changeView={this.changeView}
+                  dollarDisplay={dollarDisplay}
+                  ERC20TOKEN={ERC20TOKEN}
+                />
+                {moreButtons}
+                <RecentTransactions
+                  dollarDisplay={dollarDisplay}
+                  view={this.state.view}
+                  buttonStyle={buttonStyle}
+                  ERC20TOKEN={ERC20TOKEN}
+                  transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                  changeView={this.changeView}
+                  address={account}
+                  block={this.state.block}
+                  recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
+                />
+                </Card>
+                
                 <Bottom
                   icon={"wrench"}
                   text={i18n.t('advance_title')}
@@ -1322,8 +1324,7 @@ render() {
             case 'advanced':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
+                <Card p={3} borderRadius={2}>
                   <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
                   <Advanced
                     isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
@@ -1336,7 +1337,7 @@ render() {
                     goBack={this.goBack.bind(this)}
                     setPossibleNewPrivateKey={this.setPossibleNewPrivateKey.bind(this)}
                   />
-                </div>
+                </Card>
                 <Bottom
                   action={()=>{
                     this.changeView('main')
@@ -1363,7 +1364,7 @@ render() {
 
               return (
                 <div>
-                  <div className="send-to-address card w-100" style={{zIndex:1}}>
+                  <Card p={3} borderRadius={2}>
                     <NavCard title={i18n.t('withdraw')} goBack={this.goBack.bind(this)}/>
                     {defaultBalanceDisplay}
                     <WithdrawFromPrivate
@@ -1381,7 +1382,7 @@ render() {
                       changeAlert={this.changeAlert}
                       dollarDisplay={dollarDisplay}
                     />
-                  </div>
+                  </Card>
                   <Bottom
                     action={()=>{
                       this.changeView('main')
@@ -1392,7 +1393,7 @@ render() {
             case 'send_badge':
             return (
               <div>
-                <div className="send-to-address card w-100" style={{zIndex:1}}>
+                <Card p={3} borderRadius={2}>
                   <NavCard title={this.state.badges[this.state.selectedBadge].name} titleLink={this.state.badges[this.state.selectedBadge].external_url} goBack={this.goBack.bind(this)}/>
                   <SendBadge
                     changeView={this.changeView}
@@ -1413,7 +1414,7 @@ render() {
                     badge={this.state.badges[this.state.selectedBadge]}
                     clearBadges={this.clearBadges.bind(this)}
                   />
-                </div>
+                </Card>
                 <Bottom
                   text={i18n.t('done')}
                   action={this.goBack.bind(this)}
@@ -1423,7 +1424,7 @@ render() {
             case 'send_to_address':
             return (
               <div>
-                <div className="send-to-address card w-100" style={{zIndex:1}}>
+                <Card p={3} borderRadius={2}>
                   <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <SendToAddress
@@ -1445,7 +1446,7 @@ render() {
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
                   />
-                </div>
+                </Card>
                 <Bottom
                   text={i18n.t('cancel')}
                   action={this.goBack.bind(this)}
@@ -1455,7 +1456,7 @@ render() {
             case 'receipt':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+                <Card p={3} borderRadius={2}>
 
                   <NavCard title={i18n.t('receipt_title')} goBack={this.goBack.bind(this)}/>
                   <Receipt
@@ -1478,7 +1479,7 @@ render() {
                     fullRecentTxs={this.state.fullRecentTxs}
                     recentTxs={this.state.recentTxs}
                   />
-                </div>
+                </Card>
                 <Bottom
                   action={this.goBack.bind(this)}
                 />
@@ -1487,8 +1488,7 @@ render() {
             case 'receive':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
-
+                <Card p={3} borderRadius={2}>
                   <NavCard title={i18n.t('receive_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <Receive
@@ -1511,7 +1511,7 @@ render() {
                     fullRecentTxs={this.state.fullRecentTxs}
                     recentTxs={this.state.recentTxs}
                   />
-                </div>
+                </Card>
                 <Bottom
                   action={this.goBack.bind(this)}
                 />
@@ -1520,7 +1520,7 @@ render() {
             case 'request_funds':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+                <Card p={3} borderRadius={2}>
 
                   <NavCard title={i18n.t('request_funds_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
@@ -1541,7 +1541,7 @@ render() {
                     fullRecentTxs={this.state.fullRecentTxs}
                     recentTxs={this.state.recentTxs}
                   />
-                </div>
+                </Card>
                 <Bottom
                   action={this.goBack.bind(this)}
                 />
@@ -1559,7 +1559,7 @@ render() {
               }else{
                 return (
                   <div>
-                    <div className="send-to-address card w-100" style={{zIndex:1}}>
+                    <Card p={3} borderRadius={2}>
 
                       <NavCard title={"Helena Prediction Markets"} titleLink={""} goBack={this.goBack.bind(this)}/>
                       <Balance icon={helena} selected={"xP+"} text={"xP+"} amount={this.state.protonBalance} address={account} dollarDisplay={dollarDisplayHelena} />
@@ -1674,9 +1674,9 @@ render() {
                         changeView={this.changeView}
                       />
 
-                    </div>
+                    </Card>
                     <Bottom
-                      text={"done"}
+                      text={i18n.t('done')}
                       action={this.goBack.bind(this)}
                     />
                   </div>
@@ -1688,7 +1688,7 @@ render() {
             case 'burn-wallet':
             return (
               <div>
-                <div className="main-card card w-100" style={{zIndex:1}}>
+                <Card p={3} borderRadius={2}>
 
                   <NavCard title={"Burn Private Key"} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
@@ -1710,7 +1710,7 @@ render() {
                     }
                   }}
                   />
-                </div>
+                </Card>
                 <Bottom
                   text={i18n.t('cancel')}
                   action={this.goBack.bind(this)}
@@ -1721,45 +1721,47 @@ render() {
 
             case 'loader':
             return (
-              <div>
-                <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
-
-                  <NavCard title={"Sending..."} goBack={this.goBack.bind(this)} darkMode={true}/>
-                </div>
-                <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-              </div>
+              <Card p={3} borderRadius={2}>
+                <NavCard title={"Sending..."} goBack={this.goBack.bind(this)} darkMode={true}/>
+                
+                <Box py={5}>
+                  <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+                </Box>
+              </Card>
             );
             case 'reader':
             return (
-              <div>
-                <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
-
-                  <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)} darkMode={true}/>
-                </div>
-                <Loader loaderImage={LOADERIMAGE}  mainStyle={mainStyle}/>
-              </div>
+              <Card p={3} borderRadius={2}>
+                <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)} darkMode={true} />
+                
+                <Box py={5}>
+                  <Loader loaderImage={LOADERIMAGE}  mainStyle={mainStyle} />
+                </Box>
+              </Card>
             );
             case 'claimer':
             return (
-              <div>
-                <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
-
-                  <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
-                </div>
-              <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-              </div>
+              <Card p={3} borderRadius={2}>
+                <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
+                
+                <Box py={5}>
+                  <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+                </Box>
+              </Card>
             );
             default:
             return (
-              <div>unknown view</div>
+              <Card p={3} borderRadius={2}>
+                <NavCard title={"404 - Sorry, we can't find that"} goBack={this.goBack.bind(this)} darkMode={true} />
+              </Card>
             )
           }
 
         })()}
         { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
-          <div>
+          <Flex flexDirection={'column'} justifyContent={'center'}>
             <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-          </div>
+          </Flex>
         }
         { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
         </div>
@@ -1873,6 +1875,7 @@ render() {
       </div>
     </div>
     </I18nextProvider>
+    </ThemeProvider>
   )
 }
 }
