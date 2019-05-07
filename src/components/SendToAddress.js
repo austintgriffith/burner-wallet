@@ -16,6 +16,32 @@ import {
 
 const queryString = require('query-string');
 
+const inlineRimbleInput = {
+  paddingTop: '0',
+  paddingBottom: '0',
+  paddingLeft: '16px',
+  paddingRight: '16px',
+  color: '#3F3D48',
+  backgroundColor: '#fff',
+  width: '100%',
+  height: '3rem',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
+  fontSize: '1rem',
+  fontFamily: '"Inter-Loom", Helvetica, sans-serif',
+  appearance: 'none',
+  '-webkit-appearance': 'none',
+  '-moz-appearance': 'none',
+  ':focus': {
+    outline: 'none',
+    borderColor: '#371bb5',
+  },
+  ':hover': {
+    boxShadow: '0px 2px 6px rgba(0,0,0,0.3)'
+  }
+}
+
 export default class SendToAddress extends React.Component {
 
   constructor(props) {
@@ -137,12 +163,7 @@ export default class SendToAddress extends React.Component {
   componentDidMount(){
     this.setState({ canSend: this.canSend() })
     setTimeout(()=>{
-      console.log("#####Hacky scroll to bottom to get it to work for now")
-      if(this.state.message || this.state.amount){
-        setTimeout(()=>{
-          this.scrollToBottom()
-        },30)
-      }else if(!this.state.toAddress && this.addressInput){
+      if(!this.state.toAddress && this.addressInput){
         this.addressInput.focus();
       }else if(!this.state.amount && this.amountInput){
         this.amountInput.focus();
@@ -279,12 +300,13 @@ export default class SendToAddress extends React.Component {
 
 
     let amountInputDisplay = (
-      <Input
+      <input
         width={1}
         type="number"
         placeholder="0"
         value={this.state.amount}
-        forwardRef={(input) => { this.amountInput = input; }}
+        style={inlineRimbleInput}
+        ref={(input) => { this.amountInput = input; }}
         onChange={event => this.updateState('amount', event.target.value)}
         required
       />
@@ -297,7 +319,7 @@ export default class SendToAddress extends React.Component {
           readOnly
           placeholder="0"
           value={this.state.amount}
-          forwardRef={(input) => { this.amountInput = input; }}
+          ref={(input) => { this.amountInput = input; }}
           onChange={event => this.updateState('amount', event.target.value)}
         />
       )
