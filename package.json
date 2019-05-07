@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@frontier-token-research/pm-contracts": "^1.2.2",
-    "@frontier-token-research/pm-js": "^2.2.12",
     "axios": "^0.18.0",
     "base64url": "^3.0.1",
     "bootstrap": "^4.1.3",
@@ -34,7 +32,6 @@
     "react-scripts": "^2.1.5",
     "react-scroll": "^1.7.10",
     "react-stack-grid": "^0.7.1",
-    "tabookey-gasless": "0.3.3",
     "web3": "1.0.0-beta.33"
   },
   "scripts": {
