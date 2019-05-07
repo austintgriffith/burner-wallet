@@ -11,7 +11,7 @@ export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert,
 
   return (
       <div className="content bridge row">
-        <div className="col-6 p-1">
+        <div className="col-12 p-1">
           <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
             changeView('request_funds')}
           }>
@@ -20,15 +20,7 @@ export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert,
             </Scaler>
           </button>
         </div>
-        <div className="col-6 p-1">
-          <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
-            changeView('helena')}
-          }>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-fire"></i> {"Predict"}
-            </Scaler>
-          </button>
-        </div>
+
       </div>
     )
 }

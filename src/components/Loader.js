@@ -21,7 +21,7 @@ class App extends Component {
   render() {
 
     let shadowAmount = 100
-    let shadowColor = this.props.mainStyle.mainColor
+    let shadowColor = "#FF51EE"
     return (
       <div style={{textAlign:'center'}}>
         <div style={{width:"100%",paddingTop:"5%",paddingBottom:"10%"}}>

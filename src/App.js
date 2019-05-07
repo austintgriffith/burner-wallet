@@ -30,8 +30,6 @@ import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 
-import helena from './helena.jpg';
-import Helena from './components/Helena.js'
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 //import RNMessageChannel from 'react-native-webview-messaging';
@@ -61,10 +59,12 @@ let mainStyle = {
   height:"100%",
   //backgroundImage:"linear-gradient(#292929, #191919)",
   //backgroundColor:"#191919",
-  hotColor:"#ff2c5e",
-  mainColorAlt:"#130094",
-  mainColor:"#371bb5",
+  hotColor:"#FF51EE",
+  mainColorAlt:"#6f60fb",
+  mainColor:"#5f4ffe",
 }
+
+//5f4ffe
 
 /*
 mainColorAlt:"#81379d",
@@ -81,34 +81,29 @@ let titleImage = (
   <span style={{paddingRight:20,paddingLeft:16}}><i className="fas fa-fire" /></span>
 )
 
-let HELENAERC20NAME = "xP+"
-let HELENAERC20IMAGE = helena
-let HELENAERC20TOKEN = "Proton"
-
-
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = POA_XDAI_NODE
+  XDAI_PROVIDER = "http://localhost:8545";
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
   if(false){
     ERC20NAME = false
     ERC20IMAGE = false
   }else{
-    ERC20NAME = "RAD"
+  ERC20NAME = "LibertyCoin"
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
-    ERC20IMAGE = "🍕"
+    ERC20IMAGE = "🗽"
     LOADERIMAGE = ""
   }
 }
-else if (window.location.hostname.indexOf("radwallet.io") >= 0) {
+else if (window.location.hostname.indexOf("ethnewyork.io") >= 0) {
   WEB3_PROVIDER = POA_XDAI_NODE;
-  ERC20NAME = "RAD"
+  ERC20NAME = "LibertyCoin"
   ERC20VENDOR = 'VendingMachine'
   ERC20TOKEN = 'ERC20Vendable'
-  ERC20IMAGE = "🍕"
+  ERC20IMAGE = "🗽"
   XDAI_PROVIDER = POA_XDAI_NODE
   LOADERIMAGE = ""
 }
@@ -168,11 +163,6 @@ let dollarDisplayCash = (amount)=>{
   amount = Math.floor(amount*100)/100
   return dollarSymbol+convertFromDollar(amount).toFixed(2)
 }
-let dollarDisplayHelena = (amount)=>{
-  let floatAmount = parseFloat(amount)
-  amount = Math.floor(amount*10000)/10000
-  return convertFromDollar(amount).toFixed(4)
-}
 
 
 let interval
@@ -231,33 +221,7 @@ class App extends Component {
     }catch(e){console.log(e)}*/
 
   }
-  helenaContractLoader(contractName,customAddress){
 
-      let {DEBUG} = this.state.config
-      let resultingContract
-      console.log("helena contract loading ",contractName)
-      try{
-        let contractObject = {
-          address:require("./contracts/"+contractName+".address.js"),
-          abi:require("./contracts/"+contractName+".abi.js"),
-          blocknumber:require("./contracts/"+contractName+".blocknumber.js"),
-        }
-        console.log("helena contract object", contractObject)
-        if(customAddress){
-          contractObject.address = customAddress
-        }
-        if(DEBUG) console.log("ContractLoader - Loading ",contractName,contractObject)
-        let contract = new this.state.xdaiweb3.eth.Contract(contractObject.abi,contractObject.address)
-        resultingContract = contract.methods
-        resultingContract._blocknumber = contractObject.blocknumber
-        resultingContract._address = contractObject.address
-        resultingContract._abi = contractObject.abi
-        resultingContract._contract = contract
-      }catch(e){
-        console.log("ERROR LOADING CONTRACT "+contractName,e)
-      }
-      return resultingContract
-    }
   parseAndCleanPath(path){
     let parts = path.split(";")
     //console.log("PARTS",parts)
@@ -1040,10 +1004,6 @@ render() {
         this.setState({contracts: contracts,customLoader: customLoader}, async () => {
           console.log("Contracts Are Ready:", contracts)
           this.checkClaim(tx, contracts);
-          let currentContracts = this.state.contracts
-          currentContracts["Proton"] = this.helenaContractLoader("Proton")
-          currentContracts["Market"] = this.helenaContractLoader("Market")
-          this.setState({contracts,currentContracts})
         })
       }}
       />
@@ -1275,12 +1235,6 @@ render() {
 
                   {extraTokens}
 
-                  <div style={{cursor:"pointer"}} onClick={()=>{
-                    this.changeView('helena')
-                  }}>
-                  <Balance icon={helena} selected={false} text={"xP+"} amount={this.state.protonBalance} address={account} dollarDisplay={dollarDisplayHelena} />
-                  <Ruler/>
-                  </div>
 
                   <Balance icon={"⛽"} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplayCash}/>
                   <Ruler/>
@@ -1553,135 +1507,6 @@ render() {
 
 
 
-            case 'helena':
-              if(!this.state || !this.state.customLoader || !this.state.tx || !this.state.contracts || !this.state.network || !this.state.contracts.Proton || !this.state.contracts.Market){
-                return <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-              }else{
-                return (
-                  <div>
-                    <div className="send-to-address card w-100" style={{zIndex:1}}>
-
-                      <NavCard title={"Helena Prediction Markets"} titleLink={""} goBack={this.goBack.bind(this)}/>
-                      <Balance icon={helena} selected={"xP+"} text={"xP+"} amount={this.state.protonBalance} address={account} dollarDisplay={dollarDisplayHelena} />
-                      <Ruler/>
-                      <Helena
-                        privateKey={metaAccount.privateKey}
-
-                        marketAddress={"0xfaca5beb569244d37b1ec4d67811b527210a9988"}
-
-                        web3={this.state.xdaiweb3}
-                        tx={this.state.tx}
-                        send={this.state.send}
-
-                        address={account}
-                        balance={balance}
-
-                        network={this.state.network}
-                        block={this.state.block}
-
-                        contracts={this.state.contracts}
-                        contractLoader={this.state.customLoader}
-
-                        mainnetweb3={this.state.mainnetweb3}
-                        xdaiweb3={this.state.xdaiweb3}
-
-                        daiContract={this.state.daiContract}
-                        ensContract={this.state.ensContract}
-                        ensLookup={this.ensLookup.bind(this)}
-
-                        ethBalance={this.state.ethBalance}
-                        daiBalance={this.state.daiBalance}
-                        xdaiBalance={this.state.xdaiBalance}
-
-
-                        xdai={xdai}
-                        ERC20NAME={HELENAERC20NAME}
-                        ERC20IMAGE={HELENAERC20IMAGE}
-                        ERC20TOKEN={HELENAERC20TOKEN}
-
-                        ethprice={this.state.ethprice}
-
-                        isVendor={this.state.isVendor}
-                        isAdmin={this.state.isAdmin}
-
-                        setGwei={this.setGwei}
-                        gwei={this.state.gwei}
-
-                        openScanner={this.openScanner.bind(this)}
-                        scannerState={this.state.scannerState}
-
-                        buttonStyle={buttonStyle}
-                        changeAlert={this.changeAlert}
-                        nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
-                        goBack={this.goBack.bind(this)}
-                        dollarDisplay={dollarDisplay}
-                        changeView={this.changeView}
-                      />
-
-                      <Ruler/>
-
-                      <Helena
-                        privateKey={metaAccount.privateKey}
-
-                        marketAddress={"0xb9e1302d81836e8280ad528d200059e4b3f471c1"}
-
-                        web3={this.state.web3}
-                        tx={this.state.tx}
-                        send={this.state.send}
-
-                        address={account}
-                        balance={balance}
-
-                        network={this.state.network}
-                        block={this.state.block}
-
-                        contracts={this.state.contracts}
-                        contractLoader={this.state.customLoader}
-
-                        mainnetweb3={this.state.mainnetweb3}
-                        xdaiweb3={this.state.xdaiweb3}
-
-                        daiContract={this.state.daiContract}
-                        ensContract={this.state.ensContract}
-                        ensLookup={this.ensLookup.bind(this)}
-
-                        ethBalance={this.state.ethBalance}
-                        daiBalance={this.state.daiBalance}
-                        xdaiBalance={this.state.xdaiBalance}
-
-
-                        xdai={xdai}
-                        ERC20NAME={HELENAERC20NAME}
-                        ERC20IMAGE={HELENAERC20IMAGE}
-                        ERC20TOKEN={HELENAERC20TOKEN}
-
-                        ethprice={this.state.ethprice}
-
-                        isVendor={this.state.isVendor}
-                        isAdmin={this.state.isAdmin}
-
-                        setGwei={this.setGwei}
-                        gwei={this.state.gwei}
-
-                        openScanner={this.openScanner.bind(this)}
-                        scannerState={this.state.scannerState}
-
-                        buttonStyle={buttonStyle}
-                        changeAlert={this.changeAlert}
-                        nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
-                        goBack={this.goBack.bind(this)}
-                        dollarDisplay={dollarDisplay}
-                        changeView={this.changeView}
-                      />
-
-                    </div>
-                    <Bottom
-                      text={"done"}
-                      action={this.goBack.bind(this)}
-                    />
-                  </div>
-                )
-              }
 
 
 
