@@ -67,12 +67,12 @@ export default class RequestFunds extends React.Component {
             view={view}
             max={5}
             buttonStyle={buttonStyle}
-            ERC20TOKEN={ERC20TOKEN}
-            transactionsByAddress={ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
+            ERC20TOKEN={this.props.ERC20TOKEN}
+            transactionsByAddress={this.props.ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
             changeView={changeView}
             address={address}
             block={this.props.block}
-            recentTxs={ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
+            recentTxs={this.props.ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
           />
         </div>
       )

@@ -1527,7 +1527,10 @@ render() {
                   <RequestFunds
                     block={this.state.block}
                     view={this.state.view}
+                    ERC20TOKEN={ERC20TOKEN}
+                    ensLookup={this.ensLookup.bind(this)}
                     mainStyle={mainStyle}
+                    web3={this.state.web3}
                     buttonStyle={buttonStyle}
                     balance={balance}
                     address={account}
