@@ -35,7 +35,7 @@ export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
     <div className="balance row" style={{opacity,paddingBottom:0,paddingLeft:20}}>
       <div className="avatar col p-0">
         {iconDisplay}
-        <div style={{position:'absolute',left:60,top:12,fontSize:14,opacity:0.77}}>
+        <div style={{position:'absolute',left:60,top:12,fontSize:14,opacity:0.77,color:"#FF51EE"}}>
           {text}
         </div>
       </div>
