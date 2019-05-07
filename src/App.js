@@ -40,6 +40,8 @@ import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 import incogDetect from './services/incogDetect.js'
+import downloadjs from "downloadjs";
+import cookie from "react-cookies";
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
@@ -1760,6 +1762,7 @@ render() {
                   dollarDisplay={dollarDisplay}
                   burnWallet={()=>{
                     burnMetaAccount()
+                    cookie.remove("privateKeyDownloaded", { path: "/" });
                     if(RNMessageChannel){
                       RNMessageChannel.send("burn")
                     }
@@ -1931,6 +1934,16 @@ render() {
         newPrivateKey={this.state.newPrivateKey}
         fallbackWeb3Provider={WEB3_PROVIDER}
         onUpdate={async (state) => {
+           const { metaAccount } = state;
+           // https://stackoverflow.com/a/264037/1263876
+           const privateKeyDownloaded = (cookie.load("privateKeyDownloaded") == "true");
+
+           if (metaAccount && metaAccount.privateKey && !privateKeyDownloaded) {
+             downloadjs(metaAccount.privateKey, `${window.location.hostname}-${metaAccount.address}-private-key.txt`, "plain/text");
+             cookie.save("privateKeyDownloaded", true, { path: "/" });
+           }
+
+
           //console.log("DAPPARATUS UPDATE",state)
           if(ERC20TOKEN){
             delete state.balance

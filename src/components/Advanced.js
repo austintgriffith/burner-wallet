@@ -94,6 +94,43 @@ export default class Advanced extends React.Component {
       </div>
     )
 
+    let uploadPrivateKeyRow = (
+      <div className="content ops row">
+        <div className="col-12 p-1">
+          <input
+            ref={fileInput => this.fileInput = fileInput}
+            type="file"
+            style={{display: "none"}}
+            accept=".txt, text/plain"
+            onChange={event => {
+              const files = event.target.files;
+
+              let reader = new FileReader();
+              reader.onload = () => {
+                const privateKey = reader.result;
+                console.log(privateKey, privateKey.length);
+                if (privateKey.length >= 64 && privateKey.length <= 66) {
+                  setPossibleNewPrivateKey(privateKey);
+                } else {
+                  changeAlert({type: 'warning', message: 'Invalid private key.'})
+                }
+
+              }
+              reader.readAsText(files[0]);
+            }}
+          />
+          <button
+            className="btn btn-large w-100"
+            style={this.props.buttonStyle.primary}
+            onClick={() => this.fileInput.click()}>
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              <i className="fas fa-upload"/> {i18n.t('upload')}
+            </Scaler>
+          </button>
+        </div>
+      </div>
+    )
+
 
     let inputSeedEyeButton = ""
     let inputSeedSize = "col-4 p-1"
@@ -222,6 +259,8 @@ export default class Advanced extends React.Component {
 
 
         <div style={{width:"100%",textAlign:"center"}}><h5>Create Account</h5></div>
+
+        {uploadPrivateKeyRow}
 
         {inputPrivateKeyRow}
 

@@ -23,6 +23,7 @@
     "request_funds_title": "Request funds",
     "request": "Request",
     "vendors": "Vendors",
+    "upload": "Load private key backup file",
     "main_card": {
       "receive": "Receive",
       "send": "Send",
