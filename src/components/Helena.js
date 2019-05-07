@@ -4,7 +4,7 @@ import { Events, Blockie, Scaler } from "dapparatus";
 import Web3 from 'web3';
 import Gnosis from '@frontier-token-research/pm-js/'
 import Ruler from "./Ruler";
-import { Box, Text, Input, OutlineButton, Flex } from "rimble-ui";
+import { Box, Text, Input, OutlineButton, Flex, Icon } from "rimble-ui";
 
 const YES = 0;
 const NO = 1;
@@ -145,14 +145,24 @@ export default class Helena extends React.Component {
 
         <Flex >
           <Box flex={'1 1 auto'} my={2} mr={2}>
-            <OutlineButton icon={'Check'} width={1} px={2} onClick={() => {this.bet(YES)}}>
-              {"YES (" + Math.round(this.state.odds[0] * 100 *1000)/1000 + "%)"}
+            <OutlineButton width={1} p={0} onClick={() => {this.bet(YES)}}>
+              <Text color={'primary'} fontSize={1} fontWeight={3}>
+                <Flex alignItems={'center'} mx={2}>
+                  <Icon name={'Check'} mr={1} size={'18px'} />
+                  {"YES (" + Math.round(this.state.odds[0] * 100 *1000)/1000 + "%)"}
+                </Flex>
+              </Text>
             </OutlineButton>
           </Box>
 
           <Box flex={'1 1 auto'} my={2}>
-            <OutlineButton icon={'Close'} width={1} px={2} onClick={()=>{this.bet(NO)}}>
-              {"NO (" + Math.round(this.state.odds[1] * 100 *1000)/1000 + "%)"}
+            <OutlineButton width={1} p={0} onClick={()=>{this.bet(NO)}}>
+              <Text color={'primary'} fontSize={1} fontWeight={3}>
+                <Flex alignItems={'center'} mx={2}>
+                  <Icon name={'Close'} mr={1} size={'18px'} />
+                  {"NO (" + Math.round(this.state.odds[1] * 100 *1000)/1000 + "%)"}
+                </Flex>
+              </Text>
             </OutlineButton>
           </Box>
         </Flex>
