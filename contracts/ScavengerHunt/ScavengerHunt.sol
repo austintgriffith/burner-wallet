@@ -32,11 +32,11 @@ contract ScavengerHunt {
   uint public gameEndTime;      // Time in seconds, game ends
   uint public revealEndTime = 1000000;    // Time in seconds, after end game to reveal answers, default large end time
 
-  modifier onlyBefore(uint _time) { require(now < _time); _; }
-  modifier onlyAfter(uint _time) { require(now > _time); _; }
-  modifier onlyStatus(bytes32 _status) { require(compareStrings(status, _status)); _; }
-  modifier onlyOwner() { require(owner == msg.sender); _; }
-  modifier onlyWinnerNotFound() { require(!winnerFound); _; }
+  modifier onlyBefore(uint _time) {require(now < _time, "onlyBefore error"); _;}
+  modifier onlyAfter(uint _time) {require(now > _time, "onlyAfter error"); _;}
+  modifier onlyStatus(bytes32 _status) {require(compareStrings(status, _status), "onlyStatus error"); _;}
+  modifier onlyOwner() {require(owner == msg.sender, "onlyOwner access"); _;}
+  modifier onlyWinnerNotFound() {require(!winnerFound, "winner already found"); _;}
 
   string public YourVar = "MY WORLD";
   address public owner;
@@ -53,7 +53,7 @@ contract ScavengerHunt {
     owner = msg.sender;
   }
 
-  function() payable {}
+  function() public payable {}
 
   function updateVar(string newVal) public returns (bool) {
     require(msg.sender==owner,"ScavengerHunt::updateVar not owner");
