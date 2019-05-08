@@ -33,8 +33,12 @@ export default ({
   if(pushDownWithWhiteSpace>230){
     pushDownWithWhiteSpace=230
   }*/
-  let sendButtons = (
-    <Box>
+  const urlParams = new URLSearchParams(window.location.search);
+  const admin = urlParams.get('admin');
+
+  let registerMovie;
+  if (admin === "") {
+    registerMovie = (
       <Flex mx={-2}>
         <Box width={[1, 1, 1]} m={2}>
           <Button fullWidth onClick={() => changeView("mint")}>
@@ -45,6 +49,11 @@ export default ({
           </Button>
         </Box>
       </Flex>
+    );
+  }
+  let sendButtons = (
+    <Box>
+      {registerMovie}
       <Flex mx={-2}>
         <Box width={[1, 1/2, 1/2]} m={2}>
           <Button fullWidth onClick={() => changeView("receive")}>
