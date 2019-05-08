@@ -1311,9 +1311,9 @@ render() {
                   recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
                 />
                 </Card>
-                
+
                 <Bottom
-                  icon={"wrench"}
+                  icon={'Build'}
                   text={i18n.t('advance_title')}
                   action={()=>{
                     this.changeView('advanced')
@@ -1723,7 +1723,7 @@ render() {
             return (
               <Card p={3} borderRadius={2}>
                 <NavCard title={"Sending..."} goBack={this.goBack.bind(this)} darkMode={true}/>
-                
+
                 <Box py={5}>
                   <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
                 </Box>
@@ -1733,7 +1733,7 @@ render() {
             return (
               <Card p={3} borderRadius={2}>
                 <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)} darkMode={true} />
-                
+
                 <Box py={5}>
                   <Loader loaderImage={LOADERIMAGE}  mainStyle={mainStyle} />
                 </Box>
@@ -1743,7 +1743,7 @@ render() {
             return (
               <Card p={3} borderRadius={2}>
                 <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
-                
+
                 <Box py={5}>
                   <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
                 </Box>
