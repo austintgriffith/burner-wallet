@@ -11,14 +11,14 @@
     "receipt_title": "收据",
     "send_to_address_title": "发送到地址",
     "advance": "高级功能",
-    "advance_title": "高级",
-    "loading": "加载中...",
+    "advance_title": "高级功能",
+    "loading": "加载中",
     "cancel": "取消",
     "done": "完成",
     "exchange_title": "交易",
     "amount": "金额",
     "send": "发送",
-    "withdraw": "提取",
+    "withdraw": "提款",
     "history_chat": "历史聊天",
     "request_funds_title": "发起收款",
     "request": "发起收款",
@@ -27,7 +27,7 @@
       "receive": "收款",
       "send": "发送",
       "share": "分享",
-      "link": "连接",
+      "link": "链接",
       "vendors": "商户"
     },
     "send_with_link": {
@@ -38,25 +38,25 @@
     },
     "vendor": {
       "updating": "更新中",
-      "open": "开启",
+      "open": "已开启",
       "closed": "已关闭",
       "add_product": "新增产品",
       "adding": "新增中"
     },
     "withdraw_from_private": {
       "from_address": "从钱包地址提款",
-      "amount": "提款金额",
+      "amount": "金额",
       "withdraw": "提款",
       "error": "请输入正确的提款金额"
     },
     "send_to_address": {
       "to_address": "到此地址",
       "send_amount": "发送金额",
-      "notice": "你只能发送 ",
+      "notice": "你只能发送",
       "error": "请输入正确的钱包地址或者 ENS"
     },
     "send_by_scan": {
-      "try_again": "请重复一次",
+      "try_again": "请再试一次",
       "take_photo": "拍照",
       "capture": "扫描二维码:"
     },
@@ -73,9 +73,9 @@
     },
     "exchange": {
       "withdrawal_explanation": "只有商户可以提取超过存款的金额",
-      "funds_transferred": "代币已经发送",
-      "funds_bridged": "代币桥已经交易",
-      "insufficient_funds": "代币金额不足",
+      "funds_transferred": "资金已发送",
+      "funds_bridged": "资金交易完成",
+      "insufficient_funds": "资金不足",
       "invalid_to_address": "请输入正确的钱包地址",
       "invalid_to_amount": "请输入正确的金额",
       "calculate_gas_price": "正在计算矿工费...",
