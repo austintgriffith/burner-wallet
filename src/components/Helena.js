@@ -34,9 +34,10 @@ export default class Helena extends React.Component {
       MarketContract: this.props.contractLoader("Market",this.props.marketAddress)
     },()=>{
       console.log("Market Contract:",this.state.MarketContract)
+      this.firstApprove();
     })
 
-    this.firstApprove();
+
 
   }
   componentWillUnmount() {
