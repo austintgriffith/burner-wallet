@@ -8,7 +8,7 @@ import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
 import axios from 'axios';
-import { Flex, Icon, Card, Text, Button } from "rimble-ui";
+import { Flex, Icon, Card, Text, Button, Box } from "rimble-ui";
 
 
 const BockieSize = 12
@@ -63,30 +63,30 @@ export default class Receive extends React.Component {
       )
     }else{
       sendAmount = (
-        <div>
+        <Box>
           <span style={{opacity:0.15}}>-</span>{dollarDisplay(receipt.amount)}<span style={{opacity:0.15}}>-></span>
-        </div>
+        </Box>
       )
     }
 
     if(receipt.message){
       message = (
-        <div className="row" style={{cursor:"pointer",width:"100%",marginTop:20,marginBottom:-30}}>
-          <div className="col-12" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1,padddingTop:30,fontSize:20}}>
+        <Box>
+          <Text textAlign={'center'} fontSize={3}>
             {receipt.message}
-          </div>
-        </div>
+          </Text>
+        </Box>
       )
     }
 
     return (
       <div>
-        <div>
+        <Box>
           <Flex alignItems={'center'} justifyContent={'center'}>
             <Icon name="CheckCircle" color={'success'} size={180} />
           </Flex>
 
-          <Flex alignItems={'center'} justifyContent={'space-around'}>
+          <Flex alignItems={'center'} justifyContent={'space-around'} mb={3}>
             <Blockie
               address={receipt.from}
               config={{size:BockieSize}}
@@ -100,14 +100,8 @@ export default class Receive extends React.Component {
             />
           </Flex>
 
-          <Text textAlign={'center'}>{message}</Text>
-
-        </div>
-        <div name="theVeryBottom" className="text-center bottom-text" style={{padding:10}}>
-          <Button bg={'mid-gray'} icon={'Close'} onClick={()=>{this.props.goBack()}}>
-            {i18n.t('done')}
-          </Button>
-        </div>
+          {message}
+        </Box>
       </div>
     )
   }
