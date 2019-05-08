@@ -233,6 +233,7 @@ class App extends Component {
     }catch(e){console.log(e)}*/
 
   }
+  /*
   helenaContractLoader(contractName,customAddress){
 
       let {DEBUG} = this.state.config
@@ -260,6 +261,7 @@ class App extends Component {
       }
       return resultingContract
     }
+    */
   parseAndCleanPath(path){
     let parts = path.split(";")
     //console.log("PARTS",parts)
@@ -457,8 +459,10 @@ class App extends Component {
 
     if(this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown") && this.state.contracts.Proton){
       //check for badges for this user
-      let protonBalance = await this.state.contracts.Proton.balanceOf(this.state.account).call()
-      this.setState({protonBalance:this.state.web3.utils.fromWei(protonBalance,'ether')})
+      if(window.location.hostname.indexOf("radwallet.io")>=0||window.location.hostname.indexOf("s.xdai.io")>=0){
+        let protonBalance = await this.state.contracts.Proton.balanceOf(this.state.account).call()
+        this.setState({protonBalance:this.state.web3.utils.fromWei(protonBalance,'ether')})
+      }
     }
 
 
@@ -1043,9 +1047,11 @@ render() {
           console.log("Contracts Are Ready:", contracts)
           this.checkClaim(tx, contracts);
           let currentContracts = this.state.contracts
-          currentContracts["Proton"] = this.helenaContractLoader("Proton")
-          currentContracts["Market"] = this.helenaContractLoader("Market")
-          this.setState({contracts:currentContracts})
+          currentContracts["Proton"] = customLoader("Proton")
+          currentContracts["Market"] = customLoader("Market")
+          this.setState({contracts:currentContracts},()=>{
+            console.log("Final loaded contracts",this.state.contracts)
+          })
         })
       }}
       />
@@ -1573,7 +1579,7 @@ render() {
 
                         marketAddress={"0x08f434c95024503623b1cee6aab8e10c59700103"}
 
-                        web3={this.state.xdaiweb3}
+                        web3={this.state.web3}
                         tx={this.state.tx}
                         send={this.state.send}
 
