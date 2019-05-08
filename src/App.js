@@ -989,7 +989,10 @@ export default class App extends Component {
       for(let t in transactions){
         //console.log("TX",transactions[t])
         let tx = await web3.eth.getTransaction(transactions[t])
-        if(tx && tx.to && tx.from ){
+        // NOTE: NST information is encoded in a transaction's values. Hence if
+        // we don't filter out NST transactions, they'll show up as huge
+        // transfers in the UI.
+        if(tx && tx.to && tx.from && !Util.isNST(tx.color)){
           //console.log("EEETRTTTTERTETETET",tx)
           let smallerTx = {
             hash:tx.hash,
