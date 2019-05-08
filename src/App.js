@@ -105,7 +105,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
     LOADERIMAGE = ""
   }
 }
-else if (window.location.hostname.indexOf("radwallet.io") >= 0) {
+else if (window.location.hostname.indexOf("radwallet.io") >= 0||window.location.hostname.indexOf("s.xdai.io") >= 0) {
   WEB3_PROVIDER = POA_XDAI_NODE;
   ERC20NAME = "RAD"
   ERC20VENDOR = 'VendingMachine'
