@@ -34,7 +34,7 @@ export default class Helena extends React.Component {
       MarketContract: this.props.contractLoader("Market",this.props.marketAddress)
     },()=>{
       console.log("Market Contract:",this.state.MarketContract)
-      this.firstApprove();
+      //this.firstApprove();
     })
 
 
@@ -109,11 +109,11 @@ export default class Helena extends React.Component {
           0
       );
       this.props.changeView('loader')
-      //console.log("### Approving on contract ",this.props.contracts.Proton)
-      //this.props.tx(
-      //  this.props.contracts.Proton.approve(this.props.marketAddress, -1),
-      //  50000, 0, 0,(approveReceipt)=>{
-      //    console.log("###  approveReceipt ",approveReceipt)
+      console.log("### Approving on contract ",this.props.contracts.Proton)
+      this.props.tx(
+        this.props.contracts.Proton.approve(this.props.marketAddress, -1),
+        50000, 0, 0,(approveReceipt)=>{
+          console.log("###  approveReceipt ",approveReceipt)
           console.log("###  MarketContract buy ",outcome,cost.toNumber(),this.state.MarketContract)
           this.props.tx(
             this.state.MarketContract.buy(outcome, cost.toNumber(), 400 * 1e18),
@@ -125,8 +125,8 @@ export default class Helena extends React.Component {
               }
             }
           )
-      //  }
-      //);
+        }
+      );
   }
 
 
