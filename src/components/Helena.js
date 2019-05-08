@@ -120,7 +120,7 @@ export default class Helena extends React.Component {
           //console.log("###  MarketContract buy ",outcome,cost.toNumber(),this.state.MarketContract)
           this.firstApprove(()=>{
             this.props.tx(
-              this.state.MarketContract.buy(outcome, cost.toNumber(), 1000 * 1e18),
+              this.state.MarketContract.buy(outcome, cost.toNumber(), "1000000000000000000000"),
               1042570, 0, 0,(buyReceipt)=>{
                 if(buyReceipt){
                   console.log("###  Buy Receipt ",buyReceipt)
