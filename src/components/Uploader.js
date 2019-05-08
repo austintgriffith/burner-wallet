@@ -63,7 +63,10 @@ class Uploader extends Component {
             data = (await axios.post(signer, {
               // NOTE: A file name cannot contain chars like spaces, as
               // otherwise convertion will fail.
-              filename: `${folder}${id}-${file.name.replace(/\s+/g, '')}`,
+              filename: `${folder}${id}-${file.name.replace(
+                /[^A-Za-z0-9\.]/g,
+                '',
+              )}`,
               contentType: file.type,
             })).data;
           } catch (err) {

@@ -51,6 +51,78 @@ const uploadedMovies = [
     image:
       'https://images-na.ssl-images-amazon.com/images/M/MV5BMjI2MDA2ODY1Ml5BMl5BanBnXkFtZTgwNDA0NzcyNDE@._V1_SX300.jpg',
   },
+  {
+    name: 'Cutie and the Boxer',
+    hls:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/3215882d-28c6-4a80-9a59-e2c2652d4778-CutieAndTheBoxer/Default/HLS/3215882d-28c6-4a80-9a59-e2c2652d4778-CutieAndTheBoxer.m3u8',
+    mp4:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/3215882d-28c6-4a80-9a59-e2c2652d4778-CutieAndTheBoxer/Default/MP4/3215882d-28c6-4a80-9a59-e2c2652d4778-CutieAndTheBoxer.mp4',
+    image:
+      'https://images-na.ssl-images-amazon.com/images/M/MV5BMjEyNzgyMjUzNl5BMl5BanBnXkFtZTcwODk3NjQyOQ@@._V1_SX300.jpg',
+  },
+  {
+    name: 'Dancing in Jaffa',
+    hls:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/2c66fea2-27a3-493f-a8e4-b9f0d91d8008-Dancing_In_Jaffa_Trailer/Default/HLS/2c66fea2-27a3-493f-a8e4-b9f0d91d8008-Dancing_In_Jaffa_Trailer.m3u8',
+    mp4:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/2c66fea2-27a3-493f-a8e4-b9f0d91d8008-Dancing_In_Jaffa_Trailer/Default/MP4/2c66fea2-27a3-493f-a8e4-b9f0d91d8008-Dancing_In_Jaffa_Trailer.mp4',
+    image:
+      'https://images-na.ssl-images-amazon.com/images/M/MV5BMTgzMzU0MDQ5Nl5BMl5BanBnXkFtZTgwMzUyNDQ0MTE@._V1_SX300.jpg',
+  },
+  {
+    name: 'Superfast',
+    hls:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/814e8646-195a-4e71-bee2-294ba2fab4c1-Superfast/Default/HLS/814e8646-195a-4e71-bee2-294ba2fab4c1-Superfast.m3u8',
+    mp4:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/814e8646-195a-4e71-bee2-294ba2fab4c1-Superfast/Default/MP4/814e8646-195a-4e71-bee2-294ba2fab4c1-Superfast.mp4',
+    image:
+      'https://images-na.ssl-images-amazon.com/images/M/MV5BNjM3MjQxNjkxM15BMl5BanBnXkFtZTgwMDIyMTA0NDE@._V1_SX300.jpg',
+  },
+  {
+    name: 'Paterson',
+    hls:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/cce890dd-7dbf-48a1-b7f5-055cf6b531f2-Paterson/Default/HLS/cce890dd-7dbf-48a1-b7f5-055cf6b531f2-Paterson.m3u8',
+    mp4:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/cce890dd-7dbf-48a1-b7f5-055cf6b531f2-Paterson/Default/MP4/cce890dd-7dbf-48a1-b7f5-055cf6b531f2-Paterson.mp4',
+    image:
+      'https://images-na.ssl-images-amazon.com/images/M/MV5BMTUzODA4Nzk0OF5BMl5BanBnXkFtZTgwNzE1MDIwMDI@._V1_SX300.jpg',
+  },
+  {
+    name: 'The Reluctant Fundamentalist',
+    hls:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/87195369-2ec4-471a-986f-93f89461b9b1-TheReluctantFundamentalist/Default/HLS/87195369-2ec4-471a-986f-93f89461b9b1-TheReluctantFundamentalist.m3u8',
+    mp4:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/87195369-2ec4-471a-986f-93f89461b9b1-TheReluctantFundamentalist/Default/MP4/87195369-2ec4-471a-986f-93f89461b9b1-TheReluctantFundamentalist.mp4',
+    image:
+      'https://images-na.ssl-images-amazon.com/images/M/MV5BNzAzNjg3Mzg1Nl5BMl5BanBnXkFtZTcwOTUzNzExOQ@@._V1._CR25,27.166671752929688,1347,1995.9999542236328_SY132_CR0,0,89,132_AL_.jpg_V1_SX300.jpg',
+  },
+  {
+    name: 'Next Goal Wins',
+    hls:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/9f88e165-86eb-4449-b9b5-8f9c4080b898-NextGoalWins/Default/HLS/9f88e165-86eb-4449-b9b5-8f9c4080b898-NextGoalWins.m3u8',
+    mp4:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/9f88e165-86eb-4449-b9b5-8f9c4080b898-NextGoalWins/Default/MP4/9f88e165-86eb-4449-b9b5-8f9c4080b898-NextGoalWins.mp4',
+    image:
+      'https://images-na.ssl-images-amazon.com/images/M/MV5BMjI3ODcxOTExNl5BMl5BanBnXkFtZTgwOTU0NTg1MTE@._V1_SX300.jpg',
+  },
+  {
+    name: 'Night Train to Lisbon',
+    hls:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/16257e04-7899-4271-9829-07b529b67048-NightTrainToLisbon/Default/HLS/16257e04-7899-4271-9829-07b529b67048-NightTrainToLisbon.m3u8',
+    mp4:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/16257e04-7899-4271-9829-07b529b67048-NightTrainToLisbon/Default/MP4/16257e04-7899-4271-9829-07b529b67048-NightTrainToLisbon.mp4',
+    image:
+      'https://ia.media-imdb.com/images/M/MV5BNDE5OTkxNzMxNl5BMl5BanBnXkFtZTgwMjQ4NjY3MDE@._V1_SX300.jpg',
+  },
+  {
+    name: 'One More Time',
+    hls:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/131ed43f-04e2-4fb6-90a1-e2c1e416094b-OneMoreTime/Default/HLS/131ed43f-04e2-4fb6-90a1-e2c1e416094b-OneMoreTime.m3u8',
+    mp4:
+      'https://s3.eu-central-1.amazonaws.com/cinemarket-videos/131ed43f-04e2-4fb6-90a1-e2c1e416094b-OneMoreTime/Default/MP4/131ed43f-04e2-4fb6-90a1-e2c1e416094b-OneMoreTime.mp4',
+    image:
+      'https://slack-redir.net/link?url=https%3A%2F%2Fimages-na.ssl-images-amazon.com%2Fimages%2FM%2FMV5BMjAxMTk0MTUxNV5BMl5BanBnXkFtZTgwNTY0MjAzODE%40._V1_SX300.jpg',
+  },
 ];
 
 function replaceAll(str, find, replace) {
