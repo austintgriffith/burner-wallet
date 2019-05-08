@@ -172,8 +172,8 @@ let dollarDisplayCash = (amount)=>{
 }
 let dollarDisplayHelena = (amount)=>{
   let floatAmount = parseFloat(amount)
-  amount = Math.floor(amount*10000)/10000
-  return convertFromDollar(amount).toFixed(4)
+  amount = Math.floor(amount)
+  return convertFromDollar(amount).toFixed(0)
 }
 
 
@@ -1571,7 +1571,7 @@ render() {
                       <Helena
                         privateKey={metaAccount.privateKey}
 
-                        marketAddress={"0xfaca5beb569244d37b1ec4d67811b527210a9988"}
+                        marketAddress={"0x08f434c95024503623b1cee6aab8e10c59700103"}
 
                         web3={this.state.xdaiweb3}
                         tx={this.state.tx}
@@ -1627,7 +1627,7 @@ render() {
                       <Helena
                         privateKey={metaAccount.privateKey}
 
-                        marketAddress={"0xb9e1302d81836e8280ad528d200059e4b3f471c1"}
+                        marketAddress={"0x18385b28612757a013e389f86e5aa3f6937a79fe"}
 
                         web3={this.state.web3}
                         tx={this.state.tx}

@@ -6,7 +6,7 @@ import {Flex, Box, Text} from 'rimble-ui'
 
 export default ({icon, text, selected, amount, address, dollarDisplay}) => {
 
-  let opacity = 0.85
+  let opacity = 0.75
   if(text == selected){
     opacity=0.95
   }
