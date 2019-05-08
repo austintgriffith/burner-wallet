@@ -1344,7 +1344,6 @@ render() {
               return (
                 <div>
                   <div className="send-to-address card w-100" style={{zIndex:1}}>
-                    <NavCard title={"CONNEXT SANDBOX"} titleLink={""} goBack={this.goBack.bind(this)}/>
                     <YourModule
                       privateKey={metaAccount.privateKey}
 
@@ -1390,11 +1389,13 @@ render() {
                       openScanner={this.openScanner.bind(this)}
                       scannerState={this.state.scannerState}
 
+                      mainStyle={mainStyle}
                       buttonStyle={buttonStyle}
                       changeAlert={this.changeAlert}
                       nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
                       goBack={this.goBack.bind(this)}
                       dollarDisplay={dollarDisplay}
+                      i18n={i18n}
                     />
                   </div>
                   <Bottom
