@@ -94,7 +94,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
 
   const explorerUrl = network === 'Leap Network'
     ? 'https://mainnet.leapdao.org/explorer/address/'
-    : 'https://testnet.leapdao.org/explorer/address/';
+    : 'https://staging.leapdao.org/explorer/address/';
 
   if(view=="main" || view=="exchange"){
     opacity = 1.0
