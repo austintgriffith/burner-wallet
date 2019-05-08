@@ -2,7 +2,9 @@ import React from 'react';
 import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
 
-export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
+import {Flex, Box, Text} from 'rimble-ui'
+
+export default ({icon, text, selected, amount, address, dollarDisplay}) => {
 
   let opacity = 0.65
   if(text == selected){
@@ -20,32 +22,33 @@ export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
 
   let iconDisplay
 
-    if(typeof icon == "string" && icon.length<8){
+  if(typeof icon == "string" && icon.length<8) {
     iconDisplay = (
-      <div style={{width:50,height:50,fontSize:42,paddingTop:13}}>
+      <div style={{width:50,height:50,fontSize:42,lineHeight:1,paddingTop:6}}>
         {icon}
       </div>
     )
   }else{
-    iconDisplay = <img src={icon} style={{maxWidth:50,maxHeight:50}}/>
+    iconDisplay = (
+      <img src={icon} style={{maxWidth:50,maxHeight:50}}/>
+    )
+
   }
 
 
   return (
-    <div className="balance row" style={{opacity,paddingBottom:0,paddingLeft:20}}>
-      <div className="avatar col p-0">
-        {iconDisplay}
-        <div style={{position:'absolute',left:60,top:12,fontSize:14,opacity:0.77}}>
+    <div className="balance" style={{opacity}}>
+      <Flex width={1} pr={3} pl={2} alignItems={'center'} >
+        <Box>
+          {iconDisplay}
+        </Box>
+        <Text fontSize={2}>
           {text}
-        </div>
-      </div>
-      <div style={{position:"absolute",right:25,marginTop:15}}>
-        <Scaler config={{startZoomAt:400,origin:"200px 30px",adjustedZoom:1}}>
-          <div style={{fontSize:40,letterSpacing:-2}}>
-            {dollarDisplay(amount)}
-          </div>
-        </Scaler>
-      </div>
+        </Text>
+        <Text mr={0} ml={'auto'} fontWeight={2} fontSize={'40px'}>
+          {dollarDisplay(amount)}
+        </Text>
+      </Flex>
     </div>
   )
 };
