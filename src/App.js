@@ -1313,7 +1313,7 @@ render() {
                 </Card>
 
                 <Bottom
-                  icon={"wrench"}
+                  icon={'Build'}
                   text={i18n.t('advance_title')}
                   action={()=>{
                     this.changeView('advanced')

@@ -169,7 +169,7 @@ export default class SendToAddress extends React.Component {
           </Field>
 
           <Flex alignItems={'center'} justifyContent={'center'}>
-              <Box mx={2}>
+              <Box m={4}>
                 <Blockies seed={fromAddress} scale={10} />
               </Box>
 
@@ -177,10 +177,8 @@ export default class SendToAddress extends React.Component {
           </Flex>
 
           <Field label={i18n.t('withdraw_from_private.amount')}>
-            <Flex alignItems={'center'}>
-              <Input type="number" placeholder="0" value={this.state.amount} width={'100%'}
-                onChange={event => this.updateState('amount', event.target.value)} required />
-            </Flex>
+            <Input type="number" placeholder="0" value={this.state.amount} width={1}
+              onChange={event => this.updateState('amount', event.target.value)} required />
           </Field>
 
           <Text>{products}</Text>

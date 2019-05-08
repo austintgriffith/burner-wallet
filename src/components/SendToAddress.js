@@ -12,6 +12,7 @@ import {
   OutlineButton,
   Field,
   Input,
+  Flex
 } from 'rimble-ui';
 
 const queryString = require('query-string');
@@ -359,14 +360,16 @@ export default class SendToAddress extends React.Component {
             Scan QR Code
           </OutlineButton>
 
-          <div>{ this.state.toAddress && this.state.toAddress.length==42 &&
-            <CopyToClipboard text={toAddress.toLowerCase()}>
-              <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
-                <div style={{opacity:0.33}}>{this.state.fromEns}</div>
-                <Blockies seed={toAddress.toLowerCase()} scale={10}/>
-              </div>
-            </CopyToClipboard>
-          }</div>
+          { this.state.toAddress && this.state.toAddress.length==42 &&
+            <Flex alignItems={'center'} justifyContent={'center'} mb={3}>
+              <CopyToClipboard text={toAddress.toLowerCase()}>
+                <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
+                  <div style={{opacity:0.33}}>{this.state.fromEns}</div>
+                  <Blockies seed={toAddress.toLowerCase()} scale={10}/>
+                </div>
+              </CopyToClipboard>
+            </Flex>
+          }
 
           <Field mb={3} label={i18n.t('send_to_address.send_amount')}>
             {amountInputDisplay}
