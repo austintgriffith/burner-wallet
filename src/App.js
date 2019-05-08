@@ -1045,7 +1045,7 @@ render() {
           let currentContracts = this.state.contracts
           currentContracts["Proton"] = this.helenaContractLoader("Proton")
           currentContracts["Market"] = this.helenaContractLoader("Market")
-          this.setState({contracts,currentContracts})
+          this.setState({contracts:currentContracts})
         })
       }}
       />
