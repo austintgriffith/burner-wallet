@@ -8,7 +8,7 @@ import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
 import axios from 'axios';
-import { Flex, Icon, Card, Text } from "rimble-ui";
+import { Flex, Icon, Card, Text, Button } from "rimble-ui";
 
 
 const BockieSize = 12
@@ -103,12 +103,10 @@ export default class Receive extends React.Component {
           <Text textAlign={'center'}>{message}</Text>
 
         </div>
-        <div name="theVeryBottom" className="text-center bottom-text">
-          <span style={{padding:10}}>
-            <a href="#" style={{color:"#FFFFFF"}} onClick={()=>{this.props.goBack()}}>
-              <i className="fas fa-times"/> {i18n.t('done')}
-            </a>
-          </span>
+        <div name="theVeryBottom" className="text-center bottom-text" style={{padding:10}}>
+          <Button bg={'mid-gray'} icon={'Close'} onClick={()=>{this.props.goBack()}}>
+            {i18n.t('done')}
+          </Button>
         </div>
       </div>
     )
