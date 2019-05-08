@@ -109,13 +109,16 @@ export default class Helena extends React.Component {
       );
       this.props.changeView('loader')
       this.props.tx(
-
+        console.log("### Approving on contract ",this.props.contracts.Proton)
         this.props.contracts.Proton.approve(this.props.marketAddress, -1),
         50000, 0, 0,(approveReceipt)=>{
+          console.log("###  approveReceipt ",approveReceipt)
+          console.log("###  MarketContract buy ",outcome,cost.toNumber(),this.state.MarketContract)
           this.props.tx(
             this.state.MarketContract.buy(outcome, cost.toNumber(), 400 * 1e18),
             1042570, 0, 0,(buyReceipt)=>{
               if(buyReceipt){
+                console.log("###  Buy Receipt ",buyReceipt)
                 console.log("BET COMPLETE?!?", buyReceipt)
                 this.props.changeView('helena')
               }
