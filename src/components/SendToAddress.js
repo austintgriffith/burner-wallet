@@ -16,12 +16,41 @@ import {
 
 const queryString = require('query-string');
 
+const inlineRimbleInput = {
+  paddingTop: '0',
+  paddingBottom: '0',
+  paddingLeft: '16px',
+  paddingRight: '16px',
+  color: '#3F3D48',
+  backgroundColor: '#fff',
+  width: '100%',
+  height: '3rem',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
+  fontSize: '1rem',
+  fontFamily: '"Inter-Loom", Helvetica, sans-serif',
+  appearance: 'none',
+  '-webkit-appearance': 'none',
+  '-moz-appearance': 'none',
+  ':focus': {
+    outline: 'none',
+    borderColor: '#371bb5',
+  },
+  ':hover': {
+    boxShadow: '0px 2px 6px rgba(0,0,0,0.3)'
+  }
+}
+
 export default class SendToAddress extends React.Component {
 
   constructor(props) {
     super(props);
 
-
+    this.addressInput = React.createRef();
+    this.amountInput = React.createRef();
+    this.messageInput = React.createRef();
+    this.sendButton = React.createRef();
 
     console.log("!!!!!!!!!!!!!!!!!!!!!!!! window.location.search",window.location.search,parsed)
 
@@ -137,12 +166,22 @@ export default class SendToAddress extends React.Component {
   componentDidMount(){
     this.setState({ canSend: this.canSend() })
     setTimeout(()=>{
+      console.log("@@@@@ Scrolling...")
       if(!this.state.toAddress && this.addressInput){
-        this.addressInput.focus();
+        console.log("address...")
+        this.addressInput.current.focus();
       }else if(!this.state.amount && this.amountInput){
-        this.amountInput.focus();
-      }else if(this.messageInput){
-        this.messageInput.focus();
+        console.log("amount...")
+        this.amountInput.current.focus();
+      }else if(!this.state.message && this.messageInput){
+        console.log("message...")
+        this.messageInput.current.focus();
+        setTimeout(()=>{
+          this.scrollToBottom()
+        },30)
+      }else if(this.state.toAddress && this.state.message && this.state.amount){
+        console.log("scroll to bottom",this.state)
+        this.sendButton.current.focus();
         setTimeout(()=>{
           this.scrollToBottom()
         },30)
@@ -274,12 +313,13 @@ export default class SendToAddress extends React.Component {
 
 
     let amountInputDisplay = (
-      <Input
+      <input
         width={1}
         type="number"
-        placeholder="$0.00"
+        placeholder="0"
         value={this.state.amount}
-        forwardRef={(input) => { this.amountInput = input; }}
+        style={inlineRimbleInput}
+        ref={ this.amountInput }
         onChange={event => this.updateState('amount', event.target.value)}
         required
       />
@@ -289,10 +329,11 @@ export default class SendToAddress extends React.Component {
         <input
           width={1}
           type="number"
+          style={inlineRimbleInput}
           readOnly
-          placeholder="$0.00"
+          placeholder="0"
           value={this.state.amount}
-          ref={(input) => { this.amountInput = input; }}
+          ref={ this.amountInput }
           onChange={event => this.updateState('amount', event.target.value)}
         />
       )
@@ -302,12 +343,13 @@ export default class SendToAddress extends React.Component {
       <div>
         <Box mb={4}>
           <Field mb={3} label={i18n.t('send_to_address.to_address')}>
-            <Input
+            <input
               width={1}
               type="text"
               placeholder="0x..."
+              style={inlineRimbleInput}
               value={this.state.toAddress}
-              ref={(input) => { this.addressInput = input; }}
+              ref={ this.addressInput }
               onChange={event => this.updateState('toAddress', event.target.value)}
               required
             />
@@ -331,18 +373,19 @@ export default class SendToAddress extends React.Component {
           </Field>
 
           <Field mb={3} label={messageText}>
-            <Input
+            <input
               width={1}
               type="text"
+              style={inlineRimbleInput}
               placeholder="optional unencrypted message"
               value={this.state.message}
-              ref={(input) => { this.messageInput = input; }}
+              ref={ this.messageInput }
               onChange={event => this.updateState('message', event.target.value)}
               required
             />
           </Field>
         </Box>
-        <Button size={'large'} width={1} disabled={canSend === false} onClick={this.send}>
+        <Button ref={ this.sendButton } size={'large'} width={1} disabled={canSend === false} onClick={this.send}>
           Send
         </Button>
       </div>

@@ -55,10 +55,10 @@ export default class RequestFunds extends React.Component {
               <Text fontSize={3} textAlign={'center'}>{dollarDisplay(amount)}</Text>
               <Text textAlign={'center'}>{message}</Text>
               <Flex flexDirection={'column'} alignItems={'center'} p={3} border={1} borderColor={'grey'} borderRadius={1}>
-                <QRCode value={address} size={'100%'} renderAs={'svg'} />
+                <QRCode value={qrValue} size={'100%'} renderAs={'svg'} />
               </Flex>
               <Box mt={3}>
-                <PublicAddress address={address} />
+                <PublicAddress address={qrValue} />
               </Box>
             </Box>
           </CopyToClipboard>
@@ -67,12 +67,12 @@ export default class RequestFunds extends React.Component {
             view={view}
             max={5}
             buttonStyle={buttonStyle}
-            ERC20TOKEN={ERC20TOKEN}
-            transactionsByAddress={ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
+            ERC20TOKEN={this.props.ERC20TOKEN}
+            transactionsByAddress={this.props.ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
             changeView={changeView}
             address={address}
             block={this.props.block}
-            recentTxs={ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
+            recentTxs={this.props.ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
           />
         </div>
       )

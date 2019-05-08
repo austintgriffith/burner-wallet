@@ -6,7 +6,7 @@ import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
-import gasless from 'tabookey-gasless';
+
 import './App.scss';
 import Header from './components/Header';
 import NavCard from './components/NavCard';
@@ -708,7 +708,7 @@ class App extends Component {
           console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
 
           this.setState({sending: true})
-        let relayClient = new gasless.RelayClient(this.state.web3);
+        /*let relayClient = new gasless.RelayClient(this.state.web3);
 
         if(this.state.metaAccount && this.state.metaAccount.privateKey){
           relayClient.useKeypairForSigning(this.state.metaAccount)
@@ -737,7 +737,7 @@ class App extends Component {
                 window.location = "/"
               })
             }, 2000)
-          })
+          })*/
       //})
       //.catch((error) => {
       //  console.log(error); //Get Gas price promise
@@ -1525,8 +1525,12 @@ render() {
                   <NavCard title={i18n.t('request_funds_title')} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
                   <RequestFunds
+                    block={this.state.block}
                     view={this.state.view}
+                    ERC20TOKEN={ERC20TOKEN}
+                    ensLookup={this.ensLookup.bind(this)}
                     mainStyle={mainStyle}
+                    web3={this.state.web3}
                     buttonStyle={buttonStyle}
                     balance={balance}
                     address={account}
