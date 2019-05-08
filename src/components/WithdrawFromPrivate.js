@@ -177,11 +177,14 @@ export default class SendToAddress extends React.Component {
           </Flex>
 
           <Field label={i18n.t('withdraw_from_private.amount')}>
-            <Flex alignItems={'center'}>
-              <Text mr={2}>$</Text>
-              <Input type="number" placeholder="0.00" value={this.state.amount} width={'100%'}
-                onChange={event => this.updateState('amount', event.target.value)} required />
-            </Flex>
+            <Input
+              type="number"
+              placeholder="$0.00"
+              value={this.state.amount}
+              required
+              onChange={event => this.updateState('amount', event.target.value)}
+              width={1}
+            />
           </Field>
 
           <Text>{products}</Text>
