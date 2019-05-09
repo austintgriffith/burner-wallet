@@ -1,15 +1,14 @@
 import React from 'react';
 import { Scaler, Blockie } from "dapparatus";
 import burnerloader from '../burnerloader.gif';
-export  default ({openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
+import { Card, Flex, Box, Loader } from 'rimble-ui'
 
+export  default ({openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
 
   let sendButtonOpacity = 1.0
   if(view=="receive" || view=="send_badge"){
     sendButtonOpacity = 0
   }
-
-
 
   let name = ens
   if(!name){
@@ -20,13 +19,14 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
   let blockieDisplay
   if(typeof total == "undefined" || Number.isNaN(total)){
     moneyDisplay = (
-      <div style={{opacity:0.1,fontSize:28,paddingTop:15}}>
-        connecting...
-      </div>
+      <Flex alignItems={'center'} style={{opacity:0.4,fontSize:20}}>
+        {'connecting… '}
+        <Loader color={'black'} size={'24px'} mx={2} />
+      </Flex>
     )
     blockieDisplay = (
       <div>
-        <img src ={burnerloader} style={{maxHeight:50,opacity:0.25,marginLeft:-20}}/>
+        <img src={burnerloader} style={{maxHeight:50,opacity:0.4,marginLeft:-16}}/>
       </div>
     )
   }else{
@@ -36,7 +36,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
       </div>
     )*/
     moneyDisplay = (
-      <div style={{opacity:0.4,fontSize:22,paddingTop:18}}>
+      <div style={{opacity:0.4,fontSize:22}}>
         {network}
       </div>
     )
@@ -76,41 +76,49 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     </div>
   )
 
-  let opacity = 0.5
-
-
-
   let topLeft
 
   if(view=="main" || view=="exchange"){
-    opacity = 1.0
     topLeft = (
-      <div style={{zIndex:-2,position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}}  >
-        <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank" style={{color:"#FFFFFF"}}>
-          {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
+      <Box style={{cursor:'pointer'}}>
+        <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank">
+          <Flex alignItems={'center'}>
+            {blockieDisplay}
+            <div style={{fontSize:14}}>
+              {name}
+            </div>
+          </Flex>
         </a>
-      </div>
+      </Box>
     )
   }else{
     topLeft = (
-      <div style={{zIndex:-2,position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}} onClick={() => changeView('main')} >
-          {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
-      </div>
+      <Box onClick={() => changeView('main')}>
+        <Flex alignItems={'center'}>
+          {blockieDisplay}
+          <div style={{fontSize:14}}>
+            {name}
+          </div>
+        </Flex>
+      </Box>
     )
   }
 
   let topRight = (
-    <div style={{zIndex:-2,position:"absolute",right:28,top:-4,zIndex:1,fontSize:46,opacity:0.9}}  >
+    <div style={{fontSize:46,opacity:0.9}}  >
       {moneyDisplay}
     </div>
   )
 
-
   return (
-    <div className="header" style={{opacity}}>
-      {topLeft}
-      {topRight}
-      {bottomRight}
+    <div className="header">
+      <Card borderRadius={2} my={3} px={3} py={3}>
+        <Flex alignItems={'center'} justifyContent={'space-between'}>
+          {topLeft}
+          {topRight}
+          {bottomRight}
+        </Flex>
+      </Card>
     </div>
   )
 };
