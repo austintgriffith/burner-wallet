@@ -11,9 +11,6 @@ const options = {
   debug: true,
 
   resources: {
-    fr: {
-      common: fr.fr
-    },
     en: {
       common: en.en
     },

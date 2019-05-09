@@ -469,8 +469,6 @@ export default class App extends Component {
 
     document.body.style.backgroundColor = mainStyle.backgroundColor
 
-    Wyre.configure();
-
     this.detectContext()
 
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
