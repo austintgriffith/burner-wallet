@@ -27,16 +27,10 @@ export default class ScavengerHunt extends React.Component {
     }
 
     let playerAnswers = cookie.load('playerAnswers')
-    if (!playerAnswers) {
-      playerAnswers = [];
-    }
+    if (!playerAnswers) playerAnswers = [];
 
     let ownerAnswers = cookie.load('ownerAnswers')
-    if (!ownerAnswers) {
-      ownerAnswers = [];
-    } else {
-      ownerAnswers = JSON.parse(ownerAnswers)
-    }
+    if (!ownerAnswers) ownerAnswers = [""];
 
     this.state = {
       gameEndTime: 0,
@@ -47,7 +41,7 @@ export default class ScavengerHunt extends React.Component {
       isOwner: false,
       numQuestions: 0,
       numPlayers: 0,
-      numScavengerAnswers: 1,    // Owner Number of questions to create for scavenger hunt
+      numScavengerAnswers: ownerAnswers.length,    // Owner Number of questions to create for scavenger hunt
       playerAnswers,
       ownerAnswers,
       ownerSalt,
@@ -101,8 +95,8 @@ export default class ScavengerHunt extends React.Component {
       let status = await this.state.YourContract.status().call();
       let gameEndTime = await this.state.YourContract.gameEndTime().call();
       let revealEndTime = await this.state.YourContract.revealEndTime().call();
-      let numQuestions = await this.state.YourContract.getNumQuestions().call();
-      let numPlayers = await this.state.YourContract.getNumPlayers().call();
+      let numQuestions = parseInt(await this.state.YourContract.getNumQuestions().call());
+      let numPlayers = parseInt(await this.state.YourContract.getNumPlayers().call());
       let winner = await this.state.YourContract.winner().call();
       let yourContractBalance = await this.props.web3.eth.getBalance(this.state.YourContract._address)
       //let ensName = await this.props.ensLookup("austingriffith.eth")
@@ -110,8 +104,13 @@ export default class ScavengerHunt extends React.Component {
       let xdaiBlockNumber = await this.props.xdaiweb3.eth.getBlockNumber()
       yourContractBalance = this.props.web3.utils.fromWei(yourContractBalance,'ether')
       let playerData = await this.state.YourContract.getPlayerData(this.props.address).call()
+      let playerAnswers = this.state.playerAnswers;
 
-      this.setState({status, gameEndTime, revealEndTime, winner, isOwner, numQuestions, numPlayers, yourContractBalance,mainnetBlockNumber,xdaiBlockNumber, playerData})
+      if (this.state.playerAnswers.length != numQuestions) {
+        playerAnswers = new Array(numQuestions);
+      }
+
+      this.setState({status, gameEndTime, revealEndTime, winner, isOwner, numQuestions, numPlayers, yourContractBalance,mainnetBlockNumber,xdaiBlockNumber, playerData, playerAnswers})
     }
   }
 
@@ -136,10 +135,20 @@ export default class ScavengerHunt extends React.Component {
 
   clicked(name){
     console.log("clicked: ", name)
+    let ownerAnswers = this.state.ownerAnswers
     switch (name) {
       case "ownerView":
+        this.setState({view: name});
+        break;
       case "playerView":
+        this.setState({view: name});
+      break;
       case "leaderBoardView":
+        if (this.state.view == "ownerView") {
+          cookie.save('ownerAnswers', JSON.stringify(this.state.ownerAnswers), { path: '/'})
+        } else {
+          cookie.save('playerAnswers', JSON.stringify(this.state.playerAnswers), { path: '/'})
+        }
         this.setState({view: name});
         break;
       case "endGame":
@@ -159,20 +168,53 @@ export default class ScavengerHunt extends React.Component {
         break;
       case "removeAnswer":
         if (this.state.numScavengerAnswers > 1) this.setState({numScavengerAnswers: this.state.numScavengerAnswers - 1})
+        ownerAnswers.pop();
+        this.setState({ownerAnswers})
         break;
       case "addAnswer":
         this.setState({numScavengerAnswers: this.state.numScavengerAnswers + 1})
+        ownerAnswers.push("")
+        this.setState({ownerAnswers})
         break;
       default: console.log("secondary button "+name+" was clicked")
     }
-    
-    /*
-    Time to make a transaction with YourContract!
-    */
-    // this.props.tx(this.state.YourContract.updateVar(name),120000,0,0,(result)=>{
-    //   console.log(result)
-    // })
+  }
 
+  handleAnswerChange(index, event) {
+    let inputValue = event.target.value;
+    this.setState(state => {
+      const playerAnswers = this.state.playerAnswers.map((item, j) => {
+        if (j === index) {
+          return inputValue
+        } else {
+          return item;
+        }
+      });
+
+      return {
+        playerAnswers,
+      };
+    });
+    cookie.save('playerAnswers', JSON.stringify(this.state.playerAnswers), { path: '/'})
+  }
+
+  handleOwnerAnswerChange(index, event) {
+    let inputValue = event.target.value;
+
+    this.setState(state => {
+      const ownerAnswers = this.state.ownerAnswers.map((item, j) => {
+        if (j === index) {
+          return inputValue
+        } else {
+          return item;
+        }
+      });
+
+      return {
+        ownerAnswers,
+      };
+    });
+    cookie.save('ownerAnswers', JSON.stringify(this.state.ownerAnswers), { path: '/'})
   }
 
   hashAnswer(answer, salt) {
@@ -226,7 +268,8 @@ export default class ScavengerHunt extends React.Component {
       <div className="input-group">
         <div className="col-6 p-1">
         <div>
-        <input type="text" className="form-control" placeholder={"Question " + i} id={"question_" + i}
+        <input type="text" className="form-control" placeholder={"Question " + i} id={"question_" + i} onChange={this.handleAnswerChange.bind(this, i)}
+          value={this.state.playerAnswers[i]}
         /></div>
         </div>
         <div className="col-6 p-1">
@@ -246,7 +289,8 @@ export default class ScavengerHunt extends React.Component {
       <div className="input-group">
         <div className="col-6 p-1">
         <div>
-        <input type="text" className="form-control" placeholder={"Enter Answer " + i} id={"answer_" + i}
+        <input type="text" className="form-control" placeholder={"Enter Answer " + i} id={"answer_" + i} onChange={this.handleAnswerChange.bind(this, i)}
+          value={this.state.playerAnswers[i]}
         /></div>
         </div>
         <div className="col-6 p-1">
@@ -266,7 +310,8 @@ export default class ScavengerHunt extends React.Component {
       <div className="input-group">
         <div className="col-12 p-1">
           <div>
-            <input type="text" className="form-control" placeholder={"Enter Scavenger Answer " + i} id={"scavengerAnswer_" + i} /> 
+            <input type="text" className="form-control" placeholder={"Enter Scavenger Answer " + i} id={"scavengerAnswer_" + i} onChange={this.handleOwnerAnswerChange.bind(this, i)}
+            value={this.state.ownerAnswers[i]} />
           </div>
         </div>
       </div>
@@ -321,34 +366,39 @@ export default class ScavengerHunt extends React.Component {
             }
 
             <Ruler/>
-            <div style={{padding:20}}>
-              The logged in user is
-              <Blockie
-                address={this.props.address}
-                config={{size:6}}
-              />
-              {this.props.address.substring(0,8)}
-              <div>
-                {this.props.dollarDisplay(this.props.balance)}<img src={this.props.xdai} style={{maxWidth:22,maxHeight:22}}/>
-              </div>
-              <div>
-                {this.props.dollarDisplay(this.props.daiBalance)}<img src={this.props.dai} style={{maxWidth:22,maxHeight:22}}/>
-              </div>
-              <div>
-                {this.props.dollarDisplay(this.props.ethBalance*this.props.ethprice)}<img src={this.props.eth} style={{maxWidth:22,maxHeight:22}}/>
-              </div>
-            </div>
-
-            <Ruler/>
-
-            <div>
-              <h3>Status: {this.props.web3.utils.hexToString(this.state.status)} </h3>
-            </div>
-            <div>
-              <h4>Number of Questions: {this.state.numQuestions} </h4>
-            </div>
-            <div>
-              <h4>Player Score: {this.state.playerData[1] ? this.state.playerData[1] : 0} </h4>
+            <div className="content bridge row">
+                <div className="col-6 p-1">
+                  <div style={{width:"100%",textAlign:"center"}}>
+                    <div>
+                      The logged in user is
+                      <Blockie
+                        address={this.props.address}
+                        config={{size:6}}
+                      />
+                      {this.props.address.substring(0,8)}
+                      <div>
+                        {this.props.dollarDisplay(this.props.balance)}<img src={this.props.xdai} style={{maxWidth:22,maxHeight:22}}/>
+                      </div>
+                      <div>
+                        {this.props.dollarDisplay(this.props.daiBalance)}<img src={this.props.dai} style={{maxWidth:22,maxHeight:22}}/>
+                      </div>
+                      <div>
+                        {this.props.dollarDisplay(this.props.ethBalance*this.props.ethprice)}<img src={this.props.eth} style={{maxWidth:22,maxHeight:22}}/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-6 p-1">
+                  <div>
+                    <h3>Status: {this.props.web3.utils.hexToString(this.state.status)} </h3>
+                  </div>
+                  <div>
+                    <h4>Number of Questions: {this.state.numQuestions} </h4>
+                  </div>
+                  <div>
+                    <h4>Player Score: {this.state.playerData[1] ? this.state.playerData[1] : 0} </h4>
+                  </div>
+                </div>
             </div>
             
             {/* <div>
@@ -467,8 +517,6 @@ export default class ScavengerHunt extends React.Component {
           </div>
 
           <Ruler/>
-
-
 
           <div className="content bridge row">
             <div className="col-4 p-1">
