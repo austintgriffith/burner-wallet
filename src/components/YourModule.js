@@ -22,9 +22,7 @@ export default class YourModule extends React.Component {
       yourContractBalance: 0,
       toAddress: props.scannerState ? props.scannerState.toAddress : "",
       payAmount: "",
-      depositAmountETH: "",
-      depositAmountDAI: "",
-      withdrawAmountDollars: "",
+      withdrawOrDepositAmount: "",
       percent:1,
     };
   }
@@ -100,7 +98,7 @@ export default class YourModule extends React.Component {
     if(!this.props.privateKey){
       return (
         <div>
-          Sorry, this doesn't work with inject metamask yet. Open in incog with MM or other injected web3.
+          Sorry, this doesn't work with inject metamask yet. Open in incog without MM or other injected web3.
         </div>
       )
     }
@@ -113,7 +111,39 @@ export default class YourModule extends React.Component {
       );
     }
 
+    if(this.state.connextInfo&&this.state.connextInfo.persistent&&(this.state.connextInfo.persistent.channel.pendingWithdrawalTokenHub>0)){
+      let shadowAmount = 100
+      let shadowColor = "#faa31a"
 
+
+      let inEthLong = this.props.web3.utils.fromWei(""+this.state.connextInfo.persistent.channel.pendingWithdrawalTokenHub,'ether')
+      let balanceInEth = Math.round(inEthLong*10000)/10000
+
+      let withdrawDisplay =(
+        <div>
+          Withdrawing {this.props.dollarDisplay(
+            balanceInEth
+          )}
+          <img
+            src={connextLogo}
+            style={{ maxWidth: 22, maxHeight: 22 }}
+          />
+        </div>
+      )
+
+      return (
+        <div style={{textAlign:'center'}}>
+          {withdrawDisplay}
+          <div style={{width:"100%",paddingTop:"5%",paddingBottom:"10%"}}>
+            <img src ={this.props.loaderImage} style={{maxWidth:"25%",paddingBottom:"5%"}}/>
+          </div>
+          <div style={{width:"80%",height:1,backgroundColor:"#444444",marginLeft:"10%"}}>
+            <div style={{width:this.state.percent+"%",height:1,backgroundColor:this.props.mainStyle.mainColorAlt,boxShadow:"0 0 "+shadowAmount/40+"px "+shadowColor+", 0 0 "+shadowAmount/30+"px "+shadowColor+", 0 0 "+shadowAmount/20+"px "+shadowColor+", 0 0 "+shadowAmount/10+"px #ffffff, 0 0 "+shadowAmount/5+"px "+shadowColor+", 0 0 "+shadowAmount/3+"px "+shadowColor+", 0 0 "+shadowAmount/1+"px "+shadowColor+""}}>
+            </div>
+          </div>
+        </div>
+      )
+    }
     //check if pendingDepositWeiUser and show a loading bar
     if(this.state.connextInfo&&this.state.connextInfo.persistent&&(this.state.connextInfo.persistent.channel.pendingDepositWeiUser>0)){
       let shadowAmount = 100
@@ -150,36 +180,7 @@ export default class YourModule extends React.Component {
       )
     }
 
-    if(this.state.connextInfo&&this.state.connextInfo.persistent&&(this.state.connextInfo.persistent.channel.pendingWithdrawalTokenHub>0)){
-      let shadowAmount = 100
-      let shadowColor = "#faa31a"
 
-
-      let inEthLong = this.props.web3.utils.fromWei(""+this.state.connextInfo.persistent.channel.pendingWithdrawalTokenHub,'ether')
-      let balanceInEth = Math.round(inEthLong*10000)/10000
-
-      let withdrawDisplay =(
-        <div>
-          Withdrawing {this.props.dollarDisplay(
-            balanceInEth
-          )}
-          {connextLogo}
-        </div>
-      )
-
-      return (
-        <div style={{textAlign:'center'}}>
-          {withdrawDisplay}
-          <div style={{width:"100%",paddingTop:"5%",paddingBottom:"10%"}}>
-            <img src ={this.props.loaderImage} style={{maxWidth:"25%",paddingBottom:"5%"}}/>
-          </div>
-          <div style={{width:"80%",height:1,backgroundColor:"#444444",marginLeft:"10%"}}>
-            <div style={{width:this.state.percent+"%",height:1,backgroundColor:this.props.mainStyle.mainColorAlt,boxShadow:"0 0 "+shadowAmount/40+"px "+shadowColor+", 0 0 "+shadowAmount/30+"px "+shadowColor+", 0 0 "+shadowAmount/20+"px "+shadowColor+", 0 0 "+shadowAmount/10+"px #ffffff, 0 0 "+shadowAmount/5+"px "+shadowColor+", 0 0 "+shadowAmount/3+"px "+shadowColor+", 0 0 "+shadowAmount/1+"px "+shadowColor+""}}>
-            </div>
-          </div>
-        </div>
-      )
-    }
 
 
 
@@ -194,7 +195,7 @@ export default class YourModule extends React.Component {
       let inEthLong = this.props.web3.utils.fromWei(""+this.state.connextInfo.persistent.channel.balanceTokenUser,'ether')
 
       connextBalance =(
-        <div>
+        <div style={{fontSize:26}}>
           {this.props.dollarDisplay(
             inEthLong
           )}
@@ -214,7 +215,7 @@ export default class YourModule extends React.Component {
           <div style={{ width: "100%", textAlign: "center" }}>
             <Ruler />
             <div style={{ padding: 20 }}>
-              <div>
+              <div style={{fontSize:26}}>
                 {this.props.dollarDisplay(
                   this.props.ethBalance * this.props.ethprice
                 )}
@@ -222,21 +223,41 @@ export default class YourModule extends React.Component {
                   src={this.props.eth}
                   style={{ maxWidth: 22, maxHeight: 22 }}
                 />
-                ({Math.round(this.props.ethBalance*10000)/10000})
+                ({Math.round(this.props.ethBalance*10000)/10000}) [{this.props.dollarDisplay(this.props.ethprice)}]
               </div>
-              {connextBalance}
+
             </div>
           </div>
           <Ruler />
+          <div className="content row">
+            <div className="input-group">
+              <div className="input-group-prepend">
+                <div className="input-group-text">$</div>
+              </div>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Amount to Depost or Withdraw"
+                value={this.state.withdrawOrDepositAmount}
+                ref={input => {
+                  this.depositInput = input;
+                }}
+                onChange={event =>
+                  this.setState({ withdrawOrDepositAmount: event.target.value })
+                }
+              />
+            </div>
+
+          </div>
           <div className="content bridge row">
-            <div className="col-4 p-1">
+            <div className="col-6 p-1">
               <button
                 className="btn btn-large w-100"
                 style={this.props.buttonStyle.secondary}
                 onClick={async () => {
-                  this.setState({percent:1})
+                  this.setState({percent:1,withdrawOrDepositAmount:""})
                   await this.state.connext.deposit({
-                    amountWei: this.props.web3.utils.toWei(this.state.depositAmountETH, "ether"),
+                    amountWei: this.props.web3.utils.toWei(""+(parseFloat(this.state.withdrawOrDepositAmount)/parseFloat(this.props.ethprice)), "ether"),
                     amountToken: this.props.web3.utils.toWei("0", "ether") // assumed to be in wei units
                   })
                 }}
@@ -246,12 +267,12 @@ export default class YourModule extends React.Component {
                 </Scaler>
               </button>
             </div>
-            <div className="col-4 p-1">
+            <div className="col-6 p-1">
               <button
                 className="btn btn-large w-100"
                 style={this.props.buttonStyle.secondary}
                 onClick={async () => {
-                    this.setState({percent:1})
+                    this.setState({percent:1,withdrawOrDepositAmount:""})
                   //let amount = this.props.web3.utils.toWei("0.1",'ether')
                   /*
               this.props.tx(this.state.YourContract.withdraw(amount),40000,0,0,(result)=>{
@@ -268,7 +289,7 @@ export default class YourModule extends React.Component {
                     // wei to transfer from the user's balance to 'recipient'
                     withdrawalWeiUser: this.props.web3.utils.toWei("0", "ether"),
                     // tokens from channel balance to sell back to hub
-                    tokensToSell: this.props.web3.utils.toWei(this.state.withdrawAmountDollars, "ether")
+                    tokensToSell: this.props.web3.utils.toWei(this.state.withdrawOrDepositAmount, "ether")
                   };
                   console.log("WITHDRAWING", withdrawObject);
 
@@ -282,28 +303,20 @@ export default class YourModule extends React.Component {
             </div>
           </div>
           <Ruler />
-          <div className="content row">
-            <label htmlFor="amount_input">{"DEPOSIT AMOUNTS"}</label>
-            <div className="input-group">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Amount of ETH"
-                value={this.state.depositAmountETH}
-                ref={input => {
-                  this.depositInput = input;
-                }}
-                onChange={event =>
-                  this.setState({ depositAmountETH: event.target.value })
-                }
-              />
+          <div className="form-group w-100">
+            <div style={{ width: "100%", textAlign: "center" }}>
+              <div style={{ padding: 20 }}>
+                {connextBalance}
+              </div>
             </div>
-
           </div>
+
           <div className="content row">
-            <label htmlFor="amount_input">{"RECIPIENT ADDRESS:"}</label>
-            <div className="input-group">
+            <div className="input-group" style={{marginBottom:10}}>
+
+
               <input
+
                 type="text"
                 className="form-control"
                 placeholder="0x..."
@@ -315,6 +328,7 @@ export default class YourModule extends React.Component {
                   this.setState({ toAddress: event.target.value })
                 }
               />
+
               <div
                 className="input-group-append"
                 onClick={() => {
@@ -332,12 +346,14 @@ export default class YourModule extends React.Component {
             </div>
           </div>
           <div className="content row">
-            <label htmlFor="amount_input">{"TOKENS TO SEND"}</label>
             <div className="input-group">
+            <div className="input-group-prepend">
+              <div className="input-group-text">$</div>
+            </div>
               <input
                 type="text"
                 className="form-control"
-                placeholder="$ amount to send"
+                placeholder="Amount to Send"
                 value={this.state.payAmount}
                 ref={input => {
                   this.payInput = input;
@@ -369,31 +385,15 @@ export default class YourModule extends React.Component {
                   }
                 ]
               });
+              this.setState({payAmount:"",toAddress:""})
             }}
           >
-            Pay
+            Send
           </button>
-
-          <div className="content row">
-            <label htmlFor="amount_input">{"WITHDRAW AMOUNT"}</label>
-            <div className="input-group">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Amount of $"
-                value={this.state.withdrawAmountDollars}
-                ref={input => {
-                  this.withdrawInput = input;
-                }}
-                onChange={event =>
-                  this.setState({ withdrawAmountDollars: event.target.value })
-                }
-              />
-            </div>
-
-          </div>
         </div>
-        <div className="send-to-address w-100">
+        <Ruler />
+
+        <div className="main-card card w-100" style={{paddingTop:40}}>
         <CopyToClipboard text={address} onCopy={() => {
           changeAlert({type: 'success', message: i18n.t('receive.address_copied')})
         }}>
@@ -408,6 +408,7 @@ export default class YourModule extends React.Component {
           </div>
         </CopyToClipboard>
         </div>
+
       </div>
     );
   }

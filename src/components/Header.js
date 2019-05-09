@@ -66,7 +66,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
 
   let bottomRight = (
     <div style={scanButtonStyle} onClick={() => {
-      openScanner({view:"send_to_address"})
+      openScanner({view:"yourmodule"})
     }} >
       <div style={{position:'relative',backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",backgroundColor:mainStyle.mainColor,borderRadius:"50%",width:89,height:89,boxShadow: "0.5px 0.5px 5px #000000"}}>
         <a href="#" style={{color:'#FFFFFF',position:'absolute',left:30,top:28}}>
@@ -76,7 +76,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     </div>
   )
 
-  let opacity = 0.5
+  let opacity = 1
 
 
 

@@ -105,7 +105,7 @@ class SendByScan extends Component {
   onClose = () => {
     console.log("SCAN CLOSE")
     this.stopRecording();
-    this.props.goBack();
+    this.props.changeView("yourmodule")
   };
   componentDidMount(){
     interval = setInterval(this.loadMore.bind(this),750)

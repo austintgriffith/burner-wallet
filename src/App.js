@@ -1399,8 +1399,11 @@ render() {
                     />
                   </div>
                   <Bottom
-                    text={"buttom button"}
-                    action={this.goBack.bind(this)}
+                    icon={"wrench"}
+                    text={i18n.t('advance_title')}
+                    action={()=>{
+                      this.changeView('advanced')
+                    }}
                   />
                 </div>
               )
@@ -1484,7 +1487,7 @@ render() {
                 </div>
                 <Bottom
                   action={()=>{
-                    this.changeView('main')
+                    this.changeView('yourmodule')
                   }}
                 />
               </div>
