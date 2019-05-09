@@ -167,7 +167,7 @@ export default class SendToAddress extends React.Component {
         this.props.changeAlert({type: 'warning', message: 'Not enough funds: '+dollarDisplay(Math.floor((parseFloat(this.props.balance))*100)/100)})
       }else if((ERC20TOKEN && (parseFloat(this.props.balance)<parseFloat(amount)))){
         console.log("SO THE BALANCE IS LESS!")
-        this.props.changeAlert({type: 'warning', message: 'Not enough tokens: $'+parseFloat(this.props.balance)})
+        this.props.changeAlert({type: 'warning', message: 'Not enough tokens: '+parseFloat(this.props.balance)+"€"})
       }else{
         console.log("SWITCH TO LOADER VIEW...",amount)
         this.props.changeView('loader')
@@ -265,7 +265,7 @@ export default class SendToAddress extends React.Component {
       <Input
         width={1}
         type="number"
-        placeholder="$0.00"
+        placeholder="0.00€"
         value={this.state.amount}
         ref={(input) => { this.amountInput = input; }}
         onChange={event => this.updateState('amount', event.target.value)}
@@ -277,7 +277,7 @@ export default class SendToAddress extends React.Component {
           width={1}
           type="number"
           readOnly
-          placeholder="$0.00"
+          placeholder="0.00€"
           value={this.state.amount}
           ref={(input) => { this.amountInput = input; }}
           onChange={event => this.updateState('amount', event.target.value)}

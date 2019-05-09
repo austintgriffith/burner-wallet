@@ -236,7 +236,7 @@ export default class History extends React.Component {
         if(value){
           messageValue = (
             <div style={{width:"100%",textAlign:"center",marginTop:5,marginBottom:-15,opacity:0.7,fontSize:14}}>
-              {"<-"}${this.props.dollarDisplay(theseTransactionsByAddress[r].value)}-
+              {"<-"}{this.props.dollarDisplay(theseTransactionsByAddress[r].value)}-
             </div>
           )
         }
@@ -398,7 +398,7 @@ export default class History extends React.Component {
                     },250)
                   })
               }}>
-                <div className="input-group-text">$</div>
+                <div className="input-group-text">€</div>
               </div>
               <input type="number" step="0.1" onKeyDown={this.onKeyDown} className="form-control" placeholder="0.00" value={this.state.newChatAmount}
                 ref={(input) => { this.amountInput = input; }}

@@ -26,8 +26,7 @@ export default ({
           }}
         >
           <Flex alignItems="center">
-            <Icon name="AttachMoney" mr={2} />
-            {i18n.t("more_buttons.request")}
+            {"€ "+i18n.t("more_buttons.request")}
           </Flex>
         </OutlineButton>
       </Box>
