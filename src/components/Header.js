@@ -84,7 +84,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
         <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank">
           <Flex alignItems={'center'}>
             {blockieDisplay}
-            <div style={{fontSize:14}}>
+            <div style={{fontSize:14,paddingLeft:5}}>
               {name}
             </div>
           </Flex>

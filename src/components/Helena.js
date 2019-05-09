@@ -90,11 +90,13 @@ export default class Helena extends React.Component {
     const allowance = await this.props.contracts.Proton.allowance(this.props.address, this.props.marketAddress).call();
     console.log("Allowance:",allowance)
     if(parseInt(allowance) === 0) {
+      this.props.changeView('loader')
       console.log("Need to approve...")
       this.props.tx(
         this.props.contracts.Proton.approve(this.props.marketAddress, -1),
         50000, 0, 0,(approveReceipt)=>{
-          cb()
+          this.props.changeView('helena')
+          setTimeout(cb,500)
         }
       );
     }else{
@@ -111,7 +113,7 @@ export default class Helena extends React.Component {
           this.state.amount * 1e18,
           0
       );
-      this.props.changeView('loader')
+
       console.log("### Approving on contract ",this.props.contracts.Proton)
       //this.props.tx(
     //    this.props.contracts.Proton.approve(this.props.marketAddress, -1),
@@ -119,6 +121,7 @@ export default class Helena extends React.Component {
           //console.log("###  approveReceipt ",approveReceipt)
           //console.log("###  MarketContract buy ",outcome,cost.toNumber(),this.state.MarketContract)
           this.firstApprove(()=>{
+            this.props.changeView('loader')
             this.props.tx(
               this.state.MarketContract.buy(outcome, cost.toNumber(), "1000000000000000000000"),
               1042570, 0, 0,(buyReceipt)=>{
