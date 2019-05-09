@@ -97,20 +97,8 @@ export default class SendBadge extends React.Component {
       this.props.changeView('loader')
       setTimeout(()=>{window.scrollTo(0,0)},60)
 
-      console.log("web3",this.props.web3)
-
       const color = 49154;
       let receipt;
-      console.log(
-
-          address,
-          toAddress,
-          badge.id,
-          color,
-          xdaiweb3,
-          web3,
-          metaAccount && metaAccount.privateKey
-        );
       try {
         receipt = await tokenSendV2(
           address,
@@ -146,11 +134,8 @@ export default class SendBadge extends React.Component {
         <Badge
           large={true}
           key={this.props.badge.id}
-          id={this.props.badge.id}
-          image={this.props.badge.image}
-          mp4={this.props.badge.movie.mp4} 
-          rightholderName={this.props.badge.rightholder.name}
-          name={this.props.badge.name} />
+          badge={this.props.badge}
+        />
         <Ruler />
         <Field mb={3} label="To Address">
           <Input

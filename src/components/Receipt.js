@@ -49,7 +49,7 @@ export default class Receive extends React.Component {
     if(receipt.badge){
       sendAmount = (
         <div>
-          <Badge key={"sentbadge"} id={receipt.badge.id} image={receipt.badge.image}/>
+          <Badge key={"sentbadge"} badge={receipt.badge} showName={false}/>
         </div>
       )
     }else{

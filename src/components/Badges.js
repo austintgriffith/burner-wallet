@@ -11,7 +11,12 @@ export  default ({badges,address,selectBadge}) => {
     //console.log("badges",b,badges[b])
     //we have a url description... tons of other meta data if we want to do something else here....
     allBadges.push(
-      <Badge key={"b"+b} id={badges[b].id} image={badges[b].image} name={badges[b].name} selectBadge={selectBadge}/>
+      <Badge
+        key={"b"+b}
+        badge={badges[b]}
+        selectBadge={selectBadge}
+        showName={true}
+      />
     )
   }
 

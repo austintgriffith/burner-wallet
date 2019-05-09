@@ -427,7 +427,7 @@ export default class App extends Component {
     this.setState(updateState)
   }
   clearBadges() {
-    this.setState({badges:{}},()=>{
+    this.setState({badges:{}, badgeBalance: 0},()=>{
       console.log("BADGES CLEARED",this.state.badges)
     })
   }
@@ -1393,48 +1393,6 @@ export default class App extends Component {
                   moreButtons = ""
                 }
 
-                let badgeDisplay = ""
-                if(this.state.badgeBalance>0){
-                  badgeDisplay = (
-                    <div>
-                      <Badges
-                        badges={this.state.badges}
-                        address={account}
-                        contracts={this.state.contracts}
-                        web3={this.state.web3}
-                        xdaiweb3={this.state.xdaiweb3}
-                        pdaiContract={this.state.pdaiContract}
-                        pDaiTokenAddr={P_DAI_TOKEN_ADDR}
-                        //amount={false}
-                        privateKey={this.state.withdrawFromPrivateKey}
-                        goBack={this.goBack.bind(this)}
-                        changeView={this.changeView}
-                        changeAlert={this.changeAlert}
-                        dollarDisplay={dollarDisplay}
-                        selectBadge={this.selectBadge.bind(this)}
-                        contracts={this.state.contracts}
-                        web3={this.state.web3}
-                        xdaiweb3={this.state.xdaiweb3}
-                        //amount={false}
-                        privateKey={this.state.withdrawFromPrivateKey}
-                        goBack={this.goBack.bind(this)}
-                        changeView={this.changeView}
-                        changeAlert={this.changeAlert}
-                        dollarDisplay={dollarDisplay}
-                        tokenSendV2={tokenSendV2.bind(this)}
-                      />
-                      <Ruler/>
-                      <Bottom
-                        action={()=>{
-                          this.changeView('main')
-                        }}
-                      />
-                    </div>
-                  )
-                }else{
-                  moreButtons = ""
-                }
-
                 if(this.state.contracts){
                   eventParser = (
                     <div style={{color:"#000000"}}>
@@ -1565,28 +1523,6 @@ export default class App extends Component {
                       badges={this.state.badges}
                       address={account}
                       selectBadge={this.selectBadge.bind(this)}
-                      contracts={this.state.contracts}
-                      web3={this.state.web3}
-                      xdaiweb3={this.state.xdaiweb3}
-                      pdaiContract={this.state.pdaiContract}
-                      pDaiTokenAddr={P_DAI_TOKEN_ADDR}
-                      //amount={false}
-                      privateKey={this.state.withdrawFromPrivateKey}
-                      goBack={this.goBack.bind(this)}
-                      changeView={this.changeView}
-                      changeAlert={this.changeAlert}
-                      dollarDisplay={dollarDisplay}
-                      tokenSendV2={tokenSendV2.bind(this)}
-                      selectBadge={this.selectBadge.bind(this)}
-                      contracts={this.state.contracts}
-                      web3={this.state.web3}
-                      xdaiweb3={this.state.xdaiweb3}
-                      //amount={false}
-                      privateKey={this.state.withdrawFromPrivateKey}
-                      goBack={this.goBack.bind(this)}
-                      changeView={this.changeView}
-                      changeAlert={this.changeAlert}
-                      dollarDisplay={dollarDisplay}
                     />
                     <Ruler/>
                   </div>
