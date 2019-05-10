@@ -23,7 +23,6 @@ import Ruler from "./components/Ruler";
 import Receipt from "./components/Receipt";
 import CashOut from "./components/CashOut";
 import MainCard from './components/MainCard';
-import History from './components/History';
 import Advanced from './components/Advanced';
 import BottomLinks from './components/BottomLinks';
 import MoreButtons from './components/MoreButtons';
@@ -35,7 +34,6 @@ import Footer from './components/Footer';
 import Loader from './components/Loader';
 import burnerlogo from './burnerwallet.png';
 import BurnWallet from './components/BurnWallet'
-import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
@@ -51,7 +49,7 @@ import cypherpunk from './cypherpunk.png';
 import eth from './ethereum.png';
 import dai from './dai.jpg';
 import xdai from './xdai.jpg';
-import Wyre from './services/wyre';
+
 
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
@@ -123,7 +121,7 @@ else if (window.location.hostname.indexOf("qreth") >= 0) {
   CLAIM_RELAY = false
   ERC20TOKEN = false
 }
-else if (window.location.hostname.indexOf("xdai") >= 0) {
+else if (window.location.hostname.indexOf("burnerwallet") >= 0) {
   WEB3_PROVIDER = POA_XDAI_NODE;
   CLAIM_RELAY = 'https://x.xdai.io'
   ERC20TOKEN = false
@@ -136,15 +134,6 @@ else if (window.location.hostname.indexOf("buffidai") >= 0) {
   ERC20TOKEN = 'ERC20Vendable'
   ERC20IMAGE = bufficorn
   LOADERIMAGE = bufficorn
-}
-else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20NAME = 'BURN'
-  ERC20VENDOR = 'BurnerVendor'
-  ERC20TOKEN = 'Burner'
-  ERC20IMAGE = cypherpunk
-  LOADERIMAGE = cypherpunk
 }
 else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
@@ -335,9 +324,6 @@ class App extends Component {
     this.setState(update)
   }
   componentDidMount(){
-
-    Wyre.configure();
-
 
     document.body.style.backgroundColor = mainStyle.backgroundColor
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
@@ -697,11 +683,11 @@ class App extends Component {
           console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
 
           this.setState({sending: true})
-        let relayClient = new gasless.RelayClient(this.state.web3);
+        //let relayClient = new gasless.RelayClient(this.state.web3);
 
-        if(this.state.metaAccount && this.state.metaAccount.privateKey){
+        /*if(this.state.metaAccount && this.state.metaAccount.privateKey){
           relayClient.useKeypairForSigning(this.state.metaAccount)
-        }
+        }*/
         console.log("Calling encodeABU on Links.claim() ",this.state.claimId, sig, claimHash, this.state.account)
         let claimData = this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account).encodeABI()
         //let network_gas_price = await this.state.web3.eth.getGasPrice();
@@ -716,6 +702,7 @@ class App extends Component {
           gas_limit: 150000,
           gas_price: Math.trunc(1000000000 * 25)
         }
+        /*
         console.log("Hitting relayClient with relayTransaction()",claimData, options)
         relayClient.relayTransaction(claimData, options).then((transaction) => {
             console.log("TX REALYED: ", transaction)
@@ -727,12 +714,13 @@ class App extends Component {
               })
             }, 2000)
           })
+          */
       //})
       //.catch((error) => {
       //  console.log(error); //Get Gas price promise
       //});
     }else{
-      this.changeAlert({type: 'danger', message: 'Sorry. Failed to claim. Already claimed?'})
+      /*this.changeAlert({type: 'danger', message: 'Sorry. Failed to claim. Already claimed?'})
       setTimeout(() => {
         this.setState({sending: false}, () => {
           //alert("DONE")
@@ -740,7 +728,7 @@ class App extends Component {
         })
       }, 2000)
       console.log("Fund is not valid yet, trying again....")
-      setTimeout(this.relayClaim,2000)
+      setTimeout(this.relayClaim,2000)*/
     }
   }
   setReceipt = (obj)=>{
@@ -1273,22 +1261,7 @@ render() {
                     </div>
                   )} goBack={this.goBack.bind(this)}/>
                   {defaultBalanceDisplay}
-                  <History
-                    buttonStyle={buttonStyle}
-                    saveKey={this.saveKey.bind(this)}
-                    metaAccount={this.state.metaAccount}
-                    transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
-                    address={account}
-                    balance={balance}
-                    changeAlert={this.changeAlert}
-                    changeView={this.changeView}
-                    target={targetAddress}
-                    block={this.state.block}
-                    send={this.state.send}
-                    web3={this.state.web3}
-                    goBack={this.goBack.bind(this)}
-                    dollarDisplay={dollarDisplay}
-                  />
+
                 </div>
                 <Bottom
                   action={()=>{
@@ -1861,38 +1834,7 @@ render() {
                 <div className="main-card card w-100" style={{zIndex:1}}>
 
                   <NavCard title={i18n.t('exchange_title')} goBack={this.goBack.bind(this)}/>
-                  <Exchange
-                    eth={eth}
-                    dai={dai}
-                    xdai={xdai}
-                    ERC20NAME={ERC20NAME}
-                    ERC20IMAGE={ERC20IMAGE}
-                    ERC20TOKEN={ERC20TOKEN}
-                    ERC20VENDOR={ERC20VENDOR}
-                    ethprice={this.state.ethprice}
-                    ethBalance={this.state.ethBalance}
-                    daiBalance={this.state.daiBalance}
-                    xdaiBalance={this.state.xdaiBalance}
-                    mainnetweb3={this.state.mainnetweb3}
-                    xdaiweb3={this.state.xdaiweb3}
-                    daiContract={this.state.daiContract}
-                    ensContract={this.state.ensContract}
-                    isVendor={this.state.isVendor}
-                    isAdmin={this.state.isAdmin}
-                    contracts={this.state.contracts}
-                    buttonStyle={buttonStyle}
-                    changeAlert={this.changeAlert}
-                    setGwei={this.setGwei}
-                    network={this.state.network}
-                    tx={this.state.tx}
-                    web3={this.state.web3}
-                    send={this.state.send}
-                    nativeSend={this.state.nativeSend}
-                    address={account}
-                    balance={balance}
-                    goBack={this.goBack.bind(this)}
-                    dollarDisplay={dollarDisplay}
-                  />
+
                 </div>
                 <Bottom
                   action={this.goBack.bind(this)}
