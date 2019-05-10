@@ -60,7 +60,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
   if(view=="send_to_address"){
     scanButtonStyle.position = "absolute"
     scanButtonStyle.right = -3
-    scanButtonStyle.top = 217
+    scanButtonStyle.top = 264
     delete scanButtonStyle.bottom
   }
 
