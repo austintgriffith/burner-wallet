@@ -62,7 +62,8 @@ export default class ScavengerHunt extends React.Component {
         'hours': 0,
         'minutes': 0,
         'seconds': 0
-      }
+      },
+      playerList: []
     }
   }
 
@@ -138,6 +139,9 @@ export default class ScavengerHunt extends React.Component {
       let playerData = await this.state.YourContract.getPlayerData(this.props.address).call()
       let playerAnswers = this.state.playerAnswers;
 
+      let playerList = new Array(numPlayers)
+      playerList.fill({})
+
       let time = 0
       if (this.props.web3.utils.hexToString(this.state.status) === "Start") {
         time = gameEndTime
@@ -156,7 +160,32 @@ export default class ScavengerHunt extends React.Component {
         this.setState({questionIndex:null, qrAnswer:null}) 
       }
 
-      this.setState({status, gameEndTime, revealEndTime, winner, isOwner, numQuestions, numPlayers, yourContractBalance,mainnetBlockNumber,xdaiBlockNumber, playerData, playerAnswers, timeRemaining})
+      if (numPlayers > 0) {
+        for (const i of playerList.keys()) {
+          let data = await this.state.YourContract.getPlayerDataByIndex(i).call()
+          let address = await this.state.YourContract.playerList(i).call()
+          playerList[i] = {time: parseInt(data[0]), score: parseInt(data[1]), address}
+        }
+
+        let sortBy = [{
+          prop:'score',
+          direction: -1
+        },{
+          prop:'time',
+          direction: 1
+        }];
+
+        playerList.sort(function(a,b){
+          let i = 0, result = 0;
+          while(i < sortBy.length && result === 0) {
+            result = sortBy[i].direction*(a[ sortBy[i].prop ].toString() < b[ sortBy[i].prop ].toString() ? -1 : (a[ sortBy[i].prop ].toString() > b[ sortBy[i].prop ].toString() ? 1 : 0));
+            i++;
+          }
+          return result;
+        })
+      }
+
+      this.setState({status, gameEndTime, revealEndTime, winner, isOwner, numQuestions, numPlayers, yourContractBalance,mainnetBlockNumber,xdaiBlockNumber, playerData, playerAnswers, timeRemaining, playerList})
     }
   }
 
@@ -307,6 +336,7 @@ export default class ScavengerHunt extends React.Component {
     const questions = [];
     const answers = [];
     const scavengerAnswers = [];
+    const leaderBoard = [];
 
     // submit answers
     for (let i = 0; i < this.state.numQuestions; i++) {
@@ -359,6 +389,22 @@ export default class ScavengerHunt extends React.Component {
             <input type="text" className="form-control" placeholder={"Enter Scavenger Answer " + i} id={"scavengerAnswer_" + i} onChange={this.handleOwnerAnswerChange.bind(this, i)}
             value={this.state.ownerAnswers[i]} />
           </div>
+        </div>
+      </div>
+    </div>)
+    }
+
+    for (let i = 0; i < this.state.numPlayers; i++) {
+      leaderBoard.push(<div className="content bridge row">
+      <div className="input-group">
+        <div className="col-8 p-1">
+          <div>{this.state.playerList[i].address}</div>
+        </div>
+        <div className="col-1 p-1">
+          <div>{this.state.playerList[i].score}</div>
+        </div>
+        <div className="col-3 p-1">
+          <div>{new Date(this.state.playerList[i].time*1000).toTimeString().slice(0,8)}</div>
         </div>
       </div>
     </div>)
@@ -446,6 +492,9 @@ export default class ScavengerHunt extends React.Component {
                   </div>
                   <div>
                     <h4>Time Left: {this.state.timeRemaining.hours}:{this.state.timeRemaining.minutes}:{this.state.timeRemaining.seconds} </h4>
+                  </div>
+                  <div>
+                    <h4>Num Players: {this.state.numPlayers}</h4>
                   </div>
                   <div>
                     <h4>Player Score: {this.state.playerData[1] ? this.state.playerData[1] : 0} </h4>
@@ -558,8 +607,24 @@ export default class ScavengerHunt extends React.Component {
               ////////////////////////////////////////////////////////////////////////////////////////////// 
               <div>
                 <h3>Leader Board</h3>
-                <h4>Players: {this.state.numPlayers}</h4>
-                <h4>Winner: {this.state.winner} </h4>
+                {this.props.web3.utils.hexToString(this.state.status) == "Game Over" &&
+                  <h4>Winner: {this.state.winner} </h4>
+                }
+                <div className="content bridge row">
+                  <div className="input-group">
+                    <div className="col-8 p-1">
+                      <h5>Player</h5>
+                    </div>
+                    <div className="col-1 p-1">
+                      <h5>Score</h5>
+                    </div>
+                    <div className="col-3 p-1">
+                      <h5>Time</h5>
+                    </div>
+                  </div>
+                </div>
+
+                {leaderBoard}
 
               <Ruler/>
               </div>

@@ -197,6 +197,11 @@ contract ScavengerHunt {
     return (players[_player].timestamp, players[_player].score);
   }
 
+  /// @dev return player data
+  function getPlayerDataByIndex(uint index) public view returns (uint, uint) {
+    return (players[playerList[index]].timestamp, players[playerList[index]].score);
+  }
+
   /// @dev kills contract and returns funds
   function kill() public onlyOwner() {
       selfdestruct(msg.sender);
