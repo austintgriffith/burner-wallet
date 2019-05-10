@@ -323,16 +323,12 @@ export default class RegisterMovie extends React.Component {
 
   componentWillReceiveProps(newProps) {
     const { rightholderAddress } = this.state;
-    if (
-      this.props.scannerState !== newProps.scannerState ||
-      newProps.scannerState !== rightholderAddress
-    ) {
-      this.setState(
-        { rightholderAddress: newProps.scannerState.toAddress },
-        () => {
-          this.canRegister();
+    if (this.props.scannerState !== newProps.scannerState) {
+      this.handleAddress({
+        target: {
+          value: newProps.scannerState.toAddress
         }
-      );
+      });
     }
   }
 
@@ -389,11 +385,10 @@ export default class RegisterMovie extends React.Component {
       movieCast2,
       movieDirector,
       movieProducer,
-      rightholderAddress,
       rightholderName,
       email
     } = this.refs;
-    const { provider, meta, uploader } = this.state;
+    const { provider, meta, uploader, rightholderAddress } = this.state;
 
     changeView("loader");
     setTimeout(() => {
@@ -433,7 +428,7 @@ export default class RegisterMovie extends React.Component {
     let receipt;
     try {
       receipt = await this.mintPlasma(
-        rightholderAddress.value,
+        rightholderAddress,
         rawHash,
         meta.mainnet.account && meta.mainnet.account.privateKey
       );
@@ -446,7 +441,7 @@ export default class RegisterMovie extends React.Component {
     }
     console.log("receipt", receipt);
     setReceipt({
-      to: rightholderAddress.value,
+      to: rightholderAddress,
       from: ERC721Full._address,
       badge: token,
       result: receipt
@@ -455,7 +450,7 @@ export default class RegisterMovie extends React.Component {
     try {
       await this.registerEmail(
         email.value,
-        rightholderAddress.value,
+        rightholderAddress,
         rightholderName.value
       );
     } catch (err) {
@@ -669,6 +664,8 @@ export default class RegisterMovie extends React.Component {
 
   canRegister() {
     const { uploader } = this.state;
+    let { rightholderAddress } = this.state;
+    const { xdaiweb3 } = this.props;
     const {
       movieName,
       movieYear,
@@ -676,11 +673,21 @@ export default class RegisterMovie extends React.Component {
       movieCast2,
       movieDirector,
       movieProducer,
-      rightholderAddress,
       rightholderName,
       email
     } = this.refs;
-    const canRegister = !(
+    // NOTE: We first check if rightholderAddress can be converted to a checksum
+    // address before we continue evaluating. If it errors, we can safely set
+    // canRegister to false as the form shouldn't be submitted without a valid
+    // address.
+    try {
+      rightholderAddress = xdaiweb3.utils.toChecksumAddress(rightholderAddress);
+    } catch (err) {
+      this.setState({ canRegister: false });
+      return;
+    }
+
+    const canRegister =
       uploader &&
       uploader.posters &&
       uploader.movies &&
@@ -690,10 +697,9 @@ export default class RegisterMovie extends React.Component {
       // NOTE movieCast2 is not required
       movieDirector.value &&
       movieProducer.value &&
-      rightholderAddress.value &&
+      xdaiweb3.utils.isAddress(rightholderAddress) &&
       rightholderName.value &&
-      email.value
-    );
+      email.value;
     this.setState({
       canRegister
     });
@@ -727,6 +733,13 @@ export default class RegisterMovie extends React.Component {
     }
   }
 
+  handleAddress(event) {
+    const { xdaiweb3 } = this.props;
+    this.setState({ rightholderAddress: event.target.value }, () => {
+      this.canRegister();
+    });
+  }
+
   render() {
     const {
       rightholderAddress,
@@ -735,7 +748,6 @@ export default class RegisterMovie extends React.Component {
       movie,
       upload
     } = this.state;
-
     return (
       <div>
         <div className="content row">
@@ -877,9 +889,8 @@ export default class RegisterMovie extends React.Component {
                 width={1}
                 type="text"
                 placeholder="0x..."
-                ref="rightholderAddress"
-                defaultValue={rightholderAddress}
-                onChange={this.canRegister.bind(this)}
+                value={rightholderAddress}
+                onChange={this.handleAddress.bind(this)}
               />
               <OutlineButton
                 icon={"CenterFocusWeak"}
@@ -896,7 +907,7 @@ export default class RegisterMovie extends React.Component {
           <Button
             size={"large"}
             width={1}
-            disabled={canRegister}
+            disabled={!canRegister}
             onClick={this.submit}
           >
             Register
