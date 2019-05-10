@@ -96,10 +96,19 @@ class SendByScan extends Component {
       console.log("dataAfterColon:",dataAfterColon)
       if (dataAfterColon) {
         this.stopRecording();
-        if (Web3.utils.isAddress(dataAfterColon)) {
+        const dataSplit = dataAfterColon.split(";");
+
+        if (dataSplit.length === 1 && Web3.utils.isAddress(dataSplit[0])) {
           console.log("RETURN STATE:",this.props.returnState)
           let returnState = this.props.parseAndCleanPath(dataAfterColon)
           this.props.returnToState(returnState)
+        } else if(Web3.utils.isAddress(dataSplit[0]) && !isNaN(parseInt(dataSplit[1], 10)) && dataSplit[2]) {
+          const returnState = {
+            toAddress: dataSplit[0],
+            amount: parseInt(dataSplit[1], 10),
+            message: dataSplit[2]
+          }
+          this.props.returnToState(returnState);
         } else {
             // NOTE: Everything that is not a valid Ethereum address, we insert
             // in the URL to see if the burner wallet can resolve it.
