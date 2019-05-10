@@ -633,10 +633,9 @@ export default class App extends Component {
     try {
         await this.fetchBadgesPlasma(49154);
     } catch(err) {
-      this.changeAlert({
-        type: 'warning',
-        message: "Couldn't load ERC721 data.",
-      });
+      // NOTE: A changeAlert here confused some people. Especially when 
+      // everything worked as expected but e.g. some ipfs links from Infura
+      // timed out. We hence decided to only return the error in the console.
       console.log(err);
     }
 
