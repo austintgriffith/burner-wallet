@@ -1569,8 +1569,6 @@ render() {
               }else{
 
                 let predMarkets = [
-                  "0x6239e1e6993719e8c92dcf4eaadb896b75bb8055",
-                  "0x6218a3aa62963f1d56de51354d794a0a248cd270",
                   "0xce1419a287b954b92ae03ceadb0d1068261db327",
                   "0xc6334caf42f257c4e3647956adf63defb204b2f3",
                   "0xcaf45448d447daa864e4dc76f6c31bdfde60bfc3",
