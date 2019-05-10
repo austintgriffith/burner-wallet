@@ -32,6 +32,10 @@ export default class ScavengerHunt extends React.Component {
     let ownerAnswers = cookie.load('ownerAnswers')
     if (!ownerAnswers) ownerAnswers = [""];
 
+    var urlParams = new URLSearchParams(window.location.search);
+    var questionIndex = urlParams.get("q")      // question index
+    var qrAnswer = urlParams.get("a")           // answer to question index
+
     this.state = {
       gameEndTime: 0,
       revealEndTime: 0,
@@ -50,6 +54,15 @@ export default class ScavengerHunt extends React.Component {
       YourContract: false,
       yourContractBalance: 0,
       toAddress: (props.scannerState ? props.scannerState.toAddress : ""),
+      questionIndex,
+      qrAnswer,
+      timeRemaining:{
+        'total': 0,
+        'days': 0,
+        'hours': 0,
+        'minutes': 0,
+        'seconds': 0
+      }
     }
   }
 
@@ -67,8 +80,6 @@ export default class ScavengerHunt extends React.Component {
     var urlParams = new URLSearchParams(window.location.search);
     var contractAddress = urlParams.get("game")
 
-    console.log("contractadd ", contractAddress)
-
     if (!contractAddress) {
       this.setState({
       YourContract: this.props.contractLoader("ScavengerHunt")
@@ -85,6 +96,27 @@ export default class ScavengerHunt extends React.Component {
 
     setInterval(this.pollInterval.bind(this),2500)
     setTimeout(this.pollInterval.bind(this),30)
+  }
+
+  getTimeRemaining(endtime){
+    var t = endtime * 1000 - Date.parse(new Date());
+    var seconds = Math.floor( (t/1000) % 60 );
+    var minutes = Math.floor( (t/1000/60) % 60 );
+    var hours = Math.floor( (t/(1000*60*60)) % 24 );
+    var days = Math.floor( t/(1000*60*60*24) );
+    if (t < 0) {
+      seconds = 0
+      minutes = 0
+      hours = 0
+      days = 0
+    }
+    return {
+      'total': t,
+      'days': ('0' + days).slice(-2),
+      'hours': ('0' + hours).slice(-2),
+      'minutes': ('0' + minutes).slice(-2),
+      'seconds': ('0' + seconds).slice(-2) 
+    };
   }
 
   async pollInterval(){
@@ -106,11 +138,25 @@ export default class ScavengerHunt extends React.Component {
       let playerData = await this.state.YourContract.getPlayerData(this.props.address).call()
       let playerAnswers = this.state.playerAnswers;
 
+      let time = 0
+      if (this.props.web3.utils.hexToString(this.state.status) === "Start") {
+        time = gameEndTime
+      } else {
+        time = revealEndTime
+      }
+
+      let timeRemaining = this.getTimeRemaining(time);
+
       if (this.state.playerAnswers.length != numQuestions) {
         playerAnswers = new Array(numQuestions);
       }
 
-      this.setState({status, gameEndTime, revealEndTime, winner, isOwner, numQuestions, numPlayers, yourContractBalance,mainnetBlockNumber,xdaiBlockNumber, playerData, playerAnswers})
+      if (this.state.questionIndex && this.state.qrAnswer) {
+        playerAnswers[this.state.questionIndex] = this.state.qrAnswer;
+        this.setState({questionIndex:null, qrAnswer:null}) 
+      }
+
+      this.setState({status, gameEndTime, revealEndTime, winner, isOwner, numQuestions, numPlayers, yourContractBalance,mainnetBlockNumber,xdaiBlockNumber, playerData, playerAnswers, timeRemaining})
     }
   }
 
@@ -393,7 +439,13 @@ export default class ScavengerHunt extends React.Component {
                     <h3>Status: {this.props.web3.utils.hexToString(this.state.status)} </h3>
                   </div>
                   <div>
+                    <h3>Pot: {this.props.dollarDisplay(this.state.yourContractBalance)}</h3>
+                  </div>
+                  <div>
                     <h4>Number of Questions: {this.state.numQuestions} </h4>
+                  </div>
+                  <div>
+                    <h4>Time Left: {this.state.timeRemaining.hours}:{this.state.timeRemaining.minutes}:{this.state.timeRemaining.seconds} </h4>
                   </div>
                   <div>
                     <h4>Player Score: {this.state.playerData[1] ? this.state.playerData[1] : 0} </h4>
