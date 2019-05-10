@@ -1567,6 +1567,84 @@ render() {
               if(!this.state || !this.state.customLoader || !this.state.tx || !this.state.contracts || !this.state.network || !this.state.contracts.Proton || !this.state.contracts.Market){
                 return <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
               }else{
+
+                let predMarkets = [
+                  "0x6239e1e6993719e8c92dcf4eaadb896b75bb8055",
+                  "0x6218a3aa62963f1d56de51354d794a0a248cd270",
+                  "0xce1419a287b954b92ae03ceadb0d1068261db327",
+                  "0xc6334caf42f257c4e3647956adf63defb204b2f3",
+                  "0xcaf45448d447daa864e4dc76f6c31bdfde60bfc3",
+                  "0xe1e596fe7150ae75baaedc8fc1edb95907d9fb89",
+                  "0x9c4da052d7beac1d6a0eb52952df35a5b24da4ea",
+                  "0xa68710fc5b1a1eb58ca5b243a36be67d32b9005f",
+                  "0xa2d85bda804bc724bbe90c2bf7d772577a8a9d46",
+                  "0x984a907fd432ac531eb7f13657739dd4e0b49001"
+                ]
+
+                let predictionMarketDisplay = []
+                for(let p in predMarkets){
+                  predictionMarketDisplay.push(
+                    <div id={"predictionMarket"+p}>
+                      <Helena
+                        privateKey={metaAccount.privateKey}
+
+                        marketAddress={predMarkets[p]}
+
+                        web3={this.state.web3}
+                        tx={this.state.tx}
+                        send={this.state.send}
+
+                        address={account}
+                        balance={balance}
+
+                        network={this.state.network}
+                        block={this.state.block}
+
+                        contracts={this.state.contracts}
+                        contractLoader={this.state.customLoader}
+
+                        mainnetweb3={this.state.mainnetweb3}
+                        xdaiweb3={this.state.xdaiweb3}
+
+                        daiContract={this.state.daiContract}
+                        ensContract={this.state.ensContract}
+                        ensLookup={this.ensLookup.bind(this)}
+
+                        ethBalance={this.state.ethBalance}
+                        daiBalance={this.state.daiBalance}
+                        xdaiBalance={this.state.xdaiBalance}
+
+
+                        xdai={xdai}
+                        ERC20NAME={HELENAERC20NAME}
+                        ERC20IMAGE={HELENAERC20IMAGE}
+                        ERC20TOKEN={HELENAERC20TOKEN}
+
+                        ethprice={this.state.ethprice}
+
+                        isVendor={this.state.isVendor}
+                        isAdmin={this.state.isAdmin}
+
+                        setGwei={this.setGwei}
+                        gwei={this.state.gwei}
+
+                        openScanner={this.openScanner.bind(this)}
+                        scannerState={this.state.scannerState}
+
+                        buttonStyle={buttonStyle}
+                        changeAlert={this.changeAlert}
+                        nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
+                        goBack={this.goBack.bind(this)}
+                        dollarDisplay={dollarDisplay}
+                        changeView={this.changeView}
+                      />
+
+                      <Ruler/>
+                    </div>
+                  )
+                }
+
+
                 return (
                   <div>
                     <Card p={3} borderRadius={2}>
@@ -1574,115 +1652,8 @@ render() {
                       <NavCard title={"Helena Prediction Markets"} titleLink={""} goBack={this.goBack.bind(this)}/>
                       <Balance icon={helena} selected={"xP+"} text={"xP+"} amount={this.state.protonBalance} address={account} dollarDisplay={dollarDisplayHelena} />
                       <Ruler/>
-                      <Helena
-                        privateKey={metaAccount.privateKey}
 
-                        marketAddress={"0x08f434c95024503623b1cee6aab8e10c59700103"}
-
-                        web3={this.state.web3}
-                        tx={this.state.tx}
-                        send={this.state.send}
-
-                        address={account}
-                        balance={balance}
-
-                        network={this.state.network}
-                        block={this.state.block}
-
-                        contracts={this.state.contracts}
-                        contractLoader={this.state.customLoader}
-
-                        mainnetweb3={this.state.mainnetweb3}
-                        xdaiweb3={this.state.xdaiweb3}
-
-                        daiContract={this.state.daiContract}
-                        ensContract={this.state.ensContract}
-                        ensLookup={this.ensLookup.bind(this)}
-
-                        ethBalance={this.state.ethBalance}
-                        daiBalance={this.state.daiBalance}
-                        xdaiBalance={this.state.xdaiBalance}
-
-
-                        xdai={xdai}
-                        ERC20NAME={HELENAERC20NAME}
-                        ERC20IMAGE={HELENAERC20IMAGE}
-                        ERC20TOKEN={HELENAERC20TOKEN}
-
-                        ethprice={this.state.ethprice}
-
-                        isVendor={this.state.isVendor}
-                        isAdmin={this.state.isAdmin}
-
-                        setGwei={this.setGwei}
-                        gwei={this.state.gwei}
-
-                        openScanner={this.openScanner.bind(this)}
-                        scannerState={this.state.scannerState}
-
-                        buttonStyle={buttonStyle}
-                        changeAlert={this.changeAlert}
-                        nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
-                        goBack={this.goBack.bind(this)}
-                        dollarDisplay={dollarDisplay}
-                        changeView={this.changeView}
-                      />
-
-                      <Ruler/>
-
-                      <Helena
-                        privateKey={metaAccount.privateKey}
-
-                        marketAddress={"0x18385b28612757a013e389f86e5aa3f6937a79fe"}
-
-                        web3={this.state.web3}
-                        tx={this.state.tx}
-                        send={this.state.send}
-
-                        address={account}
-                        balance={balance}
-
-                        network={this.state.network}
-                        block={this.state.block}
-
-                        contracts={this.state.contracts}
-                        contractLoader={this.state.customLoader}
-
-                        mainnetweb3={this.state.mainnetweb3}
-                        xdaiweb3={this.state.xdaiweb3}
-
-                        daiContract={this.state.daiContract}
-                        ensContract={this.state.ensContract}
-                        ensLookup={this.ensLookup.bind(this)}
-
-                        ethBalance={this.state.ethBalance}
-                        daiBalance={this.state.daiBalance}
-                        xdaiBalance={this.state.xdaiBalance}
-
-
-                        xdai={xdai}
-                        ERC20NAME={HELENAERC20NAME}
-                        ERC20IMAGE={HELENAERC20IMAGE}
-                        ERC20TOKEN={HELENAERC20TOKEN}
-
-                        ethprice={this.state.ethprice}
-
-                        isVendor={this.state.isVendor}
-                        isAdmin={this.state.isAdmin}
-
-                        setGwei={this.setGwei}
-                        gwei={this.state.gwei}
-
-                        openScanner={this.openScanner.bind(this)}
-                        scannerState={this.state.scannerState}
-
-                        buttonStyle={buttonStyle}
-                        changeAlert={this.changeAlert}
-                        nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
-                        goBack={this.goBack.bind(this)}
-                        dollarDisplay={dollarDisplay}
-                        changeView={this.changeView}
-                      />
+                      {predictionMarketDisplay}
 
                     </Card>
                     <Bottom
