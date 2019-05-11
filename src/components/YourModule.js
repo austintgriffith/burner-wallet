@@ -370,19 +370,19 @@ export default class YourModule extends React.Component {
             onClick={async () => {
 
               this.exchangeIfNeeded()
-
+              let cObject = {
+                recipient: this.state.toAddress, // payee  address
+                //amount: {
+                  amountToken: this.props.web3.utils.toWei(this.state.payAmount,'ether'), //this.props.web3.utils.toWei("1",'ether'),
+                //  amountWei: "0" // only token payments are facilitated
+                //},
+                //type: "PT_OPTIMISTIC" // the payment type, see the client docs for more
+              }
+              console.log("cObject",cObject)
               console.log(`address: ${this.state.toAddress}`)
               const purchaseId = await this.state.connext.buy({
-                meta: {},
                 payments: [
-                  {
-                    recipient: this.state.toAddress, // payee  address
-                    amount: {
-                      amountToken: this.props.web3.utils.toWei(this.state.payAmount,'ether'), //this.props.web3.utils.toWei("1",'ether'),
-                      amountWei: "0" // only token payments are facilitated
-                    },
-                    type: "PT_OPTIMISTIC" // the payment type, see the client docs for more
-                  }
+                  cObject
                 ]
               });
               this.setState({payAmount:"",toAddress:""})
