@@ -236,7 +236,7 @@ let convertFromDollar = (amount)=>{
 let dollarDisplay = (amount)=>{
   let floatAmount = parseFloat(amount)
   amount = Math.floor(amount*1000)/1000
-  return convertFromDollar(amount).toFixed(3)
+  return convertFromDollar(amount).toFixed(0)
 }
 let dollarDisplayCash = (amount)=>{
   let floatAmount = parseFloat(amount)
@@ -1319,7 +1319,7 @@ render() {
                     <YourModule
                       privateKey={metaAccount.privateKey}
 
-                      marketAddress={"0xfaca5beb569244d37b1ec4d67811b527210a9988"}
+                      marketAddress={"0x3d87a5a7bf9bd4056b231e4ada1792028051fa90"}
 
                       web3={this.state.web3}
                       tx={this.state.tx}
@@ -1376,7 +1376,7 @@ render() {
                     <YourModule
                       privateKey={metaAccount.privateKey}
 
-                      marketAddress={"0xb9e1302d81836e8280ad528d200059e4b3f471c1"}
+                      marketAddress={"0xf1d5d53909f826d445ad1e33f8b83cd51386d63f"}
 
                       web3={this.state.web3}
                       tx={this.state.tx}
@@ -1427,6 +1427,126 @@ render() {
                       dollarDisplay={dollarDisplay}
                       changeView={this.changeView}
                     />
+
+
+
+
+                          <RulerDark/>
+
+                          <YourModule
+                            privateKey={metaAccount.privateKey}
+
+                            marketAddress={"0x3b9fd4791eb5bb1329684b1da059f3d21b242b59"}
+
+                            web3={this.state.web3}
+                            tx={this.state.tx}
+                            send={this.state.send}
+
+                            address={account}
+                            balance={balance}
+
+                            network={this.state.network}
+                            block={this.state.block}
+
+                            contracts={this.state.contracts}
+                            contractLoader={this.state.customLoader}
+
+                            mainnetweb3={this.state.mainnetweb3}
+                            xdaiweb3={this.state.xdaiweb3}
+
+                            daiContract={this.state.daiContract}
+                            ensContract={this.state.ensContract}
+                            ensLookup={this.ensLookup.bind(this)}
+
+                            ethBalance={this.state.ethBalance}
+                            daiBalance={this.state.daiBalance}
+                            xdaiBalance={this.state.xdaiBalance}
+
+                            eth={eth}
+                            dai={dai}
+                            xdai={xdai}
+                            ERC20NAME={ERC20NAME}
+                            ERC20IMAGE={ERC20IMAGE}
+                            ERC20TOKEN={ERC20TOKEN}
+                            ERC20VENDOR={ERC20VENDOR}
+                            ethprice={this.state.ethprice}
+
+                            isVendor={this.state.isVendor}
+                            isAdmin={this.state.isAdmin}
+
+                            setGwei={this.setGwei}
+                            gwei={this.state.gwei}
+
+                            openScanner={this.openScanner.bind(this)}
+                            scannerState={this.state.scannerState}
+
+                            buttonStyle={buttonStyle}
+                            changeAlert={this.changeAlert}
+                            nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
+                            goBack={this.goBack.bind(this)}
+                            dollarDisplay={dollarDisplay}
+                            changeView={this.changeView}
+                          />
+
+
+
+
+                        <RulerDark/>
+
+                        <YourModule
+                          privateKey={metaAccount.privateKey}
+
+                          marketAddress={"0x6fb683af2922133d98f82d4356f171edd9b7031b"}
+
+                          web3={this.state.web3}
+                          tx={this.state.tx}
+                          send={this.state.send}
+
+                          address={account}
+                          balance={balance}
+
+                          network={this.state.network}
+                          block={this.state.block}
+
+                          contracts={this.state.contracts}
+                          contractLoader={this.state.customLoader}
+
+                          mainnetweb3={this.state.mainnetweb3}
+                          xdaiweb3={this.state.xdaiweb3}
+
+                          daiContract={this.state.daiContract}
+                          ensContract={this.state.ensContract}
+                          ensLookup={this.ensLookup.bind(this)}
+
+                          ethBalance={this.state.ethBalance}
+                          daiBalance={this.state.daiBalance}
+                          xdaiBalance={this.state.xdaiBalance}
+
+                          eth={eth}
+                          dai={dai}
+                          xdai={xdai}
+                          ERC20NAME={ERC20NAME}
+                          ERC20IMAGE={ERC20IMAGE}
+                          ERC20TOKEN={ERC20TOKEN}
+                          ERC20VENDOR={ERC20VENDOR}
+                          ethprice={this.state.ethprice}
+
+                          isVendor={this.state.isVendor}
+                          isAdmin={this.state.isAdmin}
+
+                          setGwei={this.setGwei}
+                          gwei={this.state.gwei}
+
+                          openScanner={this.openScanner.bind(this)}
+                          scannerState={this.state.scannerState}
+
+                          buttonStyle={buttonStyle}
+                          changeAlert={this.changeAlert}
+                          nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
+                          goBack={this.goBack.bind(this)}
+                          dollarDisplay={dollarDisplay}
+                          changeView={this.changeView}
+                        />
 
                   </div>
                   <Bottom
