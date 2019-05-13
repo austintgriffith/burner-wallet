@@ -71,7 +71,7 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
       onClick={() => {
         openScanner({view:"send_to_address"})
       }}
-      style={{backgroundColor: "white"}}
+      style={{backgroundColor: "white", border: "3px solid black"}}
       color="black"
       borderRadius={"50%"} 
       height={"auto"} 
@@ -119,10 +119,10 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
 
 
   return (
-    <div className="header" style={{opacity}}>
+    <div className="header" style={{opacity, "z-index": "99"}}>
       {topLeft}
       {topRight}
-      {bottomRight}
+      {view === "main" ?  bottomRight : null}
     </div>
   )
 };
