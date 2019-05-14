@@ -27,7 +27,10 @@ export default class ScavengerHunt extends React.Component {
     }
 
     let playerAnswers = cookie.load('playerAnswers')
-    if (!playerAnswers) playerAnswers = [];
+    if (!playerAnswers) {
+      playerAnswers = new Array(20);
+      playerAnswers.fill("")
+    }
 
     let ownerAnswers = cookie.load('ownerAnswers')
     if (!ownerAnswers) ownerAnswers = [""];
@@ -46,6 +49,7 @@ export default class ScavengerHunt extends React.Component {
       numQuestions: 0,
       numPlayers: 0,
       numScavengerAnswers: ownerAnswers.length,    // Owner Number of questions to create for scavenger hunt
+      revealedAnswers: [],
       playerAnswers,
       ownerAnswers,
       ownerSalt,
@@ -56,6 +60,7 @@ export default class ScavengerHunt extends React.Component {
       toAddress: (props.scannerState ? props.scannerState.toAddress : ""),
       questionIndex,
       qrAnswer,
+      revealed: false,
       timeRemaining:{
         'total': 0,
         'days': 0,
@@ -137,7 +142,9 @@ export default class ScavengerHunt extends React.Component {
       let xdaiBlockNumber = await this.props.xdaiweb3.eth.getBlockNumber()
       yourContractBalance = this.props.web3.utils.fromWei(yourContractBalance,'ether')
       let playerData = await this.state.YourContract.getPlayerData(this.props.address).call()
-      let playerAnswers = this.state.playerAnswers;
+      let playerAnswers = this.state.playerAnswers
+      let revealed = this.state.revealed
+      let revealedAnswers = this.state.revealedAnswers
 
       let playerList = new Array(numPlayers)
       playerList.fill({})
@@ -149,10 +156,19 @@ export default class ScavengerHunt extends React.Component {
         time = revealEndTime
       }
 
+      if (this.props.web3.utils.hexToString(this.state.status) === "Reveal" && !revealed) {
+        revealedAnswers = new Array(numQuestions);
+        for (const i of playerAnswers.keys()) {
+          revealedAnswers[i] = await this.state.YourContract.revealedAnswers(i).call()
+        }
+        revealed = true
+      }
+
       let timeRemaining = this.getTimeRemaining(time);
 
       if (this.state.playerAnswers.length != numQuestions) {
         playerAnswers = new Array(numQuestions);
+        playerAnswers.fill("")
       }
 
       if (this.state.questionIndex && this.state.qrAnswer) {
@@ -164,7 +180,7 @@ export default class ScavengerHunt extends React.Component {
         for (const i of playerList.keys()) {
           let data = await this.state.YourContract.getPlayerDataByIndex(i).call()
           let address = await this.state.YourContract.playerList(i).call()
-          playerList[i] = {time: parseInt(data[0]), score: parseInt(data[1]), address}
+          playerList[i] = {time: parseInt(data[0]), score: parseInt(data[1]), address: address.substring(0, 8)}
         }
 
         let sortBy = [{
@@ -185,7 +201,7 @@ export default class ScavengerHunt extends React.Component {
         })
       }
 
-      this.setState({status, gameEndTime, revealEndTime, winner, isOwner, numQuestions, numPlayers, yourContractBalance,mainnetBlockNumber,xdaiBlockNumber, playerData, playerAnswers, timeRemaining, playerList})
+      this.setState({status, gameEndTime, revealEndTime, winner, isOwner, numQuestions, numPlayers, yourContractBalance,mainnetBlockNumber,xdaiBlockNumber, playerData, playerAnswers, timeRemaining, playerList, revealedAnswers})
     }
   }
 
@@ -213,9 +229,11 @@ export default class ScavengerHunt extends React.Component {
     let ownerAnswers = this.state.ownerAnswers
     switch (name) {
       case "ownerView":
+        cookie.save('playerAnswers', JSON.stringify(this.state.playerAnswers), { path: '/'})
         this.setState({view: name});
         break;
       case "playerView":
+        cookie.save('ownerAnswers', JSON.stringify(this.state.ownerAnswers), { path: '/'})
         this.setState({view: name});
       break;
       case "leaderBoardView":
@@ -231,10 +249,16 @@ export default class ScavengerHunt extends React.Component {
         for (let i = 0; i < this.state.numScavengerAnswers; i++ ) {
           answers.push(this.props.web3.utils.utf8ToHex(document.getElementById("scavengerAnswer_" + i).value))
         }
-        console.log(answers, this.state.ownerSalt, parseInt(document.getElementById("revealEndTime").value))
-        this.props.tx(this.state.YourContract.endGame(answers, this.state.ownerSalt, parseInt(document.getElementById("revealEndTime").value)), 120000, 0, 0, (result)=> {
-          console.log(result);
-        })
+        let revealEndTime = parseInt(document.getElementById("revealEndTime").value)
+        console.log(answers, this.state.ownerSalt, revealEndTime)
+
+        if (revealEndTime > 0) {
+          this.props.tx(this.state.YourContract.endGame(answers, this.state.ownerSalt, revealEndTime), 1000000, 0, 0, (result)=> {
+            console.log(result);
+          })
+        } else {
+          alert('Reveal End Time must be greater than 0')
+        }
         break;
       case "findWinner":
         this.props.tx(this.state.YourContract.findWinner(), 120000, 0, 0, (result)=> {
@@ -312,16 +336,22 @@ export default class ScavengerHunt extends React.Component {
       ownerAnswer.push(scavengerAnswer)
     }
 
-    cookie.save('ownerAnswer', JSON.stringify(ownerAnswer), { path: '/'})
+    cookie.save('ownerAnswers', JSON.stringify(ownerAnswer), { path: '/'})
 
-    console.log(hashedAnswers, parseInt(document.getElementById("gameEndTime").value))
+    let gameEndTime = parseInt(document.getElementById("gameEndTime").value)
+    console.log(hashedAnswers)
     
-    // Deploy new contract with new params
-    let code = require("../contracts/ScavengerHunt.bytecode.js")
-    this.props.tx(this.state.YourContract._contract.deploy({data:code, arguments:[hashedAnswers, parseInt(document.getElementById("gameEndTime").value)]}),2000000,(receipt)=>{
-      let yourContract = this.props.contractLoader("ScavengerHunt",receipt.contractAddress)
-      this.setState({ YourContract: yourContract})
-    })
+    if (gameEndTime > 0) {
+      // Deploy new contract with new params
+      let code = require("../contracts/ScavengerHunt.bytecode.js")
+      this.props.tx(this.state.YourContract._contract.deploy({data:code, arguments:[hashedAnswers, gameEndTime]}),2000000,(receipt)=>{
+        let yourContract = this.props.contractLoader("ScavengerHunt",receipt.contractAddress)
+        this.setState({ YourContract: yourContract})
+      })
+    } else {
+      alert('Game End Time must be greater than 0')
+      return false;
+    }
   }
   render(){
 
@@ -340,7 +370,7 @@ export default class ScavengerHunt extends React.Component {
 
     // submit answers
     for (let i = 0; i < this.state.numQuestions; i++) {
-      questions.push(<div className="content bridge row">
+      questions.push(<div className="content bridge row" key={i}>
       <div className="input-group">
         <div className="col-6 p-1">
         <div>
@@ -361,7 +391,7 @@ export default class ScavengerHunt extends React.Component {
 
     // reveal answers
     for (let i = 0; i < this.state.numQuestions; i++) {
-      answers.push(<div className="content bridge row">
+      answers.push(<div className="content bridge row" key={i}>
       <div className="input-group">
         <div className="col-6 p-1">
         <div>
@@ -370,11 +400,15 @@ export default class ScavengerHunt extends React.Component {
         /></div>
         </div>
         <div className="col-6 p-1">
-        <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={this.revealAnswer.bind(this,i)}>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-dog"></i> {"Reveal Anwesr " + i}
-          </Scaler>
-        </button>
+        {this.props.web3.utils.hexToString(this.state.status) == "Reveal" && this.state.revealedAnswers.length > 0 &&
+          this.state.playerAnswers.length > 0 && this.state.playerAnswers[i] &&
+           this.state.playerAnswers[i] === this.props.web3.utils.hexToString(this.state.revealedAnswers[i]) ? (
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={this.revealAnswer.bind(this,i)}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  <i className="fas fa-dog"></i> {"Reveal Anwesr " + i}
+                </Scaler>
+              </button>) : this.state.revealedAnswers.length > 0 && this.state.playerAnswers.length > 0 ? (<span>Correct Answer: {this.props.web3.utils.hexToString(this.state.revealedAnswers[i])}</span>) : (<span>Loading</span>)
+        }
         </div>
       </div>
     </div>)
@@ -382,7 +416,7 @@ export default class ScavengerHunt extends React.Component {
 
     // Owner answers
     for (let i = 0; i < this.state.numScavengerAnswers; i++) {
-      scavengerAnswers.push(<div className="content bridge row">
+      scavengerAnswers.push(<div className="content bridge row" key={i}>
       <div className="input-group">
         <div className="col-12 p-1">
           <div>
@@ -394,13 +428,14 @@ export default class ScavengerHunt extends React.Component {
     </div>)
     }
 
+    // Leaderboard
     for (let i = 0; i < this.state.numPlayers; i++) {
-      leaderBoard.push(<div className="content bridge row">
+      leaderBoard.push(<div className="content bridge row" key={i}>
       <div className="input-group">
-        <div className="col-8 p-1">
+        <div className="col-5 p-1">
           <div>{this.state.playerList[i].address}</div>
         </div>
-        <div className="col-1 p-1">
+        <div className="col-3 p-1">
           <div>{this.state.playerList[i].score}</div>
         </div>
         <div className="col-3 p-1">
@@ -419,7 +454,7 @@ export default class ScavengerHunt extends React.Component {
                 this.clicked('ownerView')}
               }>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-bell"></i> {"Owner View"}
+                  <i className="fas fa-bell"></i> {"Owner"}
                 </Scaler>
               </button>
             </div>
@@ -428,7 +463,7 @@ export default class ScavengerHunt extends React.Component {
               this.clicked('playerView')}
             }>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-hand-holding-usd"></i> {"Player View"}
+                <i className="fas fa-hand-holding-usd"></i> {"Player"}
               </Scaler>
             </button>
             </div>
@@ -549,43 +584,48 @@ export default class ScavengerHunt extends React.Component {
                 {scavengerAnswers}
 
                 <div className="content bridge row">
-                  <div className="input-group">
                     <div className="col-6 p-1">
                       <div>
                         <input type="text" className="form-control" placeholder={"Game End Time in Seconds"} id={"gameEndTime"} />
                       </div>
                     </div>
+                  <div className="col-6 p-1">
+                    <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={this.deployYourContract.bind(this)}>
+                      <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                        <i className="fas fa-rocket"></i> {"Deploy Scavenger Contract"}
+                      </Scaler>
+                    </button>
                   </div>
-                  <div className="input-group">
+                </div>
+
+                <div className="content bridge row">
                     <div className="col-6 p-1">
                       <div>
                         <input type="text" className="form-control" placeholder={"Reveal End Time in Seconds"} id={"revealEndTime"} />
                       </div>
                     </div>
-                  </div>
+                    <div className="col-6 p-1">
+                      <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={() => {
+                        this.clicked("endGame")
+                      }}>
+                        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                          <i className="fas fa-rocket"></i> {"End Game"}
+                        </Scaler>
+                      </button>
+                    </div>
                 </div>
 
-                <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={this.deployYourContract.bind(this)}>
-                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-rocket"></i> {"Deploy Scavenger Contract"}
-                  </Scaler>
-                </button>
-
-                <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={() => {
-                  this.clicked("endGame")
-                }}>
-                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-rocket"></i> {"End Game"}
-                  </Scaler>
-                </button>
-
-                <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={() => {
-                  this.clicked("findWinner")
-                }}>
-                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-rocket"></i> {"Find Winner"}
-                  </Scaler>
-                </button>
+                <div className="content bridge row">
+                    <div className="col-12 p-1">
+                      <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={() => {
+                        this.clicked("findWinner")
+                      }}>
+                        <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                          <i className="fas fa-rocket"></i> {"Find Winner"}
+                        </Scaler>
+                      </button>
+                    </div>
+                </div>
 
               </div>
 
@@ -612,10 +652,10 @@ export default class ScavengerHunt extends React.Component {
                 }
                 <div className="content bridge row">
                   <div className="input-group">
-                    <div className="col-8 p-1">
+                    <div className="col-5 p-1">
                       <h5>Player</h5>
                     </div>
-                    <div className="col-1 p-1">
+                    <div className="col-3 p-1">
                       <h5>Score</h5>
                     </div>
                     <div className="col-3 p-1">
