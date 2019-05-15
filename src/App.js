@@ -658,14 +658,14 @@ class App extends Component {
 
     let fund = await contracts.Links.funds(this.state.claimId).call()
     console.log("FUND FOR "+this.state.claimId+" IS: ", fund)
-    if (parseInt(fund[5].toString())>0) {
+    if (parseInt(fund[6].toString())>0) {
       this.setState({fund: fund})
 
 
       let claimHash = this.state.web3.utils.soliditySha3(
         {type: 'bytes32', value: this.state.claimId}, // fund id
         {type: 'address', value: this.state.account}, // destination address
-        {type: 'uint256', value: fund[5]}, // nonce
+        {type: 'uint256', value: fund[6]}, // nonce
         {type: 'address', value: contracts.Links._address} // contract address
       )
       console.log("claimHash", claimHash)
@@ -710,14 +710,14 @@ class App extends Component {
   async relayClaim() {
     console.log("DOING CLAIM THROUGH RELAY")
     let fund = await this.state.contracts.Links.funds(this.state.claimId).call()
-      if (parseInt(fund[5].toString())>0) {
+      if (parseInt(fund[6].toString())>0) {
         this.setState({fund: fund})
         console.log("FUND: ", fund)
 
         let claimHash = this.state.web3.utils.soliditySha3(
           {type: 'bytes32', value: this.state.claimId}, // fund id
           {type: 'address', value: this.state.account}, // destination address
-          {type: 'uint256', value: fund[5]}, // nonce
+          {type: 'uint256', value: fund[6]}, // nonce
           {type: 'address', value: this.state.contracts.Links._address} // contract address
         )
         console.log("claimHash", claimHash)
@@ -1700,8 +1700,7 @@ render() {
             return (
               <div>
                 <div className="main-card card w-100" style={{zIndex:1}}>
-
-                  <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
+                <NavCard title={'Send with Link'} goBack={this.goBack.bind(this)} />
                   {defaultBalanceDisplay}
                   <SendWithLink balance={balance}
                     buttonStyle={buttonStyle}
@@ -1714,21 +1713,23 @@ render() {
                       // Use xDai as default token
                       const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
                       // -- Temp hacks
-                      const expirationTime = 365; // Hard-coded to 1 year link expiration.
+                      const expirationTime = 365; // Hard-coded to 1 year link expiration. 
                       const amountToSend = amount*10**18 ; // Conversion to wei
                       // --
                       if(!ERC20TOKEN)
                       {
-                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (receipt)=>{
+                        //0xfdae1ba7 - bytes4(keccak256("NATIVE"))
+                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,"0xfdae1ba7",amountToSend,expirationTime),300000,false,amountToSend,async (receipt)=>{
                           this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
                             console.log("STATE SAVED",this.state)
                           })
                           cb(receipt)
                         })
                       } else{
+                        //0x8ae85d84 - bytes4(keccak256("ERC20"))
                         this.state.tx(this.state.contracts[ERC20TOKEN].approve(this.state.contracts.Links._address, amountToSend),21000,false,0,async (approveReceipt)=>{
                           //cb(approveReceipt)
-                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (sendReceipt)=>{
+                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,"0x8ae85d84",amountToSend,expirationTime),300000,false,amountToSend,async (sendReceipt)=>{
                             this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
                               console.log("STATE SAVED",this.state)
                             })
