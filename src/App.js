@@ -535,8 +535,8 @@ class App extends Component {
   longPoll() {
     axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
      .then((response)=>{
-       let ethprice = response.data.data.quotes.USD.price
-       this.setState({ethprice})
+      //  let ethprice = response.data.data.quotes.USD.price
+      //  this.setState({ethprice})
      })
   }
   setPossibleNewPrivateKey(value){

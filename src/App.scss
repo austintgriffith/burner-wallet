@@ -4,8 +4,8 @@
 }
 
 .col-6 {
-   padding-left: 0;
-   padding-right: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 i.fas {
@@ -36,7 +36,7 @@ i.fas {
       cursor: pointer;
       margin-left: 16px;
     }
-    color: #8762A6;
+    color: #8762a6;
     font-weight: 800;
   }
   margin-bottom: 10px;
@@ -50,7 +50,6 @@ i.fas {
   }
 
   .qr {
-
     canvas {
       margin: 0 auto;
       height: 256px;
@@ -65,20 +64,20 @@ i.fas {
       cursor: pointer;
       background: white;
       i {
-        color: #8762A6;
+        color: #8762a6;
       }
     }
   }
 
-  .bridge, .ops {
+  .bridge,
+  .ops {
     .btn {
-      background-color: #FFFFFF;
+      background-color: #ffffff;
       color: white;
       font-weight: 500;
     }
   }
 }
-
 
 .balance {
   width: 100%;
@@ -107,7 +106,7 @@ i.fas {
 
 .nav-card {
   i {
-    color: #8762A6;
+    color: #8762a6;
     line-height: 30px;
   }
   span {
@@ -125,11 +124,11 @@ i.fas {
   }
   button {
     margin-top: 10px;
-    font-size: 16px ;
+    font-size: 16px;
   }
 }
 
-.bottom-text{
+.bottom-text {
   margin-top: 20px;
   font-size: 16px;
   color: white;
@@ -149,63 +148,73 @@ i.fas {
 
 /** SLIDER STYLE OVERRIDES **/
 .wyre-slider .input-range__slider {
-    width: 18px;
-    height: 18px;
-    margin-left: -9px;
-    margin-top: -11px;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+  margin-top: -11px;
 }
 
 @media only screen and (max-width: 500px) {
-    .wyre-slider .input-range__slider {
-        width: 24px;
-        height: 24px;
-        margin-left: -12px;
-        margin-top: -15px;
-    }
+  .wyre-slider .input-range__slider {
+    width: 24px;
+    height: 24px;
+    margin-left: -12px;
+    margin-top: -15px;
+  }
 }
 
 .wyre-slider .input-range__label--min,
 .wyre-slider .input-range__label--max {
-    bottom: -1.8rem;
+  bottom: -1.8rem;
 }
 
 @media only screen and (max-width: 500px) {
-    .wyre-slider .input-range__label--min,
-    .wyre-slider .input-range__label--max {
-        bottom: -2.1rem;
-    }
+  .wyre-slider .input-range__label--min,
+  .wyre-slider .input-range__label--max {
+    bottom: -2.1rem;
+  }
 }
 
 .wyre-slider .input-range__label {
-    font-size: 16px!important;
-    font-weight: normal!important;
-    letter-spacing: .1px!important;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  font-size: 16px !important;
+  font-weight: normal !important;
+  letter-spacing: 0.1px !important;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .wyre-slider .input-range__label--value {
-    display: none!important;
+  display: none !important;
 }
-
 
 /** Wyre **/
 .wyre-button--font-size {
-    font-size: 16px;
+  font-size: 16px;
 }
 
 .wyre-sublabel--font-size {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 @media only screen and (max-width: 450px) {
-    .wyre-button--font-size {
-        font-size: 13px;
-    }
+  .wyre-button--font-size {
+    font-size: 13px;
+  }
 
-    .wyre-sublabel--font-size {
-        font-size: 10px;
-    }
+  .wyre-sublabel--font-size {
+    font-size: 10px;
+  }
+}
+
+// ERC721 Module
+.grid-card {
+  @extend .card;
+  display: flex;
+  justify-content: center;
+  img {
+    width: 120px;
+    height: 120px;
+  }
 }
