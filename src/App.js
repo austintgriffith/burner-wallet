@@ -448,6 +448,7 @@ class App extends Component {
   async poll() {
 
     let badgeBalance = 0
+    let singleBadgeId
     if(this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown") && this.state.contracts.Badges){
       //check for badges for this user
       badgeBalance = await this.state.contracts.Badges.balanceOf(this.state.account).call()
@@ -455,6 +456,7 @@ class App extends Component {
         let update = false
         for(let b = 0;b<badgeBalance;b++){
           let thisBadgeId = await this.state.contracts.Badges.tokenOfOwnerByIndex(this.state.account,b).call()
+          singleBadgeId = thisBadgeId
           if(!this.state.badges[thisBadgeId]){
 
             let thisBadgeData = await this.state.contracts.Badges.tokenURI(thisBadgeId).call()
@@ -559,7 +561,14 @@ class App extends Component {
       }
 
       this.setState({ethBalance,daiBalance,xdaiBalance,badgeBalance,hasUpdateOnce:true})
+
+      if(xdaiBalance < 0.01 && singleBadgeId && !this.state.switchedToSingleBadge){
+        this.setState({switchedToSingleBadge:true})
+        this.selectBadge(singleBadgeId)
+      }
+
     }
+
 
 
   }
