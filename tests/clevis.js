@@ -178,11 +178,18 @@ module.exports = {
         result = await clevis("send","0.10","0","0x3606affd391d37a0f413c261bd3caf573c6360e1")///<<<-------- change this to your metamask accounts
         printTxResult(result)
 
-
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x75b459791dad37746ba60c8665a065e1255bff63","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
         printTxResult(result)
 
-        result = await clevis("send","0.10","0","0xa0ddb01deab4f240cf6dad304e50b58085055372")///<<<-------- change this to your metamask accounts
+
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa5f4accb90f15d2c813b07a514b0ff4886c4064e","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
+        printTxResult(result)
+
+
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x75b459791dad37746ba60c8665a065e1255bff63","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
+        printTxResult(result)
+
+        result = await clevis("send","0.10","0","0x75b459791dad37746ba60c8665a065e1255bff63")///<<<-------- change this to your metamask accounts
         printTxResult(result)
 
 

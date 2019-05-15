@@ -592,9 +592,14 @@ class App extends Component {
         console.log("this.state.xdaiBalance",this.state.xdaiBalance)
         console.log("this.state.daiBalance",this.state.daiBalance)
         console.log("this.state.isVendor",this.state.isVendor)
+        console.log("this.state.badges",this.state.badges)
+        let badgeCount = 0
+        for(let b in this.state.badges){
+          console.log("B",b,this.state.badges[b])
+          badgeCount++
+        }
 
-
-        if(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed)){
+        if(!this.state.metaAccount || this.state.balance>=0.05 || (badgeCount>0) || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed)){
           this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
             this.changeView('withdraw_from_private')
           })
@@ -1462,6 +1467,7 @@ render() {
                     {defaultBalanceDisplay}
                     <WithdrawFromPrivate
                       ERC20TOKEN={ERC20TOKEN}
+                      badges={this.state.badges}
                       products={this.state.products}
                       buttonStyle={buttonStyle}
                       balance={balance}
