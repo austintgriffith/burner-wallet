@@ -13,6 +13,7 @@ export default class YourModule extends React.Component {
       yourVar: "",
       YourContract: false,
       yourContractBalance: 0,
+      assets: [],
       toAddress: (props.scannerState ? props.scannerState.toAddress : ""),
     }
   }
@@ -35,6 +36,19 @@ export default class YourModule extends React.Component {
 
     setInterval(this.pollInterval.bind(this),2500)
     setTimeout(this.pollInterval.bind(this),30)
+    
+    axios
+    .get(
+      `https://api.opensea.io/api/v1/assets/?owner=${
+        this.props.address
+      }&order_by=current_price&order_direction=asc`
+    )
+    .then(response => {
+      console.log("Data#### ", response.data.assets);
+      this.setState({
+        assets: response.data.assets
+      });
+    });
   }
 
   async pollInterval(){
@@ -88,7 +102,7 @@ export default class YourModule extends React.Component {
         <div className="form-group w-100">
 
           <div style={{width:"100%",textAlign:"center"}}>
-            YOURMODULE DISPLAY HERE
+            ERC 721 Module
             <Ruler/>
             <div style={{padding:20}}>
               The logged in user is
@@ -129,7 +143,28 @@ export default class YourModule extends React.Component {
 
             <Ruler/>
 
-            <button className="btn btn-large w-50" style={this.props.buttonStyle.secondary} onClick={async ()=>{
+            {this.state.assets &&
+              this.state.assets.map(asset =>
+                asset.image_url ? (
+                  <div className="grid-card">
+                    <div className="">
+                      <a href={asset.external_link}>
+                        <img
+                          src={asset.image_url}
+                          alt={asset.name}
+                        />
+                      </a>
+                      <p>{asset.name}</p>
+                      <span>{asset.description}</span>
+                    </div>
+                  </div>
+                ) : null
+              )}
+
+
+         
+
+            {/* <button className="btn btn-large w-50" style={this.props.buttonStyle.secondary} onClick={async ()=>{
 
               let hashSigned = this.props.web3.utils.sha3("jabronie pie"+Math.random())
               let sig
@@ -149,11 +184,11 @@ export default class YourModule extends React.Component {
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-pen"></i> {"sign a random hash"}
               </Scaler>
-            </button>
+            </button> */}
 
           </div>
 
-          <Events
+          {/* <Events
             config={{hide:false}}
             contract={this.state.YourContract}
             eventName={"Sign"}
@@ -298,7 +333,7 @@ export default class YourModule extends React.Component {
           <button className={'btn btn-lg w-100'} style={this.props.buttonStyle.primary}
                   onClick={()=>{alert("do something")}}>
             Primary CTA
-          </button>
+          </button> */}
 
         </div>
       </div>

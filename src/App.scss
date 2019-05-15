@@ -209,3 +209,15 @@ i.fas {
         font-size: 10px;
     }
 }
+
+
+// ERC721 Module
+.grid-card {
+  @extend .card;
+  display: flex;
+  justify-content: center;
+  img {
+    width: 120px;
+    height: 120px;
+  }
+}
