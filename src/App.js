@@ -33,7 +33,7 @@ import Vendors from './components/Vendors';
 import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
-import burnerlogo from './burnerwallet.png';
+import burnerlogo from './fairtags.png';
 import BurnWallet from './components/BurnWallet'
 import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
@@ -73,11 +73,11 @@ let FAILCOUNT = 0
 let mainStyle = {
   width:"100%",
   height:"100%",
-  backgroundImage:"linear-gradient(#292929, #191919)",
-  backgroundColor:"#191919",
+  backgroundImage:"linear-gradient(#eeede9, #d3d2cd)",
+  backgroundColor:"#d3d2cd",
   hotColor:"#F69E4D",
-  mainColorAlt:"#fa7d36",
-  mainColor:"#F76B1C",
+  mainColorAlt:"#9f8775",
+  mainColor:"#af947f",
 }
 
 let title = i18n.t('app_name')
