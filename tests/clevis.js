@@ -170,7 +170,7 @@ module.exports = {
 
         // GAS UP YOUR RANDOM INCOG ACCOUNTS HERE:
 
-        result = await clevis("send","0.10","0","0xa9887c69538ccf8692066e0fd5d12a9593ab0403")///<<<-------- change this to your metamask accounts
+        result = await clevis("send","0.50","0","0xedf39c04c5e941789c08acc2b252e91faef73354")///<<<-------- change this to your metamask accounts
         printTxResult(result)
         result = await clevis("send","0.10","0","0x3a48736d0e60b77e8fbe6791372091e1ba80c590")///<<<-------- change this to your metamask accounts
         printTxResult(result)
