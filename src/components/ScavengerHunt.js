@@ -145,6 +145,7 @@ export default class ScavengerHunt extends React.Component {
       let playerAnswers = this.state.playerAnswers
       let revealed = this.state.revealed
       let revealedAnswers = this.state.revealedAnswers
+      let toAddress = this.state.toAddress
 
       let playerList = new Array(numPlayers)
       playerList.fill({})
@@ -174,6 +175,7 @@ export default class ScavengerHunt extends React.Component {
       if (this.state.questionIndex && this.state.qrAnswer) {
         playerAnswers[this.state.questionIndex] = this.state.qrAnswer;
         this.setState({questionIndex:null, qrAnswer:null}) 
+        cookie.save('playerAnswers', JSON.stringify(this.state.playerAnswers), { path: '/'})
       }
 
       if (numPlayers > 0) {
@@ -201,7 +203,47 @@ export default class ScavengerHunt extends React.Component {
         })
       }
 
-      this.setState({status, gameEndTime, revealEndTime, winner, isOwner, numQuestions, numPlayers, yourContractBalance,mainnetBlockNumber,xdaiBlockNumber, playerData, playerAnswers, timeRemaining, playerList, revealedAnswers})
+      if (toAddress && !this.props.web3.utils.isAddress(toAddress)) {
+        this.parseQRCode(toAddress)
+        toAddress = ""
+      }
+
+      this.setState({status, gameEndTime, revealEndTime, winner, isOwner, numQuestions, numPlayers, yourContractBalance,mainnetBlockNumber,xdaiBlockNumber, playerData, playerAnswers, timeRemaining, playerList, revealedAnswers, toAddress})
+    }
+  }
+
+  savePlayerAnswer(questionIndex, answer) {
+    this.state.playerAnswers[questionIndex] = answer;
+    this.setState({questionIndex:null, qrAnswer:null})
+    cookie.save('playerAnswers', JSON.stringify(this.state.playerAnswers), { path: '/'})
+  }
+
+  parseQRCode(qrCode) {
+    let list = qrCode.split('&');
+    if (list.length == 1) {
+      // just contract
+      let contract = list[0].split('=')[1]
+      if (contract != this.state.contractAddress) {
+        // reload new contract
+        window.location.href = window.location.protocol + '//' + window.location.host + '?' + list.join();
+      }
+    } else if (list.length == 2) {
+      // just q/a
+      let q = list[0].split('=')[1]
+      let a = list[1].split('=')[1]
+      this.savePlayerAnswer(q, a)
+    } else if (list.length === 1 || list.length === 3) {
+      // contract and q/a
+      let contract = list[0].split('=')[1]
+      if (contract != this.state.contractAddress) {
+        // reload new contract
+        window.location.href = window.location.protocol + '//' + window.location.host + '?' + list.join('&');
+      } else {
+        // just load answer
+        let q = list[1].split('=')[1]
+        let a = list[2].split('=')[1]
+        this.savePlayerAnswer(q, a)
+      }
     }
   }
 
@@ -472,7 +514,7 @@ export default class ScavengerHunt extends React.Component {
               this.clicked("leaderBoardView")
             }}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-paw"></i> {"Leader Board"}
+                 {"Leader Board"}
               </Scaler>
             </button>
             </div>
@@ -723,9 +765,9 @@ export default class ScavengerHunt extends React.Component {
           <Ruler/>
 
           <div className="content row">
-            <label htmlFor="amount_input">{"EXAMPLE ADDRESS INPUT:"}</label>
+            <label htmlFor="amount_input">{"SCAN FOUND ANSWER QR CODES:"}</label>
             <div className="input-group">
-              <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
+              <input type="hidden" className="form-control" placeholder="0x..." value={this.state.toAddress}
                 ref={(input) => { this.addressInput = input; }}
                 onChange={event => this.updateState('toAddress', event.target.value)}
               />
