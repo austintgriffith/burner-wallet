@@ -539,9 +539,6 @@ export default class Exchange extends React.Component {
     return (this.state.daiSendToAddress && this.state.daiSendToAddress.length === 42 && parseFloat(this.state.daiSendAmount)>0 && parseFloat(this.state.daiSendAmount) <= parseFloat(this.props.daiBalance))
   }
   async transferDai(destination,amount,message,cb) {
-    // Inspired by: https://github.com/leapdao/bridge-ui/blob/427f72944c31a62f687f3b53a35c4115765efada/src/stores/token.ts#L281
-    const approveAmount = new BN("2").pow(new BN("255"));
-
     let response
     try {
       response = await axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
@@ -583,7 +580,7 @@ export default class Exchange extends React.Component {
             paramsObject.to = this.props.daiContract._address
             paramsObject.data = this.props.daiContract.methods.approve(
               this.props.bridgeContract._address,
-              approveAmount
+              amountWei
             ).encodeABI()
 
             const signedApprove = await this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey)
@@ -603,7 +600,10 @@ export default class Exchange extends React.Component {
           }
         }
 
-    if(response && response.data.average>0&&response.data.average<200){
+        this.setState({
+          loaderBarColor:"#f5eb4a",
+          loaderBarStatusText:message,
+        })
 
         paramsObject = {
           from: this.state.daiAddress,
@@ -669,7 +669,7 @@ export default class Exchange extends React.Component {
             const approveReceipt = await tx(
               daiContract.methods.approve(
                 bridgeContract._address,
-                approveAmount
+                amountWei
               ),
               ///TODO LET ME PASS IN A CERTAIN AMOUNT OF GAS INSTEAD OF LEANING BACK ON THE <GAS> COMPONENT!!!!!
               150000,
@@ -702,56 +702,6 @@ export default class Exchange extends React.Component {
       }
     } else {
       console.log("ERRORed RESPONSE FROM ethgasstation",response)
-    }
-  }
-  sendXdai(){
-    if(parseFloat(this.props.xdaiBalance)<parseFloat(this.state.xdaiSendAmount)){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.insufficient_funds')});
-    }else if(!this.state.xdaiSendToAddress || !this.state.xdaiSendToAddress.length === 42){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_address')});
-    }else if(!(parseFloat(this.state.xdaiSendAmount) > 0)){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_amount')});
-    }else{
-      this.setState({
-        xdaiToDendaiMode:"sending",
-        xdaiBalanceAtStart:this.props.xdaiBalance,
-        xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)-parseFloat(this.state.xdaiSendAmount),
-        loaderBarColor:"#f5eb4a",
-        loaderBarStatusText: "Sending $"+this.state.xdaiSendAmount+" to "+this.state.xdaiSendToAddress,
-        loaderBarPercent:0,
-        loaderBarStartTime: Date.now(),
-        loaderBarClick:()=>{
-          alert(i18n.t('exchange.go_to_etherscan'))
-        }
-      })
-      this.setState({sendXdai:false})
-      this.props.nativeSend(this.state.xdaiSendToAddress, this.state.xdaiSendAmount, 120000, "", (result) => {
-        if(result && result.transactionHash){
-          this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_transferred'),loaderBarColor:"#62f54a"})
-          setTimeout(()=>{
-            this.setState({
-              xdaiToDendaiMode:false,
-              xdaiSendAmount:"",
-              xdaiSendToAddress:"",
-              loaderBarColor:"#FFFFFF",
-              loaderBarStatusText:"",
-            })
-          },3500)
-
-        }
-      })
-      /*
-      this.transferDai(this.state.daiSendToAddress,this.state.daiSendAmount,"Sending "+this.state.daiSendAmount+" DAI to "+this.state.daiSendToAddress+"...",()=>{
-        this.props.changeAlert({type: 'success',message: "Sent "+this.state.daiSendAmount+" DAI to "+this.state.daiSendToAddress});
-        this.setState({
-          daiToXdaiMode:false,
-          daiSendAmount:"",
-          daiSendToAddress:"",
-          loaderBarColor:"#FFFFFF",
-          loaderBarStatusText:"",
-        })
-      })*/
-
     }
   }
   canSendXdai() {
