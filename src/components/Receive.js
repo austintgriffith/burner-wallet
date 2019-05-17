@@ -40,8 +40,8 @@ export default class Receive extends React.Component {
             </div>
           </CopyToClipboard>
           <div style={{width:"100%",textAlign:'center',padding:20}}>
-            <a href={"https://blockscout.com/poa/dai/address/"+address+"/transactions"} target="_blank">
-              View on Blockscout
+            <a href={config.explorer.url + "address/" + address} target="_blank">
+              View on {config.explorer.name}
             </a>
           </div>
 
