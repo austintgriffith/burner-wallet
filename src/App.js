@@ -1226,8 +1226,14 @@ render() {
                   {extraTokens}
 
 
+
+
                   <Balance icon={"⛽"} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplayCash}/>
                   <Ruler/>
+
+                  <Balance icon={"🤑"} pk={this.state.metaAccount.privateKey} web3={web3} selected={true} text={""} amount={""} address={account} dollarDisplay={dollarDisplayCash} />
+                  <Ruler/>
+
 
                   {badgeDisplay}
 
