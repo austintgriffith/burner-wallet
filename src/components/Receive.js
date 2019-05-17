@@ -6,7 +6,8 @@ import Blockies from 'react-blockies';
 import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
-const QRCode = require('qrcode.react');
+import QRCode from 'qrcode.react';
+import config from "../config.json";
 
 export default class Receive extends React.Component {
 
