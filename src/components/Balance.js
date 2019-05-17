@@ -20,7 +20,7 @@ export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
 
   let iconDisplay
 
-    if(typeof icon == "string" && icon.length<8){
+  if(typeof icon == "string" && icon.length<8){
     iconDisplay = (
       <div style={{width:50,height:50,fontSize:42,paddingTop:13}}>
         {icon}
