@@ -1503,6 +1503,13 @@ render() {
                 </div>
               );
             case 'send_badge':
+              if(!this.state.badges || !this.state.badges[this.state.selectedBadge] || !this.state.badges[this.state.selectedBadge].name){
+                return (
+                  <div>
+                    loading...
+                  </div>
+                )
+              }
             return (
               <div>
                 <div className="send-to-address card w-100" style={{zIndex:1}}>
