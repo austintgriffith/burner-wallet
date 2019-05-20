@@ -1301,7 +1301,7 @@ export default class App extends Component {
     return (
       <ThemeProvider theme={theme}>
         <I18nextProvider i18n={i18n}>
-          <div style={mainStyle}>
+          <div id="main" style={mainStyle}>
             <div style={innerStyle}>
               {extraHead}
               {networkOverlay}
@@ -2197,6 +2197,10 @@ export default class App extends Component {
                 })
               }}
               />
+              <div
+                id="context"
+                style={{position:"absolute",right:5,top:-15,opacity:0.2,zIndex:100,fontSize:60,color:'#FFFFFF'}}>
+              </div>
               {eventParser}
             </div>
           </div>
