@@ -3,9 +3,6 @@
 Read the full article here:
 [Ethereum in Emerging Economies - Mass adoption will start where decentralization is necessary](https://medium.com/@austin_48503/ethereum-in-emerging-economies-b235f8dac2f2)
 
-
-There are places in the world today where it's hard to find important goods with the traditional currency or the currency may fluctuate immensely in value due to inflation. Luckily, exchange of value is one of our most powerful assets in the Ethereum space. 
-
 Unfortunately, it is especially difficult to onboard new users because our ecosystem has such a steep learning curve. Traditional wallets put a huge burden on the user to understand a new currency and deal with seed phrases.
 
 What we need is a way to exchange an intuitive currency like DAI using a simple and ubiquitous platform like the mobile web browser.
@@ -14,11 +11,16 @@ What we need is a way to exchange an intuitive currency like DAI using a simple 
 
 ### Contributing as a Developer/Designer
 
+you'll need ganache installed and running
+```
+ganache-cli
+```
+
+clone the burner wallet repo
 ```
 git clone https://github.com/austintgriffith/burner-wallet.git
 cd burner-wallet
 ```
-
 
 initialize burner:
 ```
@@ -26,41 +28,48 @@ npx clevis init
 ```
 (You'll need to hit enter a few times to specify some config directories.)
 
-
 install burner:
 ```
 npm i
 ```
 
-
-in a new terminal install and fire up ganache:
+link clevis 
 ```
-ganache-cli
+alias clevis='./node_modules/clevis/bin.js'
 ```
 
-in a new terminal start the app:
+compile, deploy, test, and inject all contracts in the frontend:
+```
+clevis test full
+```
+
+start the app:
 ```
 npm start
 ```
+
+### Meta Transaction Relay
 
 in a new terminal start the decentralized metatx relayer from Tabookey:
 ```
 ./startLocalRelay.sh
 ```
 
-you probably want to have a bin alias for clevis in your .bashrc or .profile as mentioned in the [clevis docs](https://github.com/austintgriffith/clevis):
+then deploy and test 
 ```
-alias clevis='./node_modules/clevis/bin.js'
+clevis test withrelay
 ```
 
-in a new terminal compile and deploy all contracts:
-```
-clevis test full
-```
+### WTF is Clevis? (It's like truffle and drizzle I think.)
+
+Clevis is used to compile, deploy, and test the smart contracts. It is mainly for orchestration, but it also injects all the contracts into the Dapparatus (frontend). 
+
+[clevis docs](https://github.com/austintgriffith/clevis):
+
+
+### Testing locally
 
 Take a look at `tests/clevis.js`, the `metamask()` function in particular, to give your MetaMask accounts some ETH when you run the full test.
-
-
 
 # Original Video
 

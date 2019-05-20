@@ -6,7 +6,8 @@ import Blockies from 'react-blockies';
 import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
-const QRCode = require('qrcode.react');
+import QRCode from 'qrcode.react';
+import config from "../config.json";
 
 export default class Receive extends React.Component {
 
@@ -38,6 +39,12 @@ export default class Receive extends React.Component {
               </div>
             </div>
           </CopyToClipboard>
+          <div style={{width:"100%",textAlign:'center',padding:20}}>
+            <a href={config.explorer.url + "address/" + address} target="_blank">
+              View on {config.explorer.name}
+            </a>
+          </div>
+
           <RecentTransactions
             dollarDisplay={dollarDisplay}
             view={view}

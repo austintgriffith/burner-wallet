@@ -41,6 +41,7 @@ import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
+import incogDetect from './services/incogDetect.js'
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
@@ -240,6 +241,7 @@ let dollarDisplay = (amount)=>{
 
 let interval
 let intervalLong
+let originalStyle = {}
 
 class App extends Component {
   constructor(props) {
@@ -338,12 +340,41 @@ class App extends Component {
   saveKey(update){
     this.setState(update)
   }
+  detectContext(){
+    console.log("DETECTING CONTEXT....")
+    //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
+    incogDetect((result)=>{
+      if(result){
+        console.log("INCOG")
+        document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
+        document.body.style.backgroundColor = "#671c1c"
+        var contextElement = document.getElementById("context")
+        contextElement.innerHTML = 'INCOGNITO';
+      }else if (typeof web3 !== 'undefined') {
+        console.log("NOT INCOG",this.state.metaAccount)
+        if (window.web3.currentProvider.isMetaMask === true) {
+          document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
+          document.body.style.backgroundColor = "#ca6e28"
+          var contextElement = document.getElementById("context")
+          contextElement.innerHTML = 'METAMASK';
+        } else if(this.state.account && !this.state.metaAccount) {
+          console.log("~~~*** WEB3",this.state.metaAccount,result)
+          document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
+          document.body.style.backgroundColor = "#305582"
+          var contextElement = document.getElementById("context")
+          contextElement.innerHTML = 'WEB3';
+        }
+      }
+    })
+  }
   componentDidMount(){
+
+    document.body.style.backgroundColor = mainStyle.backgroundColor
 
     Wyre.configure();
 
+    this.detectContext()
 
-    document.body.style.backgroundColor = mainStyle.backgroundColor
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
     if(window.location.pathname){
@@ -404,6 +435,9 @@ class App extends Component {
     intervalLong = setInterval(this.longPoll.bind(this),45000)
     setTimeout(this.longPoll.bind(this),150)
 
+    this.connectToRPC()
+  }
+  connectToRPC(){
     // NOTE: Change this to mainnet again when ready for mainnet launch.
     let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider("wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65"));
     let ensContract = new mainnetweb3.eth.Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
@@ -411,7 +445,7 @@ class App extends Component {
     let bridgeContract;
     try{
       daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0xD2D0F8a6ADfF16C2098101087f9548465EC96C98")
-      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), require("./contracts/Bridge.address.js"))
+      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), "0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530")
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
@@ -525,6 +559,7 @@ class App extends Component {
           }
         }catch(e){
           console.log(e)
+          this.connectToRPC()
         }
       }
       if(this.state.xdaiweb3 && this.state.pdaiContract){
@@ -1115,7 +1150,7 @@ render() {
 
   return (
     <I18nextProvider i18n={i18n}>
-    <div style={mainStyle}>
+    <div id="main" style={mainStyle}>
       <div style={innerStyle}>
         {extraHead}
         {networkOverlay}
@@ -1690,7 +1725,7 @@ render() {
                       // Use xDai as default token
                       const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
                       // -- Temp hacks
-                      const expirationTime = 365; // Hard-coded to 1 year link expiration. 
+                      const expirationTime = 365; // Hard-coded to 1 year link expiration.
                       const amountToSend = amount*10**18 ; // Conversion to wei
                       // --
                       if(!ERC20TOKEN)
@@ -1933,6 +1968,7 @@ render() {
           if (state.web3Provider) {
             state.web3 = new Web3(state.web3Provider)
             this.setState(state,()=>{
+              this.detectContext()
               //console.log("state set:",this.state)
               if(this.state.possibleNewPrivateKey){
                 this.dealWithPossibleNewPrivateKey()
@@ -2013,6 +2049,10 @@ render() {
           })
         }}
         />
+
+        <div id="context" style={{position:"absolute",right:5,top:-15,opacity:0.2,zIndex:100,fontSize:60,color:'#FFFFFF'}}>
+        </div>
+
         {eventParser}
       </div>
     </div>

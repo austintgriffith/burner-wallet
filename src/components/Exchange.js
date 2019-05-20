@@ -704,56 +704,6 @@ export default class Exchange extends React.Component {
       console.log("ERRORed RESPONSE FROM ethgasstation",response)
     }
   }
-  sendXdai(){
-    if(parseFloat(this.props.xdaiBalance)<parseFloat(this.state.xdaiSendAmount)){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.insufficient_funds')});
-    }else if(!this.state.xdaiSendToAddress || !this.state.xdaiSendToAddress.length === 42){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_address')});
-    }else if(!(parseFloat(this.state.xdaiSendAmount) > 0)){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_amount')});
-    }else{
-      this.setState({
-        xdaiToDendaiMode:"sending",
-        xdaiBalanceAtStart:this.props.xdaiBalance,
-        xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)-parseFloat(this.state.xdaiSendAmount),
-        loaderBarColor:"#f5eb4a",
-        loaderBarStatusText: "Sending $"+this.state.xdaiSendAmount+" to "+this.state.xdaiSendToAddress,
-        loaderBarPercent:0,
-        loaderBarStartTime: Date.now(),
-        loaderBarClick:()=>{
-          alert(i18n.t('exchange.go_to_etherscan'))
-        }
-      })
-      this.setState({sendXdai:false})
-      this.props.nativeSend(this.state.xdaiSendToAddress, this.state.xdaiSendAmount, 120000, "", (result) => {
-        if(result && result.transactionHash){
-          this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_transferred'),loaderBarColor:"#62f54a"})
-          setTimeout(()=>{
-            this.setState({
-              xdaiToDendaiMode:false,
-              xdaiSendAmount:"",
-              xdaiSendToAddress:"",
-              loaderBarColor:"#FFFFFF",
-              loaderBarStatusText:"",
-            })
-          },3500)
-
-        }
-      })
-      /*
-      this.transferDai(this.state.daiSendToAddress,this.state.daiSendAmount,"Sending "+this.state.daiSendAmount+" DAI to "+this.state.daiSendToAddress+"...",()=>{
-        this.props.changeAlert({type: 'success',message: "Sent "+this.state.daiSendAmount+" DAI to "+this.state.daiSendToAddress});
-        this.setState({
-          daiToXdaiMode:false,
-          daiSendAmount:"",
-          daiSendToAddress:"",
-          loaderBarColor:"#FFFFFF",
-          loaderBarStatusText:"",
-        })
-      })*/
-
-    }
-  }
   canSendXdai() {
     console.log("canSendXdai",this.state.xdaiSendToAddress,this.state.xdaiSendToAddress.length,parseFloat(this.state.xdaiSendAmount),parseFloat(this.props.xdaiBalance))
     return (this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length === 42 && parseFloat(this.state.xdaiSendAmount)>0 && parseFloat(this.state.xdaiSendAmount) <= parseFloat(this.props.xdaiBalance))
