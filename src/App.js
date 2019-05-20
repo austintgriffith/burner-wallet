@@ -11,7 +11,6 @@ import Header from './components/Header';
 import NavCard from './components/NavCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
-import RegisterMovie from './components/RegisterMovie';
 import SendBadge from './components/SendBadge';
 import WithdrawFromPrivate from './components/WithdrawFromPrivate';
 import RequestFunds from './components/RequestFunds';
@@ -109,42 +108,6 @@ if (window.location.hostname.indexOf("localhost") >= 0 ||
   WEB3_PROVIDER = "https://rinkeby.infura.io/v3/f039330d8fb747e48a7ce98f51400d65"
   leapNetwork = "Leap Testnet";
   // LEAP token instead of DAI
-  DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
-  P_DAI_TOKEN_ADDR = '0x674d3D146453dDbC82aA1Cd46d12E04609408790';
-
-  // Testnet Leap Bridge(ExitHandler)
-  BRIDGE_ADDR = '0x3c80369bBf392cC1DBA45B2F1d97F7A374f5BB40';
-
-  MARKET_MAKER = 'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet';
-
-  CLAIM_RELAY = false;
-  ERC20NAME = false;
-  ERC20TOKEN = false;
-  ERC20IMAGE = false;
-}
-else if (window.location.hostname.indexOf("cannes.motion.ooo") >= 0) {
-  XDAI_PROVIDER = "https://staging-testnet.leapdao.org/rpc";
-  WEB3_PROVIDER = "https://rinkeby.infura.io/v3/f039330d8fb747e48a7ce98f51400d65"
-  leapNetwork = "Leap Testnet";
-  // MNY token
-  DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
-  P_DAI_TOKEN_ADDR = '0x674d3D146453dDbC82aA1Cd46d12E04609408790';
-
-  // Testnet Leap Bridge(ExitHandler)
-  BRIDGE_ADDR = '0x3c80369bBf392cC1DBA45B2F1d97F7A374f5BB40';
-
-  MARKET_MAKER = 'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet';
-
-  CLAIM_RELAY = false;
-  ERC20NAME = false;
-  ERC20TOKEN = false;
-  ERC20IMAGE = false;
-}
-else if (window.location.hostname.indexOf("cannes.motion.ooo") >= 0) {
-  XDAI_PROVIDER = "https://staging-testnet.leapdao.org/rpc";
-  WEB3_PROVIDER = "https://rinkeby.infura.io/v3/f039330d8fb747e48a7ce98f51400d65"
-  leapNetwork = "Leap Testnet";
-  // MNY token
   DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
   P_DAI_TOKEN_ADDR = '0x674d3D146453dDbC82aA1Cd46d12E04609408790';
 
@@ -2047,34 +2010,6 @@ export default class App extends Component {
                       <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                     </div>
                   <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-                  </div>
-                );
-                case 'mint':
-                return (
-                  <div>
-                    {this.state.scannerOpen ? sendByScan : null}
-                    <div className="send-to-address card w-100" style={{zIndex:1}}>
-                      <NavCard title={i18n.t('mint.title')} goBack={this.goBack.bind(this)}/>
-                      <RegisterMovie
-                        mainnetweb3={this.state.mainnetweb3}
-	                xdaiweb3={this.state.xdaiweb3}
-                        ERC721Full={this.state.contracts.ERC721Full}
-                        scannerState={this.state.scannerState}
-                        openScanner={this.openScanner.bind(this)}
-                        buttonStyle={buttonStyle}
-                        web3={this.state.web3}
-                        address={account}
-                        goBack={this.goBack.bind(this)}
-                        changeView={this.changeView}
-                        changeAlert={this.changeAlert}
-                        pTx={this.state.pTx}
-                        setReceipt={this.setReceipt}
-                      />
-                    </div>
-                    <Bottom
-                      text={i18n.t('cancel')}
-                      action={this.goBack.bind(this)}
-                    />
                   </div>
                 );
                 default:
