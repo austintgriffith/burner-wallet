@@ -11,7 +11,6 @@ import Header from './components/Header';
 import NavCard from './components/NavCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
-import SendBadge from './components/SendBadge';
 import WithdrawFromPrivate from './components/WithdrawFromPrivate';
 import RequestFunds from './components/RequestFunds';
 import SendWithLink from './components/SendWithLink';
@@ -19,7 +18,6 @@ import Receive from './components/Receive'
 import Share from './components/Share'
 import ShareLink from './components/ShareLink'
 import Balance from "./components/Balance";
-import Badges from "./components/Badges";
 import Ruler from "./components/Ruler";
 import Receipt from "./components/Receipt";
 import MainCard from './components/MainCard';
@@ -333,8 +331,6 @@ export default class App extends Component {
       vendors: {},
       ethprice: 0.00,
       hasUpdateOnce: false,
-      badges: {},
-      selectedBadge: false,
     };
     this.alertTimeout = null;
 
@@ -374,11 +370,6 @@ export default class App extends Component {
     //console.log("STATE",state)
     return state;
   }
-  selectBadge(id){
-    this.setState({selectedBadge:id},()=>{
-      this.changeView('send_badge')
-    })
-  }
   openScanner(returnState){
     this.setState({returnState:returnState, scannerOpen: true})
   }
@@ -388,11 +379,6 @@ export default class App extends Component {
     updateState.returnState = false
     console.log("UPDATE FROM RETURN STATE",updateState)
     this.setState(updateState)
-  }
-  clearBadges() {
-    this.setState({badges:{}, badgeBalance: 0},()=>{
-      console.log("BADGES CLEARED",this.state.badges)
-    })
   }
   updateDimensions() {
     //force it to rerender when the window is resized to make sure qr fits etc
@@ -514,94 +500,8 @@ export default class App extends Component {
     window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
 
-  async fetchBadgesPlasma(color) {
-    const {xdaiweb3, account, badgeBalance} = this.state;
-    if (xdaiweb3) {
-      const queenId =
-        '0x000000000000000000000000000000000000000000000000000000000000053A';
-
-      const colors = await new Promise((resolve, reject) => {
-        xdaiweb3.currentProvider.send(
-          {
-            jsonrpc: '2.0',
-            id: 42,
-            method: 'plasma_getColors',
-            params: [false, true],
-          },
-          (err, {result}) => {
-            if (err) {
-              return reject(err);
-            }
-            return resolve(result);
-          },
-        );
-      });
-      const tokenAddr = colors[color - NST_COLOR_BASE]
-        .replace('0x', '')
-        .toLowerCase();
-
-      const unspent = await new Promise((resolve, reject) => {
-        xdaiweb3.currentProvider.send(
-          {
-            jsonrpc: '2.0',
-            id: 42,
-            method: 'plasma_unspent',
-            params: [account, color],
-          },
-          (err, {result}) => {
-            if (err) {
-              return reject(err);
-            }
-            return resolve(result);
-          },
-        );
-      });
-      const badges = unspent.reduce((initVal, currVal) => {
-        const tokenId = currVal.output.value;
-        initVal[tokenId] = {
-          hash: this.toIPFSHash(currVal.output.data),
-          id: tokenId
-        }
-        return initVal;
-      }, {});
-
-      let tokenIds = Object.keys(badges);
-
-      if (badgeBalance !== tokenIds.length) {
-        for (let i = 0; i < tokenIds.length; i++) {
-          const tokenId = tokenIds[i];
-          const hash = badges[tokenId].hash;
-          badges[tokenId] = Object.assign(
-            {id: tokenId},
-            (await axios.get(`https://ipfs.infura.io/ipfs/${hash}`)).data
-          )
-        }
-        this.setState({badges, badgeBalance: tokenIds.length});
-      }
-    }
-  }
-
-  toIPFSHash(data) {
-    // NOTE: We currently hard code the IPFS hash to SHA2-256
-    const algorithm = "12";
-    const size = "20";
-    data = data.substring(2, data.length);
-    data = algorithm + size + data;
-    return bs58.encode(Buffer.from(data, "hex"));
-  }
 
   async poll() {
-    const { web3, contracts, account } = this.state;
-
-    try {
-        await this.fetchBadgesPlasma(49154);
-    } catch(err) {
-      // NOTE: A changeAlert here confused some people. Especially when 
-      // everything worked as expected but e.g. some ipfs links from Infura
-      // timed out. We hence decided to only return the error in the console.
-      console.log(err);
-    }
-
     //console.log(">>>>>>> <<< >>>>>> Looking into iframe...")
     //console.log(document.getElementById('galleassFrame').contentWindow['web3'])
 
@@ -1477,19 +1377,6 @@ export default class App extends Component {
                 )
               }
 
-              let badgeDisplay = ""
-              if(this.state.badgeBalance>0){
-                badgeDisplay = (
-                  <div>
-                    <Badges
-                      badges={this.state.badges}
-                      address={account}
-                      selectBadge={this.selectBadge.bind(this)}
-                    />
-                    <Ruler/>
-                  </div>
-                );
-              }
               const sendByScan = (
                 <SendByScan
                   parseAndCleanPath={this.parseAndCleanPath.bind(this)}
@@ -1517,8 +1404,6 @@ export default class App extends Component {
                       <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
 
                       <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
-
-                      {badgeDisplay}
 
                       <MainCard
                         subBalanceDisplay={subBalanceDisplay}
@@ -1572,8 +1457,6 @@ export default class App extends Component {
                         privateKey={metaAccount.privateKey}
                         changeAlert={this.changeAlert}
                         dollarDisplay={dollarDisplay}
-                        badge={this.state.badges[this.state.selectedBadge]}
-                        clearBadges={this.clearBadges.bind(this)}
                         tokenSendV2={tokenSendV2.bind(this)}
                         metaAccount={this.state.metaAccount}
                       />
@@ -1620,39 +1503,6 @@ export default class App extends Component {
                       />
                     </div>
                   );
-                case 'send_badge':
-                return (
-                  <div>
-                    {this.state.scannerOpen ? sendByScan : null}
-                    <Card p={3} style={{zIndex:1}}>
-                      <NavCard title="Transfer Movie" titleLink={this.state.badges[this.state.selectedBadge].external_url} goBack={this.goBack.bind(this)}/>
-                      <SendBadge
-                        changeView={this.changeView}
-                        ensLookup={this.ensLookup.bind(this)}
-                        ERC20TOKEN={ERC20TOKEN}
-                        buttonStyle={buttonStyle}
-                        balance={balance}
-                        web3={this.state.web3}
-                        xdaiweb3={this.state.xdaiweb3}
-                        contracts={this.state.contracts}
-                        address={account}
-                        scannerState={this.state.scannerState}
-                        tx={this.state.tx}
-                        goBack={this.goBack.bind(this)}
-                        openScanner={this.openScanner.bind(this)}
-                        setReceipt={this.setReceipt}
-                        changeAlert={this.changeAlert}
-                        dollarDisplay={dollarDisplay}
-                        badge={this.state.badges[this.state.selectedBadge]}
-                        clearBadges={this.clearBadges.bind(this)}
-                      />
-                    </Card>
-                    <Bottom
-                      text={i18n.t('done')}
-                      action={this.goBack.bind(this)}
-                    />
-                  </div>
-                )
                 case 'send_to_address':
                 return (
                   <div>
