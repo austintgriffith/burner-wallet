@@ -8,9 +8,6 @@ import { Scaler } from "dapparatus";
 import Web3 from 'web3';
 import i18n from '../i18n';
 
-import InputRange from 'react-input-range';
-import 'react-input-range/lib/css/index.css';
-
 import {
   Flex,
   Box,
@@ -52,7 +49,6 @@ const colStyle = {
   whiteSpace:"nowrap"
 }
 
-const dendaiToxDaiEstimatedTime = 7000
 const xdaiToDaiEstimatedTime = 160000
 const daiToxDaiEstimatedTime = 330000
 
@@ -117,22 +113,8 @@ export default class Exchange extends React.Component {
       xdaiAddress = this.props.address
     }
 
-    let dendaiContract
-    let vendorContract
-    console.log("NETWORK:",this.props.network)
-    if(props.ERC20TOKEN&&this.props.network=="xDai"){
-      try{
-        console.log("Loading "+props.ERC20TOKEN+" Contract...")
-        dendaiContract = new this.props.web3.eth.Contract(require("../contracts/"+props.ERC20TOKEN+".abi.js"),require("../contracts/"+props.ERC20TOKEN+".address.js"))
-        vendorContract = new this.props.web3.eth.Contract(require("../contracts/"+props.ERC20VENDOR+".abi.js"),require("../contracts/"+props.ERC20VENDOR+".address.js"))
-        console.log("SET vendorContract",vendorContract)
-      }catch(e){
-        console.log("ERROR LOADING dendaiContract Contract",e)
-      }
-    }
 
     this.state = {
-      extraGasUpDisplay: "",
       daiAddress: daiAddress,
       xdaiAddress: xdaiAddress,
       xdaiSendToAddress: "",
@@ -141,8 +123,6 @@ export default class Exchange extends React.Component {
       mainnetMetaAccount: mainnetMetaAccount,
       xdaiweb3:xdaiweb3,
       xdaiMetaAccount: xdaiMetaAccount,
-      dendaiContract: dendaiContract,
-      vendorContract: vendorContract,
       daiToXdaiMode: false,
       ethToDaiMode: false,
       loaderBarStatusText: i18n.t('loading'),
@@ -241,7 +221,7 @@ export default class Exchange extends React.Component {
     }
   }
   async poll(){
-    let { vendorContract, dendaiContract, mainnetweb3, xdaiweb3, xdaiAddress} = this.state
+    let { mainnetweb3, xdaiweb3, xdaiAddress} = this.state
     /*let { daiContract } = this.props
     if(daiContract){
       let daiBalance = await daiContract.methods.balanceOf(this.state.daiAddress).call()
@@ -262,7 +242,6 @@ export default class Exchange extends React.Component {
     }
     const xDaiToEthGasStationEnabled = false;
 
-    //console.log("checking extraGasUpDisplay",parseFloat(this.props.daiBalance),parseFloat(this.props.ethBalance),parseFloat(this.props.xdaiBalance))
     if(xDaiToEthGasStationEnabled && parseFloat(this.props.daiBalance)>0 && parseFloat(this.props.ethBalance)<=0.001 && parseFloat(this.props.xdaiBalance) > 0){
       let getGasText = (
         <div>
@@ -276,104 +255,6 @@ export default class Exchange extends React.Component {
           </div>
         )
       }
-
-
-      let extraGasUpDisplay = (
-        <div style={{padding:10,width:"100%",textAlign:'center',backgroundColor:"#ffdddd"}}>
-          <div style={{padding:10}}>You have DAI but no ETH for gas:</div>
-          <button style={this.props.buttonStyle.secondary}
-            className="btn btn-large"
-            onClick={()=>{
-              if(this.state.gettingGas){
-                this.props.changeAlert({type: 'warning',message: "Already trying to fuel up via xDai->ETH"});
-              }else if(this.props.network!="xDai"&&this.props.network!="Unknown"){
-                this.props.changeAlert({type: 'warning',message: "You must be on the xDai network to fuel xDai->ETH"});
-              }else{
-                this.setState({gettingGas:true,ethBalanceShouldBe:parseFloat(this.props.ethBalance)+0.001})
-                gasPrice()
-                .catch((err)=>{
-                  console.log("Error getting gas price",err)
-                })
-                .then(gwei => {
-                  let AMOUNTNEEDEDFORACOUPLETXS = Math.round(gwei*(1111000000*10) * 201000) // idk maybe enough for a couple transactions?
-
-                  console.log("let's move ",AMOUNTNEEDEDFORACOUPLETXS,"from",this.props.xdaiBalance,"to",this.props.ethBalance)
-
-                  let gasInEth = this.props.web3.utils.fromWei(""+AMOUNTNEEDEDFORACOUPLETXS,'ether')
-                  console.log("gasInEth",gasInEth)
-                  let gasInXDai = Math.floor(this.props.ethprice*gasInEth*100)/100
-
-                  if(gasInXDai>0.5) gasInXDai = 0.5
-                  if(this.props.xdaiBalance < gasInXDai) gasInXDai = this.props.xdaiBalance-0.005
-
-                  console.log("gasInXDai",gasInXDai)
-                  let gasEmitterContract
-                  if(this.props.network=="xDai"){
-                    try{
-                      gasEmitterContract = new this.props.web3.eth.Contract(require("../contracts/Emitter.abi.js"),require("../contracts/Emitter.address.js"))
-                    }catch(e){
-                      console.log("ERROR LOADING Emitter Contract",e)
-                    }
-                  }
-                  if(gasEmitterContract){
-                    let amountInWei = this.props.web3.utils.toWei(""+gasInXDai,'ether')
-
-                    if(this.state.xdaiMetaAccount){
-                      //send funds using metaaccount on mainnet
-
-                      let paramsObject = {
-                        from: this.state.daiAddress,
-                        value: amountInWei,
-                        gas: 120000,
-                        gasPrice: Math.round(1.1 * 1000000000)
-                      }
-                      console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
-
-                      paramsObject.to = gasEmitterContract._address
-                      paramsObject.data = gasEmitterContract.methods.goToETH().encodeABI()
-
-                      console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
-
-
-                      this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
-                        console.log("========= >>> SIGNED",signed)
-                          this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                            console.log("META RECEIPT",receipt)
-                            if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                              metaReceiptTracker[receipt.transactionHash] = true
-                              //actually, let's wait for the eth balance to change
-                              //this.setState({gettingGas:false})
-                            }
-                          }).on('error', (err)=>{
-                            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                            this.props.changeAlert({type: 'danger',message: err.toString()});
-                            this.setState({gettingGas:false})
-                          }).then(console.log)
-                      });
-
-                    }else{
-                      console.log("Use MetaMask to go xDai to ETH")
-                      this.props.tx(
-                        gasEmitterContract.methods.goToETH()
-                      ,120000,0,amountInWei,(receipt)=>{
-                        if(receipt){
-                          console.log("GAS UP COMPLETE?!?",receipt)
-                          //this.setState({gettingGas:false})
-                          //window.location = "/"+receipt.contractAddress
-                        }
-                      })
-                    }
-                  }
-                })
-              }
-            }}
-          >
-           {getGasText}
-          </button>
-        </div>
-
-      )
-      this.setState({extraGasUpDisplay})
     }
 
     this.updatePendingExits(this.state.daiAddress, xdaiweb3)
@@ -384,64 +265,6 @@ export default class Exchange extends React.Component {
       this.setState({ exitableSunDaiBalance });
     }
 
-    if(this.props.ERC20TOKEN&&dendaiContract){
-      let denDaiBalance = await dendaiContract.methods.balanceOf(this.state.daiAddress).call()
-      denDaiBalance = mainnetweb3.utils.fromWei(denDaiBalance,"ether")
-      if(denDaiBalance!=this.state.denDaiBalance){
-        this.setState({denDaiBalance})
-      }
-
-      console.log("vendorContract",vendorContract)
-      let maxWithdrawlAmount = await vendorContract.methods.allowance(this.state.daiAddress).call()
-      maxWithdrawlAmount = mainnetweb3.utils.fromWei(maxWithdrawlAmount,"ether")
-      if(maxWithdrawlAmount!=this.state.maxWithdrawlAmount){
-        this.setState({maxWithdrawlAmount})
-      }
-
-      //dendaiToxDaiEstimatedTime
-      if(this.state.xdaiToDendaiMode=="withdrawing"){
-        let txAge = Date.now() - this.state.loaderBarStartTime
-        let percentDone = Math.min(100,((txAge * 100) / dendaiToxDaiEstimatedTime)+5)
-
-        let xdaiBalanceShouldBe = parseFloat(this.state.xdaiBalanceShouldBe)-0.0005
-        console.log("watching for ",this.props.xdaiBalance,"to be ",xdaiBalanceShouldBe)
-        if(this.props.xdaiBalance>=(xdaiBalanceShouldBe)){
-          this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_transferred'),loaderBarColor:"#62f54a"})
-          setTimeout(()=>{
-            this.setState({
-              xdaiToDendaiMode: false,
-              loaderBarStatusText: i18n.t('loading'),
-              loaderBarStartTime:0,
-              loaderBarPercent: 1,
-              loaderBarColor: "#FFFFFF"
-            })
-          },3500)
-        }else{
-          this.setState({loaderBarPercent:percentDone})
-        }
-
-      }else if(this.state.xdaiToDendaiMode=="depositing"){
-        let txAge = Date.now() - this.state.loaderBarStartTime
-        let percentDone = Math.min(100,((txAge * 100) / daiToxDaiEstimatedTime)+5)
-
-        console.log("watching for ",this.props.xdaiBalance,"to be less than ",this.state.xdaiBalanceShouldBe+0.0005)
-        if(this.props.xdaiBalance<=(this.state.xdaiBalanceShouldBe+0.00005)){
-          this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_bridged'),loaderBarColor:"#62f54a"})
-          setTimeout(()=>{
-            this.setState({
-              xdaiToDendaiMode: false,
-              loaderBarStatusText: i18n.t('loading'),
-              loaderBarStartTime:0,
-              loaderBarPercent: 1,
-              loaderBarColor: "#FFFFFF"
-            })
-          },3500)
-        }else{
-          this.setState({loaderBarPercent:percentDone})
-        }
-      }
-
-    }
     /*
     console.log("SETTING ETH BALANCE OF "+this.state.daiAddress)
     this.setState({ethBalance:mainnetweb3.utils.fromWei(await mainnetweb3.eth.getBalance(this.state.daiAddress),'ether') })
@@ -904,7 +727,7 @@ export default class Exchange extends React.Component {
     }
   }
   render() {
-    let {xdaiToDendaiMode,daiToXdaiMode,ethToDaiMode} = this.state
+    let {daiToXdaiMode,ethToDaiMode} = this.state
 
     let ethCancelButton = (
       <span style={{padding:10,whiteSpace:"nowrap"}}>
@@ -927,7 +750,7 @@ export default class Exchange extends React.Component {
     let xdaiCancelButton = (
       <span style={{padding:10,whiteSpace:"nowrap"}}>
         <a href="#" style={{color:"#000000"}} onClick={()=>{
-          this.setState({amount:"",xdaiToDendaiMode:false})
+          this.setState({amount:""})
         }}>
           <i className="fas fa-times"/> {i18n.t('cancel')}
         </a>
@@ -935,338 +758,12 @@ export default class Exchange extends React.Component {
     )
 
     let buttonsDisabled = (
-      xdaiToDendaiMode=="sending" || xdaiToDendaiMode=="withdrawing" || xdaiToDendaiMode=="depositing" ||
       daiToXdaiMode=="sending" || daiToXdaiMode=="withdrawing" || daiToXdaiMode=="depositing" ||
       ethToDaiMode=="sending" || ethToDaiMode=="depositing" || ethToDaiMode=="withdrawing"
     )
 
     let adjustedFontSize = Math.round((Math.min(document.documentElement.clientWidth,600)/600)*24)
     let adjustedTop = Math.round((Math.min(document.documentElement.clientWidth,600)/600)*-20)+9
-
-    let xdaiToDendaiDisplay =  i18n.t('loading')
-
-    let tokenDisplay = ""
-    if(this.props.ERC20TOKEN){
-      if(xdaiToDendaiMode=="sending" || xdaiToDendaiMode=="withdrawing" || xdaiToDendaiMode=="depositing"){
-        xdaiToDendaiDisplay = (
-          <div className="content ops row" style={{position:"relative"}}>
-            <button style={{width:Math.min(100,this.state.loaderBarPercent)+"%",backgroundColor:this.state.loaderBarColor,color:"#000000"}}
-              className="btn btn-large"
-            >
-            </button>
-            <div style={{position:'absolute',left:"50%",width:"100%",marginLeft:"-50%",fontSize:adjustedFontSize,top:adjustedTop,opacity:0.95,textAlign:"center"}}>
-              {this.state.loaderBarStatusText}
-            </div>
-          </div>
-        )
-
-      }else if(xdaiToDendaiMode=="deposit"){
-
-        //console.log("CHECKING META ACCOUNT ",this.state.xdaiMetaAccount,this.props.network)
-        if(!this.state.xdaiMetaAccount && (this.props.network!="xDai"&&this.props.network!="Unknown")){
-          xdaiToDendaiDisplay = (
-            <div className="content ops row" style={{textAlign:'center'}}>
-              <div className="col-12 p-1">
-                Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>dai.poa.network</span>
-                <a href="#" onClick={()=>{this.setState({xdaiToDendaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
-                  <i className="fas fa-times"/> dismiss
-                </a>
-              </div>
-            </div>
-          )
-        }else{
-          xdaiToDendaiDisplay = (
-            <div className="content ops row">
-
-              <div className="col-1 p-1"  style={colStyle}>
-                <i className="fas fa-arrow-up"  />
-              </div>
-              <div className="col-5 p-1" style={colStyle}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <div className="input-group-text">$</div>
-                  </div>
-                  <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
-                         onChange={event => this.updateState('amount', event.target.value)} />
-                </div>
-                </Scaler>
-              </div>
-              <div className="col-3 p-1"  style={colStyle}>
-                <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
-                {xdaiCancelButton}
-                </Scaler>
-              </div>
-              <div className="col-3 p-1">
-                <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
-
-                  let amountOfxDaiToDeposit = this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether')
-                  console.log("Using DenDai contract to deposit "+amountOfxDaiToDeposit+" xDai")
-
-                  this.setState({
-                    xdaiToDendaiMode:"depositing",
-                    xdaiBalanceAtStart:this.props.xdaiBalance,
-                    xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)-parseFloat(this.state.amount),
-                    loaderBarColor:"#3efff8",
-                    loaderBarStatusText:"Depositing xDai into "+this.props.ERC20NAME+"...",
-                    loaderBarPercent:0,
-                    loaderBarStartTime: Date.now(),
-                    loaderBarClick:()=>{
-                      alert(i18n.t('exchange.go_to_etherscan'))
-                    }
-                  })
-
-                  if(this.state.xdaiMetaAccount){
-                    //send funds using metaaccount on mainnet
-
-                    let paramsObject = {
-                      from: this.state.daiAddress,
-                      value: amountOfxDaiToDeposit,
-                      gas: 120000,
-                      gasPrice: Math.round(1.1 * 1000000000)
-                    }
-                    console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
-
-                    paramsObject.to = this.state.vendorContract._address
-                    paramsObject.data = this.state.vendorContract.methods.deposit().encodeABI()
-
-                    console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
-
-                    this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
-                      console.log("========= >>> SIGNED",signed)
-                        this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                          console.log("META RECEIPT",receipt)
-                          if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                            metaReceiptTracker[receipt.transactionHash] = true
-                            this.setState({
-                              amount:"",
-                            })
-                          }
-                        }).on('error', (err)=>{
-                          console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                          this.props.changeAlert({type: 'danger',message: err.toString()});
-                        }).then(console.log)
-                    });
-
-                  }else{
-                    console.log("Use MetaMask to withdraw "+this.props.ERC20NAME+" to MNY")
-                    this.props.tx(
-                      this.props.contracts[this.props.ERC20VENDOR].deposit()
-                    ,120000,0,amountOfxDaiToDeposit,(receipt)=>{
-                      if(receipt){
-                        console.log("EXCHANGE COMPLETE?!?",receipt)
-                        //window.location = "/"+receipt.contractAddress
-                      }
-                    })
-                  }
-
-                }}>
-                  <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
-                    <i className="fas fa-arrow-up" /> Send
-                  </Scaler>
-                </button>
-
-              </div>
-            </div>
-          )
-        }
-      }else if(xdaiToDendaiMode=="withdraw"){
-        console.log("CHECKING META ACCOUNT ",this.state.xdaiMetaAccount,this.props.network)
-        if(!this.state.xdaiMetaAccount && (this.props.network!="xDai"&&this.props.network!="Unknown")){
-          xdaiToDendaiDisplay = (
-            <div className="content ops row" style={{textAlign:'center'}}>
-              <div className="col-12 p-1">
-                Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>dai.poa.network</span>
-                <a href="#" onClick={()=>{this.setState({xdaiToDendaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
-                  <i className="fas fa-times"/> dismiss
-                </a>
-              </div>
-            </div>
-          )
-        }else{
-
-          let extraWithdrawInfo = ""
-
-          if(!this.props.isAdmin && (!this.props.isVendor || !this.props.isVendor.isAllowed)){
-            extraWithdrawInfo = (
-              <div className="content ops row" style={{paddingTop:10}}>
-                <div style={{width:"100%",textAlign:'center'}}>
-                  Maximum withdrawal amount: {this.props.dollarDisplay(this.state.maxWithdrawlAmount)}
-                </div>
-                <div style={{width:"100%",textAlign:'center',opacity:0.5}}>
-                  ({this.state.withdrawalExplanation})
-                </div>
-              </div>
-            )
-          }
-
-
-          xdaiToDendaiDisplay = (
-            <div>
-              <div className="content ops row">
-
-                <div className="col-1 p-1"  style={colStyle}>
-                  <i className="fas fa-arrow-down"  />
-                </div>
-                <div className="col-5 p-1" style={colStyle}>
-                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <div className="input-group">
-                    <div className="input-group-prepend">
-                      <div className="input-group-text">$</div>
-                    </div>
-                    <input type="number" step="0.1" className="form-control" placeholder="0.00" value={this.state.amount}
-                           onChange={event => this.updateState('amount', event.target.value)} />
-                  </div>
-                  </Scaler>
-                </div>
-                <div className="col-3 p-1"  style={colStyle}>
-                  <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
-                  {xdaiCancelButton}
-                  </Scaler>
-                </div>
-                <div className="col-3 p-1">
-                  <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
-
-                    let amountOfxDaiToWithdraw = this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether')
-                    console.log("Using "+this.props.ERC20NAME+" contract to withdraw "+amountOfxDaiToWithdraw+" MNY")
-
-                    this.setState({
-                      xdaiToDendaiMode:"withdrawing",
-                      xdaiBalanceAtStart:this.props.xdaiBalance,
-                      xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)+parseFloat(this.state.amount),
-                      loaderBarColor:"#3efff8",
-                      loaderBarStatusText:"Withdrawing "+this.props.ERC20NAME+" to MNY...",
-                      loaderBarPercent:0,
-                      loaderBarStartTime: Date.now(),
-                      loaderBarClick:()=>{
-                        alert(i18n.t('exchange.go_to_etherscan'))
-                      }
-                    })
-
-                    if(this.state.xdaiMetaAccount){
-                      //send funds using metaaccount on mainnet
-
-                      let paramsObject = {
-                        from: this.state.daiAddress,
-                        value: 0,
-                        gas: 120000,
-                        gasPrice: Math.round(1.1 * 1000000000)
-                      }
-                      console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
-
-                      paramsObject.to = this.state.vendorContract._address
-                      paramsObject.data = this.state.vendorContract.methods.withdraw(""+amountOfxDaiToWithdraw).encodeABI()
-
-                      console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
-
-                      this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
-                        console.log("========= >>> SIGNED",signed)
-                          this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                            console.log("META RECEIPT",receipt)
-                            if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                              metaReceiptTracker[receipt.transactionHash] = true
-                              this.setState({
-                                amount:"",
-                              })
-                            }
-                          }).on('error', (err)=>{
-                            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                            this.props.changeAlert({type: 'danger',message: err.toString()});
-                          }).then(console.log)
-                      });
-
-                    }else{
-                      console.log("Use MetaMask to withdraw "+this.props.ERC20NAME+" to MNY")
-                      this.props.tx(
-                        this.props.contracts[this.props.ERC20VENDOR].withdraw(""+amountOfxDaiToWithdraw)
-                      ,120000,0,0,(receipt)=>{
-                        if(receipt){
-                          console.log("EXCHANGE COMPLETE?!?",receipt)
-                          //window.location = "/"+receipt.contractAddress
-                        }
-                      })
-                    }
-
-                  }}>
-                    <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
-                      <i className="fas fa-arrow-down" /> Send
-                    </Scaler>
-                  </button>
-
-                </div>
-              </div>
-              {extraWithdrawInfo}
-            </div>
-          )
-        }
-      }else{
-
-
-
-
-        xdaiToDendaiDisplay = (
-           <div className="content ops row">
-
-             <div className="col-6 p-1">
-               <button className="btn btn-large w-100"  style={this.props.buttonStyle.primary} disabled={buttonsDisabled}  onClick={()=>{
-                 this.setState({xdaiToDendaiMode:"deposit"})
-               }}>
-                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-arrow-up"  /> MNY to {this.props.ERC20NAME}
-                  </Scaler>
-               </button>
-             </div>
-
-             <div className="col-6 p-1">
-               <button className="btn btn-large w-100"  style={this.props.buttonStyle.primary} disabled={buttonsDisabled}  onClick={()=>{
-                 this.setState({xdaiToDendaiMode:"withdraw"})
-               }}>
-                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-arrow-down" /> {this.props.ERC20NAME} to MNY
-                 </Scaler>
-               </button>
-             </div>
-           </div>
-        )
-      }
-
-      let link = ""
-      if(this.props.contracts){
-        link = "https://blockscout.com/poa/dai/address/"+this.props.contracts[this.props.ERC20TOKEN]._address+"/contracts"
-      }
-
-      tokenDisplay = (
-        <div>
-          <div className="content ops row" style={{paddingBottom:20}}>
-            <div className="col-2 p-1">
-              <a href={link} target="_blank">
-                <img style={logoStyle} src={this.props.ERC20IMAGE} />
-              </a>
-            </div>
-            <div className="col-3 p-1" style={{marginTop:8}}>
-              {this.props.ERC20NAME}
-            </div>
-            <div className="col-5 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  {this.props.dollarDisplay(this.state.denDaiBalance)}
-                </Scaler>
-            </div>
-            <div className="col-2 p-1" style={{marginTop:8}}>
-              <button className="btn btn-large w-100" disabled={buttonsDisabled} style={this.props.buttonStyle.secondary} onClick={this.props.goBack}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-arrow-right"></i>
-                </Scaler>
-              </button>
-            </div>
-
-          </div>
-
-          <div className="main-card card w-100">
-            {xdaiToDendaiDisplay}
-          </div>
-        </div>
-      )
-    }
 
     let daiToXdaiDisplay =  i18n.t('loading')
 
@@ -2292,8 +1789,6 @@ export default class Exchange extends React.Component {
           padding: '10px', backgroundColor: 'orange', textAlign: 'center'
         }}>{this.state.pendingMsg}</div> }
 
-        {tokenDisplay}
-
 
           <div className="content ops row" style={{paddingBottom:20}}>
             <div className="col-2 p-1">
@@ -2362,7 +1857,6 @@ export default class Exchange extends React.Component {
           </div>
 
           {sendEthRow}
-          {this.state.extraGasUpDisplay}
 
       </Box>
     )

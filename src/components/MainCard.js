@@ -12,7 +12,6 @@ export default ({
   changeAlert,
   changeView,
   dollarDisplay,
-  subBalanceDisplay
 }) => {
   var w = window,
     d = document,

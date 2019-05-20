@@ -90,18 +90,6 @@ export default class SendToAddress extends React.Component {
       //  this.scrollToBottom()
       //},30)
     }
-    if(key=="toAddress"&&value.indexOf(".eth")>=0){
-      console.log("Attempting to look up ",value)
-      let addr = await this.props.ensLookup(value)
-      console.log("Resolved:",addr)
-      if(addr!="0x0000000000000000000000000000000000000000"){
-        this.setState({toAddress:addr,fromEns:value},()=>{
-          if(key!="message"){
-            this.bounceToAmountIfReady()
-          }
-        })
-      }
-    }
   };
   bounceToAmountIfReady(){
     if(this.state.toAddress && this.state.toAddress.length === 42){
