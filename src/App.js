@@ -23,7 +23,6 @@ import Balance from "./components/Balance";
 import Badges from "./components/Badges";
 import Ruler from "./components/Ruler";
 import Receipt from "./components/Receipt";
-import CashOut from "./components/CashOut";
 import MainCard from './components/MainCard';
 import History from './components/History';
 import Advanced from './components/Advanced';
