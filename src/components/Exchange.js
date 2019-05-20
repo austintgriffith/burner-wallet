@@ -191,19 +191,20 @@ export default class Exchange extends React.Component {
     xdaiweb3.getColor(tokenAddr)
     .then(color => {
       return fetch(
-      `https://yxygzjw6s4.execute-api.eu-west-1.amazonaws.com/testnet/exits/${account}/${color}`,
+      `${this.props.marketMaker}/exits/${account}/${color}`,
       { method: "GET", mode: "cors" }
       );
     })
     .then(response => response.json())
     .then(rsp => {
-      console.log(rsp);
       const pendingValue = rsp.reduce((sum, v) => add(sum, bi(v.value)), bi(0));
       const pendingTokens = parseInt(String(divide(pendingValue, bi(10 ** 16)))) / 100;
-      const pendingMsg = "Pending exits of " + pendingTokens.toString() + " MNY";
-      this.setState({
-        pendingMsg
-      });
+      if (pendingTokens > 0) {
+        const pendingMsg = "Pending exits of " + pendingTokens.toString() + " MNY";
+        this.setState({
+          pendingMsg
+        });
+      }
     });
   };
 
