@@ -174,6 +174,10 @@ export default class ScavengerHunt extends React.Component {
 
       if (this.state.questionIndex && this.state.qrAnswer) {
         playerAnswers[this.state.questionIndex] = this.state.qrAnswer;
+        this.props.changeAlert({
+          type: 'info',
+          message: 'Congrats! Found answer to question: ' + this.state.questionIndex
+        })
         this.setState({questionIndex:null, qrAnswer:null}) 
         cookie.save('playerAnswers', JSON.stringify(this.state.playerAnswers), { path: '/'})
       }
@@ -253,7 +257,10 @@ export default class ScavengerHunt extends React.Component {
     let hashedAnswer = await this.state.YourContract.getSaltedHash(this.props.web3.utils.utf8ToHex(answer), this.state.playerSalt).call();
     this.props.tx(this.state.YourContract.commitAnswer(hashedAnswer, question), 160000, 0, 0, (result)=> {
       console.log(result);
-      alert('Answer submitted')
+      this.props.changeAlert({
+        type: 'info',
+        message: 'Answer submitted'
+      })
     })
   }
  
@@ -262,7 +269,10 @@ export default class ScavengerHunt extends React.Component {
     console.log('answer', answer)
     this.props.tx(this.state.YourContract.revealAnswer(this.props.web3.utils.utf8ToHex(answer), question, this.state.playerSalt), 160000, 0, 0, (result)=> {
       console.log('revealAnswer', result)
-      alert('revealed Answer')
+      this.props.changeAlert({
+        type: 'info',
+        message: 'Revealed Answer'
+      })
     })
   }
 
@@ -296,15 +306,24 @@ export default class ScavengerHunt extends React.Component {
 
         if (revealEndTime > 0) {
           this.props.tx(this.state.YourContract.endGame(answers, this.state.ownerSalt, revealEndTime), 1000000, 0, 0, (result)=> {
-            console.log(result);
+            this.props.changeAlert({
+              type: 'info',
+              message: 'Reveal Stage started'
+            })
           })
         } else {
-          alert('Reveal End Time must be greater than 0')
+          this.props.changeAlert({
+            type: 'danger',
+            message: 'Revaeal EndTime must be greater than 0'
+          })
         }
         break;
       case "findWinner":
         this.props.tx(this.state.YourContract.findWinner(), 120000, 0, 0, (result)=> {
-          console.log(result);
+          this.props.changeAlert({
+            type: 'info',
+            message: 'Found Winner'
+          })
         })
         break;
       case "removeAnswer":
@@ -389,9 +408,16 @@ export default class ScavengerHunt extends React.Component {
       this.props.tx(this.state.YourContract._contract.deploy({data:code, arguments:[hashedAnswers, gameEndTime]}),2000000,(receipt)=>{
         let yourContract = this.props.contractLoader("ScavengerHunt",receipt.contractAddress)
         this.setState({ YourContract: yourContract})
+        this.props.changeAlert({
+          type: 'info',
+          message: 'New Scavenger Hunt deployed'
+        })
       })
     } else {
-      alert('Game End Time must be greater than 0')
+      this.props.changeAlert({
+        type: 'danger',
+        message: 'Game End Time must be greater than 0'
+      })
       return false;
     }
   }
