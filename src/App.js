@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
+import { ContractLoader, Dapparatus, Transactions, Gas, Events } from "dapparatus";
 import { helpers, Tx, Input, Output } from 'leap-core';
 import { equal, bi } from 'jsbi-utils';
 import Web3 from 'web3';
-import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
 import gasless from 'tabookey-gasless';
@@ -472,15 +471,14 @@ class App extends Component {
             //console.log("BADGE",b,thisBadgeId,thisBadgeData)
             if(!this.state.badges[thisBadgeId]){
               console.log("Getting badge data ",thisBadgeData)
-              let response = axios.get(thisBadgeData).then((response)=>{
-                console.log("RESPONSE:",response)
-                if(response && response.data){
-                  this.state.badges[thisBadgeId] = response.data
+              fetch(thisBadgeData)
+                .then(r => r.json())
+                .then((response)=>{
+                  console.log("RESPONSE:",response)
+                  this.state.badges[thisBadgeId] = response
                   this.state.badges[thisBadgeId].id = thisBadgeId
                   update=true
-                }
-              })
-
+                })
             }
           }
         }
@@ -575,11 +573,12 @@ class App extends Component {
   longPoll() {
     const uniswap = "https://uniswap-analytics.appspot.com/api/v1/ticker?exchangeAddress="
     const daiExchange = "0x09cabec1ead1c0ba254b09efb3ee13841712be14"
-    axios.get(uniswap+daiExchange)
-     .then((response)=>{
-       const ethprice = response.data.price
-       this.setState({ethprice})
-     })
+    fetch(uniswap+daiExchange)
+      .then(r => r.json())
+      .then((response)=>{
+        const ethprice = response.price
+        this.setState({ethprice})
+      })
   }
   setPossibleNewPrivateKey(value){
     this.setState({possibleNewPrivateKey:value},()=>{

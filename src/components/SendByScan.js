@@ -1,11 +1,30 @@
 import React, { Component } from "react";
 import QrReader from "react-qr-reader";
 import FileReaderInput from 'react-file-reader-input';
-import QrCode from 'qrcode-reader';
 import qrimage from '../qrcode.png';
 import RNMessageChannel from 'react-native-webview-messaging';
 import i18n from "../i18n";
-var Jimp = require("jimp");
+
+function base64ToBitmap(base64) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      context.drawImage(img, 0, 0);
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      resolve({
+        data: Buffer.from(imageData.data),
+        width: canvas.width,
+        height: canvas.height
+      });
+    };
+    img.src = base64;
+  });
+}
+
 let interval
 class SendByScan extends Component {
   constructor(props){
@@ -125,41 +144,38 @@ class SendByScan extends Component {
       const [e, file] = result;
       let reader = new FileReader();
       reader.onload = (e) => {
-      //  this.props.changeView('send_by_scan',()=>{
-          console.log("")
-          this.setState({imageData:e.target.result})
-          Jimp.read(Buffer.from(e.target.result.replace(/^data:image\/png;base64,/, "").replace(/^data:image\/jpeg;base64,/, ""), 'base64'),(err, image) => {
+        this.setState({imageData:e.target.result})
+        Promise.all([
+          base64ToBitmap(e.target.result),
+          import('qrcode-reader')
+        ])
+          .then(([bitmap, { default: QrCode }]) => {
+            console.log(QrCode);
+            let qr = new QrCode();
+            qr.callback = (err, value) => {
+              this.setState({ isLoading: false });
               if (err) {
-                  alert("ERR1")
-                  console.error("ERR1",err);
-                  this.setState({scanFail:err.toString()})
+                setTimeout(() => {
+                  console.log('FAILED TO SCAN!!!');
+                  this.setState({ scanFail: err.toString() });
+                  setTimeout(() => {
+                    this.setState({ imageData: false });
+                  }, 1500);
+                  setTimeout(() => {
+                    this.setState({ scanFail: false });
+                  }, 3500);
+                }, 1500);
+              } else if (value && value.result) {
+                this.handleScan(value.result);
               }
-              var qr = new QrCode();
-              qr.callback = (err, value) => {
-                  this.setState({isLoading:false})
-                  if (err) {
-                    setTimeout(()=>{
-                      console.log("FAILED TO SCAN!!!")
-                      this.setState({scanFail:err.toString()})
-                      setTimeout(()=>{
-                        this.setState({imageData:false})
-                      },1500)
-                      setTimeout(()=>{
-                        this.setState({scanFail:false})
-                      },3500)
-                    },1500)
-                  }else if(value&&value.result){
-                    this.handleScan(value.result)
-                  }
-              };
-              if(!image||!image.bitmap){
-                //this.setState({extraFail:JSON.stringify(e.target.result)})
-              }else{
-                qr.decode(image.bitmap);
-              }
-
+            };
+            qr.decode(bitmap);
           })
-      //  })
+          .catch(err => {
+            alert('ERR1');
+            console.error('ERR1', err);
+            this.setState({ scanFail: err.toString() });
+          });
       };
       reader.readAsDataURL(file);
     })

@@ -1,5 +1,4 @@
 import React from 'react';
-import Ruler from "./Ruler";
 import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
 
@@ -8,7 +7,6 @@ import { Scaler } from "dapparatus";
 //import localeth from '../localeth.png';
 
 import Web3 from 'web3';
-import axios from "axios"
 import i18n from '../i18n';
 
 import Wyre from '../services/wyre';
@@ -55,6 +53,26 @@ const uniswapContractObject = {
 let interval
 let intervalLong
 let metaReceiptTracker = {}
+
+/**
+ * @returns gas price in gwei
+ */
+function gasPrice() {
+  return fetch({
+    url: 'https://ethgasstation.info/json/ethgasAPI.json',
+    mode: 'cors',
+    method: 'get',
+  })
+    .then(r => r.json())
+    .then((response)=>{
+      if(response.average > 0 && response.average < 200){
+        const avg = response.average + (response.average*GASBOOSTPRICE)
+        return Math.round(avg * 100) / 1000;
+      }
+
+      return Promise.reject('Average out of range (0–200)');
+    });
+}
 
 export default class Exchange extends React.Component {
 
@@ -127,7 +145,7 @@ export default class Exchange extends React.Component {
   updatePendingExits(daiAddress, xdaiweb3) {
     const account = daiAddress;
     const tokenAddr = this.props.daiContract._address;
-                    
+
     xdaiweb3.getColor(tokenAddr)
     .then(color => {
       return fetch(
@@ -213,90 +231,82 @@ export default class Exchange extends React.Component {
                 this.props.changeAlert({type: 'warning',message: "You must be on the xDai network to fuel xDai->ETH"});
               }else{
                 this.setState({gettingGas:true,ethBalanceShouldBe:parseFloat(this.props.ethBalance)+0.001})
-                axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
+                gasPrice()
                 .catch((err)=>{
                   console.log("Error getting gas price",err)
                 })
-                .then((response)=>{
-                  if(response && response.data.average>0&&response.data.average<200){
-                    console.log("gas prices",response.data.average)
-                    let gwei = Math.round(response.data.average*100)/1000
-                    console.log("gwei:",gwei)
-                    let AMOUNTNEEDEDFORACOUPLETXS = Math.round(gwei*(1111000000*10) * 201000) // idk maybe enough for a couple transactions?
+                .then(gwei => {
+                  let AMOUNTNEEDEDFORACOUPLETXS = Math.round(gwei*(1111000000*10) * 201000) // idk maybe enough for a couple transactions?
 
-                    console.log("let's move ",AMOUNTNEEDEDFORACOUPLETXS,"from",this.props.xdaiBalance,"to",this.props.ethBalance)
+                  console.log("let's move ",AMOUNTNEEDEDFORACOUPLETXS,"from",this.props.xdaiBalance,"to",this.props.ethBalance)
 
-                    let gasInEth = this.props.web3.utils.fromWei(""+AMOUNTNEEDEDFORACOUPLETXS,'ether')
-                    console.log("gasInEth",gasInEth)
-                    let gasInXDai = Math.floor(this.props.ethprice*gasInEth*100)/100
+                  let gasInEth = this.props.web3.utils.fromWei(""+AMOUNTNEEDEDFORACOUPLETXS,'ether')
+                  console.log("gasInEth",gasInEth)
+                  let gasInXDai = Math.floor(this.props.ethprice*gasInEth*100)/100
 
-                    if(gasInXDai>0.5) gasInXDai = 0.5
-                    if(this.props.xdaiBalance < gasInXDai) gasInXDai = this.props.xdaiBalance-0.005
+                  if(gasInXDai>0.5) gasInXDai = 0.5
+                  if(this.props.xdaiBalance < gasInXDai) gasInXDai = this.props.xdaiBalance-0.005
 
-                    console.log("gasInXDai",gasInXDai)
-                    let gasEmitterContract
-                    if(this.props.network=="xDai"){
-                      try{
-                        gasEmitterContract = new this.props.web3.eth.Contract(require("../contracts/Emitter.abi.js"),require("../contracts/Emitter.address.js"))
-                      }catch(e){
-                        console.log("ERROR LOADING Emitter Contract",e)
-                      }
+                  console.log("gasInXDai",gasInXDai)
+                  let gasEmitterContract
+                  if(this.props.network=="xDai"){
+                    try{
+                      gasEmitterContract = new this.props.web3.eth.Contract(require("../contracts/Emitter.abi.js"),require("../contracts/Emitter.address.js"))
+                    }catch(e){
+                      console.log("ERROR LOADING Emitter Contract",e)
                     }
-                    if(gasEmitterContract){
-                      let amountInWei = this.props.web3.utils.toWei(""+gasInXDai,'ether')
+                  }
+                  if(gasEmitterContract){
+                    let amountInWei = this.props.web3.utils.toWei(""+gasInXDai,'ether')
 
-                      if(this.state.xdaiMetaAccount){
-                        //send funds using metaaccount on mainnet
+                    if(this.state.xdaiMetaAccount){
+                      //send funds using metaaccount on mainnet
 
-                        let paramsObject = {
-                          from: this.state.daiAddress,
-                          value: amountInWei,
-                          gas: 120000,
-                          gasPrice: Math.round(1.1 * 1000000000)
-                        }
-                        console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
-
-                        paramsObject.to = gasEmitterContract._address
-                        paramsObject.data = gasEmitterContract.methods.goToETH().encodeABI()
-
-                        console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
-
-
-                        this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
-                          console.log("========= >>> SIGNED",signed)
-                            this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                              console.log("META RECEIPT",receipt)
-                              if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                                metaReceiptTracker[receipt.transactionHash] = true
-                                //actually, let's wait for the eth balance to change
-                                //this.setState({gettingGas:false})
-                              }
-                            }).on('error', (err)=>{
-                              console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                              this.props.changeAlert({type: 'danger',message: err.toString()});
-                              this.setState({gettingGas:false})
-                            }).then(console.log)
-                        });
-
-                      }else{
-                        console.log("Use MetaMask to go xDai to ETH")
-                        this.props.tx(
-                          gasEmitterContract.methods.goToETH()
-                        ,120000,0,amountInWei,(receipt)=>{
-                          if(receipt){
-                            console.log("GAS UP COMPLETE?!?",receipt)
-                            //this.setState({gettingGas:false})
-                            //window.location = "/"+receipt.contractAddress
-                          }
-                        })
+                      let paramsObject = {
+                        from: this.state.daiAddress,
+                        value: amountInWei,
+                        gas: 120000,
+                        gasPrice: Math.round(1.1 * 1000000000)
                       }
+                      console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+                      paramsObject.to = gasEmitterContract._address
+                      paramsObject.data = gasEmitterContract.methods.goToETH().encodeABI()
+
+                      console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+
+                      this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
+                        console.log("========= >>> SIGNED",signed)
+                          this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                            console.log("META RECEIPT",receipt)
+                            if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                              metaReceiptTracker[receipt.transactionHash] = true
+                              //actually, let's wait for the eth balance to change
+                              //this.setState({gettingGas:false})
+                            }
+                          }).on('error', (err)=>{
+                            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                            this.props.changeAlert({type: 'danger',message: err.toString()});
+                            this.setState({gettingGas:false})
+                          }).then(console.log)
+                      });
+
+                    }else{
+                      console.log("Use MetaMask to go xDai to ETH")
+                      this.props.tx(
+                        gasEmitterContract.methods.goToETH()
+                      ,120000,0,amountInWei,(receipt)=>{
+                        if(receipt){
+                          console.log("GAS UP COMPLETE?!?",receipt)
+                          //this.setState({gettingGas:false})
+                          //window.location = "/"+receipt.contractAddress
+                        }
+                      })
                     }
                   }
                 })
               }
-
-
-
             }}
           >
            {getGasText}
@@ -539,18 +549,14 @@ export default class Exchange extends React.Component {
     return (this.state.daiSendToAddress && this.state.daiSendToAddress.length === 42 && parseFloat(this.state.daiSendAmount)>0 && parseFloat(this.state.daiSendAmount) <= parseFloat(this.props.daiBalance))
   }
   async transferDai(destination,amount,message,cb) {
-    let response
+    let gwei
     try {
-      response = await axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
+      gwei = await gasPrice();
     } catch(err) {
       console.log("Error getting gas price",err)
     }
 
-    if(response && response.data.average>0&&response.data.average<200){
-
-      response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
-      let gwei = Math.round(response.data.average*100)/1000
-
+    if(gwei !== undefined){
       if(this.state.mainnetMetaAccount){
         //send funds using metaaccount on mainnet
         const amountWei = this.state.mainnetweb3.utils.toWei(""+amount,"ether")
@@ -700,8 +706,6 @@ export default class Exchange extends React.Component {
           cb(depositReceipt)
         }
       }
-    } else {
-      console.log("ERRORed RESPONSE FROM ethgasstation",response)
     }
   }
   canSendXdai() {
@@ -759,56 +763,47 @@ export default class Exchange extends React.Component {
     if(this.state.mainnetMetaAccount){
       //send funds using metaaccount on mainnet
 
-      axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
+      gasPrice()
       .catch((err)=>{
         console.log("Error getting gas price",err)
       })
-      .then((response)=>{
-        if(response && response.data.average>0&&response.data.average<200){
+      .then(gwei => {
+        this.setState({
+          loaderBarColor:"#f5eb4a",
+          loaderBarStatusText:message,
+        });
 
-          this.setState({
-            loaderBarColor:"#f5eb4a",
-            loaderBarStatusText:message,
-          })
-
-          response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
-          let gwei = Math.round(response.data.average*100)/1000
-          let paramsObject = {
-            from: this.state.daiAddress,
-            value: amount,
-            gas: 240000,
-            gasPrice: Math.round(gwei * 1000000000)
-          }
-          console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
-
-          paramsObject.to = destination
-          if(call){
-            paramsObject.data = call.encodeABI()
-          }else{
-            paramsObject.data = "0x00"
-          }
-
-          console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
-
-          this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
-            console.log("========= >>> SIGNED",signed)
-              this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                console.log("META RECEIPT",receipt)
-                if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                  metaReceiptTracker[receipt.transactionHash] = true
-                  cb(receipt)
-                }
-              }).on('error', (err)=>{
-                console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                this.props.changeAlert({type: 'danger',message: err.toString()});
-              }).then(console.log)
-          });
-
-        }else{
-          console.log("ERRORed RESPONSE FROM ethgasstation",response)
+        let paramsObject = {
+          from: this.state.daiAddress,
+          value: amount,
+          gas: 240000,
+          gasPrice: Math.round(gwei * 1000000000)
         }
-      })
+        console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
+        paramsObject.to = destination
+        if(call){
+          paramsObject.data = call.encodeABI()
+        }else{
+          paramsObject.data = "0x00"
+        }
+
+        console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+        this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+          console.log("========= >>> SIGNED",signed)
+            this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+              console.log("META RECEIPT",receipt)
+              if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                metaReceiptTracker[receipt.transactionHash] = true
+                cb(receipt)
+              }
+            }).on('error', (err)=>{
+              console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+              this.props.changeAlert({type: 'danger',message: err.toString()});
+            }).then(console.log)
+        });
+      });
     }else{
       console.log("Using uniswap exchange to move ETH to DAI")
 
@@ -1238,7 +1233,7 @@ export default class Exchange extends React.Component {
       //       </div>
       //     </div>
       //   )
-      //}else 
+      //}else
       if(this.props.ethBalance<=0){
         daiToXdaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
@@ -1410,7 +1405,7 @@ export default class Exchange extends React.Component {
                     }).catch(err => {
                       console.log(err);
                     });
-                  
+
                 }else{
 
                   //BECAUSE THIS COULD BE ON A TOKEN, THE SEND FUNCTION IS SENDING TOKENS TO THE BRIDGE HAHAHAHA LETs FIX THAT
@@ -1433,7 +1428,7 @@ export default class Exchange extends React.Component {
                     // TODO: get real decimals
                     const amount = bi(this.state.amount * 10 ** 18);
                     const tokenAddr = this.props.daiContract._address;
-                    
+
                     this.state.xdaiweb3.getColor(tokenAddr)
                       .then(color =>
                         Exit.fastSellAmount(
@@ -1532,35 +1527,27 @@ export default class Exchange extends React.Component {
                  <div className="input-group-append" onClick={() => {
 
                    console.log("Getting gas price...")
-                   axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
+                   gasPrice()
                    .catch((err)=>{
                      console.log("Error getting gas price",err)
                    })
-                   .then((response)=>{
-                     if(response && response.data.average>0&&response.data.average<200){
-                       response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
-                       let gwei = Math.round(response.data.average*100)/1000
+                   .then(gwei => {
+                      console.log(gwei)
 
-                       console.log(gwei)
+                      let IDKAMOUNTTOLEAVE = gwei*(1111000000*2) * 201000 // idk maybe enough for a couple transactions?
 
+                      console.log("let's leave ",IDKAMOUNTTOLEAVE,this.props.ethBalance)
 
-                       let IDKAMOUNTTOLEAVE = gwei*(1111000000*2) * 201000 // idk maybe enough for a couple transactions?
+                      let gasInEth = this.props.web3.utils.fromWei(""+IDKAMOUNTTOLEAVE,'ether')
+                      console.log("gasInEth",gasInEth)
 
-                       console.log("let's leave ",IDKAMOUNTTOLEAVE,this.props.ethBalance)
+                      let adjustedEthBalance = (parseFloat(this.props.ethBalance) - parseFloat(gasInEth))
+                      console.log(adjustedEthBalance)
 
-                       let gasInEth = this.props.web3.utils.fromWei(""+IDKAMOUNTTOLEAVE,'ether')
-                       console.log("gasInEth",gasInEth)
-
-                       let adjustedEthBalance = (parseFloat(this.props.ethBalance) - parseFloat(gasInEth))
-                       console.log(adjustedEthBalance)
-
-                       this.setState({amount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 },()=>{
-                         this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                       })
-
-                     }
+                      this.setState({amount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 },()=>{
+                        this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                      })
                    })
-
                  }}>
                    <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
                      max
@@ -1775,134 +1762,122 @@ export default class Exchange extends React.Component {
                 if(this.state.mainnetMetaAccount){
                   //send funds using metaaccount on mainnet
 
-                  axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
+                  gasPrice()
                   .catch((err)=>{
                     console.log("Error getting gas price",err)
                   })
-                  .then((response)=>{
-                    if(response && response.data.average>0&&response.data.average<200){
-                      response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
-                      let gwei = Math.round(response.data.average*100)/1000
+                  .then(gwei => {
+                    if(approval<amountOfDai){
+                      console.log("approval",approval)
+                      this.setState({
+                        loaderBarColor:"#f5eb4a",
+                        loaderBarStatusText:"Approving 🦄 exchange...",
+                      })
 
-                      if(approval<amountOfDai){
-                        console.log("approval",approval)
-                        this.setState({
-                          loaderBarColor:"#f5eb4a",
-                          loaderBarStatusText:"Approving 🦄 exchange...",
-                        })
-
-                        let paramsObject = {
-                          from: this.state.daiAddress,
-                          value: 0,
-                          gas: 100000,
-                          gasPrice: Math.round(gwei * 1000000000)
-                        }
-                        console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
-
-                        paramsObject.to = this.props.daiContract._address
-                        paramsObject.data = this.props.daiContract.methods.approve(uniswapExchangeAccount,""+(amountOfDai)).encodeABI()
-
-                        console.log("APPROVE TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
-
-                        this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
-                          console.log("========= >>> SIGNED",signed)
-                            this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', async (receipt)=>{
-                              console.log("META RECEIPT",receipt)
-                              if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                                metaReceiptTracker[receipt.transactionHash] = true
-                                this.setState({
-                                  loaderBarColor:"#4ab3f5",
-                                  loaderBarStatusText:"Waiting for 🦄 exchange...",
-                                  ethBalanceAtStart:this.props.ethBalance,
-                                  ethBalanceShouldBe:eventualEthBalance,
-                                })
-
-                                let manualNonce = await this.state.mainnetweb3.eth.getTransactionCount(this.state.daiAddress)
-                                console.log("manually grabbed nonce as ",manualNonce)
-                                paramsObject = {
-                                  nonce: manualNonce,
-                                  from: this.state.daiAddress,
-                                  value: 0,
-                                  gas: 240000,
-                                  gasPrice: Math.round(gwei * 1000000000)
-                                }
-                                console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
-
-                                paramsObject.to = uniswapContract._address
-                                paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
-
-                                console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
-
-                                this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
-                                  console.log("========= >>> SIGNED",signed)
-                                    this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                                      console.log("META RECEIPT",receipt)
-                                      if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                                        metaReceiptTracker[receipt.transactionHash] = true
-                                        this.setState({
-                                          amount:"",
-                                        })
-                                      }
-                                    }).on('error', (err)=>{
-                                      console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                                      this.props.changeAlert({type: 'danger',message: err.toString()});
-                                    }).then(console.log)
-                                });
-                              }
-                            }).on('error', (err)=>{
-                              this.props.changeAlert({type: 'danger',message: err.toString()});
-                              console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                            }).then(console.log)
-                        });
-
-                      }else{
-                        this.setState({
-                          loaderBarColor:"#f5eb4a",
-                          loaderBarStatusText:"Waiting for 🦄 exchange...",
-                          ethBalanceAtStart:this.props.ethBalance,
-                          ethBalanceShouldBe:eventualEthBalance,
-                        })
-
-                        let paramsObject = {
-                          from: this.state.daiAddress,
-                          value: 0,
-                          gas: 240000,
-                          gasPrice: Math.round(gwei * 1000000000)
-                        }
-                        console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
-
-                        paramsObject.to = uniswapContract._address
-                        paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
-
-                        console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
-
-                        this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
-                          console.log("========= >>> SIGNED",signed)
-                            this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                              console.log("META RECEIPT",receipt)
-                              if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                                metaReceiptTracker[receipt.transactionHash] = true
-                                this.setState({
-                                  amount:"",
-                                  loaderBarColor:"#4ab3f5",
-                                })
-                              }
-                            }).on('error', (err)=>{
-                              console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                              this.props.changeAlert({type: 'danger',message: err.toString()});
-                            }).then(console.log)
-                        });
-
+                      let paramsObject = {
+                        from: this.state.daiAddress,
+                        value: 0,
+                        gas: 100000,
+                        gasPrice: Math.round(gwei * 1000000000)
                       }
+                      console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
+                      paramsObject.to = this.props.daiContract._address
+                      paramsObject.data = this.props.daiContract.methods.approve(uniswapExchangeAccount,""+(amountOfDai)).encodeABI()
 
+                      console.log("APPROVE TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
+                      this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+                        console.log("========= >>> SIGNED",signed)
+                          this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', async (receipt)=>{
+                            console.log("META RECEIPT",receipt)
+                            if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                              metaReceiptTracker[receipt.transactionHash] = true
+                              this.setState({
+                                loaderBarColor:"#4ab3f5",
+                                loaderBarStatusText:"Waiting for 🦄 exchange...",
+                                ethBalanceAtStart:this.props.ethBalance,
+                                ethBalanceShouldBe:eventualEthBalance,
+                              })
+
+                              let manualNonce = await this.state.mainnetweb3.eth.getTransactionCount(this.state.daiAddress)
+                              console.log("manually grabbed nonce as ",manualNonce)
+                              paramsObject = {
+                                nonce: manualNonce,
+                                from: this.state.daiAddress,
+                                value: 0,
+                                gas: 240000,
+                                gasPrice: Math.round(gwei * 1000000000)
+                              }
+                              console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+                              paramsObject.to = uniswapContract._address
+                              paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
+
+                              console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+                              this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+                                console.log("========= >>> SIGNED",signed)
+                                  this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                                    console.log("META RECEIPT",receipt)
+                                    if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                                      metaReceiptTracker[receipt.transactionHash] = true
+                                      this.setState({
+                                        amount:"",
+                                      })
+                                    }
+                                  }).on('error', (err)=>{
+                                    console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                                    this.props.changeAlert({type: 'danger',message: err.toString()});
+                                  }).then(console.log)
+                              });
+                            }
+                          }).on('error', (err)=>{
+                            this.props.changeAlert({type: 'danger',message: err.toString()});
+                            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                          }).then(console.log)
+                      });
 
                     }else{
-                      console.log("ERRORed RESPONSE FROM ethgasstation",response)
-                    }
-                  })
+                      this.setState({
+                        loaderBarColor:"#f5eb4a",
+                        loaderBarStatusText:"Waiting for 🦄 exchange...",
+                        ethBalanceAtStart:this.props.ethBalance,
+                        ethBalanceShouldBe:eventualEthBalance,
+                      })
 
+                      let paramsObject = {
+                        from: this.state.daiAddress,
+                        value: 0,
+                        gas: 240000,
+                        gasPrice: Math.round(gwei * 1000000000)
+                      }
+                      console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+                      paramsObject.to = uniswapContract._address
+                      paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
+
+                      console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+                      this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+                        console.log("========= >>> SIGNED",signed)
+                          this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                            console.log("META RECEIPT",receipt)
+                            if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                              metaReceiptTracker[receipt.transactionHash] = true
+                              this.setState({
+                                amount:"",
+                                loaderBarColor:"#4ab3f5",
+                              })
+                            }
+                          }).on('error', (err)=>{
+                            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                            this.props.changeAlert({type: 'danger',message: err.toString()});
+                          }).then(console.log)
+                      });
+
+                    }
+                  });
                 }else{
                   console.log("Using uniswap exchange to move ETH to DAI")
 
@@ -2160,35 +2135,27 @@ export default class Exchange extends React.Component {
                      <div className="input-group-append" onClick={() => {
 
                        console.log("Getting gas price...")
-                       axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
+                       gasPrice()
                        .catch((err)=>{
                          console.log("Error getting gas price",err)
                        })
-                       .then((response)=>{
-                         if(response && response.data.average>0&&response.data.average<200){
-                           response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
-                           let gwei = Math.round(response.data.average*100)/1000
+                       .then(gwei => {
+                          console.log(gwei)
 
-                           console.log(gwei)
+                          let IDKAMOUNTTOLEAVE = gwei*(1111000000*2) * 201000 // idk maybe enough for a couple transactions?
 
+                          console.log("let's leave ",IDKAMOUNTTOLEAVE,this.props.ethBalance)
 
-                           let IDKAMOUNTTOLEAVE = gwei*(1111000000*2) * 201000 // idk maybe enough for a couple transactions?
+                          let gasInEth = this.props.web3.utils.fromWei(""+IDKAMOUNTTOLEAVE,'ether')
+                          console.log("gasInEth",gasInEth)
 
-                           console.log("let's leave ",IDKAMOUNTTOLEAVE,this.props.ethBalance)
+                          let adjustedEthBalance = (parseFloat(this.props.ethBalance) - parseFloat(gasInEth))
+                          console.log(adjustedEthBalance)
 
-                           let gasInEth = this.props.web3.utils.fromWei(""+IDKAMOUNTTOLEAVE,'ether')
-                           console.log("gasInEth",gasInEth)
-
-                           let adjustedEthBalance = (parseFloat(this.props.ethBalance) - parseFloat(gasInEth))
-                           console.log(adjustedEthBalance)
-
-                           this.setState({ethSendAmount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 },()=>{
-                             this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-                           })
-
-                         }
+                          this.setState({ethSendAmount: Math.floor(this.props.ethprice*adjustedEthBalance*100)/100 },()=>{
+                            this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
+                          })
                        })
-
                      }}>
                        <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.secondary}>
                          max

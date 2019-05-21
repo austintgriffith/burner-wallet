@@ -6,7 +6,6 @@ import i18n from '../i18n';
 const QRCode = require('qrcode.react');
 
 export default class Advanced extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -65,7 +64,7 @@ export default class Advanced extends React.Component {
     let inputPrivateKeyRow = (
       <div className="content ops row">
         <div className={inputPrivateSize}>
-            <input type={this.state.privateKeyHidden?"password":"text"}  autocorrect="off" autocapitalize="none"  autocorrect="off" autocapitalize="none" className="form-control" placeholder="private key" value={this.state.newPrivateKey}
+            <input type={this.state.privateKeyHidden?"password":"text"}  autoCorrect="off" autoCapitalize="none" className="form-control" placeholder="private key" value={this.state.newPrivateKey}
                    onChange={event => this.setState({newPrivateKey:event.target.value})} />
         </div>
         {inputPrivateEyeButton}
@@ -113,7 +112,7 @@ export default class Advanced extends React.Component {
     let inputSeedRow = (
       <div className="content ops row" style={{paddingTop:10}}>
         <div className={inputSeedSize}>
-        <input type={this.state.seedPhraseHidden?"password":"text"}  autocorrect="off" autocapitalize="none" className="form-control" placeholder="seed phrase" value={this.state.newSeedPhrase}
+        <input type={this.state.seedPhraseHidden?"password":"text"}  autoCorrect="off" autoCapitalize="none" className="form-control" placeholder="seed phrase" value={this.state.newSeedPhrase}
                onChange={event => this.setState({newSeedPhrase:event.target.value})} />
         </div>
         {inputSeedEyeButton}
@@ -123,10 +122,12 @@ export default class Advanced extends React.Component {
                     if(!this.state.newSeedPhrase){
                       changeAlert({type: 'warning', message: 'Invalid seed phrase.'})
                     }else{
-                      let pkutils = require("ethereum-mnemonic-privatekey-utils")
-                      const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(this.state.newSeedPhrase)
-                      changeView('main')
-                      setPossibleNewPrivateKey("0x"+newPrivateKey)
+                      import('ethereum-mnemonic-privatekey-utils').then(pkutils => {
+                        console.log(pkutils);
+                        const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(this.state.newSeedPhrase)
+                        changeView('main')
+                        setPossibleNewPrivateKey("0x"+newPrivateKey)
+                      });
                     }
                   }}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
@@ -232,7 +233,7 @@ export default class Advanced extends React.Component {
 
         <div className="content ops row">
           <div className="col-6 p-1">
-              <input type="text" autocorrect="off" autocapitalize="none" className="form-control" placeholder="any text to encode" value={this.state.newQr}
+              <input type="text" autoCorrect="off" autoCapitalize="none" className="form-control" placeholder="any text to encode" value={this.state.newQr}
                      onChange={event => this.setState({newQr:event.target.value})} />
           </div>
           <div className="col-6 p-1">

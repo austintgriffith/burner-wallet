@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 
 import eth from '../ethereum.png';
 import i18n from '../i18n';
@@ -29,17 +28,18 @@ export default class BalanceDisplay extends React.Component {
     componentDidMount(){
       let currencyOptions = [];
 
-      axios.get("https://api.exchangeratesapi.io/latest?base=USD").then((response) => {
+
+      fetch("https://api.exchangeratesapi.io/latest?base=USD").then(r => r.json()).then((response) => {
         //console.log("Exchange: ", response.data);
         //console.log(typeof(response.data.rates))
 
-        for(var i in response.data.rates){
-          //console.log(i + ':' + response.data.rates[i]);
+        for(var i in response.rates){
+          //console.log(i + ':' + response.rates[i]);
           currencyOptions.push(<option value={i}>{i}</option>)   // All currency options loaded from API
         }
 
         this.setState({
-          rates: response.data.rates,
+          rates: response.rates,
           currencyOptions: currencyOptions
         });
 
