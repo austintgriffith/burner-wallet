@@ -55,12 +55,6 @@ contract ScavengerHunt {
 
   function() public payable {}
 
-  function updateVar(string newVal) public returns (bool) {
-    require(msg.sender==owner,"ScavengerHunt::updateVar not owner");
-    YourVar=newVal;
-    return true;
-  }
-
   /// @dev commits users answer to a question and joins player in game if not already joined
   /// @param _hashedAnswer is hashed answered using a salt
   /// @param _questionIndex is index to question being answered
@@ -82,7 +76,11 @@ contract ScavengerHunt {
     // Store player answer to correct question
     player.answers[_questionIndex].commit = _hashedAnswer;
     player.timestamp = now;
+
+    emit CommitAnswer(msg.sender, _hashedAnswer, _questionIndex);
   }
+
+  event CommitAnswer(address sender, bytes32 hashedAnswer, uint questionIndex);
 
   /// @dev ends game and provides answer. Sets game in reveal phase for players to reveal answers
   /// @param _answers array of answers
@@ -93,7 +91,7 @@ contract ScavengerHunt {
       uint length = playerList.length;
       uint answersLength = answers.length;
       if (length == 0) kill();
-      
+
       // Check supplied answers correct
       for (uint idx = 0; idx < answersLength; idx++) {
         require(getSaltedHash(_answers[idx], _salt) == answers[idx], "ScavengerHunt::endGame: Answers don't match");
@@ -102,7 +100,11 @@ contract ScavengerHunt {
 
       status = 'Reveal';
       revealEndTime = now + _revealEndTime;
+
+      emit EndGame(revealEndTime);
   }
+
+  event EndGame(uint revealEndTime);
 
   /// @dev Finds winner and sends winner pot if exists, otherwise send back to owner
   function findWinner() public onlyWinnerNotFound() onlyAfter(revealEndTime) onlyStatus('Reveal') {
@@ -147,7 +149,8 @@ contract ScavengerHunt {
   /// @param _questionIndex question being answered
   /// @param _salt salt used to hash answer
   /// @return true if correct answer
-  function revealAnswer(bytes32 _answer, uint _questionIndex, bytes32 _salt) public onlyStatus('Reveal') onlyAfter(gameEndTime) onlyBefore(revealEndTime) returns (bool) {
+  function revealAnswer(bytes32 _answer, uint _questionIndex, bytes32 _salt)
+    public onlyStatus('Reveal') onlyAfter(gameEndTime) onlyBefore(revealEndTime) returns (bool) {
     Answer storage answer = players[msg.sender].answers[_questionIndex];
 
     //make sure it hasn't been revealed yet and set it to revealed
