@@ -526,12 +526,10 @@ export default class App extends Component {
 
   }
   longPoll() {
-    const uniswap = "https://uniswap-analytics.appspot.com/api/v1/ticker?exchangeAddress="
-    const daiExchange = "0x09cabec1ead1c0ba254b09efb3ee13841712be14"
-    fetch(uniswap+daiExchange)
+    fetch("https://api.coinmarketcap.com/v2/ticker/1027/")
       .then(r => r.json())
       .then((response)=>{
-        const ethprice = response.price
+        const ethprice = response.data.quotes.USD.price
         this.setState({ethprice})
       })
   }
