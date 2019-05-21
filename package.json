@@ -8,6 +8,7 @@
     "dapparatus": "leapdao/dapparatus#5591152",
     "eth-crypto": "^1.3.2",
     "ethereum-mnemonic-privatekey-utils": "^1.0.5",
+    "ethereumjs-util": "^6.0.0",
     "i18next": "^13.1.5",
     "i18next-browser-languagedetector": "^2.2.4",
     "identity-obj-proxy": "3.0.0",
