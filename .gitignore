@@ -1,5 +1,4 @@
 *.env*
-package-lock.json
 *.pem
 .env
 clevis.json

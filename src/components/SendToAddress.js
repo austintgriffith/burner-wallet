@@ -6,51 +6,44 @@ import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
-const queryString = require('query-string');
+import queryString from 'query-string';
+
+import {
+  Box,
+  Button,
+  OutlineButton,
+  Field,
+  Input,
+} from 'rimble-ui';
 
 export default class SendToAddress extends React.Component {
 
   constructor(props) {
     super(props);
 
-
-
     console.log("!!!!!!!!!!!!!!!!!!!!!!!! window.location.search",window.location.search,parsed)
 
-    let startAmount = props.amount
-    if(props.scannerState) startAmount = props.scannerState.amount
-    if(!startAmount) {
-      startAmount = cookie.load('sendToStartAmount')
-    }else{
-      cookie.save('sendToStartAmount', startAmount, { path: '/', maxAge: 60 })
-    }
-    let startMessage= props.message
-    if(props.scannerState) startMessage = props.scannerState.message
-    if(!startMessage) {
-      startMessage = cookie.load('sendToStartMessage')
-    }else{
-      cookie.save('sendToStartMessage', startMessage, { path: '/', maxAge: 60 })
-    }
-
-    let extraMessage = props.extraMessage
-    if(props.scannerState) extraMessage = props.scannerState.extraMessage
-
-    let toAddress = ""
-    if(props.scannerState) toAddress = props.scannerState.toAddress
-    if(!toAddress) {
-      toAddress = cookie.load('sendToAddress')
-    }else{
-      cookie.save('sendToAddress', toAddress, { path: '/', maxAge: 60 })
+    let initialState;
+    if (props.scannerState) {
+      const { amount, message, extraMessage, toAddress } = props.scannerState
+      initialState = {
+        amount,
+        message,
+        extraMessage,
+        toAddress
+      }
+    } else {
+      const { amount, message, extraMessage } = props
+      initialState = {
+        amount: amount,
+        message: message,
+        extraMessage: extraMessage,
+        toAddress: ""
+      }
     }
 
-    let initialState = {
-      amount: startAmount,
-      message: startMessage,
-      toAddress: toAddress,
-      extraMessage: extraMessage,
-      fromEns: "",
-      canSend: false,
-    }
+    initialState.fromEns = ""
+    initialState.canSend = false
 
     let startingAmount = 0.15
     if(props.amount){
@@ -73,23 +66,17 @@ export default class SendToAddress extends React.Component {
     }
 
     this.state = initialState
-  //  console.log("SendToAddress constructor",this.state)
+    //console.log("SendToAddress constructor",this.state)
     window.history.pushState({},"", "/");
+  }
 
-
-
+  componentWillReceiveProps(newProps) {
+    if (this.props.scannerState !== newProps.scannerState) {
+        this.setState(Object.assign(this.state, newProps.scannerState))
+    }
   }
 
   updateState = async (key, value) => {
-    if(key=="amount"){
-      cookie.save('sendToStartAmount', value, { path: '/', maxAge: 60 })
-    }
-    else if(key=="message"){
-      cookie.save('sendToStartMessage', value, { path: '/', maxAge: 60 })
-    }
-    else if(key=="toAddress"){
-      cookie.save('sendToAddress', value, { path: '/', maxAge: 60 })
-    }
     this.setState({ [key]: value },()=>{
       this.setState({ canSend: this.canSend() },()=>{
         if(key!="message"){
@@ -102,18 +89,6 @@ export default class SendToAddress extends React.Component {
       //setTimeout(()=>{
       //  this.scrollToBottom()
       //},30)
-    }
-    if(key=="toAddress"&&value.indexOf(".eth")>=0){
-      console.log("Attempting to look up ",value)
-      let addr = await this.props.ensLookup(value)
-      console.log("Resolved:",addr)
-      if(addr!="0x0000000000000000000000000000000000000000"){
-        this.setState({toAddress:addr,fromEns:value},()=>{
-          if(key!="message"){
-            this.bounceToAmountIfReady()
-          }
-        })
-      }
     }
   };
   bounceToAmountIfReady(){
@@ -145,7 +120,8 @@ export default class SendToAddress extends React.Component {
         toAddress: resolvedAddress
       })
     }*/
-    return (this.state.toAddress && this.state.toAddress.length === 42 && (this.state.amount>0 || this.state.message))
+    const { toAddress, amount, message } = this.state;
+    return (toAddress && toAddress.length === 42 && (amount>0 || message))
   }
 
   scrollToBottom(){
@@ -201,15 +177,14 @@ export default class SendToAddress extends React.Component {
         cookie.remove('sendToStartMessage', { path: '/' })
         cookie.remove('sendToAddress', { path: '/' })
 
-        this.props.send(toAddress, value, 120000, txData, (result) => {
+        this.props.send(toAddress, value, 120000, txData, (err, result) => {
           if(result && result.hash){
             this.props.goBack();
             window.history.pushState({},"", "/");
-            /*
-            this.props.changeAlert({
-              type: 'success',
-              message: 'Sent! '+result.transactionHash,
-            });*/
+            // this.props.changeAlert({
+            //   type: 'success',
+            //   message: 'Sent! '+result.transactionHash,
+            // });
 
             let receiptObj = {to:toAddress,from:result.from,amount:parseFloat(amount),message:this.state.message,result:result}
 
@@ -217,7 +192,24 @@ export default class SendToAddress extends React.Component {
               receiptObj.params = this.state.params
             }
 
-          //  console.log("CHECKING SCANNER STATE FOR ORDER ID",this.props.scannerState)
+            //  console.log("CHECKING SCANNER STATE FOR ORDER ID",this.props.scannerState)
+            if(this.props.scannerState&&this.props.scannerState.daiposOrderId){
+              receiptObj.daiposOrderId = this.props.scannerState.daiposOrderId
+            }
+
+            //console.log("SETTING RECEPITE STATE",receiptObj)
+            this.props.setReceipt(receiptObj)
+            this.props.changeView("receipt");
+          } else {
+            this.props.goBack();
+            window.history.pushState({},"", "/");
+            let receiptObj = {to:toAddress,from:err.request.account,amount:parseFloat(amount),message:err.error.message,result:err}
+
+            if(this.state.params){
+              receiptObj.params = this.state.params
+            }
+
+            //  console.log("CHECKING SCANNER STATE FOR ORDER ID",this.props.scannerState)
             if(this.props.scannerState&&this.props.scannerState.daiposOrderId){
               receiptObj.daiposOrderId = this.props.scannerState.daiposOrderId
             }
@@ -234,8 +226,10 @@ export default class SendToAddress extends React.Component {
   };
 
   render() {
-    let { canSend, toAddress } = this.state;
-    let {dollarSymbol} = this.props
+    let {
+      canSend,
+      toAddress
+    } = this.state;
 
     /*let sendMessage = ""
     if(this.state.message){
@@ -256,64 +250,74 @@ export default class SendToAddress extends React.Component {
 
 
     let amountInputDisplay = (
-      <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
-          ref={(input) => { this.amountInput = input; }}
-             onChange={event => this.updateState('amount', event.target.value)} />
+      <Input
+        width={1}
+        type="number"
+        placeholder="$0.00"
+        value={this.state.amount}
+        ref={(input) => { this.amountInput = input; }}
+        onChange={event => this.updateState('amount', event.target.value)}
+      />
     )
     if(this.props.scannerState&&this.props.scannerState.daiposOrderId){
       amountInputDisplay = (
-        <input type="number" readOnly className="form-control" placeholder="0.00" value={this.state.amount}
-            ref={(input) => { this.amountInput = input; }}
-               onChange={event => this.updateState('amount', event.target.value)} />
+        <Input
+          width={1}
+          type="number"
+          readOnly
+          placeholder="$0.00"
+          value={this.state.amount}
+          ref={(input) => { this.amountInput = input; }}
+          onChange={event => this.updateState('amount', event.target.value)}
+        />
       )
     }
 
     return (
       <div>
-        <div className="content row">
-          <div className="form-group w-100">
-            <div className="form-group w-100">
-              <label htmlFor="amount_input">{i18n.t('send_to_address.to_address')}</label>
-              <div className="input-group">
-                <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
-                  ref={(input) => { this.addressInput = input; }}
-                       onChange={event => this.updateState('toAddress', event.target.value)} />
-                <div className="input-group-append" onClick={() => {
-                  this.props.openScanner({view:"send_to_address"})
-                }}>
-                  <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.primary}>
-                    <i style={{color:"#FFFFFF"}} className="fas fa-qrcode" />
-                  </span>
-                </div>
+        <Box mb={4}>
+          <Field mb={3} label={i18n.t('send_to_address.to_address')}>
+            <Input
+              width={1}
+              type="text"
+              placeholder="0x..."
+              value={this.state.toAddress}
+              ref={(input) => { this.addressInput = input; }}
+              onChange={event => this.updateState('toAddress', event.target.value)}
+            />
+          </Field>
+
+          <OutlineButton icon={'CenterFocusWeak'} mb={4} width={1} onClick={() => {this.props.openScanner({view:"send_to_address"})}}>
+            Scan QR Code
+          </OutlineButton>
+
+          <div>{ this.state.toAddress && this.state.toAddress.length==42 &&
+            <CopyToClipboard text={toAddress.toLowerCase()}>
+              <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
+                <div style={{opacity:0.33}}>{this.state.fromEns}</div>
+                <Blockies seed={toAddress.toLowerCase()} scale={10}/>
               </div>
-            </div>
-            <div>  { this.state.toAddress && this.state.toAddress.length==42 &&
-              <CopyToClipboard text={toAddress.toLowerCase()}>
-                <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
-                  <div style={{opacity:0.33}}>{this.state.fromEns}</div>
-                  <Blockies seed={toAddress.toLowerCase()} scale={10}/>
-                </div>
-              </CopyToClipboard>
-            }</div>
-            <label htmlFor="amount_input">{i18n.t('send_to_address.send_amount')}</label>
-            <div className="input-group">
-              <div className="input-group-prepend">
-                <div className="input-group-text">{dollarSymbol}</div>
-              </div>
-              {amountInputDisplay}
-            </div>
-            <div className="form-group w-100" style={{marginTop:20}}>
-              <label htmlFor="amount_input">{messageText}</label>
-              <input type="text" className="form-control" placeholder="optional unencrypted message" value={this.state.message}
-                ref={(input) => { this.messageInput = input; }}
-                     onChange={event => this.updateState('message', event.target.value)} />
-            </div>
-          </div>
-          <button name="theVeryBottom" className={`btn btn-lg w-100 ${canSend ? '' : 'disabled'}`} style={this.props.buttonStyle.primary}
-                  onClick={this.send}>
-            Send
-          </button>
-        </div>
+            </CopyToClipboard>
+          }</div>
+
+          <Field mb={3} label={i18n.t('send_to_address.send_amount')}>
+            {amountInputDisplay}
+          </Field>
+
+          <Field mb={3} label={messageText}>
+            <Input
+              width={1}
+              type="text"
+              placeholder="optional unencrypted message"
+              value={this.state.message}
+              ref={(input) => { this.messageInput = input; }}
+              onChange={event => this.updateState('message', event.target.value)}
+            />
+          </Field>
+        </Box>
+        <Button size={'large'} width={1} disabled={!canSend} onClick={this.send}>
+          Send
+        </Button>
       </div>
     )
   }

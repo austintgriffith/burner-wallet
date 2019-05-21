@@ -4,6 +4,7 @@ import FileReaderInput from 'react-file-reader-input';
 import qrimage from '../qrcode.png';
 import RNMessageChannel from 'react-native-webview-messaging';
 import i18n from "../i18n";
+import Web3 from 'web3';
 
 function base64ToBitmap(base64) {
   return new Promise((resolve, reject) => {
@@ -96,17 +97,25 @@ class SendByScan extends Component {
       console.log("dataAfterColon:",dataAfterColon)
       if (dataAfterColon) {
         this.stopRecording();
-        console.log("RETURN STATE:",this.props.returnState)
-        if(this.props.returnState && this.props.returnState.view!="send_to_address"){
+        const dataSplit = dataAfterColon.split(";");
+
+        if (dataSplit.length === 1 && Web3.utils.isAddress(dataSplit[0])) {
+          console.log("RETURN STATE:",this.props.returnState)
           let returnState = this.props.parseAndCleanPath(dataAfterColon)
           this.props.returnToState(returnState)
-          console.log("return state",returnState)
-        }else{
-          this.props.changeView('reader')
-          setTimeout(()=>{
-            //maybe they just scanned an address?
-            window.location = "/"+dataAfterColon
-          },100)
+        } else if(Web3.utils.isAddress(dataSplit[0]) && !isNaN(parseInt(dataSplit[1], 10)) && dataSplit[2]) {
+          const returnState = {
+            toAddress: dataSplit[0],
+            amount: parseInt(dataSplit[1], 10),
+            message: dataSplit[2]
+          }
+          this.props.returnToState(returnState);
+        } else {
+            // NOTE: Everything that is not a valid Ethereum address, we insert
+            // in the URL to see if the burner wallet can resolve it.
+            setTimeout(() => {
+                window.location = "/" +  dataAfterColon 
+            }, 100)
         }
       }
     }
@@ -124,7 +133,7 @@ class SendByScan extends Component {
   onClose = () => {
     console.log("SCAN CLOSE")
     this.stopRecording();
-    this.props.goBack();
+    this.props.goBack(this.props.returnState.goBackView);
   };
   componentDidMount(){
     interval = setInterval(this.loadMore.bind(this),750)

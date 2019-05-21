@@ -1,6 +1,7 @@
 import React from 'react';
 import { Scaler, Blockie } from "dapparatus";
 import burnerloader from '../burnerloader.gif';
+import { Button, Icon } from "rimble-ui";
 export  default ({openScanner, network, total, dollarDisplay, ens, title, titleImage, mainStyle, balance, address, changeView, view}) => {
 
 
@@ -65,14 +66,23 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
   }
 
   let bottomRight = (
-    <div style={scanButtonStyle} onClick={() => {
-      openScanner({view:"send_to_address"})
-    }} >
-      <div style={{position:'relative',backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",backgroundColor:mainStyle.mainColor,borderRadius:"50%",width:89,height:89,boxShadow: "0.5px 0.5px 5px #000000"}}>
-        <a href="#" style={{color:'#FFFFFF',position:'absolute',left:30,top:28}}>
-          <i className="fas fa-qrcode" />
-        </a>
-      </div>
+    <div style={scanButtonStyle}  >
+    <Button 
+      onClick={() => {
+        openScanner({view:"send_to_address"})
+      }}
+      style={{backgroundColor: "white", border: "3px solid black"}}
+      color="black"
+      borderRadius={"50%"} 
+      height={"auto"} 
+      width={"auto"} 
+      p={0} m={0}
+      position={"absolute"}
+      bottom={3}
+      right={3}
+    >
+      <Icon name="CenterFocusWeak" size={90} p={3} />
+    </Button>
     </div>
   )
 
@@ -81,6 +91,10 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
 
 
   let topLeft
+
+  const explorerUrl = network === 'Leap Network'
+    ? 'https://mainnet.leapdao.org/explorer/address/'
+    : 'https://staging.leapdao.org/explorer/address/';
 
   if(view=="main" || view=="exchange"){
     opacity = 1.0
@@ -105,10 +119,10 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
 
 
   return (
-    <div className="header" style={{opacity}}>
+    <div className="header" style={{opacity, "z-index": "99"}}>
       {topLeft}
       {topRight}
-      {bottomRight}
+      {view === "main" ?  bottomRight : null}
     </div>
   )
 };

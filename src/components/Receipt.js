@@ -1,5 +1,4 @@
 import React from 'react';
-import Badge from './Badge';
 import { Blockie } from "dapparatus";
 import i18n from '../i18n';
 
@@ -45,20 +44,11 @@ export default class Receive extends React.Component {
 
     let message = ""
 
-    let sendAmount = ""
-    if(receipt.badge){
-      sendAmount = (
-        <div>
-          <Badge key={"sentbadge"} id={receipt.badge.id} image={receipt.badge.image}/>
-        </div>
-      )
-    }else{
-      sendAmount = (
-        <div>
-          <span style={{opacity:0.15}}>-</span>{dollarDisplay(receipt.amount)}<span style={{opacity:0.15}}>-></span>
-        </div>
-      )
-    }
+    let sendAmount = (
+      <div>
+        <span style={{opacity:0.15}}>-</span>{dollarDisplay(receipt.amount)}<span style={{opacity:0.15}}>-></span>
+      </div>
+    )
 
     if(receipt.message){
       message = (
@@ -75,7 +65,12 @@ export default class Receive extends React.Component {
         <div className="send-to-address w-100">
             <div className="row" style={{cursor:"pointer",width:"100%"}}>
               <div className="col-12" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
-                <i className="fas fa-check-circle" style={{color:"#39e917",fontSize:180,opacity:.7}}></i>
+                {!receipt.result.error &&
+                  <i className="fas fa-check-circle" style={{color:"#39e917",fontSize:180,opacity:.7}} />
+                }
+                {receipt.result.error &&
+                  <i className="fas fa-times-circle" style={{color:"rgb(233, 23, 23)",fontSize:180,opacity:.7}} />
+                }
               </div>
             </div>
 

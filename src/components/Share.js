@@ -1,39 +1,39 @@
 import React from 'react';
-import Ruler from "./Ruler";
-import Balance from "./Balance";
-import {CopyToClipboard} from "react-copy-to-clipboard";
-import Blockies from 'react-blockies';
-import { scroller } from 'react-scroll'
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import i18n from '../i18n';
-const QRCode = require('qrcode.react');
+import {
+  Flex,
+  Box,
+  Input,
+  QR as QRCode
+} from 'rimble-ui'
 
 export default class Receive extends React.Component {
-
   constructor(props) {
     super(props);
     let initialState = {
     }
   }
-  render() {
-    let {changeAlert,url} = this.props
 
-    let qrSize = Math.min(document.documentElement.clientWidth,512)-90
-    let qrValue = url
+  render() {
+    let {
+      changeAlert,
+      url
+    } = this.props
 
     return (
       <div>
-        <CopyToClipboard text={qrValue} onCopy={() => {
+        <CopyToClipboard text={url} onCopy={() => {
           changeAlert({type: 'success', message: i18n.t('share.copied')})
         }}>
-          <div className="content qr row" style={{cursor:"pointer"}}>
-            <QRCode value={qrValue} size={qrSize}/>
-            <div className="input-group">
-              <input type="text" className="form-control" style={{color:"#999999"}} value={qrValue} disabled/>
-              <div className="input-group-append">
-                <span className="input-group-text"><i style={{color:"#999999"}}  className="fas fa-copy"/></span>
-              </div>
-            </div>
-          </div>
+          <Box>
+            <Flex flexDirection={'column'} alignItems={'center'} p={3} border={1} borderColor={'grey'} borderRadius={1}>
+              <QRCode value={url} size={'100%'} renderAs={'svg'} />
+            </Flex>
+            <Box mt={3}>
+              <Input type='url' readOnly value={url} width={1} />
+            </Box>
+          </Box>
         </CopyToClipboard>
       </div>
     )

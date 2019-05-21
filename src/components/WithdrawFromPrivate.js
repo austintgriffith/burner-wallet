@@ -5,6 +5,10 @@ import { Scaler } from "dapparatus";
 import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import i18n from '../i18n';
+import {
+  Button,
+  Input as RInput,
+} from 'rimble-ui'
 
 let pollInterval
 let metaReceiptTracker = {}
@@ -43,16 +47,13 @@ export default class SendToAddress extends React.Component {
   }
 
   async poll(){
-    let fromBalance
-    if(this.props.ERC20TOKEN){
-      fromBalance = await this.props.contracts[this.props.ERC20TOKEN].balanceOf('' + this.state.fromAddress).call()
-    }else{
-      fromBalance = await this.props.web3.eth.getBalance('' + this.state.fromAddress)
-    }
+    const { xdaiweb3, pdaiContract } = this.props;
+    const { fromAddress } = this.state;
+    let fromBalance = await pdaiContract.methods.balanceOf(fromAddress).call();
 
-    fromBalance = parseFloat(this.props.web3.utils.fromWei(fromBalance,'ether'))
+    fromBalance = parseFloat(xdaiweb3.utils.fromWei(fromBalance,'ether'))
     fromBalance = fromBalance.toFixed(2)
-    console.log("from balance:",fromBalance,"of from address",this.state.fromAddress)
+    console.log("from balance:",fromBalance,"of from address",fromAddress)
 
     if(typeof this.state.amount == "undefined"){
       this.setState({fromBalance,canWithdraw:this.canWithdraw(),amount:fromBalance})
@@ -65,50 +66,46 @@ export default class SendToAddress extends React.Component {
     return (parseFloat(this.state.amount) > 0 && parseFloat(this.state.amount) <= parseFloat(this.state.fromBalance))
   }
 
-  withdraw = () => {
-    let { fromAddress, amount, metaAccount } = this.state;
-
+  withdraw = async () => {
+    let { fromAddress, amount, metaAccount } = this.state
+    const { tokenSendV2, address, web3, xdaiweb3, pDaiTokenAddr} = this.props
 
     if(this.state.canWithdraw){
-
         console.log("SWITCH TO LOADER VIEW...")
         this.props.changeView('loader')
         setTimeout(()=>{window.scrollTo(0,0)},60)
         //console.log("metaAccount",this.state.metaAccount,"amount",this.props.web3.utils.toWei(amount,'ether'))
-        let tx
 
-        if(this.props.ERC20TOKEN){
-          tx={
-            to:this.props.contracts[this.props.ERC20TOKEN]._address,
-            data: this.props.contracts[this.props.ERC20TOKEN].transfer(this.props.address,this.props.web3.utils.toWei(""+amount,'ether')).encodeABI(),
-            gas: 60000,
-            gasPrice: Math.round(1100000000)//1.1gwei
-          }
-        }else{
-          tx={
-            to:this.props.address,
-            value: this.props.web3.utils.toWei(amount,'ether'),
-            gas: 30000,
-            gasPrice: Math.round(1100000000)//1.1gwei
-          }
+        // NOTE: Amount needs to be cast to a string here.
+        const weiAmount = web3.utils.toWei(""+amount, "ether")
+        const color = await xdaiweb3.getColor(pDaiTokenAddr);
+
+        try {
+          await tokenSendV2(
+            fromAddress,
+            address,
+            weiAmount,
+            color,
+            xdaiweb3,
+            web3,
+            metaAccount.privateKey
+          )
+        } catch(err) {
+          this.props.goBack();
+          window.history.pushState({},"", "/");
+          this.props.changeAlert({
+            type: 'warning',
+            message: 'Transaction was rejected by the node. Please try again or contract an administrator.'
+          });
+          return;
         }
 
-        this.props.web3.eth.accounts.signTransaction(tx, metaAccount.privateKey).then(signed => {
-            this.props.web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-              console.log("META RECEIPT",receipt)
-              if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                metaReceiptTracker[receipt.transactionHash] = true
-                this.props.goBack();
-                window.history.pushState({},"", "/");
-                this.props.changeAlert({
-                  type: 'success',
-                  message: 'Withdrawn! '+receipt.transactionHash,
-                });
-              }
-
-            })
+        this.props.goBack();
+        window.history.pushState({},"", "/");
+        this.props.changeAlert({
+          type: 'success',
+          message: 'Withdrawn!'
         });
-
     }else{
       this.props.changeAlert({type: 'warning', message: i18n.t('withdraw_from_private.error')})
     }
@@ -172,7 +169,11 @@ export default class SendToAddress extends React.Component {
             <div className="form-group w-100">
               <div className="form-group w-100">
                 <label htmlFor="amount_input">{i18n.t('withdraw_from_private.from_address')}</label>
-                <input type="text" className="form-control" placeholder="0x..." value={fromAddress} />
+                <RInput
+                  width={1}
+                  type="text"
+                  placeholder="0x..."
+                  value={fromAddress} />
               </div>
 
               <div className="content bridge row">
@@ -190,18 +191,22 @@ export default class SendToAddress extends React.Component {
 
               <label htmlFor="amount_input">{i18n.t('withdraw_from_private.amount')}</label>
               <div className="input-group">
-                <div className="input-group-prepend">
-                  <div className="input-group-text">$</div>
-                </div>
-                <input type="number" className="form-control" placeholder="0.00" value={this.state.amount}
-                       onChange={event => this.updateState('amount', event.target.value)} />
+                <RInput 
+                  width={1}
+                  type="number"
+                  placeholder="$0.00"
+                  value={this.state.amount}
+                  onChange={event => this.updateState('amount', event.target.value)} />
               </div>
               {products}
             </div>
-            <button style={this.props.buttonStyle.primary} className={`btn btn-success btn-lg w-100 ${canWithdraw ? '' : 'disabled'}`}
-                    onClick={this.withdraw}>
+            <Button 
+              size={'large'}
+              width={1}
+              disabled={!canWithdraw}
+              onClick={this.withdraw}>
               {i18n.t('withdraw_from_private.withdraw')}
-            </button>
+            </Button>
           </div>
       </div>
     )

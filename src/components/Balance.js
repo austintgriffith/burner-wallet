@@ -1,6 +1,7 @@
 import React from 'react';
 import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
+import { Flex, Text, Box, Image } from "rimble-ui";
 
 export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
 
@@ -32,20 +33,18 @@ export  default ({icon, text, selected, amount, address, dollarDisplay}) => {
 
 
   return (
-    <div className="balance row" style={{opacity,paddingBottom:0,paddingLeft:20}}>
-      <div className="avatar col p-0">
-        {iconDisplay}
-        <div style={{position:'absolute',left:60,top:12,fontSize:14,opacity:0.77}}>
+    <Flex justifyContent={"space-between"} alignItems={"center"} borderBottom={1} borderColor={"#DFDFDF"} mb={3} pb={3}>
+      <Flex alignItems={"center"}>
+        <Image src={icon} height={"50"} width={"50"} mr={3} bg="white" />
+
+        <Text>
           {text}
-        </div>
-      </div>
-      <div style={{position:"absolute",right:25,marginTop:15}}>
-        <Scaler config={{startZoomAt:400,origin:"200px 30px",adjustedZoom:1}}>
-          <div style={{fontSize:40,letterSpacing:-2}}>
-            {dollarDisplay(amount)}
-          </div>
-        </Scaler>
-      </div>
-    </div>
+        </Text>
+      </Flex>
+
+      <Text fontSize={4}>
+        {dollarDisplay(amount)}
+      </Text>
+    </Flex>
   )
 };
