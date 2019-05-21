@@ -74,13 +74,13 @@ let metaReceiptTracker = {}
  * @returns gas price in gwei
  */
 function gasPrice() {
-  return fetch({
-    url: 'https://ethgasstation.info/json/ethgasAPI.json',
+  return fetch('https://ethgasstation.info/json/ethgasAPI.json', {
     mode: 'cors',
     method: 'get',
   })
     .then(r => r.json())
     .then((response)=>{
+      console.log(response);
       if(response.average > 0 && response.average < 200){
         const avg = response.average + (response.average*GASBOOSTPRICE)
         return Math.round(avg * 100) / 1000;
@@ -849,7 +849,7 @@ export default class Exchange extends React.Component {
                   }
                 })
                 //send ERC20 DAI to 0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016 (toXdaiBridgeAccount)
-                this.depositDaiToXdai(toXdaiBridgeAccount,this.state.amount,"Sending funds to bridge...",()=>{
+                this.transferDai(toXdaiBridgeAccount,this.state.amount,"Sending funds to bridge...",()=>{
                   this.setState({
                     amount:"",
                     loaderBarColor:"#4ab3f5",
