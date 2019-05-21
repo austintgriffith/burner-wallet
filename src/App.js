@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { helpers, Tx, Input, Output, Util } from 'leap-core';
 import { Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
-import { Tx, Input, Output, Util } from 'leap-core';
 import { equal, bi } from 'jsbi-utils';
 import Web3 from 'web3';
 import { I18nextProvider } from 'react-i18next';

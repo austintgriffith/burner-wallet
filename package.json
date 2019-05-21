@@ -5,8 +5,7 @@
   "dependencies": {
     "base64url": "^3.0.1",
     "bootstrap": "^4.1.3",
-    "base64url": "^3.0.1",
-    "dapparatus": "leapdao/dapparatus#f74eff4",
+    "dapparatus": "leapdao/dapparatus#66912e7",
     "eth-crypto": "^1.3.2",
     "ethereum-mnemonic-privatekey-utils": "^1.0.5",
     "i18next": "^13.1.5",
