@@ -60,12 +60,6 @@ let ERC20NAME
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
 
-// Mainnet DAI by default
-let DAI_TOKEN_ADDR = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
-let P_DAI_TOKEN_ADDR = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
-
-// Mainnet Leap Bridge(ExitHandler)
-let BRIDGE_ADDR = '0x0036192587fD788B75829fbF79BE7F06E4F23B21';
 
 let MARKET_MAKER;
 let leapNetwork;
@@ -95,7 +89,6 @@ if (window.location.hostname.indexOf("localhost") >= 0 ||
   leapNetwork = "Leap Testnet";
   // LEAP token instead of DAI
   DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
-  P_DAI_TOKEN_ADDR = '0x674d3D146453dDbC82aA1Cd46d12E04609408790';
 
   // Testnet Leap Bridge(ExitHandler)
   BRIDGE_ADDR = '0x3c80369bBf392cC1DBA45B2F1d97F7A374f5BB40';
@@ -134,7 +127,6 @@ else if (window.location.hostname.indexOf("burner.leapdao.org") >= 0) {
   WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
   // LEAP token instead of DAI
   DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
-  P_DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
   leapNetwork = "Leap Testnet";
   // Testnet Leap Bridge(ExitHandler)
   BRIDGE_ADDR = '0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530';
@@ -152,7 +144,7 @@ else if (window.location.hostname.indexOf("sundai.io") >= 0) {
   leapNetwork = "Leap Network";
 
   // mainnet sunDAI for Plasma DAI
-  P_DAI_TOKEN_ADDR = '0x3cC0DF021dD36eb378976142Dc1dE3F5726bFc48';
+  DAI_TOKEN_ADDR = '0x3cC0DF021dD36eb378976142Dc1dE3F5726bFc48';
 
   MARKET_MAKER = 'https://k238oyefqc.execute-api.eu-west-1.amazonaws.com/mainnet';
 
@@ -169,7 +161,6 @@ else if (window.location.hostname.indexOf("sundai.local") >= 0 ||
 
   // testnet sunDAI for Plasma DAI
   DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
-  P_DAI_TOKEN_ADDR = '0xeFb369E2c694Bc0ba31945e0D3ac91Ab8E943be3';
 
   // Testnet Leap Bridge(ExitHandler)
   BRIDGE_ADDR = '0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530';
@@ -461,8 +452,7 @@ export default class App extends Component {
   }
   connectToRPC(){
     let mainnetweb3 = new Web3(WEB3_PROVIDER);
-    let daiContract;
-    let bridgeContract;
+    let daiContract, bridgeContract;
     try{
       daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),DAI_TOKEN_ADDR)
       bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), BRIDGE_ADDR)
@@ -1119,7 +1109,7 @@ export default class App extends Component {
                             web3={this.state.web3}
                             xdaiweb3={this.state.xdaiweb3}
                             pdaiContract={this.state.pdaiContract}
-                            pDaiTokenAddr={P_DAI_TOKEN_ADDR}
+                            daiTokenAddr={DAI_TOKEN_ADDR}
                             //amount={false}
                             privateKey={this.state.withdrawFromPrivateKey}
                             goBack={this.goBack.bind(this)}
@@ -1161,7 +1151,6 @@ export default class App extends Component {
                           changeAlert={this.changeAlert}
                           dollarDisplay={dollarDisplay}
                           convertToDollar={convertToDollar}
-                          pDaiTokenAddr={P_DAI_TOKEN_ADDR}
                         />
                       </Card>
                       <Bottom
@@ -1458,10 +1447,10 @@ export default class App extends Component {
                 }
                 if (state.xdaiweb3) {
                   let pdaiContract;
-                  try{
-                    pdaiContract = new state.xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),P_DAI_TOKEN_ADDR)
-                  }catch(e){
-                    console.log("ERROR LOADING DAI Stablecoin Contract",e)
+                  try {
+                    pdaiContract = new state.xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),DAI_TOKEN_ADDR)
+                  } catch(err) {
+                    console.log("Error loading PDAI contract");
                   }
                   this.setState({pdaiContract});
                 }
@@ -1576,7 +1565,7 @@ async function tokenSend(to, value, gasLimit, txData, cb) {
   }
 
   value = xdaiweb3.utils.toWei(""+value, "ether")
-  const color = await xdaiweb3.getColor(P_DAI_TOKEN_ADDR);
+  const color = await xdaiweb3.getColor(DAI_TOKEN_ADDR);
   try {
     const receipt = await tokenSendV2(
       account,
