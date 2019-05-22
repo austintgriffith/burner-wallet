@@ -61,7 +61,6 @@ let titleImage = (
   <span style={{paddingRight:20,paddingLeft:16}}><i className="fas fa-fire" /></span>
 )
 
-
 // TODO: Consolidate this with theme.js
 let innerStyle = {
   maxWidth:740,
