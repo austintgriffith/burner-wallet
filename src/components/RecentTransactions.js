@@ -2,37 +2,46 @@ import React from 'react';
 import { Blockie } from "dapparatus";
 import { Scaler } from "dapparatus";
 
-export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
+export default ({dollarDisplay, view, max, buttonStyle, vendorName, address, recentTxs, block, changeView}) => {
   let txns = []
   let count=0
   if(!max) max=9999
   for(let r in recentTxs){
     let thisValue = parseFloat(recentTxs[r].value)
     if(thisValue>0.0){
-      let dollarView
-      if(ERC20TOKEN){
-        if(recentTxs[r].token){
-          dollarView = (
-            <span>
-              <span style={{opacity:0.33}}>-</span>{dollarDisplay(recentTxs[r].value)}<span style={{opacity:0.33}}>-></span>
-            </span>
-          )
-        }else{
-          dollarView = (
-            <span style={{opacity:0.5,fontSize:14}}>
-              {dollarDisplay(recentTxs[r].value)}
-            </span>
-          )
-        }
 
-      } else {
-        //dollarDisplay
-        dollarView = (
+      let extraUp = 0
+      if(view=="receive"){
+        extraUp=-10
+      }
+      let extraIcon = ""
+      if(recentTxs[r].data){
+        extraIcon = (
+          <div style={{position:'absolute',right:-3,top:extraUp}}>
+            <button className="btn btn-large w-100" style={buttonStyle.primary}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fas fa-comment"></i>
+              </Scaler>
+            </button>
+          </div>
+        )
+      }else{
+        extraIcon = (
+          <div style={{position:'absolute',right:-3,top:extraUp}}>
+            <button className="btn btn-large w-100" style={buttonStyle.secondary}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                <i className="fas fa-comment"></i>
+              </Scaler>
+            </button>
+          </div>
+        )
+      }
+
+      let dollarView = (
           <span>
             <span style={{opacity:0.33}}>-</span>{dollarDisplay(recentTxs[r].value)}<span style={{opacity:0.33}}>-></span>
           </span>
         )
-      }
 
       let toBlockie = (
         <Blockie

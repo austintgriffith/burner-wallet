@@ -19,7 +19,6 @@ export default class Receive extends React.Component {
     let {
       view,
       buttonStyle,
-      ERC20TOKEN,
       address,
       changeAlert,
       changeView,
@@ -52,12 +51,11 @@ export default class Receive extends React.Component {
             view={view}
             max={5}
             buttonStyle={buttonStyle}
-            ERC20TOKEN={ERC20TOKEN}
-            transactionsByAddress={ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
+            transactionsByAddress={this.props.transactionsByAddress}
             changeView={changeView}
             address={address}
             block={this.props.block}
-            recentTxs={ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
+            recentTxs={this.props.recentTxs}
           />
         </div>
         <div name="theVeryBottom" className="text-center bottom-text">

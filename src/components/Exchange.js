@@ -922,53 +922,25 @@ export default class Exchange extends React.Component {
                   });
 
                 }else{
+                  // TODO: get real decimals
+                  const amount = bi(this.state.amount * 10 ** 18);
+                  const tokenAddr = this.props.daiContract._address;
 
-                  //BECAUSE THIS COULD BE ON A TOKEN, THE SEND FUNCTION IS SENDING TOKENS TO THE BRIDGE HAHAHAHA LETs FIX THAT
-                  if(this.props.ERC20TOKEN){
-                    console.log("native sending ",exitableAmount," to ",toDaiBridgeAccount)
-                    this.props.nativeSend(toDaiBridgeAccount, exitableAmount, 120000, (err, result) => {
-                      console.log("RESUTL!!!!",result)
-                      if(result && result.transactionHash){
-                        this.setState({
-                          amount:"",
-                          loaderBarColor:"#4ab3f5",
-                          loaderBarStatusText:"Waiting for bridge...",
-                          loaderBarClick:()=>{
-                            alert(i18n.t('exchange.idk'))
-                          }
-                        })
-                      }
-                    })
-                  }else{
-                    // TODO: get real decimals
-                    let amount = bi(exitableAmount * 10 ** 18);
-                    const tokenAddr = this.props.pdaiContract._address;
-
-                    const color = await this.state.xdaiweb3.getColor(tokenAddr);
-
-                    // special handler for MNY
-                    if (!this.state.notSundai) {
-                      this.directSell(amount, color);
-                      return;
-                    }
-
-                    Exit.fastSellAmount(
-                      this.state.daiAddress, amount, color,
-                      this.state.xdaiweb3, this.props.web3,
-                      `${this.props.marketMaker}/sellExit`
+                  this.state.xdaiweb3.getColor(tokenAddr)
+                    .then(color =>
+                      Exit.fastSellAmount(
+                        this.state.daiAddress, amount, color,
+                        this.state.xdaiweb3, this.props.web3,
+                        'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet/sellExit'
+                      )
                     ).then(rsp => {
                       console.log(rsp);
                       this.updatePendingExits(this.state.daiAddress, this.state.xdaiweb3);
                       this.setState({ amount: "", daiToXdaiMode: false });
                     }).catch(err => {
                       console.log(err);
-                      this.props.changeAlert({
-                        type: 'warning',
-                        message: 'Failed to exit MNY'
-                      });
                     });
-                  }
-                }
+              }
               }}>
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-down" /> Send
@@ -1659,29 +1631,15 @@ export default class Exchange extends React.Component {
       )
     }
 
-    let sendXdaiButton
-
-    if(this.props.ERC20TOKEN){
-      sendXdaiButton = (
-        <OutlineButton
-          width={1}
-          icon={'ArrowForward'}
-          icononly
-          disabled={buttonsDisabled}
-          onClick={()=>{this.setState({sendXdai:true})}}
-        />
-      )
-    }else{
-      sendXdaiButton = (
-        <OutlineButton
-          width={1}
-          icon={'ArrowForward'}
-          icononly
-          disabled={buttonsDisabled}
-          onClick={() => this.props.goBack("send_to_address")}
-        />
-      )
-    }
+    let sendXdaiButton = (
+      <OutlineButton
+        width={1}
+        icon={'ArrowForward'}
+        icononly
+        disabled={buttonsDisabled}
+        onClick={() => this.props.goBack("send_to_address")}
+      />
+    )
 
     let sendXdaiRow = ""
     if(this.state.sendXdai){

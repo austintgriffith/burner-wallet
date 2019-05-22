@@ -52,11 +52,6 @@ const POA_XDAI_NODE = "https://dai.poa.network"
 let XDAI_PROVIDER = POA_XDAI_NODE
 
 let WEB3_PROVIDER
-let CLAIM_RELAY // eslint-disable-line
-let ERC20TOKEN
-let ERC20VENDOR
-let ERC20IMAGE
-let ERC20NAME
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
 
@@ -95,32 +90,6 @@ if (window.location.hostname.indexOf("localhost") >= 0 ||
 
   MARKET_MAKER = 'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet';
 
-  CLAIM_RELAY = false;
-  ERC20NAME = false;
-  ERC20TOKEN = false;
-  ERC20IMAGE = false;
-}
-else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false//'Burner'
-}
-else if (window.location.hostname.indexOf("wallet.galleass.io") >= 0) {
-  //WEB3_PROVIDER = "https://rinkeby.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac";
-  WEB3_PROVIDER = "http://localhost:8545"
-  //CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false//'Burner'
-  document.domain = 'galleass.io'
-}
-else if (window.location.hostname.indexOf("qreth") >= 0) {
-  WEB3_PROVIDER = "https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac"
-  CLAIM_RELAY = false
-  ERC20TOKEN = false
-}
-else if (window.location.hostname.indexOf("xdai") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false
 }
 else if (window.location.hostname.indexOf("burner.leapdao.org") >= 0) {
   XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
@@ -133,10 +102,6 @@ else if (window.location.hostname.indexOf("burner.leapdao.org") >= 0) {
 
   MARKET_MAKER = 'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet';
 
-  CLAIM_RELAY = false;
-  ERC20NAME = false;
-  ERC20TOKEN = false;
-  ERC20IMAGE = false;
 }
 else if (window.location.hostname.indexOf("sundai.io") >= 0) {
   XDAI_PROVIDER = "wss://mainnet-node1.leapdao.org:1443";
@@ -147,11 +112,6 @@ else if (window.location.hostname.indexOf("sundai.io") >= 0) {
   DAI_TOKEN_ADDR = '0x3cC0DF021dD36eb378976142Dc1dE3F5726bFc48';
 
   MARKET_MAKER = 'https://k238oyefqc.execute-api.eu-west-1.amazonaws.com/mainnet';
-
-  CLAIM_RELAY = false;
-  ERC20NAME = false;
-  ERC20TOKEN = false;
-  ERC20IMAGE = false;
 }
 else if (window.location.hostname.indexOf("sundai.local") >= 0 ||
          window.location.hostname.indexOf("sundai.fritz.box") >= 0) {
@@ -166,66 +126,7 @@ else if (window.location.hostname.indexOf("sundai.local") >= 0 ||
   BRIDGE_ADDR = '0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530';
 
   MARKET_MAKER = 'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet';
-  CLAIM_RELAY = false;
-  ERC20NAME = false;
-  ERC20TOKEN = false;
-  ERC20IMAGE = false;
 }
-else if (window.location.hostname.indexOf("buffidai") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20NAME = 'BUFF'
-  ERC20VENDOR = 'VendingMachine'
-  ERC20TOKEN = 'ERC20Vendable'
-  ERC20IMAGE = bufficorn
-  LOADERIMAGE = bufficorn
-}
-else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20NAME = 'BURN'
-  ERC20VENDOR = 'BurnerVendor'
-  ERC20TOKEN = 'Burner'
-  ERC20IMAGE = cypherpunk
-  LOADERIMAGE = cypherpunk
-}
-else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
-  ERC20NAME = false
-  ERC20TOKEN = false
-  ERC20IMAGE = false
-}
-
-if(ERC20NAME==="BUFF"){
-  mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
-  mainStyle.backgroundColor = "#20012d"
-  mainStyle.mainColor = "#b6299e"
-  mainStyle.mainColorAlt = "#de3ec3"
-  title = "BuffiDai.io"
-  titleImage = (
-    <img src={bufficorn} style={{
-      maxWidth:50,
-      maxHeight:50,
-      marginRight:15,
-      marginTop:-10
-    }} alt="" />
-  )
-} else if(ERC20NAME==="BURN"){
-  mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
-  mainStyle.backgroundColor = "#6c0664"
-  mainStyle.mainColor = "#e72da3"
-  mainStyle.mainColorAlt = "#f948b8"
-  title = "Burner"
-  titleImage = (
-    <img src={cypherpunk} style={{
-      maxWidth:50,
-      maxHeight:50,
-      marginRight:15,
-      marginTop:-10
-    }} alt=""/>
-  )
-}
-
 
 let innerStyle = {
   maxWidth:740,
@@ -775,12 +676,7 @@ export default class App extends Component {
     recentTxs = recentTxs.slice(0,12)
     localStorage.setItem(this.state.account+"recentTxs",JSON.stringify(recentTxs))
     localStorage.setItem(this.state.account+"transactionsByAddress",JSON.stringify(transactionsByAddress))
-
-    this.setState({recentTxs:recentTxs,transactionsByAddress:transactionsByAddress},()=>{
-      if(ERC20TOKEN){
-        this.syncFullTransactions()
-      }
-    })
+    this.setState({recentTxs:recentTxs,transactionsByAddress:transactionsByAddress})
   }
   async addAllTransactionsFromList(recentTxs,transactionsByAddress,theList){
     let updatedTxs = false
@@ -791,7 +687,6 @@ export default class App extends Component {
       cleanEvent.to = cleanEvent.to.toLowerCase()
       cleanEvent.from = cleanEvent.from.toLowerCase()
       cleanEvent.value = this.state.web3.utils.fromWei(""+cleanEvent.value,'ether')
-      cleanEvent.token = ERC20TOKEN
       if(cleanEvent.data) {
         let decrypted = await this.decryptInput(cleanEvent.data)
         if(decrypted){
@@ -890,10 +785,6 @@ export default class App extends Component {
     }
 
     let totalBalance = parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice) + parseFloat(this.state.daiBalance) + parseFloat(this.state.xdaiBalance)
-    if(ERC20TOKEN){
-      totalBalance += parseFloat(this.state.balance)
-    }
-
     let header = (
       <div style={{height:50}}>
       </div>
@@ -951,17 +842,6 @@ export default class App extends Component {
                   </div>
                 )
 
-                if(ERC20TOKEN){
-                  selected = ERC20NAME
-                  extraTokens = (
-                    <div>
-                      <Balance icon={ERC20IMAGE} selected={selected} text={"MNY"} amount={this.state.balance} address={account} dollarDisplay={dollarDisplay} />
-                    </div>
-                  )
-                  defaultBalanceDisplay = extraTokens
-                }
-
-                if(view.indexOf("account_")===0)
                 {
 
                   let targetAddress = view.replace("account_","")
@@ -980,7 +860,7 @@ export default class App extends Component {
                           buttonStyle={buttonStyle}
                           saveKey={this.saveKey.bind(this)}
                           metaAccount={this.state.metaAccount}
-                          transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                          transactionsByAddress={this.state.transactionsByAddress}
                           address={account}
                           balance={balance}
                           changeAlert={this.changeAlert}
@@ -1039,7 +919,6 @@ export default class App extends Component {
                           changeAlert={this.changeAlert}
                           changeView={this.changeView}
                           dollarDisplay={dollarDisplay}
-                          ERC20TOKEN={ERC20TOKEN}
                         />
 
                         <Box>
@@ -1050,12 +929,11 @@ export default class App extends Component {
                           dollarDisplay={dollarDisplay}
                           view={this.state.view}
                           buttonStyle={buttonStyle}
-                          ERC20TOKEN={ERC20TOKEN}
-                          transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                          transactionsByAddress={this.state.transactionsByAddress}
                           changeView={this.changeView}
                           address={account}
                           block={this.state.block}
-                          recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
+                          recentTxs={this.state.recentTxs}
                         />
 
                       </Card>
@@ -1101,7 +979,6 @@ export default class App extends Component {
                           <NavCard title={i18n.t('withdraw')} goBack={this.goBack.bind(this)}/>
                           {defaultBalanceDisplay}
                           <WithdrawFromPrivate
-                            ERC20TOKEN={ERC20TOKEN}
                             products={this.state.products}
                             buttonStyle={buttonStyle}
                             balance={balance}
@@ -1139,7 +1016,6 @@ export default class App extends Component {
                           parseAndCleanPath={this.parseAndCleanPath.bind(this)}
                           openScanner={this.openScanner.bind(this)}
                           scannerState={this.state.scannerState}
-                          ERC20TOKEN={ERC20TOKEN}
                           buttonStyle={buttonStyle}
                           balance={balance}
                           web3={this.state.web3}
@@ -1169,7 +1045,6 @@ export default class App extends Component {
                           receipt={this.state.receipt}
                           view={this.state.view}
                           block={this.state.block}
-                          ERC20TOKEN={ERC20TOKEN}
                           buttonStyle={buttonStyle}
                           balance={balance}
                           web3={this.state.web3}
@@ -1200,7 +1075,6 @@ export default class App extends Component {
                         <Receive
                           view={this.state.view}
                           block={this.state.block}
-                          ERC20TOKEN={ERC20TOKEN}
                           buttonStyle={buttonStyle}
                           balance={balance}
                           web3={this.state.web3}
@@ -1353,10 +1227,6 @@ export default class App extends Component {
                           eth={eth}
                           dai={dai}
                           xdai={xdai}
-                          ERC20NAME={ERC20NAME}
-                          ERC20IMAGE={ERC20IMAGE}
-                          ERC20TOKEN={ERC20TOKEN}
-                          ERC20VENDOR={ERC20VENDOR}
                           ethprice={this.state.ethprice}
                           ethBalance={this.state.ethBalance}
                           daiBalance={this.state.daiBalance}
@@ -1442,9 +1312,6 @@ export default class App extends Component {
               xdaiProvider={XDAI_PROVIDER}
               onUpdate={async (state) => {
                 //console.log("DAPPARATUS UPDATE",state)
-                if(ERC20TOKEN){
-                  delete state.balance
-                }
                 if (state.xdaiweb3) {
                   let pdaiContract;
                   try {
