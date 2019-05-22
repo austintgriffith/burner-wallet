@@ -92,7 +92,16 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
 
   let topLeft
 
+<<<<<<< HEAD
   if(view==="main" || view==="exchange"){
+=======
+  // TODO: Put this in config.js file
+  const explorerUrl = network === 'Leap Network'
+    ? 'https://mainnet.leapdao.org/explorer/address/'
+    : 'https://staging.leapdao.org/explorer/address/';
+
+  if(view=="main" || view=="exchange"){
+>>>>>>> config.json => config.js
     opacity = 1.0
     topLeft = (
       <div style={{position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}} onClick={() => changeView('receive')} >

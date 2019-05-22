@@ -4,7 +4,7 @@ import React from 'react';
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import RecentTransactions from './RecentTransactions';
 import i18n from '../i18n';
-import config from "../config.json";
+import config from "../config";
 
 import {
   Flex,
@@ -41,7 +41,7 @@ export default class Receive extends React.Component {
             </Box>
           </CopyToClipboard>
           <div style={{width:"100%",textAlign:'center',padding:20}}>
-            <a href={config.explorer.url + "address/" + address} target="_blank" rel="noopener noreferrer">
+            <a href={config.EXPLORER.URL + "address/" + address} target="_blank" rel="noopener noreferrer">
               View on {config.explorer.name}
             </a>
           </div>
