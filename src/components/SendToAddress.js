@@ -5,7 +5,6 @@ import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
 import queryString from 'query-string';
-
 import {
   Box,
   Button,

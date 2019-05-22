@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Button, Icon, OutlineButton, Box, Text } from "rimble-ui";
+import { Flex, Button, Icon, Box } from "rimble-ui";
 import i18next from "i18next";
 
 export default ({

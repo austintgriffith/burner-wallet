@@ -6,11 +6,13 @@ import Linkify from 'react-linkify'
 import {toArray} from 'react-emoji-render';
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
-import config from "../config";
+import getConfig from "../config";
 import { OutlineButton } from 'rimble-ui'
-const Transaction = require("ethereumjs-tx")
-const EthUtil = require('ethereumjs-util')
-const EthCrypto = require('eth-crypto');
+import Transaction from "ethereumjs-tx";
+import EthUtil from 'ethereumjs-util';
+import EthCrypto from 'eth-crypto';
+
+const CONFIG = getConfig();
 
 let interval
 let counter = 0
@@ -303,7 +305,7 @@ export default class History extends React.Component {
       <div style={{marginTop:20}}>
           <div className="content ops row">
             <div className="col-2 p-1">
-              <a href={config.EXPLORER.URL + "address/"+ address} target="_blank" rel="noopener noreferrer">
+              <a href={CONFIG.EXPLORER.URL + "address/"+ address} target="_blank" rel="noopener noreferrer">
                 <Blockies seed={target} scale={5}/> {isEncrypted}
               </a>
             </div>

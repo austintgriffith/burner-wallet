@@ -2,8 +2,6 @@ import React from 'react';
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18n from '../i18n';
 import RecentTransactions from './RecentTransactions';
-// const QRCode = require('qrcode.react');
-
 import {
   Flex,
   Box,

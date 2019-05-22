@@ -10,33 +10,6 @@ export default ({dollarDisplay, view, max, buttonStyle, vendorName, address, rec
     let thisValue = parseFloat(recentTxs[r].value)
     if(thisValue>0.0){
 
-      let extraUp = 0
-      if(view=="receive"){
-        extraUp=-10
-      }
-      let extraIcon = ""
-      if(recentTxs[r].data){
-        extraIcon = (
-          <div style={{position:'absolute',right:-3,top:extraUp}}>
-            <button className="btn btn-large w-100" style={buttonStyle.primary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-comment"></i>
-              </Scaler>
-            </button>
-          </div>
-        )
-      }else{
-        extraIcon = (
-          <div style={{position:'absolute',right:-3,top:extraUp}}>
-            <button className="btn btn-large w-100" style={buttonStyle.secondary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-comment"></i>
-              </Scaler>
-            </button>
-          </div>
-        )
-      }
-
       let dollarView = (
           <span>
             <span style={{opacity:0.33}}>-</span>{dollarDisplay(recentTxs[r].value)}<span style={{opacity:0.33}}>-></span>

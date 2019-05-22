@@ -8,6 +8,7 @@ import {
   Input as RInput,
 } from 'rimble-ui'
 
+// TODO: Can this be state of SendToAddress?
 let pollInterval
 
 export default class SendToAddress extends React.Component {

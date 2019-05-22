@@ -30,35 +30,22 @@ import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
 import incogDetect from './services/incogDetect.js'
 import { Card, Box, ThemeProvider } from 'rimble-ui';
-import theme from "./theme"
-
+import theme from "./theme";
+import getConfig from "./config";
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
-
-
-import bufficorn from './bufficorn.png';
-import cypherpunk from './cypherpunk.png';
 import eth from './ethereum.png';
 import dai from './dai.jpg';
 import xdai from './xdai.png';
-
 import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 
-//const POA_XDAI_NODE = "https://dai-b.poa.network"
-const POA_XDAI_NODE = "https://dai.poa.network"
-
-
-let XDAI_PROVIDER = POA_XDAI_NODE
-
-let WEB3_PROVIDER
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
 
+const CONFIG = getConfig();
 
-let MARKET_MAKER;
-let leapNetwork;
-
+// TODO: Consolidate this with theme.js
 let mainStyle = {
   width:"100%",
   height:"100%",
@@ -74,66 +61,15 @@ let titleImage = (
   <span style={{paddingRight:20,paddingLeft:16}}><i className="fas fa-fire" /></span>
 )
 
-//<i className="fas fa-fire" />
-if (window.location.hostname.indexOf("localhost") >= 0 ||
-    window.location.hostname.indexOf("10.0.0.107") >= 0 ||
-    // For Tim to debug
-    window.location.hostname.indexOf("sundai.fritz.box") >= 0) {
-  XDAI_PROVIDER = "https://staging-testnet.leapdao.org/rpc";
-  WEB3_PROVIDER = "https://rinkeby.infura.io/v3/f039330d8fb747e48a7ce98f51400d65"
-  leapNetwork = "Leap Testnet";
-  // LEAP token instead of DAI
-  DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
 
-  // Testnet Leap Bridge(ExitHandler)
-  BRIDGE_ADDR = '0x3c80369bBf392cC1DBA45B2F1d97F7A374f5BB40';
-
-  MARKET_MAKER = 'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet';
-
-}
-else if (window.location.hostname.indexOf("burner.leapdao.org") >= 0) {
-  XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
-  WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
-  // LEAP token instead of DAI
-  DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
-  leapNetwork = "Leap Testnet";
-  // Testnet Leap Bridge(ExitHandler)
-  BRIDGE_ADDR = '0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530';
-
-  MARKET_MAKER = 'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet';
-
-}
-else if (window.location.hostname.indexOf("sundai.io") >= 0) {
-  XDAI_PROVIDER = "wss://mainnet-node1.leapdao.org:1443";
-  WEB3_PROVIDER = "wss://mainnet.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
-  leapNetwork = "Leap Network";
-
-  // mainnet sunDAI for Plasma DAI
-  DAI_TOKEN_ADDR = '0x3cC0DF021dD36eb378976142Dc1dE3F5726bFc48';
-
-  MARKET_MAKER = 'https://k238oyefqc.execute-api.eu-west-1.amazonaws.com/mainnet';
-}
-else if (window.location.hostname.indexOf("sundai.local") >= 0 ||
-         window.location.hostname.indexOf("sundai.fritz.box") >= 0) {
-  XDAI_PROVIDER = "wss://testnet-node1.leapdao.org:1443";
-  WEB3_PROVIDER = "wss://rinkeby.infura.io/ws/v3/f039330d8fb747e48a7ce98f51400d65";
-  leapNetwork = "Leap Testnet";
-
-  // testnet sunDAI for Plasma DAI
-  DAI_TOKEN_ADDR = '0xD2D0F8a6ADfF16C2098101087f9548465EC96C98';
-
-  // Testnet Leap Bridge(ExitHandler)
-  BRIDGE_ADDR = '0x2c2a3b359edbCFE3c3Ac0cD9f9F1349A96C02530';
-
-  MARKET_MAKER = 'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet';
-}
-
+// TODO: Consolidate this with theme.js
 let innerStyle = {
   maxWidth:740,
   margin:'0 auto',
   textAlign:'left'
 }
 
+// TODO: Consolidate this with theme.js
 let buttonStyle = {
   primary: {
     backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",
@@ -150,6 +86,8 @@ let buttonStyle = {
   }
 }
 
+// TODO: Make this part of config.js. Tim didn't do it yet because he doesn't
+// understand what these constants do :/
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
 
@@ -352,11 +290,11 @@ export default class App extends Component {
     this.connectToRPC()
   }
   connectToRPC(){
-    let mainnetweb3 = new Web3(WEB3_PROVIDER);
+    let mainnetweb3 = new Web3(CONFIG.ROOTCHAIN.RPC);
     let daiContract, bridgeContract;
     try{
-      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),DAI_TOKEN_ADDR)
-      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), BRIDGE_ADDR)
+      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),CONFIG.ROOTCHAIN.DAI_ADDRESS)
+      bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), CONFIG.SIDECHAIN.BRIDGE_ADDRESS)
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
@@ -793,7 +731,7 @@ export default class App extends Component {
       header = (
         <Header
           openScanner={this.openScanner.bind(this)}
-          network={leapNetwork || this.state.network}
+          network={CONFIG.SIDECHAIN.NAME || this.state.network}
           total={totalBalance}
           ens={this.state.ens}
           title={this.state.title}
@@ -842,7 +780,7 @@ export default class App extends Component {
                   </div>
                 )
 
-                {
+                if(view.indexOf("account_")===0) {
 
                   let targetAddress = view.replace("account_","")
                   console.log("TARGET",targetAddress)
@@ -986,7 +924,7 @@ export default class App extends Component {
                             web3={this.state.web3}
                             xdaiweb3={this.state.xdaiweb3}
                             pdaiContract={this.state.pdaiContract}
-                            daiTokenAddr={DAI_TOKEN_ADDR}
+                            daiTokenAddr={CONFIG.SIDECHAIN.DAI}
                             //amount={false}
                             privateKey={this.state.withdrawFromPrivateKey}
                             goBack={this.goBack.bind(this)}
@@ -1252,7 +1190,7 @@ export default class App extends Component {
                           goBack={this.goBack.bind(this)}
                           dollarDisplay={dollarDisplay}
                           tokenSendV2={tokenSendV2.bind(this)}
-                          marketMaker={MARKET_MAKER}
+                          marketMaker={CONFIG.SIDECHAIN.MARKET_MAKER}
                         />
                       </Card>
                     </div>
@@ -1307,15 +1245,15 @@ export default class App extends Component {
               }}
               //used to pass a private key into Dapparatus
               newPrivateKey={this.state.newPrivateKey}
-              fallbackWeb3Provider={WEB3_PROVIDER}
+              fallbackWeb3Provider={CONFIG.ROOTCHAIN.RPC}
               network="LeapTestnet"
-              xdaiProvider={XDAI_PROVIDER}
+              xdaiProvider={CONFIG.SIDECHAIN.RPC}
               onUpdate={async (state) => {
                 //console.log("DAPPARATUS UPDATE",state)
                 if (state.xdaiweb3) {
                   let pdaiContract;
                   try {
-                    pdaiContract = new state.xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),DAI_TOKEN_ADDR)
+                    pdaiContract = new state.xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"), CONFIG.SIDECHAIN.DAI_ADDRESS)
                   } catch(err) {
                     console.log("Error loading PDAI contract");
                   }
@@ -1432,7 +1370,7 @@ async function tokenSend(to, value, gasLimit, txData, cb) {
   }
 
   value = xdaiweb3.utils.toWei(""+value, "ether")
-  const color = await xdaiweb3.getColor(DAI_TOKEN_ADDR);
+  const color = await xdaiweb3.getColor(CONFIG.SIDECHAIN.DAI);
   try {
     const receipt = await tokenSendV2(
       account,
