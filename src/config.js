@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const configs = [
   {
     DOMAINS: ["localhost", "10.0.0.107", "sundai.fritz.box"],
@@ -119,4 +120,11 @@ export default function getConfig() {
   } else {
     throw new Error("Cannot find distinct config for this domain");
   }
+=======
+export default {
+    "EXPLORER": {
+        "URL": "https://testnet.leapdao.org/explorer/",
+        "NAME": "LeapDAO Testnet Explorer"
+    }
+>>>>>>> config.json => config.js
 }
