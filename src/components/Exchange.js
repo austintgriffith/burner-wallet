@@ -854,7 +854,6 @@ export default class Exchange extends React.Component {
               <Button disabled={buttonsDisabled} onClick={async ()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
 
-
                 if(this.state.xdaiMetaAccount){
                   //send funds using metaaccount on xdai
 
@@ -893,7 +892,6 @@ export default class Exchange extends React.Component {
                       message: 'Failed to exit MNY'
                     });
                   });
-
                 }else{
                   // TODO: get real decimals
                   const amount = bi(this.state.amount * 10 ** 18);
