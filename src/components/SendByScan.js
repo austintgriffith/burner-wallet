@@ -215,6 +215,7 @@ class SendByScan extends Component {
         onScan={this.handleScan}
         onImageLoad={this.onImageLoad}
         style={{ width: "100%" }}
+        resolution={1200}
       />
     )
     if(this.state.legacyMode){
