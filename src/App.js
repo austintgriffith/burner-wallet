@@ -346,7 +346,7 @@ class App extends Component {
         contextElement.innerHTML = 'INCOGNITO';
       }else if (typeof web3 !== 'undefined') {
         console.log("NOT INCOG",this.state.metaAccount)
-        if (window.web3.currentProvider.isMetaMask === true) {
+        if (window.web3 && window.web3.currentProvider && window.web3.currentProvider.isMetaMask === true) {
           document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
           document.body.style.backgroundColor = "#ca6e28"
           var contextElement = document.getElementById("context")
