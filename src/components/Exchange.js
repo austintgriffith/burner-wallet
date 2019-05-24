@@ -910,7 +910,7 @@ export default class Exchange extends React.Component {
             icon={'ArrowDownward'}
             disabled={
               buttonsDisabled ||
-              (!this.state.notSundai && this.state.exitableSunDaiBalance === 0) ||
+              (!this.state.notSundai && this.state.exitableSunDaiBalance ===0) ||
               parseFloat(this.props.xdaiBalance) === 0
             }
             onClick={()=>{

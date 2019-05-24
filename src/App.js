@@ -1396,7 +1396,7 @@ async function tokenSend(to, value, gasLimit, txData, cb) {
 }
 
 async function tokenSendV2(from, to, value, color, xdaiweb3, web3, privateKey) {
-  const unspent = await xdaiweb3.getUnspent(from, 0)
+  const unspent = await xdaiweb3.getUnspent(from, color)
 
   let transaction;
   if (Util.isNST(color)) {
