@@ -1,9 +1,6 @@
 import React from 'react';
 import Ruler from "./Ruler";
-import Balance from "./Balance";
-import Blockies from 'react-blockies';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-import { Scaler, Button } from "dapparatus"
 var QRCode = require('qrcode.react');
 
 export default class ShareLink extends React.Component {
@@ -15,26 +12,17 @@ export default class ShareLink extends React.Component {
     }
   }
   render() {
-    let { canSend } = this.state;
 
     let port = window.location.port
-    if(port && port!="80"){
+    if(port && port!=="80"){
       port=":"+port
     }else{
       port=""
     }
 
     let url = window.location.protocol + "//" + window.location.hostname+port;
-    let element = "";
     let qrValue = url + "/" + this.props.sendLink + ";" + this.props.sendKey;
-    let extraDisplay = "";
-
     let qrSize = Math.min(document.documentElement.clientWidth,512)-90
-
-
-    if(this.state.copied){
-      extraDisplay="Copied Link!"
-    }
 
     return (
       <div>

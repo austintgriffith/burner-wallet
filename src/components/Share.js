@@ -9,11 +9,6 @@ import {
 } from 'rimble-ui'
 
 export default class Receive extends React.Component {
-  constructor(props) {
-    super(props);
-    let initialState = {
-    }
-  }
 
   render() {
     let {

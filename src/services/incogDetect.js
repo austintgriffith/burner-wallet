@@ -2,7 +2,7 @@
 //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
 
 function retry(isDone, next) {
-    var current_trial = 0, max_retry = 50, interval = 10, is_timeout = false;
+    var current_trial = 0, max_retry = 50, is_timeout = false;
     var id = window.setInterval(
         function() {
             if (isDone()) {
@@ -24,13 +24,13 @@ function isIE10OrLater(user_agent) {
     if (ua.indexOf('msie') === 0 && ua.indexOf('trident') === 0) {
         return false;
     }
-    var match = /(?:msie|rv:)\s?([\d\.]+)/.exec(ua);
+    var match = /(?:msie|rv:)\s?([\d.]+)/.exec(ua);
     if (match && parseInt(match[1], 10) >= 10) {
         return true;
     }
     // MS Edge Detection from this gist: https://gist.github.com/cou929/7973956
     var edge = /edge/.exec(ua);
-    if (edge && edge[0] == "edge") {
+    if (edge && edge[0] === "edge") {
         return true;
     }
     return false;

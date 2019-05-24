@@ -1,9 +1,8 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+
 import React from 'react';
-import Ruler from "./Ruler";
-import Balance from "./Balance";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import RecentTransactions from './RecentTransactions';
-import { scroller } from 'react-scroll'
 import i18n from '../i18n';
 import config from "../config.json";
 
@@ -16,23 +15,15 @@ import {
 
 export default class Receive extends React.Component {
 
-  constructor(props) {
-    super(props);
-    let initialState = {
-    }
-  }
   render() {
     let {
       view,
       buttonStyle,
       ERC20TOKEN,
       address,
-      balance,
       changeAlert,
       changeView,
       dollarDisplay,
-      subBalanceDisplay,
-      account
     } = this.props
 
     return (
@@ -51,7 +42,7 @@ export default class Receive extends React.Component {
             </Box>
           </CopyToClipboard>
           <div style={{width:"100%",textAlign:'center',padding:20}}>
-            <a href={config.explorer.url + "address/" + address} target="_blank">
+            <a href={config.explorer.url + "address/" + address} target="_blank" rel="noopener noreferrer">
               View on {config.explorer.name}
             </a>
           </div>

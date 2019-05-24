@@ -1,14 +1,10 @@
 import React from 'react';
 import Ruler from "./Ruler";
-import Balance from "./Balance";
 import i18n from '../i18n';
 
 
-
-export default ({mainStyle, address, balance, burnWallet, goBack, dollarDisplay}) => {
-
+export default ({ mainStyle, burnWallet, goBack }) => {
   return (
-
     <div>
       <div style={{textAlign:"center",width:"100%",fontWeight:'bold',fontSize:30}}>
         {i18n.t('burn_wallet.burn_private_key_question')}

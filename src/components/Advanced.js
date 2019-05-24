@@ -1,6 +1,5 @@
 import React from 'react';
 import { Scaler } from "dapparatus";
-import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18n from '../i18n';
 import {
@@ -20,10 +19,10 @@ export default class Advanced extends React.Component {
     }
   }
   render(){
-    let {isVendor, balance, address, privateKey, changeAlert, changeView, goBack, setPossibleNewPrivateKey} = this.props
+    let {isVendor, balance, privateKey, changeAlert, changeView, setPossibleNewPrivateKey} = this.props
 
     let url = window.location.protocol+"//"+window.location.hostname
-    if(window.location.port&&window.location.port!=80&&window.location.port!=443){
+    if(window.location.port&&window.location.port!==80&&window.location.port!==443){
       url = url+":"+window.location.port
     }
     let qrSize = Math.min(document.documentElement.clientWidth,512)-90
@@ -88,7 +87,7 @@ export default class Advanced extends React.Component {
                       //const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(newPrivateKey)
                       changeView('main')
                       let possibleNewPrivateKey = this.state.newPrivateKey
-                      if(possibleNewPrivateKey.indexOf("0x")!=0){
+                      if(possibleNewPrivateKey.indexOf("0x")!==0){
                         possibleNewPrivateKey = "0x"+possibleNewPrivateKey
                       }
                       setPossibleNewPrivateKey(possibleNewPrivateKey)
@@ -162,7 +161,7 @@ export default class Advanced extends React.Component {
         <div style={{width:"100%",textAlign:"center"}}><h5>Learn More</h5></div>
         <div className="content ops row" style={{marginBottom:10}}>
           <div className="col-6 p-1">
-            <a href="https://github.com/CinemarketIO/motion-burner" style={{color:"#FFFFFF"}} target="_blank">
+            <a href="https://github.com/CinemarketIO/motion-burner" style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
               <OutlineButton width={1}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-code"/> {i18n.t('code')}
@@ -171,7 +170,7 @@ export default class Advanced extends React.Component {
             </a>
           </div>
           <div className="col-6 p-1">
-            <a href="https://docs.google.com/document/d/1QS4goTOE8TdeNaXoUzk8FKeKDx_BE0zC2ru6Qvzr108" style={{color:"#FFFFFF"}} target="_blank">
+            <a href="https://docs.google.com/document/d/1QS4goTOE8TdeNaXoUzk8FKeKDx_BE0zC2ru6Qvzr108" style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
               <OutlineButton width={1}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-info"/> {i18n.t('about')}

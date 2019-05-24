@@ -1,20 +1,10 @@
 import React from "react";
-import Ruler from "./Ruler";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import Balance from "./Balance";
 import i18n from "../i18n";
 import { OutlineButton, Flex, Icon, Box } from "rimble-ui";
 
 export default ({
   isVendor,
-  buttonStyle,
-  ERC20TOKEN,
-  address,
-  balance,
-  changeAlert,
   changeView,
-  dollarDisplay,
-  subBalanceDisplay
 }) => {
   let exchangeButton;
 

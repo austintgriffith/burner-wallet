@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+
 import React from 'react';
 import { Blockie } from "dapparatus";
 import i18n from '../i18n';
@@ -6,11 +8,6 @@ const BockieSize = 12
 
 export default class Receive extends React.Component {
 
-  constructor(props) {
-    super(props);
-    let initialState = {
-    }
-  }
   componentDidMount(){
     console.log("RECEIPT LOADED",this.props)
     if(this.props.receipt && this.props.receipt.daiposOrderId){
@@ -40,7 +37,7 @@ export default class Receive extends React.Component {
     }
   }
   render() {
-    let {receipt,buttonStyle,ERC20TOKEN,address, balance, changeView, dollarDisplay,account} = this.props
+    let {receipt, dollarDisplay} = this.props
 
     let message = ""
 

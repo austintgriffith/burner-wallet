@@ -1,6 +1,4 @@
 import React from 'react';
-import Ruler from "./Ruler";
-import Balance from "./Balance";
 import cookie from 'react-cookies'
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
@@ -21,7 +19,7 @@ export default class SendToAddress extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!! window.location.search",window.location.search,parsed)
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!! window.location.search",window.location.search)
 
     let initialState;
     if (props.scannerState) {
@@ -45,12 +43,8 @@ export default class SendToAddress extends React.Component {
     initialState.fromEns = ""
     initialState.canSend = false
 
-    let startingAmount = 0.15
-    if(props.amount){
-      startingAmount = props.amount
-    }
     if(window.location.pathname){
-      if(window.location.pathname.length==43){
+      if(window.location.pathname.length===43){
         initialState.toAddress = window.location.pathname.substring(1)
       }else if(window.location.pathname.length>40) {
       //    console.log("window.location.pathname",window.location.pathname)
@@ -79,12 +73,12 @@ export default class SendToAddress extends React.Component {
   updateState = async (key, value) => {
     this.setState({ [key]: value },()=>{
       this.setState({ canSend: this.canSend() },()=>{
-        if(key!="message"){
+        if(key!=="message"){
           this.bounceToAmountIfReady()
         }
       })
     });
-    if(key=="toAddress"){
+    if(key==="toAddress"){
       this.setState({fromEns:""})
       //setTimeout(()=>{
       //  this.scrollToBottom()
@@ -291,7 +285,7 @@ export default class SendToAddress extends React.Component {
             Scan QR Code
           </OutlineButton>
 
-          <div>{ this.state.toAddress && this.state.toAddress.length==42 &&
+          <div>{ this.state.toAddress && this.state.toAddress.length===42 &&
             <CopyToClipboard text={toAddress.toLowerCase()}>
               <div style={{cursor:"pointer"}} onClick={() => this.props.changeAlert({type: 'success', message: toAddress.toLowerCase()+' copied to clipboard'})}>
                 <div style={{opacity:0.33}}>{this.state.fromEns}</div>

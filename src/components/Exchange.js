@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+
 import React from 'react';
 import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
@@ -13,23 +15,11 @@ import {
   Box,
   Button,
   OutlineButton,
-  Icon,
   Input as RInput,
   Field
 } from 'rimble-ui'
 
-import {
-  Unspent,
-  Tx,
-  Input,
-  Output,
-  Outpoint,
-  OutpointJSON,
-  Type,
-  LeapTransaction,
-  helpers,
-  Exit,
-} from 'leap-core';
+import { Exit } from 'leap-core';
 
 import { fromRpcSig } from 'ethereumjs-util';
 
@@ -66,8 +56,6 @@ const uniswapContractObject = {
   blocknumber:6627956,
 }
 
-let interval
-let intervalLong
 let metaReceiptTracker = {}
 
 /**
@@ -103,7 +91,7 @@ export default class Exchange extends React.Component {
     let xdaiMetaAccount = false
     let daiAddress = false
     let xdaiAddress = false
-    if(pk&&pk!="0"){
+    if(pk&&pk!=="0"){
       mainnetMetaAccount = mainnetweb3.eth.accounts.privateKeyToAccount(pk)
       daiAddress = mainnetMetaAccount.address.toLowerCase();
       xdaiMetaAccount = xdaiweb3.eth.accounts.privateKeyToAccount(pk)
@@ -139,7 +127,7 @@ export default class Exchange extends React.Component {
   }
 
   async maybeApprovePDai(amountWei) {
-    
+
     const pDaiAllowance = await this.props.daiContract.methods.allowance(
       this.state.daiAddress,
       this.props.pdaiContract._address,
@@ -167,7 +155,7 @@ export default class Exchange extends React.Component {
   updatePendingExits(daiAddress, xdaiweb3) {
     const account = daiAddress;
     const tokenAddr = this.props.pdaiContract._address;
-                    
+
     xdaiweb3.getColor(tokenAddr)
     .then(color => {
       return fetch(
@@ -196,7 +184,7 @@ export default class Exchange extends React.Component {
   };
   async componentDidMount(){
     this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
-    interval = setInterval(this.poll.bind(this),1500)
+    this.interval = setInterval(this.poll.bind(this),1500)
     setTimeout(this.poll.bind(this),250)
   }
   async getWrappedDaiBalance() {
@@ -221,12 +209,12 @@ export default class Exchange extends React.Component {
     }
   }
   async poll(){
-    let { mainnetweb3, xdaiweb3, xdaiAddress} = this.state
+    let { xdaiweb3 } = this.state
     /*let { daiContract } = this.props
     if(daiContract){
       let daiBalance = await daiContract.methods.balanceOf(this.state.daiAddress).call()
       daiBalance = mainnetweb3.utils.fromWei(daiBalance,"ether")
-      if(daiBalance!=this.state.daiBalance){
+      if(daiBalance!==this.state.daiBalance){
         this.setState({daiBalance})
       }
     }*/
@@ -240,23 +228,6 @@ export default class Exchange extends React.Component {
         }
       }
     }
-    const xDaiToEthGasStationEnabled = false;
-
-    if(xDaiToEthGasStationEnabled && parseFloat(this.props.daiBalance)>0 && parseFloat(this.props.ethBalance)<=0.001 && parseFloat(this.props.xdaiBalance) > 0){
-      let getGasText = (
-        <div>
-          ⛽ xDai -> ETH
-        </div>
-      )
-      if(this.state.gettingGas){
-        getGasText = (
-          <div>
-            ⛽ <i className="fas fa-cog fa-spin"></i>
-          </div>
-        )
-      }
-    }
-
     this.updatePendingExits(this.state.daiAddress, xdaiweb3)
 
     if (!this.state.notSundai) {
@@ -274,7 +245,7 @@ export default class Exchange extends React.Component {
       //console.log("!! xdaiBalance:",xdaiBalance)
       this.setState({xdaiBalance:xdaiweb3.utils.fromWei(xdaiBalance,'ether')})
     }*/
-    if(this.state.daiToXdaiMode=="withdrawing"){
+    if(this.state.daiToXdaiMode==="withdrawing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
       let percentDone = Math.min(100,((txAge * 100) / xdaiToDaiEstimatedTime)+5)
 
@@ -294,7 +265,7 @@ export default class Exchange extends React.Component {
         this.setState({loaderBarPercent:percentDone})
       }
 
-    }else if(this.state.daiToXdaiMode=="depositing"){
+    }else if(this.state.daiToXdaiMode==="depositing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
       let percentDone = Math.min(100,((txAge * 100) / daiToxDaiEstimatedTime)+5)
 
@@ -313,7 +284,7 @@ export default class Exchange extends React.Component {
       }else{
         this.setState({loaderBarPercent:percentDone})
       }
-    }else if(this.state.daiToXdaiMode=="sending"){
+    }else if(this.state.daiToXdaiMode==="sending"){
       let txAge = Date.now() - this.state.loaderBarStartTime
       let percentDone = Math.min(100,((txAge * 100) / sendDaiEstimatedTime)+5)
 
@@ -335,7 +306,7 @@ export default class Exchange extends React.Component {
     }
 
 
-    if(this.state.ethToDaiMode=="withdrawing"){
+    if(this.state.ethToDaiMode==="withdrawing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
       let percentDone = Math.min(100,((txAge * 100) / exchangeEstimatedTime) + 5)
       //ethBalanceAtStart:this.state.ethBalance,
@@ -356,7 +327,7 @@ export default class Exchange extends React.Component {
         this.setState({loaderBarPercent:percentDone})
       }
 
-    }else if(this.state.ethToDaiMode=="depositing"){
+    }else if(this.state.ethToDaiMode==="depositing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
       let percentDone = Math.min(100,((txAge * 100) / exchangeEstimatedTime)+5)
 
@@ -375,7 +346,7 @@ export default class Exchange extends React.Component {
       }else{
         this.setState({loaderBarPercent:percentDone})
       }
-    }else if(this.state.ethToDaiMode=="sending"){
+    }else if(this.state.ethToDaiMode==="sending"){
       let txAge = Date.now() - this.state.loaderBarStartTime
       let percentDone = Math.min(100,((txAge * 100) / exchangeEstimatedTime) + 5)
       //ethBalanceAtStart:this.state.ethBalance,
@@ -452,7 +423,7 @@ export default class Exchange extends React.Component {
         const amountWei = this.state.mainnetweb3.utils.toWei(""+amount,"ether")
 
         let paramsObject
-        if (this.props.network === "LeapTestnet" || this.props.network == "LeapMainnet") {
+        if (this.props.network === "LeapTestnet" || this.props.network === "LeapMainnet") {
           await this.maybeApprovePDai(amountWei);
 
           const allowance = await this.props.daiContract.methods.allowance(
@@ -557,7 +528,7 @@ export default class Exchange extends React.Component {
               loaderBarColor:"#f5eb4a",
               loaderBarStatusText: "Approving token amount for Plasma bridge"
             })
-            const approveReceipt = await pTx(
+            await pTx(
               daiContract.methods.approve(
                 bridgeContract._address,
                 amountWei
@@ -747,19 +718,10 @@ export default class Exchange extends React.Component {
         </a>
       </span>
     )
-    let xdaiCancelButton = (
-      <span style={{padding:10,whiteSpace:"nowrap"}}>
-        <a href="#" style={{color:"#000000"}} onClick={()=>{
-          this.setState({amount:""})
-        }}>
-          <i className="fas fa-times"/> {i18n.t('cancel')}
-        </a>
-      </span>
-    )
 
     let buttonsDisabled = (
-      daiToXdaiMode=="sending" || daiToXdaiMode=="withdrawing" || daiToXdaiMode=="depositing" ||
-      ethToDaiMode=="sending" || ethToDaiMode=="depositing" || ethToDaiMode=="withdrawing"
+      daiToXdaiMode==="sending" || daiToXdaiMode==="withdrawing" || daiToXdaiMode==="depositing" ||
+      ethToDaiMode==="sending" || ethToDaiMode==="depositing" || ethToDaiMode==="withdrawing"
     )
 
     let adjustedFontSize = Math.round((Math.min(document.documentElement.clientWidth,600)/600)*24)
@@ -768,7 +730,7 @@ export default class Exchange extends React.Component {
     let daiToXdaiDisplay =  i18n.t('loading')
 
     //console.log("daiToXdaiMode",daiToXdaiMode)
-    if(daiToXdaiMode=="sending" || daiToXdaiMode=="withdrawing" || daiToXdaiMode=="depositing"){
+    if(daiToXdaiMode==="sending" || daiToXdaiMode==="withdrawing" || daiToXdaiMode==="depositing"){
       daiToXdaiDisplay = (
         <div className="content ops row" style={{position:"relative"}}>
           <button style={{width:Math.min(100,this.state.loaderBarPercent)+"%",backgroundColor:this.state.loaderBarColor,color:"#000000"}}
@@ -781,8 +743,8 @@ export default class Exchange extends React.Component {
         </div>
       )
 
-    }else if(daiToXdaiMode=="deposit"){
-      // if(!this.state.mainnetMetaAccount && this.props.network!="Mainnet"){
+    }else if(daiToXdaiMode==="deposit"){
+      // if(!this.state.mainnetMetaAccount && this.props.network!==="Mainnet"){
       //   daiToXdaiDisplay = (
       //     <div className="content ops row" style={{textAlign:'center'}}>
       //       <div className="col-12 p-1">
@@ -869,9 +831,9 @@ export default class Exchange extends React.Component {
           </div>
         )
       }
-    } else if(daiToXdaiMode=="withdraw"){
+    } else if(daiToXdaiMode==="withdraw"){
       console.log("CHECKING META ACCOUNT ",this.state.xdaiMetaAccount,this.props.network)
-      if(!this.state.xdaiMetaAccount && this.props.network!="LeapTestnet"){
+      if(!this.state.xdaiMetaAccount && this.props.network!=="LeapTestnet"){
         daiToXdaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
@@ -989,7 +951,7 @@ export default class Exchange extends React.Component {
                       this.directSell(amount, color);
                       return;
                     }
-                    
+
                     Exit.fastSellAmount(
                       this.state.daiAddress, amount, color,
                       this.state.xdaiweb3, this.props.web3,
@@ -1028,13 +990,13 @@ export default class Exchange extends React.Component {
             </Scaler>
           </Button>
 
-          <Button width={1} 
+          <Button width={1}
             icon={'ArrowDownward'}
             disabled={
               buttonsDisabled ||
               (!this.state.notSundai && this.state.exitableSunDaiBalance === 0) ||
               parseFloat(this.props.xdaiBalance) === 0
-            } 
+            }
             onClick={()=>{
             this.setState({daiToXdaiMode:"withdraw"})
           }} >
@@ -1048,7 +1010,7 @@ export default class Exchange extends React.Component {
 
     let ethToDaiDisplay =  i18n.t('loading')
 
-    if(ethToDaiMode=="sending" || ethToDaiMode=="depositing" || ethToDaiMode=="withdrawing"){
+    if(ethToDaiMode==="sending" || ethToDaiMode==="depositing" || ethToDaiMode==="withdrawing"){
       ethToDaiDisplay = (
         <div className="content ops row" style={{position:"relative"}}>
           <button style={{width:Math.min(100,this.state.loaderBarPercent)+"%",backgroundColor:this.state.loaderBarColor,color:"#000000"}}
@@ -1061,7 +1023,7 @@ export default class Exchange extends React.Component {
         </div>
       )
 
-    }else if(ethToDaiMode=="deposit"){
+    }else if(ethToDaiMode==="deposit"){
 
       if(this.props.ethBalance<=0){
         ethToDaiDisplay = (
@@ -1183,8 +1145,8 @@ export default class Exchange extends React.Component {
         )
       }
 
-    }else if(ethToDaiMode=="withdraw"){
-      if(!this.state.mainnetMetaAccount && this.props.network!="Mainnet"){
+    }else if(ethToDaiMode==="withdraw"){
+      if(!this.state.mainnetMetaAccount && this.props.network!=="Mainnet"){
         ethToDaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
@@ -1560,7 +1522,7 @@ export default class Exchange extends React.Component {
             />
           </Field>
           <div>
-            { this.state.daiSendToAddress && this.state.daiSendToAddress.length==42 && <Blockies seed={this.state.daiSendToAddress.toLowerCase()} scale={10} /> }
+            { this.state.daiSendToAddress && this.state.daiSendToAddress.length===42 && <Blockies seed={this.state.daiSendToAddress.toLowerCase()} scale={10} /> }
           </div>
           <Field label={'Send Amount'} mb={3}>
             <Flex>
@@ -1638,7 +1600,7 @@ export default class Exchange extends React.Component {
             />
           </Field>
           <div>
-            { this.state.ethSendToAddress && this.state.ethSendToAddress.length==42 && <Blockies seed={this.state.ethSendToAddress.toLowerCase()} scale={10} /> }
+            { this.state.ethSendToAddress && this.state.ethSendToAddress.length===42 && <Blockies seed={this.state.ethSendToAddress.toLowerCase()} scale={10} /> }
           </div>
           <Field label={'Send Amount'} mb={3}>
             <Flex>
@@ -1741,7 +1703,7 @@ export default class Exchange extends React.Component {
             />
           </Field>
           <div>
-            { this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length==42 && <Blockies seed={this.state.xdaiSendToAddress.toLowerCase()} scale={10} /> }
+            { this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length===42 && <Blockies seed={this.state.xdaiSendToAddress.toLowerCase()} scale={10} /> }
           </div>
           <Field label={'Send Amount'} mb={3}>
             <Flex>
@@ -1792,7 +1754,7 @@ export default class Exchange extends React.Component {
 
           <div className="content ops row" style={{paddingBottom:20}}>
             <div className="col-2 p-1">
-              <img style={logoStyle} src={this.props.xdai} />
+              <img style={logoStyle} src={this.props.xdai} alt="" />
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
               MNY
@@ -1817,7 +1779,7 @@ export default class Exchange extends React.Component {
 
           <div className="content ops row" style={{paddingBottom:20}}>
             <div className="col-2 p-1">
-              <img style={logoStyle} src={this.props.dai} />
+              <img style={logoStyle} src={this.props.dai} alt="dai" />
             </div>
             <div className="col-3 p-1" style={{marginTop:9}}>
               DAI
@@ -1841,7 +1803,7 @@ export default class Exchange extends React.Component {
 
           <div className="content ops row" style={{paddingBottom:20}}>
             <div className="col-2 p-1">
-              <img style={logoStyle} src={this.props.eth} />
+              <img style={logoStyle} src={this.props.eth} alt="eth" />
             </div>
             <div className="col-3 p-1" style={{marginTop:10}}>
               ETH

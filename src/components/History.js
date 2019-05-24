@@ -6,14 +6,11 @@ import Linkify from 'react-linkify'
 import {toArray} from 'react-emoji-render';
 import Ruler from "./Ruler";
 import {CopyToClipboard} from "react-copy-to-clipboard";
-import i18next from 'i18next';
 import config from "../config.json";
 import { OutlineButton } from 'rimble-ui'
-const QRCode = require('qrcode.react');
 const Transaction = require("ethereumjs-tx")
 const EthUtil = require('ethereumjs-util')
 const EthCrypto = require('eth-crypto');
-const BockieSize = 4
 
 let interval
 let counter = 0
@@ -46,7 +43,7 @@ export default class History extends React.Component {
       theseTransactionsByAddress = transactionsByAddress[target]
     }
     let lastElement = theseTransactionsByAddress[theseTransactionsByAddress.length-1]
-    if(lastElement && (!this.state.lastHash || this.state.lastHash != lastElement.hash)){
+    if(lastElement && (!this.state.lastHash || this.state.lastHash !== lastElement.hash)){
       console.log("lastHash:",lastElement.hash)
       this.setState({lastHash:lastElement.hash})
       setTimeout(()=>{
@@ -65,11 +62,10 @@ export default class History extends React.Component {
         }else{
           //try to find a transacition that is from the target
           for(let t in theseTransactionsByAddress){
-            if(theseTransactionsByAddress[t].from == target){
+            if(theseTransactionsByAddress[t].from === target){
               //console.log("FOUND TRANSACTION from target",theseTransactionsByAddress[t])
               let theTx = await this.props.web3.eth.getTransaction(theseTransactionsByAddress[t].hash)
-              let rawText = ""
-              if(theseTransactionsByAddress[t].data==":wave:"){
+              if(theseTransactionsByAddress[t].data===":wave:"){
                 var rawTx = {
                   nonce: this.props.web3.utils.toHex(theTx.nonce),
                   gasPrice: this.props.web3.utils.toHex(theTx.gasPrice),
@@ -109,7 +105,7 @@ export default class History extends React.Component {
       smooth: "easeInOutCubic",
     })
   }
-  onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
+  onKeyDown = (event) => {
     // 'keypress' event misbehaves on mobile so we track 'Enter' key via 'keydown' event
     if (event.key === 'Enter' && (this.state.newChat||this.state.newChatAmount)) {
       event.preventDefault();
@@ -126,7 +122,6 @@ export default class History extends React.Component {
 
     let message
     let targetPublicKey = this.state["publicKey_"+this.props.target]
-    let wasEncrypted = false
     if(targetPublicKey){
       //encrypt!
       console.log("ecrypting message with public key",targetPublicKey)
@@ -144,7 +139,6 @@ export default class History extends React.Component {
       update[key]=this.state.newChat
       this.props.saveKey(update)
       localStorage.setItem(key,this.state.newChat)
-      wasEncrypted=true
     }else{
       //rawdog
       message = this.props.web3.utils.utf8ToHex(this.state.newChat)
@@ -162,7 +156,7 @@ export default class History extends React.Component {
     })
   }
   render(){
-    let {transactionsByAddress,address,changeView,block,goBack,target,buttonStyle} = this.props
+    let {transactionsByAddress,address,block,target} = this.props
 
     let theseTransactionsByAddress = []
     if(transactionsByAddress&&transactionsByAddress[target]){
@@ -182,7 +176,7 @@ export default class History extends React.Component {
         )
       }
 
-      if(theseTransactionsByAddress[r].to==address){
+      if(theseTransactionsByAddress[r].to===address){
         if(value){
           messageValue = (
             <div style={{width:"100%",textAlign:"center",marginTop:5,marginBottom:-15,opacity:0.7,fontSize:14}}>
@@ -284,81 +278,6 @@ export default class History extends React.Component {
       }
     }
 
-    let sendChatButton = ""
-    let sendFundsButton = ""
-    if(this.state.sendingChat){
-      sendChatButton = (
-        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:"#666666"}}>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-cog fa-spin"></i>
-          </Scaler>
-        </button>
-      )
-      sendFundsButton = (
-        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:"#666666"}}>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-cog fa-spin"></i>
-          </Scaler>
-        </button>
-      )
-    }else{
-      sendChatButton = (
-        <button className="btn btn-large w-100" style={buttonStyle.primary}
-                onClick={this.sendChat.bind(this)}>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-comment"/>
-          </Scaler>
-        </button>
-      )
-      sendFundsButton = (
-        <button className="btn btn-large w-100" style={buttonStyle.secondary}
-                onClick={this.sendChat.bind(this)}>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-comment"/>
-          </Scaler>
-        </button>
-      )
-    }
-
-
-    let waveButton = ""
-    if(this.state.waving){
-      waveButton = (
-        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:"#666666"}}>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-cog fa-spin"></i>
-          </Scaler>
-        </button>
-      )
-    }else if(this.props.metaAccount){
-      waveButton = (
-        <button className="btn btn-large w-100" style={buttonStyle.primary}
-                onClick={()=>{
-                  this.setState({waving:true})
-                  this.props.send(this.props.target, 0, 120000, this.props.web3.utils.utf8ToHex(":wave:"), (err, result) => {
-                    if(result && result.transactionHash){
-                      this.setState({waving:false})
-                    }
-                  })
-                }}>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-handshake"/> {i18next.t('history.wave')}
-          </Scaler>
-        </button>
-      )
-    }else{
-      waveButton = (
-        <button className="btn btn-large w-100" style={{whiteSpace:"nowrap",backgroundColor:"#aaaaaa"}}
-                onClick={()=>{
-                  this.props.changeAlert({type: 'warning', message: i18next.t('history.metamask_error')})
-                }}>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-handshake"/> {i18next.t('history.wave')}
-          </Scaler>
-        </button>
-      )
-    }
-
     /*
     <div className="col-3 p-1">
       <button className="btn btn-large w-100" style={{whiteSpace:"nowrap"}}
@@ -371,73 +290,7 @@ export default class History extends React.Component {
       </button>
     </div>
      */
-    let sendForm
 
-    let placeholder="unencrypted public chat..."
-    if(this.state["publicKey_"+target]){
-      placeholder = "encrypted chat..."
-    }
-
-    let chatInput = (
-      <input disabled={this.state.sendingChat} type="text" className="form-control" placeholder={placeholder} value={this.state.newChat}
-        ref={(input) => { this.nameInput = input; }}
-        onKeyDown={this.onKeyDown}
-        onChange={event => this.setState({newChat:event.target.value})}
-      />
-    )
-
-    if(this.state.sendingFunds){
-      sendForm = (
-        <div className="content ops row">
-          <div className="col-4 p-1">
-            <div className="input-group">
-              <div className="input-group-prepend" onClick={()=>{
-                  this.setState({sendingFunds:false},()=>{
-                    setTimeout(()=>{
-                      this.nameInput.focus();
-                    },250)
-                  })
-              }}>
-                <div className="input-group-text">$</div>
-              </div>
-              <input type="number" step="0.1" onKeyDown={this.onKeyDown} className="form-control" placeholder="0.00" value={this.state.newChatAmount}
-                ref={(input) => { this.amountInput = input; }}
-                     onChange={event => this.setState({newChatAmount:event.target.value})}
-              />
-            </div>
-          </div>
-          <div className="col-6 p-1">
-            {chatInput}
-          </div>
-          <div className="col-2 p-1">
-          </div>
-        </div>
-      )
-    }else{
-      sendForm = (
-        <div className="content ops row">
-          <div className="col-2 p-1">
-            <button className="btn btn-large w-100" style={buttonStyle.secondary}
-              onClick={()=>{
-                this.setState({sendingFunds:true},()=>{
-                  setTimeout(()=>{
-                    this.amountInput.focus();
-                  },250)
-                })
-              }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-money-bill-wave"/>
-              </Scaler>
-            </button>
-          </div>
-          <div className="col-8 p-1">
-           {chatInput}
-          </div>
-          <div className="col-2 p-1">
-          </div>
-        </div>
-      )
-    }
 
     let isEncrypted = ""
     if(this.state["publicKey_"+target]){
@@ -450,7 +303,7 @@ export default class History extends React.Component {
       <div style={{marginTop:20}}>
           <div className="content ops row">
             <div className="col-2 p-1">
-              <a href={config.explorer.url + "address/"+ address} target="_blank">
+              <a href={config.explorer.url + "address/"+ address} target="_blank" rel="noopener noreferrer">
                 <Blockies seed={target} scale={5}/> {isEncrypted}
               </a>
             </div>

@@ -1,8 +1,6 @@
 import React from 'react';
 import Web3 from 'web3';
-import Ruler from "./Ruler";
 import { Scaler } from "dapparatus";
-import Balance from "./Balance";
 import Blockies from 'react-blockies';
 import i18n from '../i18n';
 import {
@@ -11,7 +9,6 @@ import {
 } from 'rimble-ui'
 
 let pollInterval
-let metaReceiptTracker = {}
 
 export default class SendToAddress extends React.Component {
 
@@ -129,7 +126,7 @@ export default class SendToAddress extends React.Component {
                     let currentAmount = this.state.amount
                     if(currentAmount) currentAmount+=parseFloat(costInDollars)
                     else currentAmount = parseFloat(costInDollars)
-                    if(currentAmount!=this.state.amount){
+                    if(currentAmount!==this.state.amount){
                       this.setState({amount:currentAmount})
                     }
                   }}
@@ -191,7 +188,7 @@ export default class SendToAddress extends React.Component {
 
               <label htmlFor="amount_input">{i18n.t('withdraw_from_private.amount')}</label>
               <div className="input-group">
-                <RInput 
+                <RInput
                   width={1}
                   type="number"
                   placeholder="$0.00"
@@ -200,7 +197,7 @@ export default class SendToAddress extends React.Component {
               </div>
               {products}
             </div>
-            <Button 
+            <Button
               size={'large'}
               width={1}
               disabled={!canWithdraw}

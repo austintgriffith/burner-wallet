@@ -1,7 +1,6 @@
 import React from 'react';
 import { Blockie } from "dapparatus";
 import { Scaler } from "dapparatus";
-import { Flex, Text, Image } from "rimble-ui";
 
 export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
   let txns = []
@@ -10,34 +9,6 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
   for(let r in recentTxs){
     let thisValue = parseFloat(recentTxs[r].value)
     if(thisValue>0.0){
-
-      let extraUp = 0
-      if(view=="receive"){
-        extraUp=-10
-      }
-      let extraIcon = ""
-      if(recentTxs[r].data){
-        extraIcon = (
-          <div style={{position:'absolute',right:-3,top:extraUp}}>
-            <button className="btn btn-large w-100" style={buttonStyle.primary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-comment"></i>
-              </Scaler>
-            </button>
-          </div>
-        )
-      }else{
-        extraIcon = (
-          <div style={{position:'absolute',right:-3,top:extraUp}}>
-            <button className="btn btn-large w-100" style={buttonStyle.secondary}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-comment"></i>
-              </Scaler>
-            </button>
-          </div>
-        )
-      }
-
       let dollarView
       if(ERC20TOKEN){
         if(recentTxs[r].token){
@@ -69,7 +40,7 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
           config={{size:4}}
         />
       )
-      if(recentTxs[r].to==address && recentTxs[r].data) {
+      if(recentTxs[r].to===address && recentTxs[r].data) {
         let message = recentTxs[r].data
         let limit = 18
         if(message.length>limit){
@@ -91,10 +62,10 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
 
         let blockAge = block-recentTxs[r].blockNumber
 
-        if(blockAge<=1&&recentTxs[r].to==address){
+        if(blockAge<=1&&recentTxs[r].to===address){
           txns.push(
-            <div key={"green"+count} style={{position:'relative',cursor:'pointer',paddingTop:10,paddingBottom:10}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
-              if(recentTxs[r].from==address){
+            <div style={{position:'relative',cursor:'pointer',paddingTop:10,paddingBottom:10}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
+              if(recentTxs[r].from===address){
                 changeView("account_"+recentTxs[r].to)
               }else{
                 changeView("account_"+recentTxs[r].from)
@@ -121,8 +92,8 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
           )
         }else{
           txns.push(
-            <div key={count} style={{position:'relative',cursor:'pointer'}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
-              if(recentTxs[r].from==address){
+            <div style={{position:'relative',cursor:'pointer'}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
+              if(recentTxs[r].from===address){
                 changeView("account_"+recentTxs[r].to)
               }else{
                 changeView("account_"+recentTxs[r].from)

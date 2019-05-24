@@ -114,7 +114,7 @@ class SendByScan extends Component {
             // NOTE: Everything that is not a valid Ethereum address, we insert
             // in the URL to see if the burner wallet can resolve it.
             setTimeout(() => {
-                window.location = "/" +  dataAfterColon 
+                window.location = "/" +  dataAfterColon
             }, 100)
         }
       }
@@ -150,7 +150,7 @@ class SendByScan extends Component {
   legacyHandleChange(e, results){
     //this.props.changeView('reader')
     results.forEach(result => {
-      const [e, file] = result;
+      const file = result[1];
       let reader = new FileReader();
       reader.onload = (e) => {
         this.setState({imageData:e.target.result})
@@ -194,7 +194,7 @@ class SendByScan extends Component {
     let displayedImage = ""
     if(this.state.imageData){
       displayedImage = (
-        <img style={{position:"absolute",left:0,top:0,maxWidth:"100%",opacity:0.7}} src={this.state.imageData} />
+        <img style={{position:"absolute",left:0,top:0,maxWidth:"100%",opacity:0.7}} src={this.state.imageData} alt="qr" />
       )
     }
 
@@ -205,7 +205,7 @@ class SendByScan extends Component {
       loaderDisplay = (
           <div style={{textAlign:'center'}}>
             <div style={{width:"100%"}}>
-              <img src ={this.props.loaderImage} style={{maxWidth:"25%"}}/>
+              <img src ={this.props.loaderImage} style={{maxWidth:"25%"}} alt=""/>
             </div>
             <div style={{width:"80%",height:1,backgroundColor:"#444444",marginLeft:"10%"}}>
               <div style={{width:this.state.percent+"%",height:1,backgroundColor:this.props.mainStyle.mainColorAlt,boxShadow:"0 0 "+shadowAmount/40+"px "+shadowColor+", 0 0 "+shadowAmount/30+"px "+shadowColor+", 0 0 "+shadowAmount/20+"px "+shadowColor+", 0 0 "+shadowAmount/10+"px #ffffff, 0 0 "+shadowAmount/5+"px "+shadowColor+", 0 0 "+shadowAmount/3+"px "+shadowColor+", 0 0 "+shadowAmount/1+"px "+shadowColor+""}}>
@@ -253,7 +253,7 @@ class SendByScan extends Component {
           {loaderDisplay}
           <div style={{textAlign:"center",paddingTop:"15%"}}>
             <div style={{marginBottom:20}}><i className="fas fa-camera"></i></div>
-            <img src={qrimage} style={{position:"absolute",left:"36%",top:"25%",padding:4,border:"1px solid #888888",opacity:0.25,maxWidth:"30%",maxHight:"30%"}} />
+            <img src={qrimage} style={{position:"absolute",left:"36%",top:"25%",padding:4,border:"1px solid #888888",opacity:0.25,maxWidth:"30%",maxHight:"30%"}} alt="qr" />
           </div>
           <div style={{textAlign:"center",paddingTop:"35%"}}>
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { helpers, Tx, Input, Output, Util } from 'leap-core';
-import { Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
+import { Tx, Input, Output, Util } from 'leap-core';
+import { Dapparatus, Transactions, Gas } from "dapparatus";
 import { equal, bi } from 'jsbi-utils';
 import Web3 from 'web3';
 import { I18nextProvider } from 'react-i18next';
@@ -16,12 +16,10 @@ import Receive from './components/Receive'
 import Share from './components/Share'
 import ShareLink from './components/ShareLink'
 import Balance from "./components/Balance";
-import Ruler from "./components/Ruler";
 import Receipt from "./components/Receipt";
 import MainCard from './components/MainCard';
 import History from './components/History';
 import Advanced from './components/Advanced';
-import BottomLinks from './components/BottomLinks';
 import MoreButtons from './components/MoreButtons';
 import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
@@ -30,11 +28,9 @@ import burnerlogo from './burnerwallet.png';
 import BurnWallet from './components/BurnWallet'
 import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
-import customRPCHint from './customRPCHint.png';
 import incogDetect from './services/incogDetect.js'
 import { Card, Box, ThemeProvider } from 'rimble-ui';
 import theme from "./theme"
-import bs58 from "bs58";
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
@@ -52,19 +48,17 @@ import EthCrypto from 'eth-crypto';
 //const POA_XDAI_NODE = "https://dai-b.poa.network"
 const POA_XDAI_NODE = "https://dai.poa.network"
 
-const NST_COLOR_BASE = 49153;
 
 let XDAI_PROVIDER = POA_XDAI_NODE
 
 let WEB3_PROVIDER
-let CLAIM_RELAY
+let CLAIM_RELAY // eslint-disable-line
 let ERC20TOKEN
 let ERC20VENDOR
 let ERC20IMAGE
 let ERC20NAME
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
-let FAILCOUNT = 0
 
 // Mainnet DAI by default
 let DAI_TOKEN_ADDR = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';
@@ -161,7 +155,7 @@ else if (window.location.hostname.indexOf("sundai.io") >= 0) {
   P_DAI_TOKEN_ADDR = '0x3cC0DF021dD36eb378976142Dc1dE3F5726bFc48';
 
   MARKET_MAKER = 'https://k238oyefqc.execute-api.eu-west-1.amazonaws.com/mainnet';
-  
+
   CLAIM_RELAY = false;
   ERC20NAME = false;
   ERC20TOKEN = false;
@@ -211,7 +205,7 @@ else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
   ERC20IMAGE = false
 }
 
-if(ERC20NAME=="BUFF"){
+if(ERC20NAME==="BUFF"){
   mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
   mainStyle.backgroundColor = "#20012d"
   mainStyle.mainColor = "#b6299e"
@@ -223,9 +217,9 @@ if(ERC20NAME=="BUFF"){
       maxHeight:50,
       marginRight:15,
       marginTop:-10
-    }}/>
+    }} alt="" />
   )
-} else if(ERC20NAME=="BURN"){
+} else if(ERC20NAME==="BURN"){
   mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
   mainStyle.backgroundColor = "#6c0664"
   mainStyle.mainColor = "#e72da3"
@@ -237,7 +231,7 @@ if(ERC20NAME=="BUFF"){
       maxHeight:50,
       marginRight:15,
       marginTop:-10
-    }}/>
+    }} alt=""/>
   )
 }
 
@@ -264,14 +258,6 @@ let buttonStyle = {
   }
 }
 
-const invLogoStyle = {
-  maxWidth:50,
-  maxHeight:50,
-}
-
-let metaReceiptTracker = {}
-
-
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
 
@@ -286,14 +272,12 @@ let convertFromDollar = (amount)=>{
   return (parseFloat(amount)*dollarConversion)
 }
 let dollarDisplay = (amount)=>{
-  let floatAmount = parseFloat(amount)
   amount = Math.floor(amount*100)/100
   return dollarSymbol+convertFromDollar(amount).toFixed(2)
 }
 
 let interval
 let intervalLong
-let originalStyle = {}
 
 export default class App extends Component {
   constructor(props) {
@@ -305,7 +289,7 @@ export default class App extends Component {
     let cachedViewSetAge = Date.now() - localStorage.getItem("viewSetTime")
     if(HARDCODEVIEW){
       view = HARDCODEVIEW
-    }else if(cachedViewSetAge < 300000 && cachedView&&cachedView!=0){
+    }else if(cachedViewSetAge < 300000 && cachedView&&cachedView!==0){
       view = cachedView
     }
     console.log("CACHED VIEW",view)
@@ -396,13 +380,13 @@ export default class App extends Component {
         if (window.web3.currentProvider.isMetaMask === true) {
           document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
           document.body.style.backgroundColor = "#ca6e28"
-          var contextElement = document.getElementById("context")
+          contextElement = document.getElementById("context")
           contextElement.innerHTML = 'METAMASK';
         } else if(this.state.account && !this.state.metaAccount) {
           console.log("~~~*** WEB3",this.state.metaAccount,result)
           document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
           document.body.style.backgroundColor = "#305582"
-          var contextElement = document.getElementById("context")
+          contextElement = document.getElementById("context")
           contextElement.innerHTML = 'WEB3';
         }
       }
@@ -424,10 +408,10 @@ export default class App extends Component {
         let rawPK = tempweb3.utils.bytesToHex(base64url.toBuffer(base64encodedPK))
         this.setState({possibleNewPrivateKey:rawPK})
         window.history.pushState({},"", "/");
-      }else if(window.location.pathname.length==43){
+      }else if(window.location.pathname.length===43){
         this.changeView('send_to_address')
         console.log("CHANGE VIEW")
-      }else if(window.location.pathname.length==134){
+      }else if(window.location.pathname.length===134){
         let parts = window.location.pathname.split(";")
         let claimId = parts[0].replace("/","")
         let claimKey = parts[1]
@@ -444,13 +428,13 @@ export default class App extends Component {
           privateKey = window.location.hash
         }
         privateKey = privateKey.replace("#","")
-        if(privateKey.indexOf("0x")!=0){
+        if(privateKey.indexOf("0x")!==0){
           privateKey="0x"+privateKey
         }
         //console.log("!!! possibleNewPrivateKey",privateKey)
         this.setState({possibleNewPrivateKey:privateKey})
         window.history.pushState({},"", "/");
-      }else if(window.location.pathname.indexOf("/vendors;")==0){
+      }else if(window.location.pathname.indexOf("/vendors;")===0){
         this.changeView('vendors')
       }else{
         let parts = window.location.pathname.split(";")
@@ -462,7 +446,7 @@ export default class App extends Component {
           if(parts.length>=3){
             extraData = parts[2]
           }
-          if((parseFloat(sendToAmount)>0 || extraData) && sendToAddress.length==42){
+          if((parseFloat(sendToAmount)>0 || extraData) && sendToAddress.length===42){
             this.changeView('send_to_address')
           }
         }
@@ -541,7 +525,7 @@ export default class App extends Component {
   async dealWithPossibleNewPrivateKey(){
     //this happens as page load and you need to wait until
     if(this.state && this.state.hasUpdateOnce){
-      if(this.state.metaAccount && this.state.metaAccount.privateKey.replace("0x","") == this.state.possibleNewPrivateKey.replace("0x","")){
+      if(this.state.metaAccount && this.state.metaAccount.privateKey.replace("0x","") === this.state.possibleNewPrivateKey.replace("0x","")){
         this.setState({possibleNewPrivateKey:false})
         this.changeAlert({
           type: 'warning',
@@ -594,7 +578,7 @@ export default class App extends Component {
     this.setState({receipt:obj})
   }
   changeView = (view,cb) => {
-    if(view=="exchange"||view=="main"/*||view.indexOf("account_")==0*/){
+    if(view==="exchange"||view==="main"/*||view.indexOf("account_")===0*/){
       localStorage.setItem("view",view)//some pages should be sticky because of metamask reloads
       localStorage.setItem("viewSetTime",Date.now())
     }
@@ -641,7 +625,7 @@ export default class App extends Component {
     let updatedTxs = false
     if(block){
       let transactions = block.transactions
-  
+
       //console.log("transactions",transactions)
       for(let t in transactions){
         //console.log("TX",transactions[t])
@@ -658,18 +642,18 @@ export default class App extends Component {
             value:web3.utils.fromWei(""+tx.value,"ether"),
             blockNumber:tx.blockNumber
           }
-  
-  
-          if(smallerTx.from==this.state.account || smallerTx.to==this.state.account){
-            if(tx.input&&tx.input!="0x"){
-  
+
+
+          if(smallerTx.from===this.state.account || smallerTx.to===this.state.account){
+            if(tx.input&&tx.input!=="0x"){
+
               let decrypted = await this.decryptInput(tx.input)
-  
+
               if(decrypted){
                 smallerTx.data = decrypted
                 smallerTx.encrypted = true
               }
-  
+
               try{
                 smallerTx.data = web3.utils.hexToUtf8(tx.input)
               }catch(e){}
@@ -680,7 +664,7 @@ export default class App extends Component {
             }
             updatedTxs = this.addTxIfAccountMatches(recentTxs,transactionsByAddress,smallerTx) || updatedTxs
           }
-  
+
         }
       }
     }
@@ -743,21 +727,21 @@ export default class App extends Component {
   }
   addTxIfAccountMatches(recentTxs,transactionsByAddress,smallerTx){
     let updatedTxs = false
-  
+
     let otherAccount = smallerTx.to
-    if(smallerTx.to==this.state.account){
+    if(smallerTx.to===this.state.account){
       otherAccount = smallerTx.from
     }
     if(!transactionsByAddress[otherAccount]){
       transactionsByAddress[otherAccount] = []
     }
-  
+
     let found = false
     if(parseFloat(smallerTx.value)>0.005){
       for(let r in recentTxs){
-        if(recentTxs[r].hash==smallerTx.hash/* && (!smallerTx.data || recentTxs[r].data == smallerTx.data)*/){
+        if(recentTxs[r].hash===smallerTx.hash/* && (!smallerTx.data || recentTxs[r].data === smallerTx.data)*/){
           found = true
-          if(!smallerTx.data || recentTxs[r].data == smallerTx.data){
+          if(!smallerTx.data || recentTxs[r].data === smallerTx.data){
             // do nothing, it exists
           }else{
             recentTxs[r].data = smallerTx.data
@@ -771,12 +755,12 @@ export default class App extends Component {
         //console.log("recentTxs after push",recentTxs)
       }
     }
-  
+
     found = false
     for(let t in transactionsByAddress[otherAccount]){
-      if(transactionsByAddress[otherAccount][t].hash==smallerTx.hash/* && (!smallerTx.data || recentTxs[r].data == smallerTx.data)*/){
+      if(transactionsByAddress[otherAccount][t].hash===smallerTx.hash/* && (!smallerTx.data || recentTxs[r].data === smallerTx.data)*/){
         found = true
-        if(!smallerTx.data || transactionsByAddress[otherAccount][t].data == smallerTx.data){
+        if(!smallerTx.data || transactionsByAddress[otherAccount][t].data === smallerTx.data){
           // do nothing, it exists
         }else{
           transactionsByAddress[otherAccount][t].data = smallerTx.data
@@ -789,19 +773,19 @@ export default class App extends Component {
       updatedTxs=true
       transactionsByAddress[otherAccount].push(smallerTx)
     }
-  
+
     return updatedTxs
   }
   sortAndSaveTransactions(recentTxs,transactionsByAddress){
     recentTxs.sort(sortByBlockNumber)
-  
+
     for(let t in transactionsByAddress){
       transactionsByAddress[t].sort(sortByBlockNumberDESC)
     }
     recentTxs = recentTxs.slice(0,12)
     localStorage.setItem(this.state.account+"recentTxs",JSON.stringify(recentTxs))
     localStorage.setItem(this.state.account+"transactionsByAddress",JSON.stringify(transactionsByAddress))
-  
+
     this.setState({recentTxs:recentTxs,transactionsByAddress:transactionsByAddress},()=>{
       if(ERC20TOKEN){
         this.syncFullTransactions()
@@ -810,7 +794,7 @@ export default class App extends Component {
   }
   async addAllTransactionsFromList(recentTxs,transactionsByAddress,theList){
     let updatedTxs = false
-  
+
     for(let e in theList){
       let thisEvent = theList[e]
       let cleanEvent = Object.assign({},thisEvent)
@@ -838,13 +822,13 @@ export default class App extends Component {
     let recentTxs = []
     recentTxs = recentTxs.concat(initResult[0])
     let transactionsByAddress = Object.assign({},initResult[1])
-  
+
     let updatedTxs = false
     updatedTxs = this.addAllTransactionsFromList(recentTxs,transactionsByAddress,this.state.transferTo) || updatedTxs
     updatedTxs = this.addAllTransactionsFromList(recentTxs,transactionsByAddress,this.state.transferFrom) || updatedTxs
     updatedTxs = this.addAllTransactionsFromList(recentTxs,transactionsByAddress,this.state.transferToWithData) || updatedTxs
     updatedTxs = this.addAllTransactionsFromList(recentTxs,transactionsByAddress,this.state.transferFromWithData) || updatedTxs
-  
+
     if(updatedTxs||!this.state.fullRecentTxs||!this.state.fullTransactionsByAddress){
       recentTxs.sort(sortByBlockNumber)
       for(let t in transactionsByAddress){
@@ -857,11 +841,11 @@ export default class App extends Component {
   }
   render() {
     let {
-      web3, account, tx, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert, send
+      web3, account, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert, send
     } = this.state;
-  
+
     let networkOverlay = ""
-    // if(web3 && !this.checkNetwork() && view!="exchange"){
+    // if(web3 && !this.checkNetwork() && view!=="exchange"){
     //   networkOverlay = (
     //     <div>
     //       <input style={{zIndex:13,position:'absolute',opacity:0.95,right:48,top:192,width:194}} value="https://dai.poa.network" />
@@ -869,8 +853,8 @@ export default class App extends Component {
     //     </div>
     //   )
     // }
-  
-  
+
+
     let web3_setup = ""
     if(web3){
       web3_setup = (
@@ -892,7 +876,7 @@ export default class App extends Component {
           state.send = tokenSend.bind(this)
           console.log(state)
           this.setState(state)
-  
+
         }}
         onReceipt={(transaction, receipt) => {
           // this is one way to get the deployed contract address, but instead I'll switch
@@ -903,10 +887,10 @@ export default class App extends Component {
         </div>
       )
     }
-  
+
     let eventParser = ""
-  
-  
+
+
     let extraHead = ""
     if(this.state.extraHeadroom){
       extraHead = (
@@ -914,12 +898,12 @@ export default class App extends Component {
         </div>
       )
     }
-  
+
     let totalBalance = parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice) + parseFloat(this.state.daiBalance) + parseFloat(this.state.xdaiBalance)
     if(ERC20TOKEN){
       totalBalance += parseFloat(this.state.balance)
     }
-  
+
     let header = (
       <div style={{height:50}}>
       </div>
@@ -942,7 +926,7 @@ export default class App extends Component {
         />
       )
     }
-  
+
     return (
       <ThemeProvider theme={theme}>
         <I18nextProvider i18n={i18n}>
@@ -951,15 +935,15 @@ export default class App extends Component {
               {extraHead}
               {networkOverlay}
               {web3_setup}
-  
+
               <div>
                 {header}
-  
-  
-  
+
+
+
               {web3 /*&& this.checkNetwork()*/ && (() => {
                 //console.log("VIEW:",view)
-  
+
                 let moreButtons = (
                   <MoreButtons
                     buttonStyle={buttonStyle}
@@ -967,7 +951,7 @@ export default class App extends Component {
                     isVendor={this.state.isVendor&&this.state.isVendor.isAllowed}
                   />
                 )
-  
+
                 let selected = "xDai"
                 let extraTokens = ""
 
@@ -987,7 +971,7 @@ export default class App extends Component {
                   defaultBalanceDisplay = extraTokens
                 }
 
-                if(view.indexOf("account_")==0)
+                if(view.indexOf("account_")===0)
                 {
 
                   let targetAddress = view.replace("account_","")
@@ -1043,7 +1027,7 @@ export default class App extends Component {
                     }}
                   />
                 )
-  
+
                 switch(view) {
                   case 'main':
                   return (
@@ -1067,7 +1051,7 @@ export default class App extends Component {
                           dollarDisplay={dollarDisplay}
                           ERC20TOKEN={ERC20TOKEN}
                         />
-                        
+
                         <Box>
                           {moreButtons}
                         </Box>
@@ -1281,12 +1265,12 @@ export default class App extends Component {
                       </div>
                     );
                     case 'share':
-  
+
                       let url = window.location.protocol+"//"+window.location.hostname
-                      if(window.location.port&&window.location.port!=80&&window.location.port!=443){
+                      if(window.location.port&&window.location.port!==80&&window.location.port!==443){
                         url = url+":"+window.location.port
                       }
-  
+
                       return (
                         <div>
                           {this.state.scannerOpen ? sendByScan : null}
@@ -1352,7 +1336,7 @@ export default class App extends Component {
                             if(RNMessageChannel){
                               RNMessageChannel.send("burn")
                             }
-                            if(localStorage&&typeof localStorage.setItem == "function"){
+                            if(localStorage&&typeof localStorage.setItem === "function"){
                               localStorage.setItem(this.state.account+"loadedBlocksTop","")
                               localStorage.setItem(this.state.account+"metaPrivateKey","")
                               localStorage.setItem(this.state.account+"recentTxs","")
@@ -1418,7 +1402,7 @@ export default class App extends Component {
                   return (
                     <div>
                       <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
-  
+
                         <NavCard title={"Sending..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                       </div>
                       <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
@@ -1492,13 +1476,13 @@ export default class App extends Component {
                       this.setState({parsingTheChain:true},async ()=>{
                         let upperBoundOfSearch = this.state.block
                         //parse through recent transactions and store in local storage
-  
-                        if(localStorage&&typeof localStorage.setItem == "function"){
-  
+
+                        if(localStorage&&typeof localStorage.setItem === "function"){
+
                           let initResult = this.initRecentTxs()
                           let recentTxs = initResult[0]
                           let transactionsByAddress = initResult[1]
-  
+
                           let loadedBlocksTop = this.state.loadedBlocksTop
                           if(!loadedBlocksTop){
                             loadedBlocksTop = localStorage.getItem(this.state.account+"loadedBlocksTop")
@@ -1507,22 +1491,22 @@ export default class App extends Component {
                           //  was last online... this could be bad. We might need a
                           //  central server keeping track of all these and delivering
                           //  a list of recent transactions
-  
+
                           let updatedTxs = false
                           if(!loadedBlocksTop || loadedBlocksTop<this.state.block){
                             if(!loadedBlocksTop) loadedBlocksTop = Math.max(2,this.state.block-5)
-  
+
                             if(this.state.block - loadedBlocksTop > MAX_BLOCK_TO_LOOK_BACK){
                               loadedBlocksTop = this.state.block-MAX_BLOCK_TO_LOOK_BACK
                             }
-  
+
                             let paddedLoadedBlocks = parseInt(loadedBlocksTop)+BLOCKS_TO_PARSE_PER_BLOCKTIME
                             //console.log("choosing the min of ",paddedLoadedBlocks,"and",this.state.block)
                             let parseBlock=Math.min(paddedLoadedBlocks,this.state.block)
-  
+
                             //console.log("MIN:",parseBlock)
                             upperBoundOfSearch = parseBlock
-                            console.log(" +++++++======= Parsing recent blocks ~"+this.state.block)
+                            console.log(" +++++++======== Parsing recent blocks ~"+this.state.block)
                             //first, if we are still back parsing, we need to look at *this* block too
                             if(upperBoundOfSearch<this.state.block){
                               for(let b=this.state.block;b>this.state.block-6;b--){
@@ -1530,18 +1514,18 @@ export default class App extends Component {
                                 updatedTxs = (await this.parseBlocks(b,recentTxs,transactionsByAddress)) || updatedTxs
                               }
                             }
-                            console.log(" +++++++======= Parsing from "+loadedBlocksTop+" to "+upperBoundOfSearch+"....")
+                            console.log(" +++++++======== Parsing from "+loadedBlocksTop+" to "+upperBoundOfSearch+"....")
                             while(loadedBlocksTop<parseBlock){
                               //console.log(" ++ Parsing Block "+parseBlock+" for transactions...")
                               updatedTxs = (await this.parseBlocks(parseBlock,recentTxs,transactionsByAddress)) || updatedTxs
                               parseBlock--
                             }
                           }
-  
+
                           if(updatedTxs||!this.state.recentTxs){
                             this.sortAndSaveTransactions(recentTxs,transactionsByAddress)
                           }
-  
+
                           localStorage.setItem(this.state.account+"loadedBlocksTop",upperBoundOfSearch)
                           this.setState({parsingTheChain:false,loadedBlocksTop:upperBoundOfSearch})
                         }
@@ -1556,9 +1540,11 @@ export default class App extends Component {
               network={this.state.network}
               onUpdate={(state)=>{
                 console.log("Gas price update:",state)
-                this.setState(state,()=>{
-                  this.state.gwei += 0.1
-                  console.log("GWEI set:",this.state)
+                const gwei = (state.gwei || this.state.gwei) + 0.1;
+                console.log("GWEI set:",gwei);
+                this.setState({
+                  ...state,
+                  gwei
                 })
               }}
               />
@@ -1714,6 +1700,8 @@ let sortByBlockNumber = (a,b)=>{
   return 0
 }
 
+// ToDo: do not mutate native prototypes
+/* eslint-disable no-extend-native */
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);

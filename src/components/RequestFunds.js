@@ -1,7 +1,4 @@
 import React from 'react';
-import Ruler from "./Ruler";
-import Balance from "./Balance";
-import Blockies from 'react-blockies';
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18n from '../i18n';
 import RecentTransactions from './RecentTransactions';
@@ -35,7 +32,6 @@ export default class RequestFunds extends React.Component {
   };
 
   request = () => {
-    let { message, amount } = this.state;
     if(this.state.canRequest){
       this.setState({requested:true})
     }else{
@@ -45,14 +41,13 @@ export default class RequestFunds extends React.Component {
 
   render() {
     let { canRequest, message, amount, requested } = this.state;
-    let {dollarDisplay,view,buttonStyle,ERC20TOKEN,address, changeView, dollarSymbol} = this.props
+    let {dollarDisplay,view,buttonStyle,ERC20TOKEN,address, changeView} = this.props
     if(requested){
 
       let url = window.location.protocol+"//"+window.location.hostname
-      if(window.location.port&&window.location.port!=80&&window.location.port!=443){
+      if(window.location.port&&window.location.port!==80&&window.location.port!==443){
         url = url+":"+window.location.port
       }
-      let qrSize = Math.min(document.documentElement.clientWidth,512)-90
       let qrValue = url+"/"+this.props.address+";"+amount+";"+encodeURI(message).replaceAll("#","%23").replaceAll(";","%3B").replaceAll(":","%3A").replaceAll("/","%2F")
 
       return (

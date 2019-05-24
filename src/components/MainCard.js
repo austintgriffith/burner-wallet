@@ -1,37 +1,11 @@
 import React from "react";
-import { Scaler } from "dapparatus";
 import { Flex, Button, Icon, OutlineButton, Box, Text } from "rimble-ui";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 import i18next from "i18next";
 
 export default ({
-  buttonStyle,
   ERC20TOKEN,
-  address,
-  balance,
-  changeAlert,
   changeView,
-  dollarDisplay,
 }) => {
-  var w = window,
-    d = document,
-    e = d.documentElement,
-    g = d.getElementsByTagName("body")[0],
-    x = w.innerWidth || e.clientWidth || g.clientWidth,
-    y = w.innerHeight || e.clientHeight || g.clientHeight;
-
-  let pushDownWithWhiteSpace = 0;
-  /*if(y){
-    if(ERC20TOKEN){
-      pushDownWithWhiteSpace = y-443
-    }else{
-      pushDownWithWhiteSpace = y-370
-    }
-
-  }
-  if(pushDownWithWhiteSpace>230){
-    pushDownWithWhiteSpace=230
-  }*/
   let sendButtons = (
     <Box>
       <Flex mx={-2}>
