@@ -218,8 +218,10 @@ let metaReceiptTracker = {}
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
 
-let dollarSymbol = "$"
-let dollarConversion = 1.0
+//let dollarSymbol = "$"
+//let dollarConversion = 1.0
+let dollarSymbol = "£"
+let dollarConversion = 0.787
 //let dollarSymbol = "€"
 //let dollarConversion = 0.88
 let convertToDollar = (amount)=>{
