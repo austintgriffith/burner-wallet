@@ -45,7 +45,8 @@ import incogDetect from './services/incogDetect.js'
 import RNMessageChannel from 'react-native-webview-messaging';
 
 
-import bufficorn from './bufficorn.png';
+import bufficorn from './coin1.PNG';
+import buffiloader from './buttercup.png';
 import cypherpunk from './cypherpunk.png';
 import eth from './ethereum.png';
 import dai from './dai.jpg';
@@ -73,11 +74,11 @@ let FAILCOUNT = 0
 let mainStyle = {
   width:"100%",
   height:"100%",
-  backgroundImage:"linear-gradient(#292929, #191919)",
-  backgroundColor:"#191919",
-  hotColor:"#F69E4D",
-  mainColorAlt:"#fa7d36",
-  mainColor:"#F76B1C",
+  backgroundImage:"linear-gradient(#000000, #000000)",
+  backgroundColor:"#000000",
+  hotColor:"#e77724",
+  mainColorAlt:"#d96f21",
+  mainColor:"#e77724",
 }
 
 let title = i18n.t('app_name')
@@ -90,15 +91,15 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(true){
+  if(false){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
   }else{
-    ERC20NAME = 'BUFF'
+    ERC20NAME = 'BCB'
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
-    ERC20IMAGE = bufficorn
+    ERC20IMAGE = buffiloader
     XDAI_PROVIDER = "http://localhost:8545"
     WEB3_PROVIDER = "http://localhost:8545";
     LOADERIMAGE = bufficorn

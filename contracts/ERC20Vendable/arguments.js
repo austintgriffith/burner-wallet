@@ -4,6 +4,6 @@
 */
 
 module.exports = [
-  "buffiDai",
-  "BUFF"
+  "Buttercup Bucks",
+  "BCB"
 ]
