@@ -55,7 +55,7 @@ contract ERC20Vendable is ERC20, Ownable {
       uint16 thisBlockValue = uint16(blockHash[index*2]) << 8 | uint16(blockHash[index*2+1]);
       x=x+(uint256(thisBlockValue));
     }
-    return uint16(x/PRICEDEPTH);
+    return uint16(x/PRICEDEPTH) + coinInventory[index];
   }
 
   function buyEmoji(uint8 index) public returns (bool){
