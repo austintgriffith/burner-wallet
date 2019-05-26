@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import { fr, en, es, ca, de, ro, he, ru, pt, ja } from "./locales";
+import { fr, en, es, ca, de, ro, he, ru, pt, ja, zh } from "./locales";
 
 const i18n = i18next;
 const options = {
@@ -40,6 +40,9 @@ const options = {
     },
     ja: {
       common: ja.ja
+    },
+    zh: {
+      common: zh.zh
     },
   },
 
