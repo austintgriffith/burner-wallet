@@ -74,8 +74,6 @@ export default class Advanced extends React.Component {
                   onClick={()=>{
                     console.log(this.state.newPrivateKey)
                     if(this.state && this.state.newPrivateKey && this.state.newPrivateKey.length>=64&&this.state.newPrivateKey.length<=66){
-                      //let pkutils = require("ethereum-mnemonic-privatekey-utils")
-                      //const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(newPrivateKey)
                       changeView('main')
                       let possibleNewPrivateKey = this.state.newPrivateKey
                       if(possibleNewPrivateKey.indexOf("0x")!=0){
@@ -123,10 +121,11 @@ export default class Advanced extends React.Component {
                     if(!this.state.newSeedPhrase){
                       changeAlert({type: 'warning', message: 'Invalid seed phrase.'})
                     }else{
-                      let pkutils = require("ethereum-mnemonic-privatekey-utils")
-                      const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(this.state.newSeedPhrase)
-                      changeView('main')
-                      setPossibleNewPrivateKey("0x"+newPrivateKey)
+                      import("ethereum-mnemonic-privatekey-utils").then(pkutils => {
+                        const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(this.state.newSeedPhrase)
+                        changeView('main')
+                        setPossibleNewPrivateKey("0x"+newPrivateKey)
+                      });
                     }
                   }}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
