@@ -8,6 +8,7 @@ import he from "./he.json";
 import ru from "./ru.json";
 import pt from "./pt.json";
 import ja from "./ja.json";
+import zh from "./zh.json";
 
 
-export { en, fr, es, ca, de, ro, he, ru, pt, ja, };
+export { en, fr, es, ca, de, ro, he, ru, pt, ja, zh };
