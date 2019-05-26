@@ -4,6 +4,7 @@ import cookie from 'react-cookies'
 import Web3 from 'web3';
 import Ruler from "./Ruler";
 import axios from "axios"
+const QRCode = require('qrcode.react');
 
 export default class ScavengerHunt extends React.Component {
 
@@ -518,7 +519,7 @@ export default class ScavengerHunt extends React.Component {
         <div className="form-group w-100">
             <div className="content bridge row">
             <div className="col-4 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
+              <button className="btn btn-large w-100" style={this.state.view === 'ownerView' ? this.props.buttonStyle.primary: this.props.buttonStyle.secondary} onClick={()=>{
                 this.clicked('ownerView')}
               }>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
@@ -527,7 +528,7 @@ export default class ScavengerHunt extends React.Component {
               </button>
             </div>
             <div className="col-4 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
+            <button className="btn btn-large w-100" style={this.state.view === 'playerView' ? this.props.buttonStyle.primary: this.props.buttonStyle.secondary} onClick={()=>{
               this.clicked('playerView')}
             }>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
@@ -536,7 +537,7 @@ export default class ScavengerHunt extends React.Component {
             </button>
             </div>
             <div className="col-4 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
+            <button className="btn btn-large w-100" style={this.state.view === 'leaderBoardView' ? this.props.buttonStyle.primary: this.props.buttonStyle.secondary} onClick={()=>{
               this.clicked("leaderBoardView")
             }}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
