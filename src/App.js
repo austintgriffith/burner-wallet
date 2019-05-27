@@ -290,7 +290,7 @@ export default class App extends Component {
     this.connectToRPC()
   }
   connectToRPC(){
-    let mainnetweb3 = new Web3(CONFIG.ROOTCHAIN.RPC);
+    const mainnetweb3 = new Web3(CONFIG.ROOTCHAIN.RPC);
     let daiContract, bridgeContract;
     try{
       daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),CONFIG.ROOTCHAIN.DAI_ADDRESS)
