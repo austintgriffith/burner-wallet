@@ -3,7 +3,7 @@ const configs = [
     DOMAINS: ["localhost", "10.0.0.107", "sundai.fritz.box"],
     SIDECHAIN: {
       NAME: "Leap Testnet",
-      RPC: "http://theta.testnet.leapdao.org:8645",
+      RPC: "https://testnet-node.leapdao.org",
       DAI_ADDRESS: "0xD2D0F8a6ADfF16C2098101087f9548465EC96C98",
       MARKET_MAKER:
         "https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet",
