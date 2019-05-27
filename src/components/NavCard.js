@@ -37,6 +37,7 @@ export default ({title, titleLink, goBack, darkMode}) => {
     >
       {titleDisplay}
       <Flex
+        className={"show-pointer"}
         position={'absolute'}
         alignItems={'center'}
         justifyContent={'center'}
