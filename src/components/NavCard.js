@@ -18,7 +18,7 @@ export default ({title, titleLink, goBack, darkMode}) => {
     )
   } else {
     titleDisplay = (
-      <Text textAlign={'center'} fontSize={3}>
+      <Text textAlign={'center'} fontSize={4} fontWeight={3} fontFamily={"Chivo, sans-serif"}>
         {title}
       </Text>
     )
