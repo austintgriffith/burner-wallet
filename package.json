@@ -5,15 +5,34 @@
   "dependencies": {
     "@burner-wallet/assets": "0.0.4",
     "@burner-wallet/core": "0.0.10",
+    "@babel/core": "7.2.2",
+    "@svgr/webpack": "4.1.0",
     "autolinker": "^2.2.1",
     "axios": "^0.18.0",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "9.0.0",
+    "babel-jest": "23.6.0",
+    "babel-loader": "8.0.5",
+    "babel-plugin-named-asset-import": "^0.3.1",
+    "babel-preset-react-app": "^7.0.2",
     "base64url": "^3.0.1",
+    "bfj": "6.1.1",
     "bootstrap": "^4.1.3",
+    "case-sensitive-paths-webpack-plugin": "2.2.0",
     "cors": "^2.8.4",
     "crypto": "^1.0.1",
     "dapparatus": "^1.0.81",
     "dotenv": "^6.2.0",
+    "css-loader": "1.0.0",
+    "dotenv-expand": "4.2.0",
     "eccrypto": "^1.1.0",
+    "eslint": "5.12.0",
+    "eslint-config-react-app": "^3.0.8",
+    "eslint-loader": "2.1.1",
+    "eslint-plugin-flowtype": "2.50.1",
+    "eslint-plugin-import": "2.14.0",
+    "eslint-plugin-jsx-a11y": "6.1.2",
+    "eslint-plugin-react": "7.12.4",
     "eth-crypto": "^1.3.2",
     "eth-ecies": "^1.0.3",
     "eth-ens-namehash": "^2.0.8",
@@ -23,19 +42,36 @@
     "ethers": "^4.0.20",
     "ethjs-ens": "^2.0.1",
     "express": "^4.16.4",
+    "file-loader": "2.0.0",
     "fs": "0.0.1-security",
+    "fs-extra": "7.0.1",
     "helmet": "^3.14.0",
+    "html-webpack-plugin": "4.0.0-alpha.2",
     "i18next": "^13.1.5",
     "i18next-browser-languagedetector": "^2.2.4",
+    "identity-obj-proxy": "3.0.0",
+    "jest": "23.6.0",
+    "jest-pnp-resolver": "1.0.2",
+    "jest-resolve": "23.6.0",
+    "jest-watch-typeahead": "^0.2.1",
+    "mini-css-extract-plugin": "0.5.0",
     "node-sass": "^4.11.0",
+    "optimize-css-assets-webpack-plugin": "5.0.1",
     "path": "^0.12.7",
+    "pnp-webpack-plugin": "1.2.1",
+    "postcss-flexbugs-fixes": "4.1.0",
+    "postcss-loader": "3.0.0",
+    "postcss-preset-env": "6.5.0",
+    "postcss-safe-parser": "4.0.1",
     "qrcode-reader": "^1.0.4",
     "qrcode.react": "^0.8.0",
     "query-string": "^6.3.0",
     "react": "^16.6.0",
+    "react-app-polyfill": "^0.2.2",
     "react-blockies": "^1.4.0",
     "react-cookies": "^0.1.0",
     "react-copy-to-clipboard": "^5.0.1",
+    "react-dev-utils": "^8.0.0",
     "react-dom": "^16.6.0",
     "react-emoji-render": "^0.5.0",
     "react-file-reader-input": "^2.0.0",
@@ -44,20 +80,26 @@
     "react-linkify": "^0.2.2",
     "react-native-webview-messaging": "^1.2.3",
     "react-qr-reader": "^2.1.1",
-    "react-scripts": "^2.1.5",
     "react-scroll": "^1.7.10",
     "react-stack-grid": "^0.7.1",
+    "resolve": "1.10.0",
     "s3": "^4.4.0",
+    "sass-loader": "7.1.0",
     "scrypt": "^6.0.3",
     "tabookey-gasless": "^0.3.3-a",
-    "web3": "1.0.0-beta.33"
+    "web3": "1.0.0-beta.33",
+    "style-loader": "0.23.1",
+    "terser-webpack-plugin": "1.2.2",
+    "url-loader": "1.1.2",
+    "webpack": "4.28.3",
+    "webpack-dev-server": "3.1.14",
+    "webpack-manifest-plugin": "2.0.4",
+    "workbox-webpack-plugin": "3.6.3"
   },
   "scripts": {
-    "start": "PORT=3000 react-scripts start",
-    "start-local": "PORT=3000 REACT_APP_MODE=local react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "PORT=3000 node scripts/start.js",
+    "build": "node scripts/build.js",
+    "test": "node scripts/test.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -74,5 +116,55 @@
     "mocha": "^5.2.0",
     "openzeppelin-solidity": "^2.3.0",
     "webpack": "^4.28.4"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts"
+    ],
+    "resolver": "jest-pnp-resolver",
+    "setupFiles": [
+      "react-app-polyfill/jsdom"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/src/**/?(*.)(spec|test).{js,jsx,ts,tsx}"
+    ],
+    "testEnvironment": "jsdom",
+    "testURL": "http://localhost",
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ],
+    "moduleNameMapper": {
+      "^react-native$": "react-native-web",
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
+    },
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "web.ts",
+      "ts",
+      "web.tsx",
+      "tsx",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node"
+    ],
+    "watchPlugins": [
+      "/Users/sunify/leapdao/burner-wallet/node_modules/jest-watch-typeahead/filename.js",
+      "/Users/sunify/leapdao/burner-wallet/node_modules/jest-watch-typeahead/testname.js"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
   }
 }
