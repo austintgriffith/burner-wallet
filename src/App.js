@@ -1340,10 +1340,7 @@ export default class App extends Component {
                 })
               }}
               />
-              <div
-                id="context"
-                style={{position:"absolute",right:5,top:-15,opacity:0.2,zIndex:100,fontSize:60,color:'#FFFFFF'}}>
-              </div>
+              <div id="context" className={"context"}></div>
               {eventParser}
             </div>
           </div>

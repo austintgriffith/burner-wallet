@@ -13,7 +13,7 @@ i.fas {
 }
 
 .header {
-  padding: 24px;
+  padding: 16px;
   position: relative;
   color: white;
 	display: flex;
@@ -155,12 +155,46 @@ i.fas {
 	align-items: center;
 }
 
-.blockieContainer{
+.blockie_container{
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 }
 
-.blockieName{
-	margin-left: 10px;
+.blockie_container__name{
+	margin-left: 16px;
+}
+
+.blockie__loader{
+	max-height:50px;
+	opacity:0.25;
+	width: 48px;
+	height: 48px;
+	object-fit: cover
+}
+
+.money_display{
+
+}
+
+.money_display__connecting{
+	opacity: 0.1;
+	font-size: 28px;
+	padding-top: 15px;
+}
+
+.money_display__network{
+	opacity: 0.4;
+	font-size: 22px;
+}
+
+.context{
+	position: absolute;
+	left: 10px;
+	bottom: 10px;
+	opacity:0.2;
+	z-index:100;
+	font-size: 60px;
+	color: #FFFFFF;
+	line-height: 1;
 }

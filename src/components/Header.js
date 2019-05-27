@@ -21,14 +21,12 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
   let blockieDisplay
   if(typeof total == "undefined" || Number.isNaN(total)){
     moneyDisplay = (
-      <div style={{opacity:0.1,fontSize:28,paddingTop:15}}>
-        connecting...
+      <div className={"money_display__connecting"}>
+        Connecting..
       </div>
     )
     blockieDisplay = (
-      <div>
-        <img src ={burnerloader} style={{maxHeight:50,opacity:0.25,marginLeft:-20}} alt=""/>
-      </div>
+      <img src={burnerloader} class="blockie__loader" alt=""/>
     )
   }else{
     /*moneyDisplay = (
@@ -37,7 +35,7 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
       </div>
     )*/
     moneyDisplay = (
-      <div style={{opacity:0.4,fontSize:22,paddingTop:18}}>
+      <div class="money_display__network">
         {network}
       </div>
     )
@@ -88,17 +86,16 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
 
   let opacity = 0.5
 
-
   const blockieLink = view === "main" || view === "exchange" ? 'receive' : 'main';
   let topLeft = (
-    <div className={"blockieContainer"} onClick={() => changeView(blockieLink)}>
+    <div className={"blockie_container"} onClick={() => changeView(blockieLink)}>
       {blockieDisplay}
-      <div class="blockieName">{name}</div>
+      <div class="blockie_container__name">{name}</div>
     </div>);
 
 
   let topRight = (
-    <div className={"moneyDisplay"} >
+    <div className={"money_display"} >
       {moneyDisplay}
     </div>
   )
