@@ -911,7 +911,7 @@ export default class Exchange extends React.Component {
                       Exit.fastSellAmount(
                         this.state.daiAddress, amount, color,
                         this.state.xdaiweb3, this.props.web3,
-                        'https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet/sellExit'
+                        `${CONFIG.SIDECHAIN.MARKET_MAKER}/sellExit`
                       )
                     ).then(rsp => {
                       console.log(rsp);

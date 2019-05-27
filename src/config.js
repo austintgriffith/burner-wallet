@@ -9,8 +9,8 @@ const configs = [
         "https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet",
       BRIDGE_ADDRESS: "0x7DC67d56f5487D612985718221bD62D7b415Fc50",
       EXPLORER: {
-        URL: "https://theta.leapdao.org/explorer/",
-        NAME: "LeapDAO Theta Testnet Explorer"
+        URL: "https://testnet.leapdao.org/explorer/",
+        NAME: "LeapDAO Testnet Explorer"
       },
       TIME_ESTIMATES: {
         // TODO: For Plasma implementations, EXIT (and specifically fast exits)
@@ -38,14 +38,14 @@ const configs = [
     DOMAINS: ["burner.leapdao.org"],
     SIDECHAIN: {
       NAME: "Leap Testnet",
-      RPC: "http://theta.testnet.leapdao.org:8645",
+      RPC: "https://testnet-node.leapdao.org",
       DAI_ADDRESS: "0xD2D0F8a6ADfF16C2098101087f9548465EC96C98",
       MARKET_MAKER:
         "https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet",
       BRIDGE_ADDRESS: "0x7DC67d56f5487D612985718221bD62D7b415Fc50",
       EXPLORER: {
-        URL: "https://theta.leapdao.org/explorer/",
-        NAME: "LeapDAO Theta Testnet Explorer"
+        URL: "https://testnet.leapdao.org/explorer/",
+        NAME: "LeapDAO Testnet Explorer"
       },
       TIME_ESTIMATES: {
         // TODO: For Plasma implementations, EXIT (and specifically fast exits)

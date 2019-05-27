@@ -1190,7 +1190,6 @@ export default class App extends Component {
                           goBack={this.goBack.bind(this)}
                           dollarDisplay={dollarDisplay}
                           tokenSendV2={tokenSendV2.bind(this)}
-                          marketMaker={CONFIG.SIDECHAIN.MARKET_MAKER}
                         />
                       </Card>
                     </div>

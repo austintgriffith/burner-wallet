@@ -42,8 +42,8 @@ export default class Receive extends React.Component {
             </Box>
           </CopyToClipboard>
           <div style={{width:"100%",textAlign:'center',padding:20}}>
-            <a href={CONFIG.EXPLORER.URL + "address/" + address} target="_blank" rel="noopener noreferrer">
-              View on {CONFIG.EXPLORER.NAME}
+            <a href={CONFIG.SIDECHAIN.EXPLORER.URL + "address/" + address} target="_blank" rel="noopener noreferrer">
+              View on {CONFIG.SIDECHAIN.EXPLORER.NAME}
             </a>
           </div>
 

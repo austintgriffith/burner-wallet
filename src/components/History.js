@@ -305,7 +305,7 @@ export default class History extends React.Component {
       <div style={{marginTop:20}}>
           <div className="content ops row">
             <div className="col-2 p-1">
-              <a href={CONFIG.EXPLORER.URL + "address/"+ address} target="_blank" rel="noopener noreferrer">
+              <a href={CONFIG.SIDECHAIN.EXPLORER.URL + "address/"+ address} target="_blank" rel="noopener noreferrer">
                 <Blockies seed={target} scale={5}/> {isEncrypted}
               </a>
             </div>
