@@ -200,21 +200,18 @@ export default class App extends Component {
     incogDetect((result)=>{
       if(result){
         console.log("INCOG")
-        document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
-        document.body.style.backgroundColor = "#671c1c"
+        document.getElementById("main").classList.add("main--incognito")
         var contextElement = document.getElementById("context")
         contextElement.innerHTML = 'INCOGNITO';
       }else if (typeof web3 !== 'undefined') {
         console.log("NOT INCOG",this.state.metaAccount)
         if (window.web3.currentProvider.isMetaMask === true) {
-          document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
-          document.body.style.backgroundColor = "#ca6e28"
+          document.getElementById("main").classList.add("main--metamask")
           contextElement = document.getElementById("context")
           contextElement.innerHTML = 'METAMASK';
         } else if(this.state.account && !this.state.metaAccount) {
           console.log("~~~*** WEB3",this.state.metaAccount,result)
-          document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
-          document.body.style.backgroundColor = "#305582"
+          document.getElementById("main").classList.add("main--web3")
           contextElement = document.getElementById("context")
           contextElement.innerHTML = 'WEB3';
         }
@@ -748,8 +745,8 @@ export default class App extends Component {
     return (
       <ThemeProvider theme={theme}>
         <I18nextProvider i18n={i18n}>
-          <div id="main" style={mainStyle}>
-            <div style={innerStyle}>
+          <div id="main" className="main">
+            <div className="inner-container">
               {extraHead}
               {networkOverlay}
               {web3_setup}

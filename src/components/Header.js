@@ -84,9 +84,9 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
     </div>
   )
 
-  let opacity = 0.5
-
-  const blockieLink = view === "main" || view === "exchange" ? 'receive' : 'main';
+  const mainOrExchange = view === "main" || view === "exchange";
+  const opacity =mainOrExchange ? 1 :  0.5;
+  const blockieLink = mainOrExchange ? 'receive' : 'main';
   let topLeft = (
     <div className={"blockie_container"} onClick={() => changeView(blockieLink)}>
       {blockieDisplay}

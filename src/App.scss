@@ -13,7 +13,7 @@ i.fas {
 }
 
 .header {
-  padding: 16px;
+  padding: 16px 0;
   position: relative;
   color: white;
 	display: flex;
@@ -28,6 +28,10 @@ i.fas {
     font-weight: 600;
   }
   margin-bottom: 0px;
+
+	@media screen and (max-width: 768px){
+		padding: 16px;
+	}
 }
 
 .card {
@@ -184,7 +188,6 @@ i.fas {
 .money_display__connecting{
 	opacity: 0.1;
 	font-size: 28px;
-	padding-top: 15px;
 }
 
 .money_display__network{
@@ -202,3 +205,64 @@ i.fas {
 	color: #FFFFFF;
 	line-height: 1;
 }
+
+.main{
+	min-height: 100vh;
+	height: 100%;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	--primary: red;
+	--secondary: blue;
+	background-image: radial-gradient(circle at bottom,var(--secondary) 10%, var(--primary), var(--falloff));
+}
+
+.main--incognito{
+	--primary: green;
+	--secondary: purple;
+}
+
+.main--metamask{
+	--falloff: #438cbf;
+	--primary:#0fce77;
+	--secondary: #ecf750;
+}
+
+.main--web3{
+	--primary:#0fce77;
+	--secondary: #ecf750;
+}
+
+.inner-container{
+	width: 100%;
+	max-width: 740px;
+	margin: 0 auto;
+	text-align: left;
+}
+
+.loader{
+	text-align: center;
+	--loader-height: 2px;
+	--loader-main: #fff;
+	--loader-glow: #fff;
+}
+
+.loader__logo{
+	max-width: 25%;
+	padding-bottom: 40px;
+}
+
+.loader__progress{
+	width: 80%;
+	height: var(--loader-height);
+	background-color: #1a7a68;
+	margin-left: 10%;
+}
+
+.loader__progress_fill{
+	height: var(--loader-height);
+	background-color: var(--loader-main);
+	box-shadow: 0 0 5px 1px var(--loader-glow);
+}
+
+
