@@ -13,9 +13,13 @@ i.fas {
 }
 
 .header {
-  padding: 30px;
+  padding: 24px;
   position: relative;
   color: white;
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+  justify-content: space-between;
   i {
     font-size: 32px;
   }
@@ -147,3 +151,16 @@ i.fas {
   }
 }
 
+.content.ops.row{
+	align-items: center;
+}
+
+.blockieContainer{
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+}
+
+.blockieName{
+	margin-left: 10px;
+}

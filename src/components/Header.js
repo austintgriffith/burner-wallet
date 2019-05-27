@@ -89,26 +89,16 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
   let opacity = 0.5
 
 
+  const blockieLink = view === "main" || view === "exchange" ? 'receive' : 'main';
+  let topLeft = (
+    <div className={"blockieContainer"} onClick={() => changeView(blockieLink)}>
+      {blockieDisplay}
+      <div class="blockieName">{name}</div>
+    </div>);
 
-  let topLeft
-
-  if(view==="main" || view==="exchange"){
-    opacity = 1.0
-    topLeft = (
-      <div style={{position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}} onClick={() => changeView('receive')} >
-          {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
-      </div>
-    )
-  }else{
-    topLeft = (
-      <div style={{position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}} onClick={() => changeView('main')} >
-          {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
-      </div>
-    )
-  }
 
   let topRight = (
-    <div style={{position:"absolute",right:28,top:-4,zIndex:1,fontSize:46,opacity:0.9}}  >
+    <div className={"moneyDisplay"} >
       {moneyDisplay}
     </div>
   )
