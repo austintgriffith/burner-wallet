@@ -1658,6 +1658,7 @@ render() {
                     changeView={this.changeView}
                     changeAlert={this.changeAlert}
                     dollarDisplay={dollarDisplay}
+                    convertToDollar={convertToDollar}
                     dollarSymbol={dollarSymbol}
                     transactionsByAddress={this.state.transactionsByAddress}
                     fullTransactionsByAddress={this.state.fullTransactionsByAddress}
