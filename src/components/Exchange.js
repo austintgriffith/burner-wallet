@@ -140,7 +140,7 @@ export default class Exchange extends React.Component {
     xdaiweb3.getColor(tokenAddr)
     .then(color => {
       return fetch(
-      `${this.props.marketMaker}/exits/${account}/${color}`,
+      `${CONFIG.SIDECHAIN.MARKET_MAKER}/exits/${account}/${color}`,
       { method: "GET", mode: "cors" }
       );
     })
@@ -887,7 +887,7 @@ export default class Exchange extends React.Component {
                   Exit.fastSellAmount(
                     this.state.daiAddress, amount, color,
                     this.state.xdaiweb3, this.props.web3,
-                    `${this.props.marketMaker}/sellExit`,
+                    `${CONFIG.SIDECHAIN.MARKET_MAKER}/sellExit`,
                     signer,
                   ).then(rsp => {
                     console.log(rsp);
