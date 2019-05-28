@@ -10,4 +10,4 @@ jobs:
       script: npm run lint
     - stage: deploy
       script: ./scripts/ci_deploy.sh
-      if: branch = master
+      if: branch = master AND type != 'pull_request'
