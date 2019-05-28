@@ -4,10 +4,11 @@ node_js:
 cache: npm
 install:
   - npm install
-jobs:
-  include:
-    - stage: lint
-      script: npm run lint
-    - stage: deploy
-      script: ./scripts/ci_deploy.sh
-      if: branch = master AND type != 'pull_request'
+script: 
+  - npm run lint
+deploy:
+  provider: script
+  script: ./scripts/ci_deploy.sh
+  skip_cleanup: true
+  on:
+    branch: master
