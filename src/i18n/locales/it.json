@@ -96,7 +96,7 @@
       "to_qr": "Al QR"
     },
     "balance_display": {
-      "waiting_for_api": "In attesa delle API",
+      "waiting_for_api": "In attesa dell'API",
       "no_currency_api": "Nessun dato della valuta disponibile dall'API"
     },
     "burn_wallet": {
