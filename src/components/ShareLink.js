@@ -1,7 +1,7 @@
 import React from 'react';
 import Ruler from "./Ruler";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-var QRCode = require('qrcode.react');
+import QRCode from 'qrcode.react';
 
 export default class ShareLink extends React.Component {
 

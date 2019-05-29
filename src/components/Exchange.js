@@ -1,15 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-
 import React from 'react';
 import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
-
-//import coinbase from '../coinbase.jpg';
-//import localeth from '../localeth.png';
-
 import Web3 from 'web3';
 import i18n from '../i18n';
-
 import {
   Flex,
   Box,
@@ -18,42 +12,28 @@ import {
   Input as RInput,
   Field
 } from 'rimble-ui'
-
 import { Exit } from 'leap-core';
-
 import { fromRpcSig } from 'ethereumjs-util';
-
 import { bi, add, divide } from 'jsbi-utils';
+import getConfig from "../config";
 
+const CONFIG = getConfig();
 const BN = Web3.utils.BN
 
-const GASBOOSTPRICE = 0.25
-
+// TODO: Move logoStyle and colStyle into e.g. SCSS file
 const logoStyle = {
   maxWidth:50,
   maxHeight:50,
 }
-
 const colStyle = {
   textAlign:"center",
   whiteSpace:"nowrap"
 }
 
-const xdaiToDaiEstimatedTime = 160000
-const daiToxDaiEstimatedTime = 330000
-
-const sendDaiEstimatedTime = 160000
-
-const exchangeEstimatedTime = 300000
-
-const toXdaiBridgeAccount = "0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016"
-const toDaiBridgeAccount = "0x7301cfa0e1756b71869e93d4e4dca5c7d0eb0aa6"
-
-const uniswapExchangeAccount = "0x09cabec1ead1c0ba254b09efb3ee13841712be14"
 const uniswapContractObject = {
-  address:uniswapExchangeAccount,
-  abi:require("../contracts/Exchange.abi.js"),
-  blocknumber:6627956,
+  address: CONFIG.ROOTCHAIN.UNISWAP.DAI_ETH_ADDRESS,
+  abi: require("../contracts/Exchange.abi.js"),
+  blocknumber: 6627956,
 }
 
 let metaReceiptTracker = {}
@@ -61,6 +41,7 @@ let metaReceiptTracker = {}
 /**
  * @returns gas price in gwei
  */
+// TODO: move to burner-core
 function gasPrice() {
   return fetch('https://ethgasstation.info/json/ethgasAPI.json', {
     mode: 'cors',
@@ -70,7 +51,7 @@ function gasPrice() {
     .then((response)=>{
       console.log(response);
       if(response.average > 0 && response.average < 200){
-        const avg = response.average + (response.average*GASBOOSTPRICE)
+        const avg = response.average + (response.average*CONFIG.ROOTCHAIN.GAS.BOOST_BY)
         return Math.round(avg * 100) / 1000;
       }
 
@@ -159,7 +140,7 @@ export default class Exchange extends React.Component {
     xdaiweb3.getColor(tokenAddr)
     .then(color => {
       return fetch(
-      `${this.props.marketMaker}/exits/${account}/${color}`,
+      `${CONFIG.SIDECHAIN.MARKET_MAKER}/exits/${account}/${color}`,
       { method: "GET", mode: "cors" }
       );
     })
@@ -247,7 +228,7 @@ export default class Exchange extends React.Component {
     }*/
     if(this.state.daiToXdaiMode==="withdrawing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
-      let percentDone = Math.min(100,((txAge * 100) / xdaiToDaiEstimatedTime)+5)
+      let percentDone = Math.min(100,((txAge * 100) / CONFIG.SIDECHAIN.TIME_ESTIMATES.EXIT)+5)
 
       console.log("watching for ",this.props.daiBalance,"to be ",this.state.daiBalanceShouldBe-0.0005)
       if(this.props.daiBalance>=(this.state.daiBalanceShouldBe-0.0005)){
@@ -267,7 +248,7 @@ export default class Exchange extends React.Component {
 
     }else if(this.state.daiToXdaiMode==="depositing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
-      let percentDone = Math.min(100,((txAge * 100) / daiToxDaiEstimatedTime)+5)
+      let percentDone = Math.min(100,((txAge * 100) / CONFIG.SIDECHAIN.TIME_ESTIMATES.DEPOSIT)+5)
 
       //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
       if(this.props.xdaiBalance>=(this.state.xdaiBalanceShouldBe-0.0005)){
@@ -286,7 +267,7 @@ export default class Exchange extends React.Component {
       }
     }else if(this.state.daiToXdaiMode==="sending"){
       let txAge = Date.now() - this.state.loaderBarStartTime
-      let percentDone = Math.min(100,((txAge * 100) / sendDaiEstimatedTime)+5)
+      let percentDone = Math.min(100,((txAge * 100) / CONFIG.ROOTCHAIN.TIME_ESTIMATES.SEND)+5)
 
       console.log("watching for ",this.props.daiBalance,"to be ",this.state.daiBalanceShouldBe-0.0005)
       if(this.props.daiBalance<=(this.state.daiBalanceShouldBe-0.0005)){
@@ -308,7 +289,7 @@ export default class Exchange extends React.Component {
 
     if(this.state.ethToDaiMode==="withdrawing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
-      let percentDone = Math.min(100,((txAge * 100) / exchangeEstimatedTime) + 5)
+      let percentDone = Math.min(100,((txAge * 100) / CONFIG.ROOTCHAIN.TIME_ESTIMATES.SEND) + 5)
       //ethBalanceAtStart:this.state.ethBalance,
       //ethBalanceShouldBe:this.state.ethBalance+amountOfChange,
       console.log("watching for ",this.props.ethBalance,"to be ",this.state.ethBalanceShouldBe-0.001)
@@ -329,7 +310,7 @@ export default class Exchange extends React.Component {
 
     }else if(this.state.ethToDaiMode==="depositing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
-      let percentDone = Math.min(100,((txAge * 100) / exchangeEstimatedTime)+5)
+      let percentDone = Math.min(100,((txAge * 100) / CONFIG.ROOTCHAIN.TIME_ESTIMATES.SEND)+5)
 
       //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
       if(this.props.daiBalance>=(this.state.daiBalanceShouldBe-0.0005)){
@@ -348,7 +329,7 @@ export default class Exchange extends React.Component {
       }
     }else if(this.state.ethToDaiMode==="sending"){
       let txAge = Date.now() - this.state.loaderBarStartTime
-      let percentDone = Math.min(100,((txAge * 100) / exchangeEstimatedTime) + 5)
+      let percentDone = Math.min(100,((txAge * 100) / CONFIG.ROOTCHAIN.TIME_ESTIMATES.SEND) + 5)
       //ethBalanceAtStart:this.state.ethBalance,
       //ethBalanceShouldBe:this.state.ethBalance+amountOfChange,
       console.log("watching for ",this.props.ethBalance,"to be ",this.state.ethBalanceShouldBe-0.001)
@@ -508,7 +489,6 @@ export default class Exchange extends React.Component {
       }else{
         //send funds using metamask (or other injected web3 ... should be checked and on mainnet)
         const { pTx, web3 } = this.props
-        console.log("Depositing to ",toDaiBridgeAccount)
         let bridgeContract = new web3.eth.Contract(this.props.bridgeContract._jsonInterface,this.props.bridgeContract._address)
         console.log("CURRENT BRIDGE CONTRACT YOU NEED TO GET ABI FROM:",this.props.bridgeContract, this.state.daiAddress)
         let daiContract = new web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
@@ -810,8 +790,9 @@ export default class Exchange extends React.Component {
                     alert(i18n.t('exchange.go_to_etherscan'))
                   }
                 })
-                //send ERC20 DAI to 0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016 (toXdaiBridgeAccount)
-                this.transferDai(toXdaiBridgeAccount,this.state.amount,"Sending funds to bridge...",()=>{
+                // TODO: transferDai doesn't use the destination parameter anymore
+                // Remove it and rename function to e.g. depositDai
+                this.transferDai(null,this.state.amount,"Sending funds to bridge...",()=>{
                   this.setState({
                     amount:"",
                     loaderBarColor:"#4ab3f5",
@@ -872,7 +853,6 @@ export default class Exchange extends React.Component {
             <div className="col-3 p-1">
               <Button disabled={buttonsDisabled} onClick={async ()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
-                console.log("Withdrawing to ",toDaiBridgeAccount)
 
                 let exitableAmount = this.state.amount;
 
@@ -907,7 +887,7 @@ export default class Exchange extends React.Component {
                   Exit.fastSellAmount(
                     this.state.daiAddress, amount, color,
                     this.state.xdaiweb3, this.props.web3,
-                    `${this.props.marketMaker}/sellExit`,
+                    `${CONFIG.SIDECHAIN.MARKET_MAKER}/sellExit`,
                     signer,
                   ).then(rsp => {
                     console.log(rsp);
@@ -922,53 +902,25 @@ export default class Exchange extends React.Component {
                   });
 
                 }else{
+                  // TODO: get real decimals
+                  const amount = bi(this.state.amount * 10 ** 18);
+                  const tokenAddr = this.props.daiContract._address;
 
-                  //BECAUSE THIS COULD BE ON A TOKEN, THE SEND FUNCTION IS SENDING TOKENS TO THE BRIDGE HAHAHAHA LETs FIX THAT
-                  if(this.props.ERC20TOKEN){
-                    console.log("native sending ",exitableAmount," to ",toDaiBridgeAccount)
-                    this.props.nativeSend(toDaiBridgeAccount, exitableAmount, 120000, (err, result) => {
-                      console.log("RESUTL!!!!",result)
-                      if(result && result.transactionHash){
-                        this.setState({
-                          amount:"",
-                          loaderBarColor:"#4ab3f5",
-                          loaderBarStatusText:"Waiting for bridge...",
-                          loaderBarClick:()=>{
-                            alert(i18n.t('exchange.idk'))
-                          }
-                        })
-                      }
-                    })
-                  }else{
-                    // TODO: get real decimals
-                    let amount = bi(exitableAmount * 10 ** 18);
-                    const tokenAddr = this.props.pdaiContract._address;
-
-                    const color = await this.state.xdaiweb3.getColor(tokenAddr);
-
-                    // special handler for MNY
-                    if (!this.state.notSundai) {
-                      this.directSell(amount, color);
-                      return;
-                    }
-
-                    Exit.fastSellAmount(
-                      this.state.daiAddress, amount, color,
-                      this.state.xdaiweb3, this.props.web3,
-                      `${this.props.marketMaker}/sellExit`
+                  this.state.xdaiweb3.getColor(tokenAddr)
+                    .then(color =>
+                      Exit.fastSellAmount(
+                        this.state.daiAddress, amount, color,
+                        this.state.xdaiweb3, this.props.web3,
+                        `${CONFIG.SIDECHAIN.MARKET_MAKER}/sellExit`
+                      )
                     ).then(rsp => {
                       console.log(rsp);
                       this.updatePendingExits(this.state.daiAddress, this.state.xdaiweb3);
                       this.setState({ amount: "", daiToXdaiMode: false });
                     }).catch(err => {
                       console.log(err);
-                      this.props.changeAlert({
-                        type: 'warning',
-                        message: 'Failed to exit MNY'
-                      });
                     });
-                  }
-                }
+              }
               }}>
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-down" /> Send
@@ -1249,7 +1201,7 @@ export default class Exchange extends React.Component {
 
 
 
-                let approval = await this.props.daiContract.methods.allowance(this.state.daiAddress,uniswapExchangeAccount).call()
+                let approval = await this.props.daiContract.methods.allowance(this.state.daiAddress,CONFIG.ROOTCHAIN.UNISWAP.DAI_ETH_ADDRESS).call()
 
 
                 if(this.state.mainnetMetaAccount){
@@ -1276,7 +1228,7 @@ export default class Exchange extends React.Component {
                       console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
                       paramsObject.to = this.props.daiContract._address
-                      paramsObject.data = this.props.daiContract.methods.approve(uniswapExchangeAccount,""+(amountOfDai)).encodeABI()
+                      paramsObject.data = this.props.daiContract.methods.approve(CONFIG.ROOTCHAIN.UNISWAP.DAI_ETH_ADDRESS,""+(amountOfDai)).encodeABI()
 
                       console.log("APPROVE TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
@@ -1392,7 +1344,7 @@ export default class Exchange extends React.Component {
                     let metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
 
                     this.props.tx(
-                      metaMaskDaiContract.methods.approve(uniswapExchangeAccount,""+(amountOfDai))//do 1000x so we don't have to waste gas doing it again
+                      metaMaskDaiContract.methods.approve(CONFIG.ROOTCHAIN.UNISWAP.DAI_ETH_ADDRESS,""+(amountOfDai))//do 1000x so we don't have to waste gas doing it again
                     ,100000,0,0,(receipt)=>{
                       if(receipt){
                         console.log("APPROVE COMPLETE?!?",receipt)
@@ -1659,29 +1611,15 @@ export default class Exchange extends React.Component {
       )
     }
 
-    let sendXdaiButton
-
-    if(this.props.ERC20TOKEN){
-      sendXdaiButton = (
-        <OutlineButton
-          width={1}
-          icon={'ArrowForward'}
-          icononly
-          disabled={buttonsDisabled}
-          onClick={()=>{this.setState({sendXdai:true})}}
-        />
-      )
-    }else{
-      sendXdaiButton = (
-        <OutlineButton
-          width={1}
-          icon={'ArrowForward'}
-          icononly
-          disabled={buttonsDisabled}
-          onClick={() => this.props.goBack("send_to_address")}
-        />
-      )
-    }
+    let sendXdaiButton = (
+      <OutlineButton
+        width={1}
+        icon={'ArrowForward'}
+        icononly
+        disabled={buttonsDisabled}
+        onClick={() => this.props.goBack("send_to_address")}
+      />
+    )
 
     let sendXdaiRow = ""
     if(this.state.sendXdai){

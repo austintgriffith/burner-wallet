@@ -4,8 +4,7 @@ import React from 'react';
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import RecentTransactions from './RecentTransactions';
 import i18n from '../i18n';
-import config from "../config.json";
-
+import getConfig from "../config";
 import {
   Flex,
   Box,
@@ -13,13 +12,14 @@ import {
   QR as QRCode
 } from 'rimble-ui'
 
+const CONFIG = getConfig();
+
 export default class Receive extends React.Component {
 
   render() {
     let {
       view,
       buttonStyle,
-      ERC20TOKEN,
       address,
       changeAlert,
       changeView,
@@ -42,8 +42,8 @@ export default class Receive extends React.Component {
             </Box>
           </CopyToClipboard>
           <div style={{width:"100%",textAlign:'center',padding:20}}>
-            <a href={config.explorer.url + "address/" + address} target="_blank" rel="noopener noreferrer">
-              View on {config.explorer.name}
+            <a href={CONFIG.SIDECHAIN.EXPLORER.URL + "address/" + address} target="_blank" rel="noopener noreferrer">
+              View on {CONFIG.SIDECHAIN.EXPLORER.NAME}
             </a>
           </div>
 
@@ -52,12 +52,11 @@ export default class Receive extends React.Component {
             view={view}
             max={5}
             buttonStyle={buttonStyle}
-            ERC20TOKEN={ERC20TOKEN}
-            transactionsByAddress={ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
+            transactionsByAddress={this.props.transactionsByAddress}
             changeView={changeView}
             address={address}
             block={this.props.block}
-            recentTxs={ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
+            recentTxs={this.props.recentTxs}
           />
         </div>
         <div name="theVeryBottom" className="text-center bottom-text">
