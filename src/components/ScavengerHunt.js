@@ -1,5 +1,7 @@
 import React from 'react';
 import { Events, Blockie, Scaler } from "dapparatus";
+import Share from './Share'
+import i18n from '../i18n';
 import cookie from 'react-cookies'
 import Web3 from 'web3';
 import Ruler from "./Ruler";
@@ -424,11 +426,38 @@ export default class ScavengerHunt extends React.Component {
   }
   render(){
 
+
+
     if(!this.state.YourContract){
       return (
         <div>
           LOADING YOURCONTRACT...
         </div>
+      )
+    }
+
+    let url = window.location.protocol+"//"+window.location.hostname
+    if(window.location.port&&window.location.port!=80&&window.location.port!=443){
+      url = url+":"+window.location.port
+    }
+    let qrSize = Math.min(document.documentElement.clientWidth,512)-90
+    let qrValue = url+"/"
+
+    let showingQr = ""
+    if(this.state.showingQr){
+      return (
+      <div>
+        <div style={{position:'absolute',right:20,fontSize:32,top:72,cursor:'pointer',zIndex:2,padding:3}} onClick={()=>{this.setState({showingQr: ""})}}>
+          <i style={{color:"#000000"}} className="fas fa-times" />
+        </div>
+        <div className="main-card card w-100" style={{zIndex:1}}>
+          <Share
+            title={this.state.showingQr}
+            url={this.state.showingQr}
+            changeAlert={this.props.changeAlert}
+          />
+        </div>
+      </div>
       )
     }
 
@@ -487,11 +516,21 @@ export default class ScavengerHunt extends React.Component {
     for (let i = 0; i < this.state.numScavengerAnswers; i++) {
       scavengerAnswers.push(<div className="content bridge row" key={i}>
       <div className="input-group">
-        <div className="col-12 p-1">
+        <div className="col-8 p-1">
           <div>
             <input type="text" className="form-control" placeholder={"Enter Scavenger Answer " + i} id={"scavengerAnswer_" + i} onChange={this.handleOwnerAnswerChange.bind(this, i)}
             value={this.state.ownerAnswers[i]} />
           </div>
+        </div>
+        <div className="col-4 p-1">
+          <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}
+                  onClick={()=>{
+                    this.setState({showingQr:`${url}/?game=${this.state.YourContract._address}q=${i}&a=${this.state.ownerAnswers[i]}`})
+                  }}>
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              <i className="fas fa-qrcode"/> {i18n.t('advanced.to_qr')}
+            </Scaler>
+          </button>
         </div>
       </div>
     </div>)
@@ -515,7 +554,7 @@ export default class ScavengerHunt extends React.Component {
     }
 
     return (
-      <div>
+      <div classname="your-module">
         <div className="form-group w-100">
             <div className="content bridge row">
             <div className="col-4 p-1">
@@ -698,7 +737,6 @@ export default class ScavengerHunt extends React.Component {
 
               </div>
 
-
             ) : this.state.view == "playerView" ? (
               //////////////////////////////////////////////////////////////////////////////////////////////
               // Player View
@@ -708,6 +746,25 @@ export default class ScavengerHunt extends React.Component {
               {(this.props.web3.utils.hexToString(this.state.status) == "Start") ? questions : answers}
               
               <Ruler/>
+
+              <div className="content row">
+                <div className="col-12 p-1">
+                  <div className="input-group" style={{width:"100%",textAlign:"center", display:"inline-block"}}>
+                    <input type="hidden" className="form-control" placeholder="0x..." value={this.state.toAddress}
+                      ref={(input) => { this.addressInput = input; }}
+                      onChange={event => this.updateState('toAddress', event.target.value)}
+                    />
+                    <div className="input-group-append" onClick={() => {
+                      this.props.openScanner({view:"scavengerhunt"})
+                    }} style={{display:"inline-block"}}>
+                      <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.primary}>
+                        <i style={{color:"#FFFFFF"}} className="fas fa-qrcode" />
+                        <span style={{marginLeft:"10px"}}>{"SCAN FOUND ANSWER QR CODES"}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               </div>
             ) : (
@@ -761,7 +818,7 @@ export default class ScavengerHunt extends React.Component {
               </button>
             </div>
             <div className="col-4 p-1">
-            <div style={{padding:20,textAlign:'center'}}>
+            <div style={{padding:15,textAlign:'center'}}>
               Your contract is
               <Blockie
                 address={this.state.YourContract._address}
@@ -772,6 +829,15 @@ export default class ScavengerHunt extends React.Component {
               <div style={{padding:5}}>
                 it has {this.props.dollarDisplay(this.state.yourContractBalance)}
               </div>
+
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}
+                  onClick={()=>{
+                    this.setState({showingQr:`${url}/?game=${this.state.YourContract._address}`})
+                  }}>
+                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                  <i className="fas fa-qrcode"/> {i18n.t('advanced.to_qr')}
+                </Scaler>
+              </button>
 
             </div>
             </div>
@@ -788,29 +854,8 @@ export default class ScavengerHunt extends React.Component {
             </button>
             </div>
           </div>
-
-          <Ruler/>
-
-          <div className="content row">
-            <label htmlFor="amount_input">{"SCAN FOUND ANSWER QR CODES:"}</label>
-            <div className="input-group">
-              <input type="hidden" className="form-control" placeholder="0x..." value={this.state.toAddress}
-                ref={(input) => { this.addressInput = input; }}
-                onChange={event => this.updateState('toAddress', event.target.value)}
-              />
-              <div className="input-group-append" onClick={() => {
-                this.props.openScanner({view:"scavengerhunt"})
-              }}>
-                <span className="input-group-text" id="basic-addon2" style={this.props.buttonStyle.primary}>
-                  <i style={{color:"#FFFFFF"}} className="fas fa-qrcode" />
-                </span>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
-    )
-
+   )
   }
 }

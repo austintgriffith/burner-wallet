@@ -1343,7 +1343,7 @@ render() {
             }else{
               return (
                 <div>
-                  <div className="send-to-address card w-100" style={{zIndex:1}}>
+                  <div className="main-card card w-100" style={{zIndex:1}}>
                     <NavCard title={"SCAVENGER HUNT"} titleLink={""} goBack={this.goBack.bind(this)}/>
                     <ScavengerHunt
                       privateKey={metaAccount.privateKey}
@@ -1398,7 +1398,6 @@ render() {
                     />
                   </div>
                   <Bottom
-                    text={"buttom button"}
                     action={this.goBack.bind(this)}
                   />
                 </div>
