@@ -415,6 +415,21 @@ export default class ScavengerHunt extends React.Component {
           type: 'info',
           message: 'New Scavenger Hunt deployed'
         })
+
+        let pot = parseFloat(document.getElementById("scavengerPot").value)
+        if (pot > 0) {
+          let toAddress = this.state.YourContract._address
+          this.props.send(toAddress, pot, 120000,"0x00", (result) => {
+            if(result && result.transactionHash){
+              console.log("RESULT&&&#&#&#&# ",result)
+              this.props.changeAlert({
+                type: 'info',
+                message: `Pot deposited ${pot}`
+              })
+            }
+          })
+        }
+
       })
     } else {
       this.props.changeAlert({
@@ -692,27 +707,34 @@ export default class ScavengerHunt extends React.Component {
                 {scavengerAnswers}
 
                 <div className="content bridge row">
-                    <div className="col-6 p-1">
-                      <div>
-                        <input type="text" className="form-control" placeholder={"Game End Time in Seconds"} id={"gameEndTime"} />
-                      </div>
+                  <div className="col-12 p-1">
+                    <div>
+                      <input type="text" className="form-control" placeholder={"Game End Time in Seconds"} id={"gameEndTime"} />
                     </div>
-                  <div className="col-6 p-1">
+                  </div>
+                  <div className="col-12 p-1">
+                    <div>
+                      <input type="text" className="form-control" placeholder={"Scavenger Pot Amount"} id={"scavengerPot"} />
+                    </div>
+                  </div>
+                  <div className="col-12 p-1">
                     <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={this.deployYourContract.bind(this)}>
                       <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                        <i className="fas fa-rocket"></i> {"Deploy Scavenger Contract"}
+                        <i className="fas fa-rocket"></i> {"Deploy Scavenger"}
                       </Scaler>
                     </button>
                   </div>
                 </div>
 
+                <Ruler/>
+
                 <div className="content bridge row">
-                    <div className="col-6 p-1">
+                    <div className="col-12 p-1">
                       <div>
                         <input type="text" className="form-control" placeholder={"Reveal End Time in Seconds"} id={"revealEndTime"} />
                       </div>
                     </div>
-                    <div className="col-6 p-1">
+                    <div className="col-12 p-1">
                       <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={() => {
                         this.clicked("endGame")
                       }}>
@@ -722,6 +744,8 @@ export default class ScavengerHunt extends React.Component {
                       </button>
                     </div>
                 </div>
+
+                <Ruler/>
 
                 <div className="content bridge row">
                     <div className="col-12 p-1">
