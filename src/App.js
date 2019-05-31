@@ -48,6 +48,7 @@ import ScavengerHunt from './components/ScavengerHunt'
 
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
+import scavengerhunt from './scavengerhunt.png';
 import eth from './ethereum.png';
 import dai from './dai.jpg';
 import xdai from './xdai.jpg';
@@ -1425,7 +1426,7 @@ render() {
                   <div style={{cursor:"pointer"}} onClick={()=>{
                     this.changeView('scavengerhunt')
                   }}>
-                  <Balance icon={cypherpunk} selected={"SCAVENGERHUNT"} text={"SCAVENGERHUNT"} amount={8.16} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance icon={scavengerhunt} selected={"SCAVENGERHUNT"} text={"SCAVENGERHUNT"} amount={8.16} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
                   </div>
                   {badgeDisplay}
