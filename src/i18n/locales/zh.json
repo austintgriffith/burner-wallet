@@ -15,7 +15,7 @@
     "loading": "加载中",
     "cancel": "取消",
     "done": "完成",
-    "exchange_title": "交易",
+    "exchange_title": "兑换",
     "amount": "金额",
     "send": "发送",
     "withdraw": "提款",
@@ -27,7 +27,7 @@
       "receive": "收款",
       "send": "发送",
       "share": "分享",
-      "link": "链接",
+      "link": "红包",
       "vendors": "商户"
     },
     "send_with_link": {
