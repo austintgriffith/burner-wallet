@@ -9,6 +9,6 @@ import ru from "./ru.json";
 import pt from "./pt.json";
 import ja from "./ja.json";
 import zh from "./zh.json";
+import it from "./it.json";
 
-
-export { en, fr, es, ca, de, ro, he, ru, pt, ja, zh };
+export { en, fr, es, ca, de, ro, he, ru, pt, ja, zh, it };

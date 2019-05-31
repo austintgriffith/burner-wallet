@@ -1,0 +1,109 @@
+{
+  "it": {
+    "app_name": "Burner",
+    "about": "Informazioni",
+    "code": "Codice",
+    "burn": "Brucia PK",
+    "show": "Mostra PK",
+    "copy": "Copia PK",
+    "create": "Crea",
+    "receive_title": "Ricevi",
+    "receipt_title": "Ricevuta",
+    "send_to_address_title": "Invia all'indirizzo",
+    "advance": "Avanzate",
+    "advance_title": "Avanzate",
+    "loading": "Caricamento...",
+    "cancel": "Annulla",
+    "done": "Fatto",
+    "exchange_title": "Scambio",
+    "amount": "Importo",
+    "send": "Invia",
+    "withdraw": "Preleva",
+    "history_chat": "Cronologia & Chat",
+    "request_funds_title": "Richiedi fondi",
+    "request": "Richiedi",
+    "vendors": "Venditori",
+    "main_card": {
+      "receive": "Ricevi",
+      "send": "Invia",
+      "share": "Condividi",
+      "link": "Link",
+      "vendors": "Venditori"
+    },
+    "send_with_link": {
+      "error": "Si prega di inserire un importo valido"
+    },
+    "share": {
+      "copied": "URL copiato negli appunti"
+    },
+    "vendor": {
+      "updating": "In aggiornamento",
+      "open": "Aperto",
+      "closed": "Chiuso",
+      "add_product": "Aggiungi prodotto",
+      "adding": "Aggiungendo"
+    },
+    "withdraw_from_private": {
+      "from_address": "Preleva dall'indirizzo",
+      "amount": "Preleva l'importo",
+      "withdraw": "Preleva",
+      "error": "Si prega di inserire un importo valido da prelevare"
+    },
+    "send_to_address": {
+      "to_address": "All'indirizzo",
+      "send_amount": "Invia importo",
+      "notice": "Puoi solo inviare ",
+      "error": "Si prega di inserire un indirizzo valido o ENS."
+    },
+    "send_by_scan": {
+      "try_again": "Per favore riprova",
+      "take_photo": "Scatta una foto",
+      "capture": "Cattura il codice QR:"
+    },
+    "more_buttons": {
+      "request": "Richiedi",
+      "exchange": "Scambia"
+    },
+    "receive": {
+      "address_copied": "Indirizzo copiato negli appunti"
+    },
+    "history": {
+      "metamask_error": "Messaggistica cifrata non disponibile con MetaMask",
+      "wave": "Gesto"
+    },
+    "exchange": {
+      "withdrawal_explanation": "Solo i venditori possono prelevare più di quanto hanno depositato",
+      "funds_transferred": "Fondi trasferiti!",
+      "funds_bridged": "Fondi scambiati",
+      "insufficient_funds": "Fondi insufficienti",
+      "invalid_to_address": "Si prega di inserire un indirizzo valido",
+      "invalid_to_amount": "Si prega di inserire un importo valido",
+      "calculate_gas_price": "Calcolando il miglior prezzo del gas...",
+      "go_to_etherscan": "vai a etherscan?",
+      "idk": "Non so dove andare da qui? qualcosa che spiega il ponte?"
+    },
+    "request_funds": {
+      "item_message": "Oggetto o messaggio",
+      "button": "Richiedi",
+      "amount": "Richiedi importo"
+    },
+    "admin": {
+      "add_admin": "Aggiungi admin",
+      "adding": "Aggiungendo",
+      "add_vendor": "Aggiungi venditore"
+    },
+    "advanced": {
+      "to_qr": "Al QR"
+    },
+    "balance_display": {
+      "waiting_for_api": "In attesa dell'API",
+      "no_currency_api": "Nessun dato della valuta disponibile dall'API"
+    },
+    "burn_wallet": {
+      "burn_private_key_question": "Sei sicuro di voler bruciare questa chiave privata?",
+      "disclaimer": "Non farlo! Perderai tutti i fondi!",
+      "cancel": "No, Annulla",
+      "burn": "Bruciala!"
+    }
+  }
+}
