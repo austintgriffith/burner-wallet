@@ -103,11 +103,15 @@ class SendByScan extends Component {
           console.log("RETURN STATE:",this.props.returnState)
           let returnState = this.props.parseAndCleanPath(dataAfterColon)
           this.props.returnToState(returnState)
-        } else if(Web3.utils.isAddress(dataSplit[0]) && !isNaN(parseInt(dataSplit[1], 10)) && dataSplit[2]) {
+        // NOTE: We only need the address and the amount as absolutely necessary
+        // parts of the QR code scan. `message` is optional.
+        } else if(Web3.utils.isAddress(dataSplit[0]) && !isNaN(parseInt(dataSplit[1], 10))) {
           const returnState = {
             toAddress: dataSplit[0],
-            amount: parseInt(dataSplit[1], 10),
-            message: dataSplit[2]
+            amount: parseInt(dataSplit[1], 10)
+          }
+          if (dataSplit.length > 1) {
+            returnState.message = dataSplit[2]
           }
           this.props.returnToState(returnState);
         } else {
