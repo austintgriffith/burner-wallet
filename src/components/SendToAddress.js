@@ -106,19 +106,11 @@ export default class SendToAddress extends React.Component {
   }
 
   canSend() {
-    /*const resolvedAddress = await this.ensProvider.resolveName(this.state.toAddress)
-    console.log(`RESOLVED ADDRESS ${resolvedAddress}`)
-    if(resolvedAddress != null){
-      this.setState({
-        toAddress: resolvedAddress
-      })
-    }*/
     const { toAddress, amount, message } = this.state;
     return (toAddress && toAddress.length === 42 && (amount>0 || message))
   }
 
   scrollToBottom(){
-    console.log("scrolling to bottom")
     scroller.scrollTo('theVeryBottom', {
       duration: 500,
       delay: 30,
