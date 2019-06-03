@@ -325,18 +325,28 @@ export default class Exchange extends React.Component {
     }
 
   }
-  sendDai(){
-    if(parseFloat(this.props.daiBalance)<parseFloat(this.state.daiSendAmount)){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.insufficient_funds')});
-    }else if(!this.state.daiSendToAddress || !this.state.daiSendToAddress.length === 42){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_address')});
-    }else if(!(parseFloat(this.state.daiSendAmount) > 0)){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_amount')});
+  async sendDai(){
+    let { daiContract } = this.props;
+    const { pTx, changeAlert, daiBalance, web3 } = this.props;
+    const {
+      daiAddress,
+      daiSendToAddress,
+      daiSendAmount,
+      mainnetMetaAccount,
+      mainnetweb3,
+    } = this.state;
+
+    if(parseFloat(daiBalance)<parseFloat(daiSendAmount)){
+      changeAlert({type: 'warning',message: i18n.t('exchange.insufficient_funds')});
+    }else if(!daiSendToAddress || !daiSendToAddress.length === 42){
+      changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_address')});
+    }else if(!(parseFloat(daiSendAmount) > 0)){
+      changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_amount')});
     }else{
       this.setState({
         daiToXdaiMode:"sending",
-        daiBalanceAtStart:this.props.daiBalance,
-        daiBalanceShouldBe:parseFloat(this.props.daiBalance)-parseFloat(this.state.daiSendAmount),
+        daiBalanceAtStart:daiBalance,
+        daiBalanceShouldBe:parseFloat(daiBalance)-parseFloat(daiSendAmount),
         loaderBarColor:"#f5eb4a",
         loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
         loaderBarPercent:0,
@@ -346,8 +356,53 @@ export default class Exchange extends React.Component {
         }
       })
       this.setState({sendDai:false})
-      this.transferDai(this.state.daiSendToAddress,this.state.daiSendAmount,"Sending "+this.state.daiSendAmount+" DAI to "+this.state.daiSendToAddress+"...",()=>{
-        this.props.changeAlert({type: 'success',message: "Sent "+this.state.daiSendAmount+" DAI to "+this.state.daiSendToAddress});
+
+      let gwei;
+      try {
+        gwei = await gasPrice();
+      } catch(err) {
+        console.log("Error getting gas price",err)
+      }
+
+      if(gwei !== undefined){
+        if (mainnetMetaAccount) {
+
+          let paramsObject = {
+            from: daiAddress,
+            value: 0,
+            gas: 240000,
+            gasPrice: Math.round(gwei * 1000000000)
+          }
+          console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+          paramsObject.to = daiContract._address;
+          paramsObject.data = daiContract.methods.transfer(daiSendToAddress, mainnetweb3.utils.toWei(daiSendAmount, "ether")).encodeABI()
+
+          console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+          let signed = await mainnetweb3.eth.accounts.signTransaction(paramsObject, mainnetMetaAccount.privateKey)
+
+          try {
+            await mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction)
+          } catch(err) {
+            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+            changeAlert({type: 'danger',message: err.toString()});
+          }
+        } else {
+            // NOTE: For some reason it's important that we reinitialize
+            // the daiContract at this point with this.props.web3.
+            daiContract = new web3.eth.Contract(daiContract._jsonInterface, daiContract._address)
+            await pTx(
+              daiContract.methods.transfer(
+                daiSendToAddress,
+                web3.utils.toWei(daiSendAmount, "ether")
+              ),
+              150000,
+              0,
+              0
+            )
+        }
+        changeAlert({type: "success", message: `Sent ${daiSendAmount} DAI to ${daiSendToAddress}...`});
         this.setState({
           daiToXdaiMode:false,
           daiSendAmount:"",
@@ -355,15 +410,17 @@ export default class Exchange extends React.Component {
           loaderBarColor:"#FFFFFF",
           loaderBarStatusText:"",
         })
-      })
-
+      } else {
+        // TODO: Propagate this error to the user
+        console.log("Couldn't get gas price");
+      }
     }
   }
   canSendDai() {
     return (this.state.daiSendToAddress && this.state.daiSendToAddress.length === 42 && parseFloat(this.state.daiSendAmount)>0 && parseFloat(this.state.daiSendAmount) <= parseFloat(this.props.daiBalance))
   }
 
-  async transferDai(destination,amount,message,cb) {
+  async depositDai(destination,amount,message,cb) {
     let gwei
     try {
       gwei = await gasPrice();
@@ -760,9 +817,9 @@ export default class Exchange extends React.Component {
                     alert(i18n.t('exchange.go_to_etherscan'))
                   }
                 })
-                // TODO: transferDai doesn't use the destination parameter anymore
-                // Remove it and rename function to e.g. depositDai
-                this.transferDai(null,this.state.amount,"Sending funds to bridge...",()=>{
+                // TODO: depositDai doesn't use the destination parameter anymore
+                // Remove it.
+                this.depositDai(null,this.state.amount,"Sending funds to bridge...",()=>{
                   this.setState({
                     amount:"",
                     loaderBarColor:"#4ab3f5",
