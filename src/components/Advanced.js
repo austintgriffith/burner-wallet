@@ -66,40 +66,36 @@ export default class Advanced extends React.Component {
     }
 
     let inputPrivateKeyRow = (
-      <div className="content ops row">
-        <div className={inputPrivateSize}>
-          <Input
-            type={this.state.privateKeyHidden?"password":"text"}
-            autocorrect="off"
-            autocapitalize="none"
-            className="form-control"
-            placeholder="private key"
-            value={this.state.newPrivateKey}
-            onChange={event => this.setState({newPrivateKey:event.target.value})}
-          />
-        </div>
+      <div className="content ops row settings-row">
+        <Input
+          type={this.state.privateKeyHidden?"password":"text"}
+          autocorrect="off"
+          autocapitalize="none"
+          className="form-control settings-input"
+          placeholder="private key"
+          value={this.state.newPrivateKey}
+          onChange={event => this.setState({newPrivateKey:event.target.value})}
+        />
         {inputPrivateEyeButton}
-        <div className="col-6 p-1">
-          <Button width={1} onClick={()=>{
-                    console.log(this.state.newPrivateKey)
-                    if(this.state && this.state.newPrivateKey && this.state.newPrivateKey.length>=64&&this.state.newPrivateKey.length<=66){
-                      //let pkutils = require("ethereum-mnemonic-privatekey-utils")
-                      //const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(newPrivateKey)
-                      changeView('main')
-                      let possibleNewPrivateKey = this.state.newPrivateKey
-                      if(possibleNewPrivateKey.indexOf("0x")!==0){
-                        possibleNewPrivateKey = "0x"+possibleNewPrivateKey
-                      }
-                      setPossibleNewPrivateKey(possibleNewPrivateKey)
-                    }else{
-                      changeAlert({type: 'warning', message: 'Invalid private key.'})
-                    }
-                  }}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-plus-square"/> {i18n.t('create')}
-            </Scaler>
-          </Button>
-        </div>
+        <button className="cta_button" onClick={()=>{
+          console.log(this.state.newPrivateKey)
+          if(this.state && this.state.newPrivateKey && this.state.newPrivateKey.length>=64&&this.state.newPrivateKey.length<=66){
+            //let pkutils = require("ethereum-mnemonic-privatekey-utils")
+            //const newPrivateKey = pkutils.getPrivateKeyFromMnemonic(newPrivateKey)
+            changeView('main')
+            let possibleNewPrivateKey = this.state.newPrivateKey
+            if(possibleNewPrivateKey.indexOf("0x")!==0){
+              possibleNewPrivateKey = "0x"+possibleNewPrivateKey
+            }
+            setPossibleNewPrivateKey(possibleNewPrivateKey)
+          }else{
+            changeAlert({type: 'warning', message: 'Invalid private key.'})
+          }
+        }}>
+          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+            <i className="fas fa-plus-square"/> {i18n.t('create')}
+          </Scaler>
+        </button>
       </div>
     )
 
