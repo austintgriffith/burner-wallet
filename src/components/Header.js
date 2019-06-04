@@ -50,10 +50,7 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
   let scanButtonStyle = {
     opacity:sendButtonOpacity,
     position:"fixed",
-    right:20,
-    bottom:20,
     zIndex:2,
-    cursor:"pointer"
   }
 
   if(view==="send_to_address"){
@@ -64,23 +61,14 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
   }
 
   let bottomRight = (
-    <div style={scanButtonStyle}  >
-    <Button
-      onClick={() => {
-        openScanner({view:"send_to_address"})
-      }}
-      style={{backgroundColor: "white", border: "3px solid black"}}
-      color="black"
-      borderRadius={"50%"}
-      height={"auto"}
-      width={"auto"}
-      p={0} m={0}
-      position={"absolute"}
-      bottom={3}
-      right={3}
-    >
-      <Icon name="CenterFocusWeak" size={90} p={3} />
-    </Button>
+    <div className={"fab_container"} style={scanButtonStyle}  >
+      <button className={"fab_button"}
+        onClick={() => {
+          openScanner({view:"send_to_address"})
+        }}
+      >
+        <Icon name="CenterFocusWeak" className="fab_icon--capture"/>
+      </button>
     </div>
   )
 
