@@ -540,7 +540,7 @@ export default class ScavengerHunt extends React.Component {
         <div className="col-4 p-1">
           <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary}
                   onClick={()=>{
-                    this.setState({showingQr:`${url}/?game=${this.state.YourContract._address}q=${i}&a=${this.state.ownerAnswers[i]}`})
+                    this.setState({showingQr:`${url}/?game=${this.state.YourContract._address}&q=${i}&a=${this.state.ownerAnswers[i]}`})
                   }}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <i className="fas fa-qrcode"/> {i18n.t('advanced.to_qr')}
