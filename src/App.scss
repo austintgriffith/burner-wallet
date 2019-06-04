@@ -1,3 +1,8 @@
+*{
+	--dark-text: #5F727D;
+	--deep-blue: #106BF3;
+}
+
 .row {
   margin-left: 0;
   margin-right: 0;
@@ -196,14 +201,15 @@ i.fas {
 }
 
 .context{
+	--offset: 32px;
 	position: absolute;
-	left: 10px;
-	bottom: 10px;
-	opacity:0.2;
+	left: var(--offset);
+	bottom: var(--offset);
+	opacity:0.25;
 	z-index:100;
-	font-size: 60px;
-	color: #FFFFFF;
+	font-size: 40px;
 	line-height: 1;
+	color: var(--dark-text);
 }
 
 .main{
@@ -212,26 +218,16 @@ i.fas {
 	display: flex;
 	align-items: flex-start;
 	justify-content: center;
-	--primary: red;
-	--secondary: blue;
-	background-image: radial-gradient(circle at bottom,var(--secondary) 10%, var(--primary), var(--falloff));
+	--primary: #18242B;
+	--secondary: #2C3F4A;
+	background-image: linear-gradient(to bottom, var(--primary), var(--secondary));
 }
 
-.main--incognito{
-	--primary: green;
-	--secondary: purple;
-}
+.main--incognito{}
 
-.main--metamask{
-	--falloff: #438cbf;
-	--primary:#0fce77;
-	--secondary: #ecf750;
-}
+.main--metamask{}
 
-.main--web3{
-	--primary:#0fce77;
-	--secondary: #ecf750;
-}
+.main--web3{}
 
 .inner-container{
 	width: 100%;
@@ -265,4 +261,62 @@ i.fas {
 	box-shadow: 0 0 5px 1px var(--loader-glow);
 }
 
+.fab_container{
+	--offset: 32px;
+	position: fixed;
+	z-index: 2;
+	cursor: pointer;
+	right: var(--offset);
+	bottom: var(--offset);
+}
 
+.fab_button{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 90px;
+	height: 90px;
+	fill: white;
+	border-radius: 90px;
+	border: none;
+	background-color: var(--deep-blue);
+	background-image: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0));
+	box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+	color: white;
+	&:hover{
+	background-color: #1c73f3;
+	 }
+}
+
+.fab_icon--capture{
+	--icon-size: 60px;
+	width: var(--icon-size);
+	height: var(--icon-size);
+}
+
+.cta_button{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	font-weight: 600;
+	padding: 12px 0;
+	background-color: #F6DF0D;
+	border: none;
+	border-radius: 4px;
+	box-shadow: inset 0 0 0 2px #EFBB01, 0 2px 3px rgba(0,0,0,0.1);
+	color: #896B02;
+}
+
+.settings-row{
+	margin: 0;
+}
+
+input.settings-input{
+	height: auto;
+}
+
+.content.ops.row{
+	margin: 0;
+}
