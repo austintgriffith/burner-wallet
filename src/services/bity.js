@@ -31,10 +31,53 @@ export const verifyNumber = data => {
     .catch(error => error);
 };
 
-
 export const placeOrder = data => {
-    return fetch('https://bity.com/api/v2/orders/phone', {
-        method: 'POST',
-        body: JSON.stringify()
-    })
-}
+  return fetch("https://exchange.api.bity.com/v2/orders", {
+    method: "POST",
+    body: JSON.stringify({
+      input: {
+        amount: data.amountInEth,
+        currency: "ETH",
+        type: "crypto_address",
+        crypto_address: data.address
+      },
+      output: {
+        currency: "EUR",
+        type: "bank_account",
+        iban: data.bityAccountNumber,
+        owner: {
+          name: data.name
+        }
+      }
+    }),
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json"
+    }
+  })
+    .then(response => response.json())
+    .then(response => response)
+    .catch(error => error);
+};
+
+export const calculateEstimate = data => {
+  return fetch("https://exchange.api.bity.com/v2/orders/estimate", {
+    method: "POST",
+    body: JSON.stringify({
+      input: {
+        currency: "ETH",
+        amount: data.amount.toFixed(4)
+      },
+      output: {
+        currency: "EUR"
+      }
+    }),
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json"
+    }
+  })
+    .then(response => response.json())
+    .then(response => response)
+    .catch(error => error);
+};

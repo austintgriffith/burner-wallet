@@ -33,7 +33,7 @@ import { fromRpcSig } from 'ethereumjs-util';
 import { bi, add, divide } from 'jsbi-utils';
 import getConfig from "../config";
 import { PrimaryButton, BorderButton } from "./Buttons";
-import { authenticate, verifyNumber, placeOrder } from '../services/bity';
+import { authenticate, verifyNumber, placeOrder, calculateEstimate } from '../services/bity';
 
 const CONFIG = getConfig();
 const BN = Web3.utils.BN
@@ -108,7 +108,13 @@ export default class Exchange extends React.Component {
       xdaiMetaAccount: xdaiMetaAccount,
       daiToXdaiMode: false,
       ethToDaiMode: false,
-      bityView: 'default',
+      bityView: 'exchange',
+      bityName: '',
+      bityAccountNumber: '',
+      bity: {
+        amountInEth: 0,
+        amountInFiat: 0
+      },
       phoneNumber: '',
       bityPhoneToken: '',
       bityVerificationCode: '',
@@ -568,19 +574,41 @@ export default class Exchange extends React.Component {
   }
 
   placeOrder() {
-    const { amount, bityPhoneToken } = this.state
+    const { bity, bityAccountNumber } = this.state
     const { address } = this.props
+    const { amountInEth, name } = bity
     const data = {
       address,
-      amount,
-      token: bityPhoneToken
+      amountInEth,
+      name,
+      bityAccountNumber
     }
-    console.log('Data ', data)
     placeOrder(data).then(result => {
-      console.log(result)
+      this.props.changeAlert({type: 'success', message: 'Your request is being processed.'})
     }).catch(err => {
-      this.props.changeAlert({type: 'warning', message: err.errors[0].message});
+      console.log('Error ', err)
+      this.props.changeAlert({type: 'warning', message: err.errors.length > 1 ? 'An error occured. Please try again.' : err.errors[0].message});
     })
+  }
+
+  handleEstimate(value) {
+    const data = {
+      amount: parseFloat(value)
+    }
+    setTimeout(() => {
+      calculateEstimate(data)
+      .then(result => {
+        this.setState({
+          bity: {
+            amountInEth: result.input.amount,
+            amountInFiat: result.output.amount
+          }
+        })
+      }).catch(err => {
+        console.log('Error ', err)
+        this.props.changeAlert({type: 'error', message: 'An error occured. Please try again'})
+      })
+    }, 5000)
   }
 
   authenticateWithPhoneNumber() {
@@ -1498,30 +1526,42 @@ export default class Exchange extends React.Component {
     if (this.state.bityView === 'exchange') {
       bitlyRow = (
       <div className="content ops row">
-            <div className="col-1 p-1">
-              <i className="fas fa-arrow-up"  />
+            <div className="col-12 p-1">
+              <p className="mb-3">[Add info here]</p>
+              <Scaler config={{startZoomAt: 400, origin: "50% 50%"}}>
+              <div className="input-group">
+                <RInput width={1} placeholder="Your Name" value={this.state.bityName} onChange={e => this.updateState('bityName', e.target.value)} />
+              </div>
+              </Scaler>
             </div>
-            <div className="col-6 p-1">
+            <div className="col-12 p-1">
+              <Scaler config={{startZoomAt: 400, origin: "50% 50%"}}>
+              <div className="input-group">
+                <RInput width={1} placeholder="Bank Account Number" value={this.state.bityAccountNumber} onChange={e => this.updateState('bityAccountNumber', e.target.value)} />
+              </div>
+              </Scaler>
+            </div>
+            <div className="col-4 p-1">
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
                 <RInput
                   width={1}
                   step="0.1"
+                  type="number"
                   placeholder="Amount in ETH"
                   value={this.state.amount}
-                  onChange={event => this.updateState('amount', event.target.value)} />
+                  onChange={event => this.handleEstimate(event.target.value)} />
               </div>
               </Scaler>
             </div>
-            <div className="col-2 p-1">
+            <div className="col-3 p-1">
               <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
               {bityCancelButton}
               </Scaler>
             </div>
-            <div className="col-3 p-1">
-
+            <div className="col-5 p-1">
               <Button
-                disabled={buttonsDisabled}
+                disabled={buttonsDisabled || this.state.bity.amountInEth <= 0}
                 onClick={()=>{
                   this.placeOrder();
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
@@ -1534,77 +1574,11 @@ export default class Exchange extends React.Component {
             </div>
           </div>
           );
-    } else if(this.state.bityView === 'phoneNumber') {
-      bitlyRow = (
-      <div className="content ops row">
-            <div className="col-5 p-1">
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <div className="input-group">
-                <PhoneInput
-                  placeholder="Phone Number"
-                  country="US"
-                  value={this.state.phoneNumber}
-                  onChange={value => this.setState({ phoneNumber: value })} />
-              </div>
-              </Scaler>
-            </div>
-            <div className="col-2 p-1">
-              <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
-              {bityCancelButton}
-              </Scaler>
-            </div>
-            <div className="col-5 p-1">
-              <Button
-                disabled={buttonsDisabled}
-                onClick={()=>{
-                  this.authenticateWithPhoneNumber()
-              }}>
-                <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
-                  Login with Phone Number
-                </Scaler>
-              </Button>
-
-            </div>
-          </div>
-      );
-      }
-      else if (this.state.bityView === 'tan') {
-        bitlyRow = (
-          <div className="content ops row">
-            <div className="col-5 p-1">
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <div className="input-group">
-                <RInput
-                  placeholder="Enter verification code"
-                  value={this.state.bityVerificationCode}
-                  onChange={event => this.setState({ bityVerificationCode: event.target.value })} />
-              </div>
-              </Scaler>
-            </div>
-            <div className="col-2 p-1">
-              <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
-              {bityCancelButton}
-              </Scaler>
-            </div>
-            <div className="col-5 p-1">
-              <Button
-                disabled={buttonsDisabled}
-                onClick={()=>{
-                  this.validateNumber()
-              }}>
-                <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
-                  Verify Number
-                </Scaler>
-              </Button>
-
-            </div>
-          </div>
-        )
     } else {
       bitlyRow = (
         <Flex width={1} px={3}>
             <Button width={1} mr={2} icon={'ArrowUpward'} onClick={()=>{
-                this.setState({ bityView: 'phoneNumber' })
+                this.setState({ bityView: 'exchange' })
             }}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 Exchange via Bity
