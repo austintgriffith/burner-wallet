@@ -322,7 +322,8 @@ export default class ScavengerHunt extends React.Component {
         }
         break;
       case "findWinner":
-        this.props.tx(this.state.YourContract.findWinner(), 120000, 0, 0, (result)=> {
+        this.props.tx(this.state.YourContract.findWinner(), 1000000, 0, 0, (result)=> {
+          console.log(result)
           this.props.changeAlert({
             type: 'info',
             message: 'Found Winner'
@@ -766,7 +767,9 @@ export default class ScavengerHunt extends React.Component {
               // Player View
               //////////////////////////////////////////////////////////////////////////////////////////////
               <div>
-
+              {this.props.web3.utils.hexToString(this.state.status) == "Game Over" &&
+                  <h4 style={{backgroundColor: "#8762A6"}}>Winner: {this.state.winner} </h4>
+                }
               {(this.props.web3.utils.hexToString(this.state.status) == "Start") ? questions : answers}
               
               <Ruler/>
@@ -798,7 +801,7 @@ export default class ScavengerHunt extends React.Component {
               <div>
                 <h3>Leader Board</h3>
                 {this.props.web3.utils.hexToString(this.state.status) == "Game Over" &&
-                  <h4>Winner: {this.state.winner} </h4>
+                  <h4 style={{backgroundColor: "#8762A6"}}>Winner: {this.state.winner} </h4>
                 }
                 <div className="content bridge row">
                   <div className="input-group">
