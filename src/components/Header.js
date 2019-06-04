@@ -115,7 +115,7 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
 
 
   return (
-    <div className="header" style={{opacity, "z-index": "99"}}>
+    <div className="header" style={{opacity, zIndex: 5}}>
       {topLeft}
       {topRight}
       {view === "main" ?  bottomRight : null}
