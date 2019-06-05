@@ -37,6 +37,7 @@ import RNMessageChannel from 'react-native-webview-messaging';
 import eth from './ethereum.png';
 import dai from './dai.jpg';
 import xdai from './xdai.png';
+import pdai from './pdai.png';
 import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 
@@ -772,7 +773,7 @@ export default class App extends Component {
 
                 let defaultBalanceDisplay = (
                   <div>
-                    <Balance icon={xdai} selected={false} text={"MNY"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+                    <Balance icon={pdai} selected={false} text={"PDAI"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
                   </div>
                 )
 
@@ -840,7 +841,7 @@ export default class App extends Component {
                       <Card p={3}>
                         {extraTokens}
 
-                        <Balance icon={xdai} selected={selected} text={"MNY"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                        <Balance icon={pdai} selected={selected} text={"PDAI"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
 
                         <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
 
@@ -1152,7 +1153,7 @@ export default class App extends Component {
 
                   case 'exchange':
                   return (
-                    <div>
+                    <div> 
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card>
 
@@ -1160,7 +1161,7 @@ export default class App extends Component {
                         <Exchange
                           eth={eth}
                           dai={dai}
-                          xdai={xdai}
+                          xdai={pdai}
                           ethprice={this.state.ethprice}
                           ethBalance={this.state.ethBalance}
                           daiBalance={this.state.daiBalance}

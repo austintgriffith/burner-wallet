@@ -123,7 +123,7 @@ export default class Exchange extends React.Component {
       const pendingValue = rsp.reduce((sum, v) => add(sum, bi(v.value)), bi(0));
       const pendingTokens = parseInt(String(divide(pendingValue, bi(10 ** 16)))) / 100;
       if (pendingTokens > 0) {
-        const pendingMsg = "Pending exits of " + pendingTokens.toString() + " MNY";
+        const pendingMsg = "Pending exits of " + pendingTokens.toString() + " PDAI";
         this.setState({
           pendingMsg
         });
@@ -940,7 +940,7 @@ export default class Exchange extends React.Component {
                     console.log(err);
                     this.props.changeAlert({
                       type: 'warning',
-                      message: 'Failed to exit MNY'
+                      message: 'Failed to exit PDAI'
                     });
                   });
                 }else{
@@ -981,7 +981,7 @@ export default class Exchange extends React.Component {
             this.setState({daiToXdaiMode:"deposit"})
           }} >
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              DAI to MNY
+              DAI to PDAI
             </Scaler>
           </Button>
 
@@ -995,7 +995,7 @@ export default class Exchange extends React.Component {
             this.setState({daiToXdaiMode:"withdraw"})
           }} >
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              MNY to DAI
+              PDAI to DAI
             </Scaler>
           </Button>
         </Flex>
@@ -1737,7 +1737,7 @@ export default class Exchange extends React.Component {
               <img style={logoStyle} src={this.props.xdai} alt="" />
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
-              MNY
+              PDAI
             </div>
             <div className="col-4 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
