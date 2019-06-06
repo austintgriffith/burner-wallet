@@ -20,25 +20,25 @@
       integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
       crossorigin="anonymous"
     />
-    <title>Motion Burner</title>
-    <meta name="description" content="Transfer MNY quickly or register a movie." />
+    <title>Plasma Burner</title>
+    <meta name="description" content="Transfer PDAI quickly" />
     <meta
       name="keywords"
       content="dai, motion, wallet, burner, crypto, ethereum, poa, payment, transactions"
     />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@austingriffith" />
-    <meta name="twitter:title" content="Burner" />
-    <meta name="twitter:description" content="Transfer MNY quickly or register a movie." />
+    <meta name="twitter:site" content="@leapdao" />
+    <meta name="twitter:title" content="Plasma Burner" />
+    <meta name="twitter:description" content="Transfer PDAI quickly" />
     <meta
       name="twitter:img:src"
-      content="https://xdai.io/burner-wallet-banner.png"
+      content="https://pdai.io/burner-wallet-banner.png"
     />
-    <meta name="og:title" content="Burner" />
+    <meta name="og:title" content="Plasma Burner" />
     <meta name="og:type" content="website" />
-    <meta name="og:url" content="https://xdai.io" />
-    <meta name="og:image" content="https://xdai.io/burnercard2.jpg" />
-    <meta name="og:description" content="Transfer MNY quickly or register a movie." />
+    <meta name="og:url" content="https://pdai.io" />
+    <meta name="og:image" content="https://pdai.io/burner-wallet-banner.jpg" />
+    <meta name="og:description" content="Transfer PDAI quickly" />
     <meta name="og:site_name" content="Burner" />
     <link
       href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed"
@@ -46,23 +46,30 @@
     />
     <link href="https://fonts.googleapis.com/css?family=Overpass" rel="stylesheet">
 	  <link href="https://fonts.googleapis.com/css?family=Chivo:400,700&display=swap" rel="stylesheet">
-  </head>
-  <body style="background-color:#222222;text-align:'center'">
-    <noscript> You need to enable JavaScript to run this app. </noscript>
-    <div id="root">
-      <div style="padding-top:60px;text-align:center;width:100%">
+	  <style>
+		  * {
+			  --primary: #18242B;
+			  --secondary: #2C3F4A;
+		  }
+		  body{
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			  min-height: 100vh;
+			  width: 100%;
+			  background-image: url("images/flame.svg"), linear-gradient(to bottom, var(--primary), var(--secondary));
+			  background-repeat: no-repeat;
+			  background-position: -25vh center, center;
+		  }
+		  .root{
+			  width: 100%;
 
-        <div>
-          <img src="whiteburn.png" style="max-width:25%;padding-bottom:5%"/>
-          <div style="text-align: center;padding-top:5%;width:100%;padding-left:20%">
-            <div style="width: 75%; height: 1px;">
-              <div id="firstLoaderBar" style="width: 5%; height: 1px; background-color: rgb(255, 255, 255); box-shadow: rgb(255, 255, 255) 0px 0px 2px, rgb(255, 255, 255) 0px 0px 2.66667px, rgb(255, 255, 255) 0px 0px 4px, rgb(255, 255, 255) 0px 0px 8px, rgb(255, 255, 255) 0px 0px 16px, rgb(255, 255, 255) 0px 0px 26.6667px, rgb(255, 255, 255) 0px 0px 80px;">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+		  }
+	  </style>
+  </head>
+  <body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+    <div id="root" class="root"></div>
     <div id="log" style="position:absolute;left:0px;top:0px;z-index:99;color:#ffffff;background-color:#000000;opacity:0.5;">
     </div>
     <script>
