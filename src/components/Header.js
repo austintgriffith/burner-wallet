@@ -1,6 +1,6 @@
 import React from 'react';
 import { Blockie } from "dapparatus";
-import burnerloader from '../burnerloader.gif';
+import burnerloader from '../assets/burnerloader.gif';
 import { Button, Icon } from "rimble-ui";
 export  default ({openScanner, network, total, ens, address, changeView, view}) => {
 
@@ -26,7 +26,7 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
       </div>
     )
     blockieDisplay = (
-      <img src={burnerloader} class="blockie__loader" alt=""/>
+      <img src={burnerloader} className="blockie__loader" alt=""/>
     )
   }else{
     /*moneyDisplay = (
@@ -35,7 +35,7 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
       </div>
     )*/
     moneyDisplay = (
-      <div class="money_display__network">
+      <div className="money_display__network">
         {network}
       </div>
     )
@@ -78,7 +78,7 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
   let topLeft = (
     <div className={"blockie_container"} onClick={() => changeView(blockieLink)}>
       {blockieDisplay}
-      <div class="blockie_container__name">{name}</div>
+      <div className="blockie_container__name">{name}</div>
     </div>);
 
 

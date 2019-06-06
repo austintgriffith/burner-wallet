@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import QrReader from "react-qr-reader";
 import FileReaderInput from 'react-file-reader-input';
-import qrimage from '../qrcode.png';
+import qrimage from '../assets/qrcode.png';
 import RNMessageChannel from 'react-native-webview-messaging';
 import i18n from "../i18n";
 import Web3 from 'web3';
