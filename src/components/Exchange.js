@@ -7,7 +7,6 @@ import i18n from '../i18n';
 import {
   Flex,
   Box,
-  Button,
   OutlineButton,
   Input as RInput,
   Field
@@ -25,10 +24,6 @@ const BN = Web3.utils.BN
 const logoStyle = {
   maxWidth:50,
   maxHeight:50,
-}
-const colStyle = {
-  textAlign:"center",
-  whiteSpace:"nowrap"
 }
 
 const uniswapContractObject = {

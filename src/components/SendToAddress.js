@@ -7,8 +7,6 @@ import i18n from '../i18n';
 import queryString from 'query-string';
 import {
   Box,
-  Button,
-  OutlineButton,
   Field,
   Input,
 } from 'rimble-ui';

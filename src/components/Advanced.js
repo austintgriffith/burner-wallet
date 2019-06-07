@@ -50,7 +50,6 @@ export default class Advanced extends React.Component {
 
 
     let inputPrivateEyeButton = ""
-    let inputPrivateSize = "col-4 p-1"
 
     if(this.state.newPrivateKey){
       inputPrivateEyeButton = (
@@ -58,8 +57,6 @@ export default class Advanced extends React.Component {
           <i className="fas fa-eye"></i>
         </PrimaryButton>
       )
-    }else{
-      inputPrivateSize = "col-6 p-1"
     }
 
     let inputPrivateKeyRow = (
@@ -100,7 +97,6 @@ export default class Advanced extends React.Component {
 
 
     let inputSeedEyeButton = ""
-    let inputSeedSize = "col-4 p-1"
 
     if(this.state.newSeedPhrase){
       inputSeedEyeButton = (
@@ -108,8 +104,6 @@ export default class Advanced extends React.Component {
           <i className="fas fa-eye"></i>
         </PrimaryButton>
       )
-    }else{
-      inputSeedSize = "col-6 p-1"
     }
 
     let inputSeedRow = (

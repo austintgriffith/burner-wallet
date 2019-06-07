@@ -7,7 +7,6 @@ import {
   Box,
   Input,
   Field,
-  Button,
   QR as QRCode
 } from 'rimble-ui'
 import { PrimaryButton } from "./Buttons";

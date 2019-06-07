@@ -63,13 +63,6 @@ let titleImage = (
 )
 
 // TODO: Consolidate this with theme.js
-let innerStyle = {
-  maxWidth:740,
-  margin:'0 auto',
-  textAlign:'left'
-}
-
-// TODO: Consolidate this with theme.js
 let buttonStyle = {
   primary: {
     backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",

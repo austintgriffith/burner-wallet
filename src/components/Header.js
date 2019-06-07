@@ -1,7 +1,7 @@
 import React from 'react';
 import { Blockie } from "dapparatus";
 import burnerloader from '../assets/burnerloader.gif';
-import { Button, Icon } from "rimble-ui";
+import { Icon } from "rimble-ui";
 export  default ({openScanner, network, total, ens, address, changeView, view}) => {
 
 
