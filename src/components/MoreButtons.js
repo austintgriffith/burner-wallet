@@ -1,6 +1,7 @@
 import React from "react";
 import i18n from "../i18n";
-import { OutlineButton, Flex, Icon, Box } from "rimble-ui";
+import { Flex, Icon, Box } from "rimble-ui";
+import { BorderButton } from "./Buttons";
 
 export default ({
   isVendor,
@@ -10,7 +11,7 @@ export default ({
 
   if (!isVendor) {
     exchangeButton = (
-      <OutlineButton
+      <BorderButton
         fullWidth
         onClick={() => {
           changeView("exchange");
@@ -20,11 +21,11 @@ export default ({
           <Icon name="Shuffle" mr={2} />
           {i18n.t("more_buttons.exchange")}
         </Flex>
-      </OutlineButton>
+      </BorderButton>
     );
   } else {
     exchangeButton = (
-      <OutlineButton
+      <BorderButton
         fullWidth
         onClick={() => {
           changeView("cash_out");
@@ -34,14 +35,14 @@ export default ({
           <Icon name="CreditCard" mr={2} />
           {"Cash Out"}
         </Flex>
-      </OutlineButton>
+      </BorderButton>
     );
   }
 
   return (
     <Flex mx={-2}>
       <Box width={[1, 1/2, 1/2]} m={2}>
-        <OutlineButton
+        <BorderButton
           fullWidth
           onClick={() => {
             changeView("request_funds");
@@ -51,7 +52,7 @@ export default ({
             <Icon name="AttachMoney" mr={2} />
             {i18n.t("more_buttons.request")}
           </Flex>
-        </OutlineButton>
+        </BorderButton>
       </Box>
       <Box width={[1, 1/2, 1/2]} m={2}>{exchangeButton}</Box>
     </Flex>
