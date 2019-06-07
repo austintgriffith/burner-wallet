@@ -1,4 +1,4 @@
-pragma solidity 0.4.25;
+pragma solidity ^0.4.25;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
@@ -32,10 +32,10 @@ contract LinksNFT is Vault{
     );
     event Claimed(
         bytes32 indexed id,
-        address sender, 
-        uint value, 
-        address indexed receiver, 
-        uint nonce, 
+        address sender,
+        uint value,
+        address indexed receiver,
+        uint nonce,
         bool indexed claimed
     );
 
@@ -64,12 +64,12 @@ contract LinksNFT is Vault{
     /// @param _id Fund lookup key value.
     /// @param _signature Sender signature.
     function send(
-        bytes32 _id, 
+        bytes32 _id,
         bytes memory _signature,
         address _token,
         uint _tokenId
-    )   
-        public 
+    )
+        public
         ifNotValidFund(_id)
         ifValidSig(_signature)
         returns (bool)
@@ -77,7 +77,7 @@ contract LinksNFT is Vault{
         address signer = ECDSA.recover(_id.toEthSignedMessageHash(),_signature);
         require(signer != address(0),"LinksNFT::send - Invalid signer");
         address sender = msg.sender;
-        
+
         // Handle Id nonce
         // Ids could be reused if the fund was correclty claimed and deleted
         uint nonce = nonceId[_id];
@@ -86,7 +86,7 @@ contract LinksNFT is Vault{
             nonceId[_id] = 1;
         }
         nonceId[_id] = nonceId[_id].add(uint(1));
-        
+
         assert(nonce < nonceId[_id]);
         _linkDeposit(_token, ERC721TOKEN, 0, _tokenId, sender);
         funds[_id] = Fund({
@@ -108,30 +108,30 @@ contract LinksNFT is Vault{
     /// @param _signature Sender signature.
     /// @param _destination Destination address.
     function claim(
-        bytes32 _id, 
-        bytes memory _signature, 
-        bytes32 _claimHash, 
+        bytes32 _id,
+        bytes memory _signature,
+        bytes32 _claimHash,
         address _destination
-    ) 
-        public 
+    )
+        public
         ifValidFund(_id)
         returns (bool)
     {
         return executeClaim(_id,_signature,_claimHash,_destination);
     }
-  
+
     /// @dev Off chain relayer can validate the claim before submitting.
     /// @param _id Claim lookup key value.
     /// @param _signature Sender signature.
     /// @param _destination Destination address.
     function isClaimValid(
-        bytes32 _id, 
+        bytes32 _id,
         bytes memory _signature,
-        bytes32 _claimHash, 
+        bytes32 _claimHash,
         address _destination
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns (bool)
     {
         if(isFundValid(_id) && _signature.length == 65){
@@ -144,7 +144,7 @@ contract LinksNFT is Vault{
                 signer = ECDSA.recover(claimHash1.toEthSignedMessageHash(),_signature);
             } else{
                 return false;
-            } 
+            }
             return (
                 signer != address(0) && (signer == funds[_id].signer)
             );
@@ -153,13 +153,13 @@ contract LinksNFT is Vault{
         }
     }
 
-    /// @dev Validate fund status. 
+    /// @dev Validate fund status.
     /// @param _id Lookup key id.
     function isFundValid(
         bytes32 _id
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns (bool)
     {
         address sender = funds[_id].sender;
@@ -167,7 +167,7 @@ contract LinksNFT is Vault{
         uint nonce = funds[_id].nonce;
         /* solium-disable-next-line security/no-inline-assembly */
         assembly {
-          // Cannot assume empty initial values without initializating them. 
+          // Cannot assume empty initial values without initializating them.
           sender := and(sender, 0xffffffff)
           signer := and(signer, 0xffffffff)
           nonce := and(nonce, 0xffffffff)
@@ -181,11 +181,11 @@ contract LinksNFT is Vault{
     /// @param _id Claim lookup key value.
     /// @param _destination Destination address.
     function executeClaim(
-        bytes32 _id, 
+        bytes32 _id,
         bytes memory _signature,
-        bytes32 _claimHash, 
+        bytes32 _claimHash,
         address _destination
-    ) 
+    )
         private
         returns (bool)
     {

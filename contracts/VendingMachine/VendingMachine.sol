@@ -1,4 +1,4 @@
-pragma solidity 0.4.25;
+pragma solidity ^0.4.25;
 
 import "openzeppelin-solidity/contracts/access/Roles.sol";
 import "ERC20Vendable.sol";

@@ -1,4 +1,4 @@
-pragma solidity 0.4.25;
+pragma solidity ^0.4.25;
 
 contract Emitter {
     event FundsSent(uint time, address indexed sender, uint value); // shoudl I log the time???

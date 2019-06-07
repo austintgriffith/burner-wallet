@@ -201,6 +201,17 @@ module.exports = {
   ////----------------------------------------------------------------------------///////////////////
 
 
+
+  version:()=>{
+    describe('#version() ', function() {
+      it('should give metamask account some ether or tokens to test', async function() {
+        this.timeout(600000)
+        let result = await clevis("version")///<<<-------- change this to your metamask accounts
+        console.log("\t\t",result)
+      })
+    })
+  },
+
   ////    ADD YOUR TESTS HERE <<<<<<<<--------------------------------
   updateVendingMachineAddress:()=>{
     describe('#transfer() ', function() {

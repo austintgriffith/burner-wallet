@@ -1,4 +1,4 @@
-pragma solidity 0.4.25;
+pragma solidity ^0.4.25;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
@@ -42,10 +42,10 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
     );
     event Claimed(
         bytes32 indexed id,
-        address sender, 
-        uint value, 
-        address indexed receiver, 
-        uint nonce, 
+        address sender,
+        uint value,
+        address indexed receiver,
+        uint nonce,
         bool indexed claimed
     );
 
@@ -74,13 +74,13 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
     /// @param _id Fund lookup key value.
     /// @param _signature Sender signature.
     function send(
-        bytes32 _id, 
+        bytes32 _id,
         bytes memory _signature,
         address _token,
         uint _amount,
         uint _expirationDays
-    )   
-        public 
+    )
+        public
         ifNotValidFund(_id)
         ifValidSig(_signature)
         payable
@@ -90,7 +90,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         address signer = ECDSA.recover(_id.toEthSignedMessageHash(),_signature);
         require(signer != address(0),"Links::send - Invalid signer");
         address sender = get_sender();  // Get sender for MetaTx instead of msg.sender
-        
+
         // Handle Id nonce
         // Ids could be reused if the fund was correclty claimed and deleted
         uint nonce = nonceId[_id];
@@ -100,7 +100,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
             blockLog[sender] = block.number;
         }
         nonceId[_id] = nonceId[_id].add(uint(1));
-        
+
         // Default expiration time
         uint expiration = now.add(1 days);
         if (_expirationDays > 1){
@@ -132,30 +132,30 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
     /// @param _signature Sender signature.
     /// @param _destination Destination address.
     function claim(
-        bytes32 _id, 
-        bytes memory _signature, 
-        bytes32 _claimHash, 
+        bytes32 _id,
+        bytes memory _signature,
+        bytes32 _claimHash,
         address _destination
-    ) 
-        public 
+    )
+        public
         ifValidFund(_id)
         returns (bool)
     {
         return executeClaim(_id,_signature,_claimHash,_destination);
     }
-  
+
     /// @dev Off chain relayer can validate the claim before submitting.
     /// @param _id Claim lookup key value.
     /// @param _signature Sender signature.
     /// @param _destination Destination address.
     function isClaimValid(
-        bytes32 _id, 
+        bytes32 _id,
         bytes memory _signature,
-        bytes32 _claimHash, 
+        bytes32 _claimHash,
         address _destination
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns (bool)
     {
         if(isFundValid(_id) && _signature.length == 65){
@@ -169,7 +169,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
                 signer = ECDSA.recover(_claimHash.toEthSignedMessageHash(),_signature);
             } else{
                 return false;
-            } 
+            }
             return (
                 signer != address(0) &&
                 ((!expired && signer == funds[_id].signer) || // normal case
@@ -180,13 +180,13 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         }
     }
 
-    /// @dev Validate fund status. 
+    /// @dev Validate fund status.
     /// @param _id Lookup key id.
     function isFundValid(
         bytes32 _id
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns (bool)
     {
         address sender = funds[_id].sender;
@@ -194,7 +194,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         uint nonce = funds[_id].nonce;
         /* solium-disable-next-line security/no-inline-assembly */
         assembly {
-          // Cannot assume empty initial values without initializating them. 
+          // Cannot assume empty initial values without initializating them.
           sender := and(sender, 0xffffffff)
           signer := and(signer, 0xffffffff)
           nonce := and(nonce, 0xffffffff)
@@ -204,13 +204,13 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         );
     }
 
-    /// @dev Validate fund status. 
+    /// @dev Validate fund status.
     /// @param _id Lookup key id.
     function isClaimExpired(
         bytes32 _id
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns (bool)
     {
         if(isFundValid(_id)){
@@ -224,11 +224,11 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
     /// @param _id Claim lookup key value.
     /// @param _destination Destination address.
     function executeClaim(
-        bytes32 _id, 
+        bytes32 _id,
         bytes memory _signature,
-        bytes32 _claimHash, 
+        bytes32 _claimHash,
         address _destination
-    ) 
+    )
         private
         returns (bool)
     {
@@ -277,8 +277,8 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
 
     function set_hub(
         RelayHub rhub
-    ) 
-        public 
+    )
+        public
     {
         init_relay_hub(rhub);
     }
@@ -300,8 +300,8 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         uint /* gas_price */,
         uint /* transaction_fee */
     )
-        public 
-        view 
+        public
+        view
         returns(uint32)
     {
         bytes4 claimFunctionIdentifier = RecipientUtils.sig("claim(bytes32,bytes,bytes32,address)");
@@ -328,7 +328,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         uint /* used_gas */,
         uint /* transaction_fee */
     )
-        public 
+        public
     {
     }
 
