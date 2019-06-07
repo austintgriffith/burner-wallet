@@ -61,7 +61,6 @@ let titleImage = (
   <span style={{paddingRight:20,paddingLeft:16}}><i className="fas fa-fire" /></span>
 )
 
-
 // TODO: Consolidate this with theme.js
 let innerStyle = {
   maxWidth:740,
@@ -924,7 +923,7 @@ export default class App extends Component {
                             web3={this.state.web3}
                             xdaiweb3={this.state.xdaiweb3}
                             pdaiContract={this.state.pdaiContract}
-                            daiTokenAddr={CONFIG.SIDECHAIN.DAI}
+                            daiTokenAddr={CONFIG.SIDECHAIN.DAI_ADDRESS}
                             //amount={false}
                             privateKey={this.state.withdrawFromPrivateKey}
                             goBack={this.goBack.bind(this)}
@@ -1369,7 +1368,7 @@ async function tokenSend(to, value, gasLimit, txData, cb) {
   }
 
   value = xdaiweb3.utils.toWei(""+value, "ether")
-  const color = await xdaiweb3.getColor(CONFIG.SIDECHAIN.DAI);
+  const color = await xdaiweb3.getColor(CONFIG.SIDECHAIN.DAI_ADDRESS);
   try {
     const receipt = await tokenSendV2(
       account,
@@ -1397,7 +1396,7 @@ async function tokenSend(to, value, gasLimit, txData, cb) {
 }
 
 async function tokenSendV2(from, to, value, color, xdaiweb3, web3, privateKey) {
-  const unspent = await xdaiweb3.getUnspent(from)
+  const unspent = await xdaiweb3.getUnspent(from, color)
 
   let transaction;
   if (Util.isNST(color)) {

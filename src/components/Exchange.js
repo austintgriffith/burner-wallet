@@ -107,35 +107,9 @@ export default class Exchange extends React.Component {
     setInterval(() => this.updatePendingExits(daiAddress, xdaiweb3), 5000);
   }
 
-  async maybeApprovePDai(amountWei) {
-
-    const pDaiAllowance = await this.props.daiContract.methods.allowance(
-      this.state.daiAddress,
-      this.props.pdaiContract._address,
-    ).call({ from: this.state.daiAddress })
-
-    // Only trigger allowance dialogue when amount is more than allowance
-    if (new BN(pDaiAllowance).lt(new BN(amountWei))) {
-      this.setState({
-        loaderBarColor:"#f5eb4a",
-        loaderBarStatusText: "Approving MNY amount for Plasma bridge"
-      })
-
-      const metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
-
-      const receipt = await this.props.pTx(
-        metaMaskDaiContract.methods.approve(this.props.pdaiContract._address, amountWei),
-        150000, 0, 0,
-      );
-
-      console.log(receipt);
-      return receipt;
-    }
-  }
-
   updatePendingExits(daiAddress, xdaiweb3) {
     const account = daiAddress;
-    const tokenAddr = this.props.pdaiContract._address;
+    const tokenAddr = this.props.daiContract._address;
 
     xdaiweb3.getColor(tokenAddr)
     .then(color => {
@@ -168,27 +142,6 @@ export default class Exchange extends React.Component {
     this.interval = setInterval(this.poll.bind(this),1500)
     setTimeout(this.poll.bind(this),250)
   }
-  async getWrappedDaiBalance() {
-    // not a sundai, return immediatelly
-    if (this.state.notSundai) return true;
-
-    const rootPdai = new this.state.mainnetweb3.eth.Contract(
-      require("../contracts/SunDai.abi.js"),
-      this.props.pdaiContract._address
-    );
-
-    try {
-      const daiBalance = await rootPdai.methods.daiBalance(this.state.daiAddress).call();
-      return parseInt(daiBalance);
-    } catch (e) {
-      // no daiBalance function = not a sundai contract, so skipping this check
-      if (e.message.indexOf('Returned values aren\'t valid') >= 0) {
-        this.setState({ notSundai: true });
-        return 0;
-      }
-      throw e;
-    }
-  }
   async poll(){
     let { xdaiweb3 } = this.state
     /*let { daiContract } = this.props
@@ -210,12 +163,6 @@ export default class Exchange extends React.Component {
       }
     }
     this.updatePendingExits(this.state.daiAddress, xdaiweb3)
-
-    if (!this.state.notSundai) {
-      const exitableSunDaiBalance = await this.getWrappedDaiBalance()
-        .catch(e => console.error('Failed to read extable daiBalance for MNY', e));
-      this.setState({ exitableSunDaiBalance });
-    }
 
     /*
     console.log("SETTING ETH BALANCE OF "+this.state.daiAddress)
@@ -351,18 +298,28 @@ export default class Exchange extends React.Component {
     }
 
   }
-  sendDai(){
-    if(parseFloat(this.props.daiBalance)<parseFloat(this.state.daiSendAmount)){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.insufficient_funds')});
-    }else if(!this.state.daiSendToAddress || !this.state.daiSendToAddress.length === 42){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_address')});
-    }else if(!(parseFloat(this.state.daiSendAmount) > 0)){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_amount')});
+  async sendDai(){
+    let { daiContract } = this.props;
+    const { pTx, changeAlert, daiBalance, web3 } = this.props;
+    const {
+      daiAddress,
+      daiSendToAddress,
+      daiSendAmount,
+      mainnetMetaAccount,
+      mainnetweb3,
+    } = this.state;
+
+    if(parseFloat(daiBalance)<parseFloat(daiSendAmount)){
+      changeAlert({type: 'warning',message: i18n.t('exchange.insufficient_funds')});
+    }else if(!daiSendToAddress || !daiSendToAddress.length === 42){
+      changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_address')});
+    }else if(!(parseFloat(daiSendAmount) > 0)){
+      changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_amount')});
     }else{
       this.setState({
         daiToXdaiMode:"sending",
-        daiBalanceAtStart:this.props.daiBalance,
-        daiBalanceShouldBe:parseFloat(this.props.daiBalance)-parseFloat(this.state.daiSendAmount),
+        daiBalanceAtStart:daiBalance,
+        daiBalanceShouldBe:parseFloat(daiBalance) - parseFloat(daiSendAmount),
         loaderBarColor:"#f5eb4a",
         loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
         loaderBarPercent:0,
@@ -372,8 +329,53 @@ export default class Exchange extends React.Component {
         }
       })
       this.setState({sendDai:false})
-      this.transferDai(this.state.daiSendToAddress,this.state.daiSendAmount,"Sending "+this.state.daiSendAmount+" DAI to "+this.state.daiSendToAddress+"...",()=>{
-        this.props.changeAlert({type: 'success',message: "Sent "+this.state.daiSendAmount+" DAI to "+this.state.daiSendToAddress});
+
+      let gwei;
+      try {
+        gwei = await gasPrice();
+      } catch(err) {
+        console.log("Error getting gas price",err)
+      }
+
+      if(gwei !== undefined){
+        if (mainnetMetaAccount) {
+
+          let paramsObject = {
+            from: daiAddress,
+            value: 0,
+            gas: 240000,
+            gasPrice: Math.round(gwei * 1000000000)
+          }
+          console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+          paramsObject.to = daiContract._address;
+          paramsObject.data = daiContract.methods.transfer(daiSendToAddress, mainnetweb3.utils.toWei(daiSendAmount, "ether")).encodeABI()
+
+          console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+          let signed = await mainnetweb3.eth.accounts.signTransaction(paramsObject, mainnetMetaAccount.privateKey)
+
+          try {
+            await mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction)
+          } catch(err) {
+            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+            changeAlert({type: 'danger',message: err.toString()});
+          }
+        } else {
+            // NOTE: For some reason it's important that we reinitialize
+            // the daiContract at this point with this.props.web3.
+            daiContract = new web3.eth.Contract(daiContract._jsonInterface, daiContract._address)
+            await pTx(
+              daiContract.methods.transfer(
+                daiSendToAddress,
+                web3.utils.toWei(daiSendAmount, "ether")
+              ),
+              150000,
+              0,
+              0
+            )
+        }
+        changeAlert({type: "success", message: `Sent ${daiSendAmount} DAI to ${daiSendToAddress}...`});
         this.setState({
           daiToXdaiMode:false,
           daiSendAmount:"",
@@ -381,15 +383,17 @@ export default class Exchange extends React.Component {
           loaderBarColor:"#FFFFFF",
           loaderBarStatusText:"",
         })
-      })
-
+      } else {
+        // TODO: Propagate this error to the user
+        console.log("Couldn't get gas price");
+      }
     }
   }
   canSendDai() {
     return (this.state.daiSendToAddress && this.state.daiSendToAddress.length === 42 && parseFloat(this.state.daiSendAmount)>0 && parseFloat(this.state.daiSendAmount) <= parseFloat(this.props.daiBalance))
   }
 
-  async transferDai(destination,amount,message,cb) {
+  async depositDai(destination, amount, message, cb) {
     let gwei
     try {
       gwei = await gasPrice();
@@ -405,8 +409,6 @@ export default class Exchange extends React.Component {
 
         let paramsObject
         if (this.props.network === "LeapTestnet" || this.props.network === "LeapMainnet") {
-          await this.maybeApprovePDai(amountWei);
-
           const allowance = await this.props.daiContract.methods.allowance(
             this.state.daiAddress,
             this.props.bridgeContract._address
@@ -496,8 +498,6 @@ export default class Exchange extends React.Component {
         const amountWei =  web3.utils.toWei(""+amount,"ether")
 
         if (this.props.network === "LeapTestnet" || this.props.network === "LeapMainnet") {
-          await this.maybeApprovePDai(amountWei);
-
           const allowance = await daiContract.methods.allowance(
             this.state.daiAddress,
             bridgeContract._address
@@ -790,9 +790,9 @@ export default class Exchange extends React.Component {
                     alert(i18n.t('exchange.go_to_etherscan'))
                   }
                 })
-                // TODO: transferDai doesn't use the destination parameter anymore
-                // Remove it and rename function to e.g. depositDai
-                this.transferDai(null,this.state.amount,"Sending funds to bridge...",()=>{
+                // TODO: depositDai doesn't use the destination parameter anymore
+                // Remove it.
+                this.depositDai(null,this.state.amount,"Sending funds to bridge...",()=>{
                   this.setState({
                     amount:"",
                     loaderBarColor:"#4ab3f5",
@@ -854,7 +854,6 @@ export default class Exchange extends React.Component {
               <Button disabled={buttonsDisabled} onClick={async ()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
 
-                let exitableAmount = this.state.amount;
 
                 if(this.state.xdaiMetaAccount){
                   //send funds using metaaccount on xdai
@@ -874,15 +873,9 @@ export default class Exchange extends React.Component {
                   };
 
                   // TODO: get real decimals
-                  const amount = bi(exitableAmount * 10 ** 18);
+                  const amount = bi(this.state.amount * 10 ** 18);
                   const tokenAddr = this.props.pdaiContract._address;
                   const color = await this.state.xdaiweb3.getColor(tokenAddr);
-
-                  // special handler for MNY
-                  if (!this.state.notSundai) {
-                    this.directSell(amount, color);
-                    return;
-                  }
 
                   Exit.fastSellAmount(
                     this.state.daiAddress, amount, color,
@@ -920,8 +913,9 @@ export default class Exchange extends React.Component {
                     }).catch(err => {
                       console.log(err);
                     });
-              }
-              }}>
+                  }
+                }
+              }>
                 <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
                   <i className="fas fa-arrow-down" /> Send
                 </Scaler>
@@ -946,7 +940,6 @@ export default class Exchange extends React.Component {
             icon={'ArrowDownward'}
             disabled={
               buttonsDisabled ||
-              (!this.state.notSundai && this.state.exitableSunDaiBalance === 0) ||
               parseFloat(this.props.xdaiBalance) === 0
             }
             onClick={()=>{

@@ -7,7 +7,7 @@ const configs = [
       DAI_ADDRESS: "0xD2D0F8a6ADfF16C2098101087f9548465EC96C98",
       MARKET_MAKER:
         "https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet",
-      BRIDGE_ADDRESS: "0x7DC67d56f5487D612985718221bD62D7b415Fc50",
+      BRIDGE_ADDRESS: "0x26a937302cc6A0A7334B210de06136C8C61BA885",
       EXPLORER: {
         URL: "https://testnet.leapdao.org/explorer/",
         NAME: "LeapDAO Testnet Explorer"
@@ -42,7 +42,7 @@ const configs = [
       DAI_ADDRESS: "0xD2D0F8a6ADfF16C2098101087f9548465EC96C98",
       MARKET_MAKER:
         "https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet",
-      BRIDGE_ADDRESS: "0x7DC67d56f5487D612985718221bD62D7b415Fc50",
+      BRIDGE_ADDRESS: "0x26a937302cc6A0A7334B210de06136C8C61BA885",
       EXPLORER: {
         URL: "https://testnet.leapdao.org/explorer/",
         NAME: "LeapDAO Testnet Explorer"
