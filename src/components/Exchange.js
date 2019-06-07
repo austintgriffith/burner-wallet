@@ -142,27 +142,6 @@ export default class Exchange extends React.Component {
     this.interval = setInterval(this.poll.bind(this),1500)
     setTimeout(this.poll.bind(this),250)
   }
-  async getWrappedDaiBalance() {
-    // not a sundai, return immediatelly
-    if (this.state.notSundai) return true;
-
-    const rootPdai = new this.state.mainnetweb3.eth.Contract(
-      require("../contracts/SunDai.abi.js"),
-      this.props.pdaiContract._address
-    );
-
-    try {
-      const daiBalance = await rootPdai.methods.daiBalance(this.state.daiAddress).call();
-      return parseInt(daiBalance);
-    } catch (e) {
-      // no daiBalance function = not a sundai contract, so skipping this check
-      if (e.message.indexOf('Returned values aren\'t valid') >= 0) {
-        this.setState({ notSundai: true });
-        return 0;
-      }
-      throw e;
-    }
-  }
   async poll(){
     let { xdaiweb3 } = this.state
     /*let { daiContract } = this.props
@@ -184,12 +163,6 @@ export default class Exchange extends React.Component {
       }
     }
     this.updatePendingExits(this.state.daiAddress, xdaiweb3)
-
-    if (!this.state.notSundai) {
-      const exitableSunDaiBalance = await this.getWrappedDaiBalance()
-        .catch(e => console.error('Failed to read extable daiBalance for MNY', e));
-      this.setState({ exitableSunDaiBalance });
-    }
 
     /*
     console.log("SETTING ETH BALANCE OF "+this.state.daiAddress)
@@ -967,7 +940,6 @@ export default class Exchange extends React.Component {
             icon={'ArrowDownward'}
             disabled={
               buttonsDisabled ||
-              (!this.state.notSundai && this.state.exitableSunDaiBalance ===0) ||
               parseFloat(this.props.xdaiBalance) === 0
             }
             onClick={()=>{
