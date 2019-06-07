@@ -32,7 +32,7 @@ export default class Advanced extends React.Component {
       privateKeyQrDisplay = (
         <div className="main-card card w-100">
           <div className="content qr row">
-            <QRCode value={qrValue} size={qrSize}/>
+            <QRCode className="qr-code" value={qrValue} size={qrSize}/>
           </div>
         </div>
       )
@@ -43,7 +43,7 @@ export default class Advanced extends React.Component {
       showingQr = (
         <div className="main-card card w-100">
           <div className="content qr row">
-            <QRCode value={this.state.showingQr} size={qrSize}/>
+            <QRCode className="qr-code" value={this.state.showingQr} size={qrSize}/>
           </div>
         </div>
       )

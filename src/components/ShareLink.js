@@ -31,7 +31,7 @@ export default class ShareLink extends React.Component {
         }}>
         <div style={{cursor:"pointer"}}>
           <div className="content qr row">
-            <QRCode value={qrValue} size={qrSize}/>
+            <QRCode className="qr-code" value={qrValue} size={qrSize}/>
           </div>
           <Ruler/>
           <div style={{width:"100%",textAlign:"center"}}>
