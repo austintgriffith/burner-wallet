@@ -30,7 +30,7 @@ import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
 import Card from './components/StyledCard';
 import incogDetect from './services/incogDetect.js'
-import { Box, ThemeProvider } from 'rimble-ui';
+import { ThemeProvider } from 'rimble-ui';
 import theme from "./theme";
 import getConfig from "./config";
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
@@ -849,9 +849,7 @@ export default class App extends Component {
                           dollarDisplay={dollarDisplay}
                         />
 
-                        <Box>
-                          {moreButtons}
-                        </Box>
+                        {moreButtons}
 
                         <RecentTransactions
                           dollarDisplay={dollarDisplay}

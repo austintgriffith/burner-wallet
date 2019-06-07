@@ -223,7 +223,7 @@ i.fas {
 	left: var(--offset);
 	bottom: var(--offset);
 	opacity:0.25;
-	z-index:100;
+	z-index:-1;
 	font-size: 40px;
 	line-height: 1;
 	color: var(--dark-text);

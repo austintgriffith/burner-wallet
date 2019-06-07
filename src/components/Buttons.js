@@ -9,6 +9,10 @@ export const PrimaryButton = styled(Button)`
   &:hover {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
   }
+  @media screen and (max-width: 480px){
+    padding-left: 0;
+    padding-right: 0;
+  }
 `;
 
 export const ActionButton = styled(Button)`
@@ -26,4 +30,8 @@ export const BorderButton = styled(OutlineButton)`
   cursor: pointer;
   color: var(--secondary-btn-text-color);
   border: 2px solid var(--secondary-btn-border-color);
+  @media screen and (max-width: 480px){
+    padding-left: 0;
+    padding-right: 0;
+  }
 `;
