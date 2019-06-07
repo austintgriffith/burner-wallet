@@ -549,37 +549,86 @@ export default class Exchange extends React.Component {
     return (this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length === 42 && parseFloat(this.state.xdaiSendAmount)>0 && parseFloat(this.state.xdaiSendAmount) <= parseFloat(this.props.xdaiBalance))
   }
 
-  sendEth(){
+  async sendEth(){
+    const { 
+      ethSendAmount,
+      ethSendToAddress,
+      mainnetMetaAccount,
+      mainnetweb3,
+      daiAddress 
+    } = this.state;
+    const { ethprice, ethBalance, changeAlert, web3 } = this.props;
 
-    let actualEthSendAmount = parseFloat(this.state.ethSendAmount)/parseFloat(this.props.ethprice)
+    let actualEthSendAmount = parseFloat(ethSendAmount)/parseFloat(ethprice)
 
-    if(parseFloat(this.props.ethBalance)<actualEthSendAmount){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.insufficient_funds')});
-    }else if(!this.state.ethSendToAddress || !this.state.ethSendToAddress.length === 42){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_address')});
+    if(parseFloat(ethBalance)<actualEthSendAmount){
+      changeAlert({type: 'warning',message: i18n.t('exchange.insufficient_funds')});
+    }else if(!this.state.ethSendToAddress || !ethSendToAddress.length === 42){
+      changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_address')});
     }else if(!(actualEthSendAmount>0)){
-      this.props.changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_amount')});
+      changeAlert({type: 'warning',message: i18n.t('exchange.invalid_to_amount')});
     }else{
       this.setState({
         ethToDaiMode:"sending",
-        ethBalanceAtStart:this.props.ethBalance,
-        ethBalanceShouldBe:parseFloat(this.props.ethBalance)-actualEthSendAmount,
+        ethBalanceAtStart:ethBalance,
+        ethBalanceShouldBe:parseFloat(ethBalance)-actualEthSendAmount,
         loaderBarColor:"#f5eb4a",
         loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
         loaderBarPercent:0,
         loaderBarStartTime: Date.now(),
         loaderBarClick:()=>{
           alert(i18n.t('exchange.go_to_etherscan'))
-        }
+        },
+        sendEth: false
       })
-      this.setState({sendEth:false})
-      //i think without inject meta mask this needs to be adjusted?!?!
-      if(this.state.mainnetMetaAccount){
-        actualEthSendAmount = this.state.mainnetweb3.utils.toWei(""+Math.round(actualEthSendAmount*10000)/10000,'ether')
+
+      actualEthSendAmount = mainnetweb3.utils.toWei(""+Math.round(actualEthSendAmount*10000)/10000,'ether')
+
+      let gwei;
+      try {
+        gwei = await gasPrice();
+      } catch(err) {
+        console.log("Error getting gas price",err)
       }
-      ////for some reason I needed this in and now I dont?!?!?
-      this.transferEth(this.state.ethSendToAddress,false,actualEthSendAmount,"Sending $"+this.state.ethSendAmount+" of ETH to "+this.state.ethSendToAddress+"...",()=>{
-        this.props.changeAlert({type: 'success',message: "Sent $"+this.state.ethSendAmount+" of ETH to "+this.state.ethSendToAddress});
+
+      if(gwei !== undefined){
+        if (mainnetMetaAccount) {
+
+          let paramsObject = {
+            from: daiAddress,
+            value: actualEthSendAmount,
+            gas: 240000,
+            gasPrice: Math.round(gwei * 1000000000),
+            to: ethSendToAddress
+          }
+          console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+          let signed = await mainnetweb3.eth.accounts.signTransaction(paramsObject, mainnetMetaAccount.privateKey)
+
+          this.setState({
+            ethToDaiMode:"sending",
+            loaderBarStatusText: "Sending funds",
+          })
+          let receipt;
+          try {
+            receipt = await mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction)
+          } catch(err) {
+            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+            changeAlert({type: 'danger',message: err.toString()});
+          }
+          console.log(receipt);
+        } else {
+          this.setState({
+            ethToDaiMode:"sending",
+            loaderBarStatusText: "Sending funds",
+          })
+          await web3.eth.sendTransaction({
+            from: daiAddress ,
+            to: ethSendToAddress,
+            value: actualEthSendAmount,
+          })
+        }
+        changeAlert({type: "success", message: `Sent ${ethSendAmount} ETH to ${ethSendToAddress}...`});
         this.setState({
           ethToDaiMode:false,
           ethSendAmount:"",
@@ -587,15 +636,17 @@ export default class Exchange extends React.Component {
           loaderBarColor:"#FFFFFF",
           loaderBarStatusText:"",
         })
-      })
-
+      } else {
+        // TODO: Propagate this error to the user
+        console.log("Couldn't get gas price");
+      }
     }
   }
   canSendEth() {
     let actualEthSendAmount = parseFloat(this.state.ethSendAmount)/parseFloat(this.props.ethprice)
     return (this.state.ethSendToAddress && this.state.ethSendToAddress.length === 42 && actualEthSendAmount>0 && actualEthSendAmount <= parseFloat(this.props.ethBalance))
   }
-  transferEth(destination,call,amount,message,cb){
+  swapEth(destination,call,amount,message,cb){
     if(this.state.mainnetMetaAccount){
       //send funds using metaaccount on mainnet
 
@@ -1059,7 +1110,7 @@ export default class Exchange extends React.Component {
                 })
 
                 ///TRANSFER ETH
-                this.transferEth(
+                this.swapEth(
                   uniswapContract._address,
                   uniswapContract.methods.ethToTokenSwapInput(""+mintokens,""+deadline),
                   amountOfEth,
@@ -1743,7 +1794,7 @@ export default class Exchange extends React.Component {
               </Scaler>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
-              {this.state.mainnetMetaAccount ? sendEthButton : null}
+              {sendEthButton}
             </div>
           </div>
 
