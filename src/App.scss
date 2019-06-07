@@ -3,8 +3,18 @@
 	--blockie-name: #799BAE;
 	--deep-blue: #106BF3;
 	--plasma-green: #41CC04;
-	--plasma-orange: #F6DF0D;
 	--plasma-yellow: #FAFF02;
+	--plasma-orange: #F6DF0D;
+	--plasma-brown: #896B02;
+	--primary-btn-text-color: var(--plasma-brown);
+	--primary-btn-bg-color: var(--plasma-orange);
+	--primary-btn-border-color: #EFBB01;
+	--secondary-btn-text-color: #5E5E5E;
+	--secondary-btn-border-color: #BDBDBD;
+	--offset: 32px;
+	@media screen and (max-width: 480px){
+		--offset: 16px;
+	}
 }
 
 .row {
@@ -209,8 +219,7 @@ i.fas {
 }
 
 .context{
-	--offset: 32px;
-	position: absolute;
+	position: fixed;
 	left: var(--offset);
 	bottom: var(--offset);
 	opacity:0.25;
@@ -268,7 +277,6 @@ i.fas {
 }
 
 .fab_container{
-	--offset: 32px;
 	position: fixed;
 	z-index: 2;
 	cursor: pointer;
@@ -315,8 +323,21 @@ i.fas {
 	color: #896B02;
 }
 
-.settings-row{
+.ops.row.settings-row{
 	margin: 0;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: 50px;
+	grid-column-gap: 10px;
+	grid-row-gap: 10px;
+	margin-bottom: 10px;
+	input{
+		margin: 0;
+		height: 100%;
+	}
+	button, a, input{
+		flex: 1;
+	}
 }
 
 input.settings-input{
@@ -325,4 +346,60 @@ input.settings-input{
 
 .content.ops.row{
 	margin: 0;
+}
+
+.input-with-toggle{
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr auto;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+
+button.show-toggle{
+	width: 50px;
+	right: 0;
+	flex: 0 0 auto;
+	margin-left: 10px;
+}
+
+.ops.row.transfer-row{
+	display: grid;
+	grid-template-areas: 'input cancel send';
+	grid-column-gap: 10px;
+	grid-row-gap: 10px;
+	padding: 0 15px;
+	i{
+		text-align: center;
+	}
+	@media screen and (max-width: 600px){
+		grid-template-areas: 'input input' 'cancel send';
+	}
+}
+
+.input-with-arrow{
+	grid-area: input;
+	display: flex;
+	i{
+		width: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-right: 10px;
+	}
+}
+
+.btn-cancel{
+	grid-area: cancel;
+}
+
+.btn-send{
+	grid-area: send;
+}
+
+.qr-code{
+	max-width: 350px;
+	width: 100%;
+	height: auto;
 }
