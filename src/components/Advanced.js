@@ -88,9 +88,7 @@ export default class Advanced extends React.Component {
             changeAlert({type: 'warning', message: 'Invalid private key.'})
           }
         }}>
-          <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-            <i className="fas fa-plus-square"/> {i18n.t('create')}
-          </Scaler>
+          <i className="fas fa-plus-square"/> {i18n.t('create')}
         </PrimaryButton>
       </div>
     )
@@ -166,32 +164,24 @@ export default class Advanced extends React.Component {
 
         {privateKey && !isVendor &&
         <div>
-                    <div style={{width:"100%",textAlign:"center"}}><h5>Private Key</h5></div>
+          <div style={{width:"100%",textAlign:"center"}}>
+            <h5>Private Key</h5>
+          </div>
           <div className="content ops row settings-row" style={{marginBottom:10}}>
-
             <PrimaryButton width={1} onClick={()=>{
               this.setState({privateKeyQr:!this.state.privateKeyQr})
             }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-key"/> {i18n.t('show')}
-              </Scaler>
+              <i className="fas fa-key"/> {i18n.t('show')}
             </PrimaryButton>
 
             <CopyToClipboard text={privateKey}>
-              <div className="col-6 p-1"
-                   onClick={() => changeAlert({type: 'success', message: 'Private Key copied to clipboard'})}>
-                <PrimaryButton width={1}>
-                  <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    <i className="fas fa-key"/> {i18n.t('copy')}
-                  </Scaler>
-                </PrimaryButton>
-              </div>
+              <PrimaryButton width={1} onClick={() => changeAlert({type: 'success', message: 'Private Key copied to clipboard'})}>
+                <i className="fas fa-key"/> {i18n.t('copy')}
+              </PrimaryButton>
             </CopyToClipboard>
 
           </div>
-          <div className="content ops row settings-row">
-            {privateKeyQrDisplay}
-          </div>
+          {privateKeyQrDisplay}
 
         </div>
         }
