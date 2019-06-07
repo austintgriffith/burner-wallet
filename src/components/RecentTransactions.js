@@ -9,13 +9,11 @@ export default ({dollarDisplay, view, max, buttonStyle, vendorName, address, rec
   for(let r in recentTxs){
     let thisValue = parseFloat(recentTxs[r].value)
     if(thisValue>0.0){
-
       let dollarView = (
-          <span>
-            <span style={{opacity:0.33}}>-</span>{dollarDisplay(recentTxs[r].value)}<span style={{opacity:0.33}}>-></span>
-          </span>
-        )
-
+        <span style={{opacity:0.5,fontSize:14}}>
+          {dollarDisplay(recentTxs[r].value)}
+        </span>
+      )
       let toBlockie = (
         <Blockie
           address={recentTxs[r].to}
