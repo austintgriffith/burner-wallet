@@ -3,8 +3,10 @@ import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "
 import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
-import i18n from './i18n';
 import gasless from 'tabookey-gasless';
+import { eth, dai, xdai } from '@burner-wallet/assets';
+
+import i18n from './i18n';
 import './App.scss';
 import Header from './components/Header';
 import NavCard from './components/NavCard';
@@ -47,9 +49,9 @@ import RNMessageChannel from 'react-native-webview-messaging';
 
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
-import eth from './ethereum.png';
-import dai from './dai.jpg';
-import xdai from './xdai.jpg';
+import ethImg from './ethereum.png';
+import daiImg from './dai.jpg';
+import xdaiImg from './xdai.jpg';
 import Wyre from './services/wyre';
 
 let base64url = require('base64url')
@@ -537,34 +539,17 @@ class App extends Component {
 
 
     if(this.state.account){
-      let ethBalance = 0.00
-      let daiBalance = 0.00
-      let xdaiBalance = 0.00
+      const ethBalance = await eth.getDisplayBalance(this.state.account, 20);
+      const daiBalance = await dai.getDisplayBalance(this.state.account, 20);
+      const xdaiBalance = await xdai.getDisplayBalance(this.state.account, 20);
 
-      if(this.state.mainnetweb3){
-
-        try{
-          ethBalance = await this.state.mainnetweb3.eth.getBalance(this.state.account)
-          ethBalance = this.state.mainnetweb3.utils.fromWei(""+ethBalance,'ether')
-
-          if(this.state.daiContract){
-            daiBalance = await this.state.daiContract.methods.balanceOf(this.state.account).call()
-            daiBalance = this.state.mainnetweb3.utils.fromWei(""+daiBalance,'ether')
-          }
-        }catch(e){
-          console.log(e)
-          this.connectToRPC()
-        }
-
-
-
-      }
-      if(this.state.xdaiweb3){
-        xdaiBalance = await this.state.xdaiweb3.eth.getBalance(this.state.account)
-        xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
-      }
-
-      this.setState({ethBalance,daiBalance,xdaiBalance,badgeBalance,hasUpdateOnce:true})
+      this.setState({
+        ethBalance,
+        daiBalance,
+        xdaiBalance,
+        badgeBalance,
+        hasUpdateOnce:true
+      });
 
       if(xdaiBalance < 0.01 && singleBadgeId && !this.state.switchedToSingleBadge){
         this.setState({switchedToSingleBadge:true})
@@ -1352,7 +1337,14 @@ render() {
 
           let defaultBalanceDisplay = (
             <div>
-              <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+              <Balance
+                icon={xdaiImg}
+                selected={false}
+                text="xdai"
+                amount={this.state.xdaiBalance}
+                address={account}
+                dollarDisplay={dollarDisplay}
+              />
               <Ruler/>
             </div>
           )
@@ -1391,11 +1383,32 @@ render() {
 
                   {extraTokens}
 
-                  <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance
+                    icon={xdaiImg}
+                    selected={selected}
+                    text="xDai"
+                    amount={this.state.xdaiBalance}
+                    address={account}
+                    dollarDisplay={dollarDisplay}
+                  />
                   <Ruler/>
-                  <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance
+                    icon={daiImg}
+                    selected={selected}
+                    text="DAI"
+                    amount={this.state.daiBalance}
+                    address={account}
+                    dollarDisplay={dollarDisplay}
+                  />
                   <Ruler/>
-                  <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance
+                    icon={ethImg}
+                    selected={selected}
+                    text="ETH"
+                    amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)}
+                    address={account}
+                    dollarDisplay={dollarDisplay}
+                  />
                   <Ruler/>
                   {badgeDisplay}
 
