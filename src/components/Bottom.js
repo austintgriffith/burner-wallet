@@ -1,6 +1,7 @@
 import React from 'react';
 import i18n from '../i18n';
-import { Button, Flex, Icon } from 'rimble-ui'
+import { Icon } from 'rimble-ui'
+import { ActionButton } from '../components/Buttons'
 
 export default class Receive extends React.Component {
   render() {
@@ -13,12 +14,10 @@ export default class Receive extends React.Component {
 
     return (
       <div name="theVeryBottom" className="text-center bottom-text" style={{marginBottom:20}}>
-        <Button style={{backgroundColor: "white"}} color="black" onClick={()=>{action()}}>
-          <Flex alignItems="center">
+        <ActionButton onClick={()=>{action()}}>
             <Icon name={icon} mr={2} />
             {text}
-          </Flex>
-        </Button>
+        </ActionButton>
       </div>
     )
   }

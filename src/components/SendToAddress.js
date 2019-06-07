@@ -7,11 +7,10 @@ import i18n from '../i18n';
 import queryString from 'query-string';
 import {
   Box,
-  Button,
-  OutlineButton,
   Field,
   Input,
 } from 'rimble-ui';
+import { PrimaryButton, BorderButton } from "./Buttons";
 
 export default class SendToAddress extends React.Component {
 
@@ -262,9 +261,9 @@ export default class SendToAddress extends React.Component {
             />
           </Field>
 
-          <OutlineButton icon={'CenterFocusWeak'} mb={4} width={1} onClick={() => {this.props.openScanner({view:"send_to_address"})}}>
+          <BorderButton icon={'CenterFocusWeak'} mb={4} width={1} onClick={() => {this.props.openScanner({view:"send_to_address"})}}>
             Scan QR Code
-          </OutlineButton>
+          </BorderButton>
 
           <div>{ this.state.toAddress && this.state.toAddress.length===42 &&
             <CopyToClipboard text={toAddress.toLowerCase()}>
@@ -290,9 +289,9 @@ export default class SendToAddress extends React.Component {
             />
           </Field>
         </Box>
-        <Button size={'large'} width={1} disabled={!canSend} onClick={this.send}>
+        <PrimaryButton size={'large'} width={1} disabled={!canSend} onClick={this.send}>
           Send
-        </Button>
+        </PrimaryButton>
       </div>
     )
   }

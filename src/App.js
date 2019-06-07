@@ -24,19 +24,20 @@ import MoreButtons from './components/MoreButtons';
 import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
-import burnerlogo from './burnerwallet.png';
+import burnerlogo from './assets/burnerwallet.png';
 import BurnWallet from './components/BurnWallet'
 import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
+import Card from './components/StyledCard';
 import incogDetect from './services/incogDetect.js'
-import { Card, Box, ThemeProvider } from 'rimble-ui';
+import { Box, ThemeProvider } from 'rimble-ui';
 import theme from "./theme";
 import getConfig from "./config";
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
-import eth from './ethereum.png';
-import dai from './dai.jpg';
-import xdai from './xdai.png';
+import eth from './assets/ethereum.png';
+import dai from './assets/dai.png';
+import pdai from './assets/pdai.png';
 import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 
@@ -60,13 +61,6 @@ let title = i18n.t('app_name')
 let titleImage = (
   <span style={{paddingRight:20,paddingLeft:16}}><i className="fas fa-fire" /></span>
 )
-
-// TODO: Consolidate this with theme.js
-let innerStyle = {
-  maxWidth:740,
-  margin:'0 auto',
-  textAlign:'left'
-}
 
 // TODO: Consolidate this with theme.js
 let buttonStyle = {
@@ -200,21 +194,18 @@ export default class App extends Component {
     incogDetect((result)=>{
       if(result){
         console.log("INCOG")
-        document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
-        document.body.style.backgroundColor = "#671c1c"
+        document.getElementById("main").classList.add("main--incognito")
         var contextElement = document.getElementById("context")
         contextElement.innerHTML = 'INCOGNITO';
       }else if (typeof web3 !== 'undefined') {
         console.log("NOT INCOG",this.state.metaAccount)
         if (window.web3.currentProvider.isMetaMask === true) {
-          document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
-          document.body.style.backgroundColor = "#ca6e28"
+          document.getElementById("main").classList.add("main--metamask")
           contextElement = document.getElementById("context")
           contextElement.innerHTML = 'METAMASK';
         } else if(this.state.account && !this.state.metaAccount) {
           console.log("~~~*** WEB3",this.state.metaAccount,result)
-          document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
-          document.body.style.backgroundColor = "#305582"
+          document.getElementById("main").classList.add("main--web3")
           contextElement = document.getElementById("context")
           contextElement.innerHTML = 'WEB3';
         }
@@ -327,8 +318,8 @@ export default class App extends Component {
           this.connectToRPC()
         }
       }
-      if(this.state.xdaiweb3 && this.state.pdaiContract){
-        xdaiBalance = await this.state.pdaiContract.methods.balanceOf(this.state.account).call();
+      if(this.state.xdaiweb3 && this.state.xdaiContract){
+        xdaiBalance = await this.state.xdaiContract.methods.balanceOf(this.state.account).call();
         xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
       }
 
@@ -748,8 +739,8 @@ export default class App extends Component {
     return (
       <ThemeProvider theme={theme}>
         <I18nextProvider i18n={i18n}>
-          <div id="main" style={mainStyle}>
-            <div style={innerStyle}>
+          <div id="main" className="main">
+            <div className="inner-container">
               {extraHead}
               {networkOverlay}
               {web3_setup}
@@ -775,7 +766,7 @@ export default class App extends Component {
 
                 let defaultBalanceDisplay = (
                   <div>
-                    <Balance icon={xdai} selected={false} text={"MNY"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+                    <Balance icon={pdai} selected={false} text={"PDAI"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
                   </div>
                 )
 
@@ -840,10 +831,10 @@ export default class App extends Component {
                   return (
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
-                      <Card p={3}>
+                      <Card>
                         {extraTokens}
 
-                        <Balance icon={xdai} selected={selected} text={"MNY"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                        <Balance icon={pdai} selected={selected} text={"PDAI"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
 
                         <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
 
@@ -887,7 +878,7 @@ export default class App extends Component {
                   return (
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
-                      <Card p={3}>
+                      <Card>
                         <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
                         <Advanced
                           isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
@@ -912,7 +903,7 @@ export default class App extends Component {
                     return (
                       <div>
                         {this.state.scannerOpen ? sendByScan : null}
-                        <Card p={3} style={{zIndex:1}}>
+                        <Card>
                           <NavCard title={i18n.t('withdraw')} goBack={this.goBack.bind(this)}/>
                           {defaultBalanceDisplay}
                           <WithdrawFromPrivate
@@ -922,8 +913,8 @@ export default class App extends Component {
                             address={account}
                             web3={this.state.web3}
                             xdaiweb3={this.state.xdaiweb3}
-                            pdaiContract={this.state.pdaiContract}
-                            daiTokenAddr={CONFIG.SIDECHAIN.DAI_ADDRESS}
+                            xdaiContract={this.state.xdaiContract}
+                            daiTokenAddr={CONFIG.SIDECHAIN.DAI}
                             //amount={false}
                             privateKey={this.state.withdrawFromPrivateKey}
                             goBack={this.goBack.bind(this)}
@@ -946,7 +937,7 @@ export default class App extends Component {
                   return (
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
-                      <Card p={3} style={{zIndex:1}}>
+                      <Card>
                         <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                         {defaultBalanceDisplay}
                         <SendToAddress
@@ -976,7 +967,7 @@ export default class App extends Component {
                   return (
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
-                      <Card p={3}>
+                      <Card>
                         <NavCard title={i18n.t('receipt_title')} goBack={this.goBack.bind(this)}/>
                         <Receipt
                           receipt={this.state.receipt}
@@ -1006,7 +997,7 @@ export default class App extends Component {
                   return (
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
-                      <Card p={3}>
+                      <Card>
                         <NavCard title={i18n.t('receive_title')} goBack={this.goBack.bind(this)}/>
                         {defaultBalanceDisplay}
                         <Receive
@@ -1036,7 +1027,7 @@ export default class App extends Component {
                     return (
                       <div>
                         {this.state.scannerOpen ? sendByScan : null}
-                        <Card p={3}>
+                        <Card>
                           <NavCard title={i18n.t('request_funds_title')} goBack={this.goBack.bind(this)}/>
                           {defaultBalanceDisplay}
                           <RequestFunds
@@ -1074,7 +1065,7 @@ export default class App extends Component {
                       return (
                         <div>
                           {this.state.scannerOpen ? sendByScan : null}
-                          <Card p={3}>
+                          <Card>
                             <NavCard title={url} goBack={this.goBack.bind(this)} />
                             <Share
                               title={url}
@@ -1102,7 +1093,7 @@ export default class App extends Component {
                       return (
                         <div>
                           {this.state.scannerOpen ? sendByScan : null}
-                          <Card p={3}>
+                          <Card>
                             <NavCard title={'Share Link'} goBack={this.goBack.bind(this)} />
                               <ShareLink
                                 sendKey={this.state.sendKey}
@@ -1122,7 +1113,7 @@ export default class App extends Component {
                     return (
                       <div>
                         {this.state.scannerOpen ? sendByScan : null}
-                        <Card p={3}>
+                        <Card>
                           <NavCard title={"Burn Private Key"} goBack={this.goBack.bind(this)}/>
                           {defaultBalanceDisplay}
                           <BurnWallet
@@ -1158,12 +1149,11 @@ export default class App extends Component {
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card>
-
                         <NavCard title={i18n.t('exchange_title')} goBack={this.goBack.bind(this)}/>
                         <Exchange
                           eth={eth}
                           dai={dai}
-                          xdai={xdai}
+                          xdai={pdai}
                           ethprice={this.state.ethprice}
                           ethBalance={this.state.ethBalance}
                           daiBalance={this.state.daiBalance}
@@ -1171,7 +1161,7 @@ export default class App extends Component {
                           mainnetweb3={this.state.mainnetweb3}
                           xdaiweb3={this.state.xdaiweb3}
                           daiContract={this.state.daiContract}
-                          pdaiContract={this.state.pdaiContract}
+                          xdaiContract={this.state.xdaiContract}
                           bridgeContract={this.state.bridgeContract}
                           isVendor={this.state.isVendor}
                           isAdmin={this.state.isAdmin}
@@ -1200,7 +1190,7 @@ export default class App extends Component {
 
                         <NavCard title={"Sending..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                       </div>
-                      <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+                      <Loader loaderImage={LOADERIMAGE}/>
                     </div>
                   );
                   case 'reader':
@@ -1209,7 +1199,7 @@ export default class App extends Component {
                       <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
                         <NavCard title={"Reading QRCode..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                       </div>
-                      <Loader loaderImage={LOADERIMAGE}  mainStyle={mainStyle}/>
+                      <Loader loaderImage={LOADERIMAGE}/>
                     </div>
                   );
                   case 'claimer':
@@ -1218,7 +1208,7 @@ export default class App extends Component {
                       <div style={{zIndex:1,position:"relative",color:"#dddddd"}}>
                         <NavCard title={"Claiming..."} goBack={this.goBack.bind(this)} darkMode={true}/>
                       </div>
-                    <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+                    <Loader loaderImage={LOADERIMAGE}/>
                     </div>
                   );
                   default:
@@ -1227,11 +1217,7 @@ export default class App extends Component {
                   )
                   }
           })()}
-          { ( false ||  !web3 /*|| !this.checkNetwork() */) &&
-            <div>
-              <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
-            </div>
-          }
+          { ( false ||  !web3 /*|| !this.checkNetwork() */) && <Loader loaderImage={LOADERIMAGE}/>}
           { alert && <Footer alert={alert} changeAlert={this.changeAlert}/> }
           </div>
           <Dapparatus
@@ -1249,13 +1235,13 @@ export default class App extends Component {
               onUpdate={async (state) => {
                 //console.log("DAPPARATUS UPDATE",state)
                 if (state.xdaiweb3) {
-                  let pdaiContract;
+                  let xdaiContract;
                   try {
-                    pdaiContract = new state.xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"), CONFIG.SIDECHAIN.DAI_ADDRESS)
+                    xdaiContract = new state.xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"), CONFIG.SIDECHAIN.DAI_ADDRESS)
                   } catch(err) {
                     console.log("Error loading PDAI contract");
                   }
-                  this.setState({pdaiContract});
+                  this.setState({xdaiContract});
                 }
                 if (state.web3Provider) {
                   state.web3 = new Web3(state.web3Provider)
@@ -1340,10 +1326,7 @@ export default class App extends Component {
                 })
               }}
               />
-              <div
-                id="context"
-                style={{position:"absolute",right:5,top:-15,opacity:0.2,zIndex:100,fontSize:60,color:'#FFFFFF'}}>
-              </div>
+              <div id="context" className={"context"}></div>
               {eventParser}
             </div>
           </div>

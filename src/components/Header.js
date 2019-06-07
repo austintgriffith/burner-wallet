@@ -1,7 +1,7 @@
 import React from 'react';
 import { Blockie } from "dapparatus";
-import burnerloader from '../burnerloader.gif';
-import { Button, Icon } from "rimble-ui";
+import burnerloader from '../assets/burnerloader.gif';
+import { Icon } from "rimble-ui";
 export  default ({openScanner, network, total, ens, address, changeView, view}) => {
 
 
@@ -21,14 +21,12 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
   let blockieDisplay
   if(typeof total == "undefined" || Number.isNaN(total)){
     moneyDisplay = (
-      <div style={{opacity:0.1,fontSize:28,paddingTop:15}}>
-        connecting...
+      <div className={"money_display__connecting"}>
+        Connecting..
       </div>
     )
     blockieDisplay = (
-      <div>
-        <img src ={burnerloader} style={{maxHeight:50,opacity:0.25,marginLeft:-20}} alt=""/>
-      </div>
+      <img src={burnerloader} className="blockie__loader" alt=""/>
     )
   }else{
     /*moneyDisplay = (
@@ -37,7 +35,7 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
       </div>
     )*/
     moneyDisplay = (
-      <div style={{opacity:0.4,fontSize:22,paddingTop:18}}>
+      <div className="money_display__network">
         {network}
       </div>
     )
@@ -52,10 +50,7 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
   let scanButtonStyle = {
     opacity:sendButtonOpacity,
     position:"fixed",
-    right:20,
-    bottom:20,
     zIndex:2,
-    cursor:"pointer"
   }
 
   if(view==="send_to_address"){
@@ -66,49 +61,29 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
   }
 
   let bottomRight = (
-    <div style={scanButtonStyle}  >
-    <Button
-      onClick={() => {
-        openScanner({view:"send_to_address"})
-      }}
-      style={{backgroundColor: "white", border: "3px solid black"}}
-      color="black"
-      borderRadius={"50%"}
-      height={"auto"}
-      width={"auto"}
-      p={0} m={0}
-      position={"absolute"}
-      bottom={3}
-      right={3}
-    >
-      <Icon name="CenterFocusWeak" size={90} p={3} />
-    </Button>
+    <div className={"fab_container"} style={scanButtonStyle}  >
+      <button className={"fab_button"}
+        onClick={() => {
+          openScanner({view:"send_to_address"})
+        }}
+      >
+        <Icon name="CenterFocusWeak" className="fab_icon--capture"/>
+      </button>
     </div>
   )
 
-  let opacity = 0.5
+  const mainOrExchange = view === "main" || view === "exchange";
+  const opacity =mainOrExchange ? 1 :  0.5;
+  const blockieLink = mainOrExchange ? 'receive' : 'main';
+  let topLeft = (
+    <div className={"blockie_container"} onClick={() => changeView(blockieLink)}>
+      {blockieDisplay}
+      <div className="blockie_container__name">{name}</div>
+    </div>);
 
-
-
-  let topLeft
-
-  if(view==="main" || view==="exchange"){
-    opacity = 1.0
-    topLeft = (
-      <div style={{position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}} onClick={() => changeView('receive')} >
-          {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
-      </div>
-    )
-  }else{
-    topLeft = (
-      <div style={{position:"absolute",left:16,top:4,zIndex:1,cursor:"pointer"}} onClick={() => changeView('main')} >
-          {blockieDisplay} <div style={{position:"absolute",left:60,top:15,fontSize:14}}>{name}</div>
-      </div>
-    )
-  }
 
   let topRight = (
-    <div style={{position:"absolute",right:28,top:-4,zIndex:1,fontSize:46,opacity:0.9}}  >
+    <div className={"money_display"} >
       {moneyDisplay}
     </div>
   )

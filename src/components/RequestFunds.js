@@ -7,9 +7,9 @@ import {
   Box,
   Input,
   Field,
-  Button,
   QR as QRCode
 } from 'rimble-ui'
+import { PrimaryButton } from "./Buttons";
 
 export default class RequestFunds extends React.Component {
 
@@ -62,8 +62,9 @@ export default class RequestFunds extends React.Component {
               {message}
             </div>
 
+
             <Flex flexDirection={'column'} alignItems={'center'} p={3} border={1} borderColor={'grey'} borderRadius={1}>
-              <QRCode value={qrValue} size={'100%'} renderAs={'svg'} />
+              <QRCode className="qr-code" value={qrValue} size={'100%'} renderAs={'svg'} />
             </Flex>
             <Box mt={3}>
               <Input type='url' readOnly value={qrValue} width={1} />
@@ -115,14 +116,14 @@ export default class RequestFunds extends React.Component {
             />
           </Field>
 
-          <Button
+          <PrimaryButton
             size={'large'}
             width={1}
             disabled={(canRequest ? false : true)}
             onClick={this.request}
           >
             {i18n.t('request_funds.button')}
-          </Button>
+          </PrimaryButton>
         </div>
       )
     }

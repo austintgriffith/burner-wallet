@@ -45,9 +45,9 @@ export default class SendToAddress extends React.Component {
   }
 
   async poll(){
-    const { xdaiweb3, pdaiContract } = this.props;
+    const { xdaiweb3, xdaiContract } = this.props;
     const { fromAddress } = this.state;
-    let fromBalance = await pdaiContract.methods.balanceOf(fromAddress).call();
+    let fromBalance = await xdaiContract.methods.balanceOf(fromAddress).call();
 
     fromBalance = parseFloat(xdaiweb3.utils.fromWei(fromBalance,'ether'))
     fromBalance = fromBalance.toFixed(2)

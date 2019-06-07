@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Button, Icon, Box } from "rimble-ui";
+import { Flex, Icon, Box } from "rimble-ui";
 import i18next from "i18next";
 
 export default ({
@@ -9,20 +9,16 @@ export default ({
     <Box>
       <Flex mx={-2}>
         <Box width={[1, 1/2, 1/2]} m={2}>
-          <Button fullWidth onClick={() => changeView("receive")}>
-            <Flex alignItems="center">
+          <button className="cta_button" onClick={() => changeView("receive")}>
               <Icon name="CenterFocusWeak" mr={2} />
               {i18next.t("main_card.receive")}
-            </Flex>
-          </Button>
+          </button>
         </Box>
         <Box width={[1, 1/2, 1/2]} m={2}>
-          <Button fullWidth onClick={() => changeView("send_to_address")}>
-            <Flex alignItems="center">
+          <button className="cta_button" onClick={() => changeView("send_to_address")}>
               <Icon name="Send" mr={2} />
               {i18next.t("main_card.send")}
-            </Flex>
-          </Button>
+          </button>
         </Box>
       </Flex>
     </Box>

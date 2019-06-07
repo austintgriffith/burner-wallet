@@ -20,7 +20,7 @@ export  default ({icon, text, selected, amount, dollarDisplay}) => {
   return (
     <Flex justifyContent={"space-between"} alignItems={"center"} borderBottom={1} borderColor={"#DFDFDF"} mb={3} pb={3}>
       <Flex alignItems={"center"}>
-        <Image src={icon} height={"50"} width={"50"} mr={3} bg="white" />
+        <Image src={icon} height={"50px"} width={"50px"} mr={3} bg="transparent" />
 
         <Text>
           {text}

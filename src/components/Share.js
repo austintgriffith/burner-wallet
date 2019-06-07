@@ -23,7 +23,7 @@ export default class Receive extends React.Component {
         }}>
           <Box>
             <Flex flexDirection={'column'} alignItems={'center'} p={3} border={1} borderColor={'grey'} borderRadius={1}>
-              <QRCode value={url} size={'100%'} renderAs={'svg'} />
+              <QRCode className="qr-code" value={url} size={'100%'} renderAs={'svg'} />
             </Flex>
             <Box mt={3}>
               <Input type='url' readOnly value={url} width={1} />
