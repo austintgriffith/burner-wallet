@@ -329,10 +329,10 @@ export default class App extends Component {
 
   }
   longPoll() {
-    fetch("https://api.coinmarketcap.com/v2/ticker/1027/")
+    fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd")
       .then(r => r.json())
       .then((response)=>{
-        const ethprice = response.data.quotes.USD.price
+        const ethprice = response.ethereum.usd;
         this.setState({ethprice})
       })
   }
