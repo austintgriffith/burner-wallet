@@ -16,6 +16,7 @@ import { Exit } from 'leap-core';
 import { fromRpcSig } from 'ethereumjs-util';
 import { bi, add, divide } from 'jsbi-utils';
 import getConfig from "../config";
+import { PrimaryButton, BorderButton } from "./Buttons";
 
 const CONFIG = getConfig();
 const BN = Web3.utils.BN
@@ -731,24 +732,18 @@ export default class Exchange extends React.Component {
   render() {
     let {daiToXdaiMode,ethToDaiMode} = this.state
 
-    let ethCancelButton = (
-      <span style={{padding:10,whiteSpace:"nowrap"}}>
-        <a href="#" style={{color:"#000000"}} onClick={()=>{
+    let ethCancelButton = <BorderButton className="btn-cancel" onClick={()=>{
           this.setState({amount:"",ethToDaiMode:false})
         }}>
-          <i className="fas fa-times"/> {i18n.t('cancel')}
-        </a>
-      </span>
-    )
-    let daiCancelButton = (
-      <span style={{padding:10,whiteSpace:"nowrap"}}>
-        <a href="#" style={{color:"#000000"}} onClick={()=>{
-          this.setState({amount:"",daiToXdaiMode:false})
-        }}>
-          <i className="fas fa-times"/> {i18n.t('cancel')}
-        </a>
-      </span>
-    )
+      <i className="fas fa-times"/> {i18n.t('cancel')}
+    </BorderButton>
+
+    let daiCancelButton =
+      <BorderButton className="btn-cancel" onClick={()=>{
+        this.setState({amount:"",daiToXdaiMode:false})
+      }}>
+        <i className="fas fa-times"/> {i18n.t('cancel')}
+      </BorderButton>
 
     let buttonsDisabled = (
       daiToXdaiMode==="sending" || daiToXdaiMode==="withdrawing" || daiToXdaiMode==="depositing" ||
@@ -800,12 +795,9 @@ export default class Exchange extends React.Component {
         )
       }else{
         daiToXdaiDisplay = (
-          <div className="content ops row">
-            <div className="col-1 p-1"  style={colStyle}>
+          <div className="content ops row transfer-row">
+            <div className="input-with-arrow">
               <i className="fas fa-arrow-up"  />
-            </div>
-            <div className="col-6 p-1" style={colStyle}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
                 <RInput
                   width={1}
@@ -815,18 +807,12 @@ export default class Exchange extends React.Component {
                   value={this.state.amount}
                   onChange={event => this.updateState('amount', event.target.value)} />
               </div>
-              </Scaler>
             </div>
-            <div className="col-2 p-1"  style={colStyle}>
-              <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
-              {daiCancelButton}
-              </Scaler>
-            </div>
-            <div className="col-3 p-1">
-
-              <Button
-                disabled={buttonsDisabled}
-                onClick={()=>{
+            {daiCancelButton}
+            <PrimaryButton
+              className={"btn-send"}
+              disabled={buttonsDisabled}
+              onClick={()=>{
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
 
                 this.setState({
@@ -854,12 +840,8 @@ export default class Exchange extends React.Component {
                   })
                 })
               }}>
-                <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
-                  <i className="fas fa-arrow-up" /> Send
-                </Scaler>
-              </Button>
-
-            </div>
+              <i className="fas fa-arrow-up" /> Send
+            </PrimaryButton>
           </div>
         )
       }
@@ -878,13 +860,9 @@ export default class Exchange extends React.Component {
         )
       }else{
         daiToXdaiDisplay = (
-          <div className="content ops row">
-
-            <div className="col-1 p-1"  style={colStyle}>
+          <div className="content ops row transfer-row">
+            <div className="input-with-arrow">
               <i className="fas fa-arrow-down"  />
-            </div>
-            <div className="col-6 p-1" style={colStyle}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
                 <RInput
                   width={1}
@@ -894,16 +872,10 @@ export default class Exchange extends React.Component {
                   value={this.state.amount}
                   onChange={event => this.updateState('amount', event.target.value)} />
               </div>
-              </Scaler>
             </div>
-            <div className="col-2 p-1"  style={colStyle}>
-              <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
-              {daiCancelButton}
-              </Scaler>
-            </div>
-            <div className="col-3 p-1">
-              <Button disabled={buttonsDisabled} onClick={async ()=>{
-                console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
+            {daiCancelButton}
+            <PrimaryButton className={"btn-send"} disabled={buttonsDisabled} onClick={async ()=>{
+              console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
 
                 if(this.state.xdaiMetaAccount){
                   //send funds using metaaccount on xdai
@@ -965,27 +937,23 @@ export default class Exchange extends React.Component {
                   }
                 }
               }>
-                <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
-                  <i className="fas fa-arrow-down" /> Send
-                </Scaler>
-              </Button>
-
-            </div>
+              <i className="fas fa-arrow-down" /> Send
+            </PrimaryButton>
           </div>
         )
       }
     } else {
       daiToXdaiDisplay = (
         <Flex width={1} px={3}>
-          <Button width={1} mr={2} icon={'ArrowUpward'} disabled={buttonsDisabled} onClick={()=>{
+          <PrimaryButton width={1} mr={2} icon={'ArrowUpward'} disabled={buttonsDisabled} onClick={()=>{
             this.setState({daiToXdaiMode:"deposit"})
           }} >
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               DAI to PDAI
             </Scaler>
-          </Button>
+          </PrimaryButton>
 
-          <Button width={1}
+          <PrimaryButton width={1}
             icon={'ArrowDownward'}
             disabled={
               buttonsDisabled ||
@@ -997,7 +965,7 @@ export default class Exchange extends React.Component {
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               PDAI to DAI
             </Scaler>
-          </Button>
+          </PrimaryButton>
         </Flex>
       )
     }
@@ -1032,13 +1000,9 @@ export default class Exchange extends React.Component {
         );
       }else {
         ethToDaiDisplay = (
-          <div className="content ops row">
-
-            <div className="col-1 p-1"  style={colStyle}>
+          <div className="content ops row transfer-row">
+            <div className="input-with-arrow">
               <i className="fas fa-arrow-up"  />
-            </div>
-            <div className="col-6 p-1" style={colStyle}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               <div className="input-group">
                 <RInput
                   width={1}
@@ -1048,93 +1012,81 @@ export default class Exchange extends React.Component {
                   value={this.state.amount}
                   onChange={event => this.updateState('amount', event.target.value)} />
               </div>
-              </Scaler>
             </div>
-            <div className="col-2 p-1"  style={colStyle}>
-              <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
-              {ethCancelButton}
-              </Scaler>
-            </div>
-            <div className="col-3 p-1">
-              <Button disabled={buttonsDisabled} onClick={async ()=>{
+            {ethCancelButton}
+            <PrimaryButton disabled={buttonsDisabled} onClick={async ()=>{
+              console.log("Using uniswap exchange to move ETH to DAI")
 
-                console.log("Using uniswap exchange to move ETH to DAI")
+              let webToUse = this.props.web3
+              if(this.state.mainnetMetaAccount){
+                webToUse = this.state.mainnetweb3
+              }
 
-                let webToUse = this.props.web3
-                if(this.state.mainnetMetaAccount){
-                  webToUse = this.state.mainnetweb3
+              console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
+
+              let uniswapContract = new webToUse.eth.Contract(uniswapContractObject.abi,uniswapContractObject.address)
+              console.log(uniswapContract)
+
+              let amountOfEth = this.state.amount / this.props.ethprice
+              amountOfEth = webToUse.utils.toWei(""+Math.round(amountOfEth*10000)/10000,'ether')
+              console.log("amountOfEth",amountOfEth)
+
+              let output = await uniswapContract.methods.getTokenToEthOutputPrice(amountOfEth).call()
+              output = parseFloat(output)
+              output = output - (output*0.0333)
+              console.log("Expected amount of DAI: ",webToUse.utils.fromWei(""+Math.round(output),'ether'))
+
+              let currentBlockNumber = await webToUse.eth.getBlockNumber()
+              let currentBlock = await webToUse.eth.getBlock(currentBlockNumber)
+              let timestamp = currentBlock.timestamp
+              console.log("timestamp",timestamp)
+
+              let deadline = timestamp+600
+              let mintokens = output
+              console.log("ethToTokenSwapInput",mintokens,deadline)
+
+
+              let amountOfChange = parseFloat(webToUse.utils.fromWei(""+mintokens,'ether'))
+
+
+
+              this.setState({
+                ethToDaiMode:"depositing",
+                loaderBarColor:"#3efff8",
+                loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
+                loaderBarPercent:0,
+                loaderBarStartTime: Date.now(),
+                loaderBarClick:()=>{
+                  alert(i18n.t('exchange.go_to_etherscan'))
                 }
+              })
 
-                console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
-
-                let uniswapContract = new webToUse.eth.Contract(uniswapContractObject.abi,uniswapContractObject.address)
-                console.log(uniswapContract)
-
-                let amountOfEth = this.state.amount / this.props.ethprice
-                amountOfEth = webToUse.utils.toWei(""+Math.round(amountOfEth*10000)/10000,'ether')
-                console.log("amountOfEth",amountOfEth)
-
-                let output = await uniswapContract.methods.getTokenToEthOutputPrice(amountOfEth).call()
-                output = parseFloat(output)
-                output = output - (output*0.0333)
-                console.log("Expected amount of DAI: ",webToUse.utils.fromWei(""+Math.round(output),'ether'))
-
-                let currentBlockNumber = await webToUse.eth.getBlockNumber()
-                let currentBlock = await webToUse.eth.getBlock(currentBlockNumber)
-                let timestamp = currentBlock.timestamp
-                console.log("timestamp",timestamp)
-
-                let deadline = timestamp+600
-                let mintokens = output
-                console.log("ethToTokenSwapInput",mintokens,deadline)
+              this.setState({
+                daiBalanceAtStart:this.props.daiBalance,
+                daiBalanceShouldBe:parseFloat(this.props.daiBalance)+amountOfChange,
+              })
 
 
-                let amountOfChange = parseFloat(webToUse.utils.fromWei(""+mintokens,'ether'))
-
-
-
-                this.setState({
-                  ethToDaiMode:"depositing",
-                  loaderBarColor:"#3efff8",
-                  loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
-                  loaderBarPercent:0,
-                  loaderBarStartTime: Date.now(),
-                  loaderBarClick:()=>{
-                    alert(i18n.t('exchange.go_to_etherscan'))
-                  }
-                })
-
-                this.setState({
-                  daiBalanceAtStart:this.props.daiBalance,
-                  daiBalanceShouldBe:parseFloat(this.props.daiBalance)+amountOfChange,
-                })
-
-                ///TRANSFER ETH
-                this.swapEth(
-                  uniswapContract._address,
-                  uniswapContract.methods.ethToTokenSwapInput(""+mintokens,""+deadline),
-                  amountOfEth,
-                  "Sending funds to 🦄 exchange...",
-                  (receipt)=>{
-                    this.setState({
-                      amount:"",
-                      loaderBarColor:"#4ab3f5",
-                      loaderBarStatusText:"Waiting for 🦄 exchange...",
-                      loaderBarClick:()=>{
-                        alert(i18n.t('exchange.idk'))
-                      }
-                    })
-                  }
-                )
-
-
-              }}>
-                <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
-                  <i className="fas fa-arrow-up" /> Send
-                </Scaler>
-              </Button>
-
-            </div>
+              ///TRANSFER ETH
+              this.swapEth(
+                uniswapContract._address,
+                uniswapContract.methods.ethToTokenSwapInput(""+mintokens,""+deadline),
+                amountOfEth,
+                "Sending funds to 🦄 exchange...",
+                (receipt)=>{
+                  this.setState({
+                    amount:"",
+                    loaderBarColor:"#4ab3f5",
+                    loaderBarStatusText:"Waiting for 🦄 exchange...",
+                    loaderBarClick:()=>{
+                      alert(i18n.t('exchange.idk'))
+                    }
+                  })
+                }
+              )
+            }}>
+              <i className="fas fa-arrow-up" /> Send
+            </PrimaryButton>
           </div>
         )
       }
@@ -1164,13 +1116,9 @@ export default class Exchange extends React.Component {
         )
       }else{
         ethToDaiDisplay = (
-          <div className="content ops row">
-
-            <div className="col-1 p-1"  style={colStyle}>
-              <i className="fas fa-arrow-down"  />
-            </div>
-            <div className="col-6 p-1" style={colStyle}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+          <div className="content ops row transfer-row">
+            <div className="input-with-arrow">
+            <i className="fas fa-arrow-down"  />
               <div className="input-group">
                 <RInput
                   width={1}
@@ -1180,76 +1128,70 @@ export default class Exchange extends React.Component {
                   value={this.state.amount}
                   onChange={event => this.updateState('amount', event.target.value)} />
               </div>
-              </Scaler>
             </div>
-            <div className="col-2 p-1"  style={colStyle}>
-              <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
-              {ethCancelButton}
-              </Scaler>
-            </div>
-            <div className="col-3 p-1">
-              <Button disabled={buttonsDisabled} onClick={async ()=>{
+            {ethCancelButton}
+            <PrimaryButton className="btn-send" disabled={buttonsDisabled} onClick={async ()=>{
 
-                console.log("Using uniswap exchange to move DAI to ETH")
+              console.log("Using uniswap exchange to move DAI to ETH")
 
 
 
-                let webToUse = this.props.web3
-                if(this.state.mainnetMetaAccount){
-                  webToUse = this.state.mainnetweb3
+              let webToUse = this.props.web3
+              if(this.state.mainnetMetaAccount){
+                webToUse = this.state.mainnetweb3
+              }
+
+              console.log("AMOUNT:",this.state.amount,"ETH BALANCE:",this.props.ethBalance)
+
+              let uniswapContract = new webToUse.eth.Contract(uniswapContractObject.abi,uniswapContractObject.address)
+              console.log(uniswapContract)
+
+              let amountOfDai = webToUse.utils.toWei(""+this.state.amount,'ether')
+              console.log("amountOfDai",amountOfDai)
+
+              let output = await uniswapContract.methods.getEthToTokenOutputPrice(amountOfDai).call()
+              output = parseFloat(output)
+              output = output - (output*0.0333)
+              console.log("Expected amount of ETH: ",output,webToUse.utils.fromWei(""+Math.round(output),'ether'))
+
+              let currentBlockNumber = await webToUse.eth.getBlockNumber()
+              let currentBlock = await webToUse.eth.getBlock(currentBlockNumber)
+              let timestamp = currentBlock.timestamp
+              console.log("timestamp",timestamp)
+
+              let deadline = timestamp+600
+              let mineth = output
+              console.log("tokenToEthSwapInput",amountOfDai,mineth,deadline)
+
+
+              let amountOfChange = parseFloat(webToUse.utils.fromWei(""+mineth,'ether'))
+              console.log("ETH should change by ",amountOfChange)
+
+              let eventualEthBalance = parseFloat(this.props.ethBalance)+parseFloat(amountOfChange)
+              console.log("----- WATCH FOR ETH BALANCE TO BE ",eventualEthBalance)
+
+
+
+              this.setState({
+                ethToDaiMode:"withdrawing",
+                loaderBarColor:"#3efff8",
+                loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
+                loaderBarPercent:0,
+                loaderBarStartTime: Date.now(),
+                loaderBarClick:()=>{
+                  alert(i18n.t('exchange.go_to_etherscan'))
                 }
-
-                console.log("AMOUNT:",this.state.amount,"ETH BALANCE:",this.props.ethBalance)
-
-                let uniswapContract = new webToUse.eth.Contract(uniswapContractObject.abi,uniswapContractObject.address)
-                console.log(uniswapContract)
-
-                let amountOfDai = webToUse.utils.toWei(""+this.state.amount,'ether')
-                console.log("amountOfDai",amountOfDai)
-
-                let output = await uniswapContract.methods.getEthToTokenOutputPrice(amountOfDai).call()
-                output = parseFloat(output)
-                output = output - (output*0.0333)
-                console.log("Expected amount of ETH: ",output,webToUse.utils.fromWei(""+Math.round(output),'ether'))
-
-                let currentBlockNumber = await webToUse.eth.getBlockNumber()
-                let currentBlock = await webToUse.eth.getBlock(currentBlockNumber)
-                let timestamp = currentBlock.timestamp
-                console.log("timestamp",timestamp)
-
-                let deadline = timestamp+600
-                let mineth = output
-                console.log("tokenToEthSwapInput",amountOfDai,mineth,deadline)
-
-
-                let amountOfChange = parseFloat(webToUse.utils.fromWei(""+mineth,'ether'))
-                console.log("ETH should change by ",amountOfChange)
-
-                let eventualEthBalance = parseFloat(this.props.ethBalance)+parseFloat(amountOfChange)
-                console.log("----- WATCH FOR ETH BALANCE TO BE ",eventualEthBalance)
+              })
 
 
 
-                this.setState({
-                  ethToDaiMode:"withdrawing",
-                  loaderBarColor:"#3efff8",
-                  loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
-                  loaderBarPercent:0,
-                  loaderBarStartTime: Date.now(),
-                  loaderBarClick:()=>{
-                    alert(i18n.t('exchange.go_to_etherscan'))
-                  }
-                })
+              let approval = await this.props.daiContract.methods.allowance(this.state.daiAddress,CONFIG.ROOTCHAIN.UNISWAP.DAI_ETH_ADDRESS).call()
 
 
+              if(this.state.mainnetMetaAccount){
+                //send funds using metaaccount on mainnet
 
-                let approval = await this.props.daiContract.methods.allowance(this.state.daiAddress,CONFIG.ROOTCHAIN.UNISWAP.DAI_ETH_ADDRESS).call()
-
-
-                if(this.state.mainnetMetaAccount){
-                  //send funds using metaaccount on mainnet
-
-                  gasPrice()
+                gasPrice()
                   .catch((err)=>{
                     console.log("Error getting gas price",err)
                   })
@@ -1276,53 +1218,53 @@ export default class Exchange extends React.Component {
 
                       this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
                         console.log("========= >>> SIGNED",signed)
-                          this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', async (receipt)=>{
-                            console.log("META RECEIPT",receipt)
-                            if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                              metaReceiptTracker[receipt.transactionHash] = true
-                              this.setState({
-                                loaderBarColor:"#4ab3f5",
-                                loaderBarStatusText:"Waiting for 🦄 exchange...",
-                                ethBalanceAtStart:this.props.ethBalance,
-                                ethBalanceShouldBe:eventualEthBalance,
-                              })
+                        this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', async (receipt)=>{
+                          console.log("META RECEIPT",receipt)
+                          if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                            metaReceiptTracker[receipt.transactionHash] = true
+                            this.setState({
+                              loaderBarColor:"#4ab3f5",
+                              loaderBarStatusText:"Waiting for 🦄 exchange...",
+                              ethBalanceAtStart:this.props.ethBalance,
+                              ethBalanceShouldBe:eventualEthBalance,
+                            })
 
-                              let manualNonce = await this.state.mainnetweb3.eth.getTransactionCount(this.state.daiAddress)
-                              console.log("manually grabbed nonce as ",manualNonce)
-                              paramsObject = {
-                                nonce: manualNonce,
-                                from: this.state.daiAddress,
-                                value: 0,
-                                gas: 240000,
-                                gasPrice: Math.round(gwei * 1000000000)
-                              }
-                              console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
-
-                              paramsObject.to = uniswapContract._address
-                              paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
-
-                              console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
-
-                              this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
-                                console.log("========= >>> SIGNED",signed)
-                                  this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                                    console.log("META RECEIPT",receipt)
-                                    if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                                      metaReceiptTracker[receipt.transactionHash] = true
-                                      this.setState({
-                                        amount:"",
-                                      })
-                                    }
-                                  }).on('error', (err)=>{
-                                    console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                                    this.props.changeAlert({type: 'danger',message: err.toString()});
-                                  }).then(console.log)
-                              });
+                            let manualNonce = await this.state.mainnetweb3.eth.getTransactionCount(this.state.daiAddress)
+                            console.log("manually grabbed nonce as ",manualNonce)
+                            paramsObject = {
+                              nonce: manualNonce,
+                              from: this.state.daiAddress,
+                              value: 0,
+                              gas: 240000,
+                              gasPrice: Math.round(gwei * 1000000000)
                             }
-                          }).on('error', (err)=>{
-                            this.props.changeAlert({type: 'danger',message: err.toString()});
-                            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                          }).then(console.log)
+                            console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
+
+                            paramsObject.to = uniswapContract._address
+                            paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
+
+                            console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
+
+                            this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+                              console.log("========= >>> SIGNED",signed)
+                              this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                                console.log("META RECEIPT",receipt)
+                                if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                                  metaReceiptTracker[receipt.transactionHash] = true
+                                  this.setState({
+                                    amount:"",
+                                  })
+                                }
+                              }).on('error', (err)=>{
+                                console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                                this.props.changeAlert({type: 'danger',message: err.toString()});
+                              }).then(console.log)
+                            });
+                          }
+                        }).on('error', (err)=>{
+                          this.props.changeAlert({type: 'danger',message: err.toString()});
+                          console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                        }).then(console.log)
                       });
 
                     }else{
@@ -1348,45 +1290,45 @@ export default class Exchange extends React.Component {
 
                       this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
                         console.log("========= >>> SIGNED",signed)
-                          this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
-                            console.log("META RECEIPT",receipt)
-                            if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
-                              metaReceiptTracker[receipt.transactionHash] = true
-                              this.setState({
-                                amount:"",
-                                loaderBarColor:"#4ab3f5",
-                              })
-                            }
-                          }).on('error', (err)=>{
-                            console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
-                            this.props.changeAlert({type: 'danger',message: err.toString()});
-                          }).then(console.log)
+                        this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                          console.log("META RECEIPT",receipt)
+                          if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
+                            metaReceiptTracker[receipt.transactionHash] = true
+                            this.setState({
+                              amount:"",
+                              loaderBarColor:"#4ab3f5",
+                            })
+                          }
+                        }).on('error', (err)=>{
+                          console.log("EEEERRRRRRRROOOOORRRRR ======== >>>>>",err)
+                          this.props.changeAlert({type: 'danger',message: err.toString()});
+                        }).then(console.log)
                       });
 
                     }
                   });
-                }else{
-                  console.log("Using uniswap exchange to move ETH to DAI")
+              }else{
+                console.log("Using uniswap exchange to move ETH to DAI")
 
 
 
-                  if(approval<amountOfDai){
-                    console.log("approval",approval)
+                if(approval<amountOfDai){
+                  console.log("approval",approval)
 
-                    //send funds using metamask (or other injected web3 ... should be checked and on mainnet)
-                    this.setState({
-                      amount:"",
-                      loaderBarColor:"#42ceb2",
-                      loaderBarStatusText:"Approving 🦄 exchange...",
-                      loaderBarClick:()=>{
-                        alert(i18n.t('exchange.idk'))
-                      }
-                    })
+                  //send funds using metamask (or other injected web3 ... should be checked and on mainnet)
+                  this.setState({
+                    amount:"",
+                    loaderBarColor:"#42ceb2",
+                    loaderBarStatusText:"Approving 🦄 exchange...",
+                    loaderBarClick:()=>{
+                      alert(i18n.t('exchange.idk'))
+                    }
+                  })
 
-                    let metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
+                  let metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
 
-                    this.props.tx(
-                      metaMaskDaiContract.methods.approve(CONFIG.ROOTCHAIN.UNISWAP.DAI_ETH_ADDRESS,""+(amountOfDai))//do 1000x so we don't have to waste gas doing it again
+                  this.props.tx(
+                    metaMaskDaiContract.methods.approve(CONFIG.ROOTCHAIN.UNISWAP.DAI_ETH_ADDRESS,""+(amountOfDai))//do 1000x so we don't have to waste gas doing it again
                     ,100000,0,0,(receipt)=>{
                       if(receipt){
                         console.log("APPROVE COMPLETE?!?",receipt)
@@ -1403,58 +1345,55 @@ export default class Exchange extends React.Component {
 
                         this.props.tx(
                           uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline)
-                        ,240000,0,0,(receipt)=>{
-                          if(receipt){
-                            console.log("EXCHANGE COMPLETE?!?",receipt)
-                            //window.location = "/"+receipt.contractAddress
-                          }
-                        })
+                          ,240000,0,0,(receipt)=>{
+                            if(receipt){
+                              console.log("EXCHANGE COMPLETE?!?",receipt)
+                              //window.location = "/"+receipt.contractAddress
+                            }
+                          })
                         //window.location = "/"+receipt.contractAddress
                       }
                     })
-                  }else{
-                    this.setState({
-                      amount:"",
-                      ethBalanceAtStart:this.props.ethBalance,
-                      ethBalanceShouldBe:eventualEthBalance,
-                      loaderBarColor:"#4ab3f5",
-                      loaderBarStatusText:"Sending funds to 🦄 Exchange...",
-                      loaderBarClick:()=>{
-                        alert(i18n.t('exchange.idk'))
-                      }
-                    })
+                }else{
+                  this.setState({
+                    amount:"",
+                    ethBalanceAtStart:this.props.ethBalance,
+                    ethBalanceShouldBe:eventualEthBalance,
+                    loaderBarColor:"#4ab3f5",
+                    loaderBarStatusText:"Sending funds to 🦄 Exchange...",
+                    loaderBarClick:()=>{
+                      alert(i18n.t('exchange.idk'))
+                    }
+                  })
 
-                    this.props.tx(
-                      uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline)
+                  this.props.tx(
+                    uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline)
                     ,240000,0,0,(receipt)=>{
                       if(receipt){
                         console.log("EXCHANGE COMPLETE?!?",receipt)
                         //window.location = "/"+receipt.contractAddress
                       }
                     })
-                  }
-
-
-
-                  //(0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359).approve(address guy, uint256 wad)
-                  //tokenToEthSwapInput(uint256 tokens_sold, uint256 min_eth, uint256 deadline)
-                  /*this.props.tx(
-                    uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline)
-                  ,240000,0,0,(receipt)=>{
-                    if(receipt){
-                      console.log("EXCHANGE COMPLETE?!?",receipt)
-                      //window.location = "/"+receipt.contractAddress
-                    }
-                  })*/
                 }
 
 
-              }}>
-                <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
-                  <i className="fas fa-arrow-down" /> Send
-                </Scaler>
-              </Button>
-            </div>
+
+                //(0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359).approve(address guy, uint256 wad)
+                //tokenToEthSwapInput(uint256 tokens_sold, uint256 min_eth, uint256 deadline)
+                /*this.props.tx(
+                  uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline)
+                ,240000,0,0,(receipt)=>{
+                  if(receipt){
+                    console.log("EXCHANGE COMPLETE?!?",receipt)
+                    //window.location = "/"+receipt.contractAddress
+                  }
+                })*/
+              }
+
+
+            }}>
+              <i className="fas fa-arrow-down" /> Send
+            </PrimaryButton>
           </div>
         )
       }
@@ -1462,20 +1401,20 @@ export default class Exchange extends React.Component {
     }else{
       ethToDaiDisplay = (
         <Flex width={1} px={3}>
-          <Button width={1} mr={2} icon={'ArrowUpward'} disabled={buttonsDisabled} onClick={()=>{
+          <PrimaryButton width={1} mr={2} icon={'ArrowUpward'} disabled={buttonsDisabled} onClick={()=>{
             this.setState({ethToDaiMode:"deposit"})
           }}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               ETH to DAI
             </Scaler>
-          </Button>
-          <Button width={1} icon={'ArrowDownward'} disabled={buttonsDisabled} onClick={()=>{
+          </PrimaryButton>
+          <PrimaryButton width={1} icon={'ArrowDownward'} disabled={buttonsDisabled} onClick={()=>{
            this.setState({ethToDaiMode:"withdraw"})
           }}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
               DAI to ETH
             </Scaler>
-        </Button>
+        </PrimaryButton>
         </Flex>
        )
 
@@ -1547,9 +1486,9 @@ export default class Exchange extends React.Component {
               </OutlineButton>
             </Flex>
           </Field>
-          <Button width={1} disabled={buttonsDisabled} onClick={this.sendDai.bind(this)}>
+          <PrimaryButton width={1} disabled={buttonsDisabled} onClick={this.sendDai.bind(this)}>
             Send
-          </Button>
+          </PrimaryButton>
         </Box>
       )
       sendDaiButton = (
@@ -1637,9 +1576,9 @@ export default class Exchange extends React.Component {
               </OutlineButton>
             </Flex>
           </Field>
-          <Button width={1} disabled={buttonsDisabled} onClick={this.sendEth.bind(this)}>
+          <PrimaryButton width={1} disabled={buttonsDisabled} onClick={this.sendEth.bind(this)}>
             Send
-          </Button>
+          </PrimaryButton>
         </Box>
       )
       sendEthButton = (
@@ -1708,9 +1647,9 @@ export default class Exchange extends React.Component {
             </Flex>
           </Field>
 
-          <Button width={1} disabled={buttonsDisabled} onClick={this.sendXdai.bind(this)}>
+          <PrimaryButton width={1} disabled={buttonsDisabled} onClick={this.sendXdai.bind(this)}>
             Send
-          </Button>
+          </PrimaryButton>
         </Box>
       )
       sendXdaiButton = (

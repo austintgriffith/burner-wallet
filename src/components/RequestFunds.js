@@ -10,6 +10,7 @@ import {
   Button,
   QR as QRCode
 } from 'rimble-ui'
+import { PrimaryButton } from "./Buttons";
 
 export default class RequestFunds extends React.Component {
 
@@ -116,14 +117,14 @@ export default class RequestFunds extends React.Component {
             />
           </Field>
 
-          <Button
+          <PrimaryButton
             size={'large'}
             width={1}
             disabled={(canRequest ? false : true)}
             onClick={this.request}
           >
             {i18n.t('request_funds.button')}
-          </Button>
+          </PrimaryButton>
         </div>
       )
     }
