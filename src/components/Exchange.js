@@ -346,7 +346,7 @@ export default class Exchange extends React.Component {
       this.setState({
         daiToXdaiMode:"sending",
         daiBalanceAtStart:daiBalance,
-        daiBalanceShouldBe:parseFloat(daiBalance)-parseFloat(daiSendAmount),
+        daiBalanceShouldBe:parseFloat(daiBalance) - parseFloat(daiSendAmount),
         loaderBarColor:"#f5eb4a",
         loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
         loaderBarPercent:0,
@@ -420,7 +420,7 @@ export default class Exchange extends React.Component {
     return (this.state.daiSendToAddress && this.state.daiSendToAddress.length === 42 && parseFloat(this.state.daiSendAmount)>0 && parseFloat(this.state.daiSendAmount) <= parseFloat(this.props.daiBalance))
   }
 
-  async depositDai(destination,amount,message,cb) {
+  async depositDai(destination, amount, message, cb) {
     let gwei
     try {
       gwei = await gasPrice();
@@ -900,7 +900,7 @@ export default class Exchange extends React.Component {
                   };
 
                   // TODO: get real decimals
-                  const amount = bi(this.state.amount* 10 ** 18);
+                  const amount = bi(this.state.amount * 10 ** 18);
                   const tokenAddr = this.props.pdaiContract._address;
                   const color = await this.state.xdaiweb3.getColor(tokenAddr);
 
