@@ -149,14 +149,14 @@ export default class Advanced extends React.Component {
       <div>
         <div style={{width:"100%",textAlign:"center"}}><h5>Learn More</h5></div>
         <div className="content ops row settings-row" style={{marginBottom:10}}>
-          <a href="https://github.com/CinemarketIO/motion-burner" style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/leapdao/burner-wallet" style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
             <BorderButton width={1}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-code"/> {i18n.t('code')}
               </Scaler>
             </BorderButton>
           </a>
-          <a href="https://docs.google.com/document/d/1QS4goTOE8TdeNaXoUzk8FKeKDx_BE0zC2ru6Qvzr108" style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
+          <a href="https://leapdao.org/" style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
             <BorderButton width={1}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-info"/> {i18n.t('about')}
