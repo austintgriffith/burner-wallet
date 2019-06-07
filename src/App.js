@@ -539,9 +539,9 @@ class App extends Component {
 
 
     if(this.state.account){
-      const ethBalance = await eth.getDisplayBalance(this.state.account)
-      const daiBalance = await dai.getDisplayBalance(this.state.account);
-      const xdaiBalance = await xdai.getDisplayBalance(this.state.account)
+      const ethBalance = await eth.getDisplayBalance(this.state.account, 20);
+      const daiBalance = await dai.getDisplayBalance(this.state.account, 20);
+      const xdaiBalance = await xdai.getDisplayBalance(this.state.account, 20);
 
       this.setState({
         ethBalance,
