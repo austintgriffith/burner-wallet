@@ -136,62 +136,6 @@ export default class YourModule extends React.Component {
           </div>
 
           <Ruler/>
-
-          <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={this.deployYourContract.bind(this)}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-rocket"></i> {"Create Chat Room"}
-            </Scaler>
-          </button>
-
-
-          <div className="content bridge row">
-            <div className="col-4 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                let toAddress = this.state.YourContract._address
-                let amount = "0.1"
-                this.props.send(toAddress, amount, 120000,"0x00", (result) => {
-                  if(result && result.transactionHash){
-                    console.log("RESULT&&&#&#&#&# ",result)
-                  }
-                })
-              }}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-arrow-circle-down"></i> {"deposit"}
-                </Scaler>
-              </button>
-            </div>
-            <div className="col-4 p-1">
-            <div style={{padding:20,textAlign:'center'}}>
-              Your Chat Room Address is:
-              <Blockie
-                address={this.state.YourContract._address}
-                config={{size:6}}
-              />
-              {this.state.YourContract._address}
-
-              <div style={{padding:5}}>
-                it has {this.props.dollarDisplay(this.state.yourContractBalance)}
-              </div>
-
-
-            </div>
-            </div>
-            <div className="col-4 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-              let amount = this.props.web3.utils.toWei("0.1",'ether')
-              this.props.tx(this.state.YourContract.withdraw(amount),40000,0,0,(result)=>{
-                console.log("RESULT@@@@@@@@@@@@@@@@@&&&#&#&#&# ",result)
-              })
-            }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-arrow-circle-up"></i> {"withdraw"}
-              </Scaler>
-            </button>
-            </div>
-          </div>
-
-          <Ruler/>
-
           <div className="content row">
             <label htmlFor="chat_input">{"SEND A MESSAGE:"}</label>
             <div className="input-group">
@@ -209,6 +153,24 @@ export default class YourModule extends React.Component {
           >
             Send Message
           </button>
+          <Ruler/>
+
+          <QRCode value={this.state.YourContract._address} size={Math.min(document.documentElement.clientWidth,512)-90}/>
+
+          <div className="content bridge row">
+
+            <div className="col-4 p-1"></div>
+            <div className="col-4 p-1">
+            <div style={{padding:20,textAlign:'center'}}>
+
+              Your Chat Room Address is: {this.state.YourContract._address}
+              <Blockie
+                address={this.state.YourContract._address}
+                config={{size:6}}
+              />
+            </div>
+            </div>
+          </div>
 
           <Ruler/>
 
@@ -238,6 +200,11 @@ export default class YourModule extends React.Component {
             Load Chat Room
           </button>
         </div>
+          <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={this.deployYourContract.bind(this)}>
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              <i className="fas fa-rocket"></i> {"Create Chat Room"}
+            </Scaler>
+          </button>
         </div>
       </div>
     )
