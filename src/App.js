@@ -1344,7 +1344,7 @@ render() {
               return (
                 <div>
                   <div className="send-to-address card w-100" style={{zIndex:1}}>
-                    <NavCard title={"YOURMODULE NAV TITLE"} titleLink={""} goBack={this.goBack.bind(this)}/>
+                    <NavCard title={"Burner Chat"} titleLink={""} goBack={this.goBack.bind(this)}/>
                     <YourModule
                       privateKey={metaAccount.privateKey}
 
@@ -1398,7 +1398,7 @@ render() {
                     />
                   </div>
                   <Bottom
-                    text={"buttom button"}
+                    text={"Go Back"}
                     action={this.goBack.bind(this)}
                   />
                 </div>

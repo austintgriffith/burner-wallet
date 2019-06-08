@@ -3,6 +3,7 @@ import { Events, Blockie, Scaler } from "dapparatus";
 import Web3 from 'web3';
 import Ruler from "./Ruler";
 import axios from "axios"
+const QRCode = require('qrcode.react');
 
 export default class YourModule extends React.Component {
 
@@ -41,7 +42,7 @@ export default class YourModule extends React.Component {
       console.log('error loading contract in componentDidMount');
     }
 
-    setInterval(this.pollInterval.bind(this),50000)
+    setInterval(this.pollInterval.bind(this),10000)
     setTimeout(this.pollInterval.bind(this),30)
   }
 
@@ -113,7 +114,7 @@ export default class YourModule extends React.Component {
         <div className="form-group w-100">
 
           <div style={{width:"100%",textAlign:"center"}}>
-            YOURMODULE DISPLAY HERE
+            Burner Chat
             <Ruler/>
             <div style={{padding:20}}>
               The logged in user is
@@ -122,89 +123,23 @@ export default class YourModule extends React.Component {
                 config={{size:6}}
               />
               {this.props.address.substring(0,8)}
-              <div>
-                {this.props.dollarDisplay(this.props.balance)}<img src={this.props.xdai} style={{maxWidth:22,maxHeight:22}}/>
-              </div>
-              <div>
-                {this.props.dollarDisplay(this.props.daiBalance)}<img src={this.props.dai} style={{maxWidth:22,maxHeight:22}}/>
-              </div>
-              <div>
-                {this.props.dollarDisplay(this.props.ethBalance*this.props.ethprice)}<img src={this.props.eth} style={{maxWidth:22,maxHeight:22}}/>
-              </div>
-            </div>
-
-            <Ruler/>
-
-            <div>
-              Network {this.props.network} is selected and on block #{this.props.block}.
-            </div>
-            <div>
-              Gas price on {this.props.network} is {this.props.gwei} gwei.
-            </div>
-            <div>
-              mainnetweb3 is on block {this.state.mainnetBlockNumber} and version {this.props.mainnetweb3.version}
-            </div>
-            <div>
-              xdaiweb3 is on block {this.state.xdaiBlockNumber} and version {this.props.xdaiweb3.version}
-            </div>
-            <div>
-              The current price of ETH is {this.props.dollarDisplay(this.props.ethprice)}.
-            </div>
-
-            <div>
-              # of messages: {this.state.messageCount}.
-            </div>
-
-            <div>
-            <ul>
-              {this.state.chat.map((item, index) => (
-                <li>{item}</li>
-              ))}
-              Chat Is: {this.state.chat}
-            </ul>
-            </div>
-            <Ruler/>
-
-            <button className="btn btn-large w-50" style={this.props.buttonStyle.secondary} onClick={async ()=>{
-
-              let hashSigned = this.props.web3.utils.sha3("jabronie pie"+Math.random())
-              let sig
-              //sign the hash using either the meta account OR the etherless account
-              if(this.props.privateKey){
-                sig = this.props.web3.eth.accounts.sign(hashSigned, this.props.privateKey);
-                sig = sig.signature
-              }else{
-                sig = await this.props.web3.eth.personal.sign(""+hashSigned,this.props.address)
-              }
-
-              this.props.tx(this.state.YourContract.sign(hashSigned,sig),50000,0,0,(result)=>{
-                console.log("RESULTsssss@&&&#&#&#&# ",result)
-              })
-
-            }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-pen"></i> {"sign a random hash"}
-              </Scaler>
-            </button>
-
           </div>
-
-          <Events
-            config={{hide:false}}
-            contract={this.state.YourContract}
-            eventName={"Sign"}
-            block={this.props.block}
-            onUpdate={(eventData,allEvents)=>{
-              console.log("EVENT DATA:",eventData)
-              this.setState({signEvents:allEvents})
-            }}
-          />
+          <Ruler/>
+          <div style={{width:"100%",textAlign:"right"}}>
+            <div>
+              <ol>
+                {this.state.chat.map((item, index) => (
+                  <li>{item}</li>
+                ))}
+              </ol>
+            </div>
+          </div>
 
           <Ruler/>
 
           <button className="btn btn-large w-100" style={this.props.buttonStyle.primary} onClick={this.deployYourContract.bind(this)}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-rocket"></i> {"deploy"}
+              <i className="fas fa-rocket"></i> {"Create Chat Room"}
             </Scaler>
           </button>
 
@@ -227,12 +162,12 @@ export default class YourModule extends React.Component {
             </div>
             <div className="col-4 p-1">
             <div style={{padding:20,textAlign:'center'}}>
-              Your contract is
+              Your Chat Room Address is:
               <Blockie
                 address={this.state.YourContract._address}
-                config={{size:3}}
+                config={{size:6}}
               />
-              {this.state.YourContract._address.substring(0,8)}
+              {this.state.YourContract._address}
 
               <div style={{padding:5}}>
                 it has {this.props.dollarDisplay(this.state.yourContractBalance)}
@@ -255,36 +190,6 @@ export default class YourModule extends React.Component {
             </div>
           </div>
 
-          <div className="content bridge row">
-            <div className="col-4 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                this.clicked("some")
-              }}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-dog"></i> {"some"}
-                </Scaler>
-              </button>
-            </div>
-            <div className="col-4 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                this.clicked("chat")
-              }}>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-bone"></i> {"Chat"}
-                </Scaler>
-              </button>
-            </div>
-            <div className="col-4 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-              this.clicked("buttons")
-            }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-paw"></i> {"buttons"}
-              </Scaler>
-            </button>
-            </div>
-          </div>
-
           <Ruler/>
 
           <div className="content row">
@@ -296,6 +201,16 @@ export default class YourModule extends React.Component {
               />
             </div>
           </div>
+
+          <button className={'btn btn-lg w-100'} style={this.props.buttonStyle.primary}
+                  onClick={()=>{
+                    this.clicked("chat")
+                  }}
+          >
+            Send Message
+          </button>
+
+          <Ruler/>
 
           <div className="content row">
             <label htmlFor="chat_address_input">{"CHAT ADDRESS INPUT:"}</label>
@@ -314,27 +229,6 @@ export default class YourModule extends React.Component {
             </div>
           </div>
 
-          <div className="content bridge row">
-            <div className="col-6 p-1">
-              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                alert('secondary')}
-              }>
-                <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-bell"></i> {"secondary"}
-                </Scaler>
-              </button>
-            </div>
-            <div className="col-6 p-1">
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-              alert('actions')}
-            }>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-hand-holding-usd"></i> {"actions"}
-              </Scaler>
-            </button>
-            </div>
-          </div>
-
           <button className={'btn btn-lg w-100'} style={this.props.buttonStyle.primary}
                   onClick={()=>{
                     let yourContract = this.props.contractLoader("YourContract", this.state.yourContractAddress)
@@ -343,7 +237,7 @@ export default class YourModule extends React.Component {
           >
             Load Chat Room
           </button>
-
+        </div>
         </div>
       </div>
     )
