@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-import eth from '../ethereum.png';
+import ethImg from '../images/ethereum.png';
 import i18n from '../i18n';
 
 export default class BalanceDisplay extends React.Component {
@@ -79,7 +79,7 @@ export default class BalanceDisplay extends React.Component {
       }
 
       let moneytype = (
-        <img style={{maxHeight:30,verticalAlign:"middle"}} src={eth}/>
+        <img style={{maxHeight:30,verticalAlign:"middle"}} src={ethImg}/>
       )
       if(window.location.hostname.indexOf("xdai") >= 0 || window.location.hostname.indexOf("localhost") >= 0){
         moneytype="$"

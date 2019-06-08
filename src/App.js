@@ -49,9 +49,9 @@ import RNMessageChannel from 'react-native-webview-messaging';
 
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
-import ethImg from './ethereum.png';
-import daiImg from './dai.jpg';
-import xdaiImg from './xdai.jpg';
+import ethImg from './images/ethereum.png';
+import daiImg from './images/dai.jpg';
+import xdaiImg from './images/xdai.jpg';
 import Wyre from './services/wyre';
 
 let base64url = require('base64url')
@@ -1848,9 +1848,6 @@ render() {
 
                   <NavCard title={i18n.t('exchange_title')} goBack={this.goBack.bind(this)}/>
                   <Exchange
-                    eth={eth}
-                    dai={dai}
-                    xdai={xdai}
                     ERC20NAME={ERC20NAME}
                     ERC20IMAGE={ERC20IMAGE}
                     ERC20TOKEN={ERC20TOKEN}
