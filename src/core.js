@@ -2,6 +2,7 @@ import BurnerCore from '@burner-wallet/core';
 import { InjectedSigner, LocalSigner } from '@burner-wallet/core/signers';
 import { InfuraGateway, InjectedGateway, XDaiGateway, HTTPGateway } from '@burner-wallet/core/gateways';
 import { eth, dai, xdai, NativeAsset } from '@burner-wallet/assets';
+import { token } from './assets';
 
 // TODO: Move all keys to env variable
 const infuraKey = 'e0ea6e73570246bbb3d4bd042c4b5dac';
@@ -23,6 +24,9 @@ if (process.env.REACT_APP_MODE === 'local') {
 }
 
 const assets = [mainAsset, dai, eth];
+if (token) {
+  assets.unshift(token);
+}
 
 const core = new BurnerCore({ signers, gateways, assets });
 

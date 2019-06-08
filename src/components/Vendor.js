@@ -50,7 +50,7 @@ export default class Advanced extends React.Component {
               this.setState({changingAvailable})
               //addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable)
               console.log(prod.id,prod.name,prod.cost,prod.isAvailable)
-              tx(contracts[this.props.ERC20VENDOR].addProduct(prod.id,prod.name,prod.cost,!prod.isAvailable),240000,0,0,(result)=>{
+              tx(contracts.VendingMachine.addProduct(prod.id,prod.name,prod.cost,!prod.isAvailable),240000,0,0,(result)=>{
                 console.log("===PRODUCT:",result)
                 let changingAvailable = this.state.changingAvailable
                 changingAvailable[p] = false
@@ -142,7 +142,7 @@ export default class Advanced extends React.Component {
           <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
             this.setState({changingActive:true})
             let setActiveTo = !vendor.isActive
-            tx(contracts[this.props.ERC20VENDOR].activateVendor(setActiveTo),120000,0,0,(result)=>{
+            tx(contracts.VendingMachine.activateVendor(setActiveTo),120000,0,0,(result)=>{
               console.log("ACTIVE:",result)
               setTimeout(()=>{
                 this.setState({changingActive:false})
@@ -178,7 +178,7 @@ export default class Advanced extends React.Component {
               //addProduct(uint256 id, bytes32 name, uint256 cost, bool isAvailable)
               let nextId = this.props.products.length
               this.setState({addingProduct:true})
-              tx(contracts[this.props.ERC20VENDOR].addProduct(nextId,web3.utils.utf8ToHex(this.state.newProductName),web3.utils.toWei(""+this.state.newProductAmount, 'ether'),true),240000,0,0,(receipt)=>{
+              tx(contracts.VendingMachine.addProduct(nextId,web3.utils.utf8ToHex(this.state.newProductName),web3.utils.toWei(""+this.state.newProductAmount, 'ether'),true),240000,0,0,(receipt)=>{
                 console.log("PRODUCT ADDED",receipt)
                 if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
                   metaReceiptTracker[receipt.transactionHash] = true

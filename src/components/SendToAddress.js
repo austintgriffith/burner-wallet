@@ -5,8 +5,9 @@ import cookie from 'react-cookies'
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import Blockies from 'react-blockies';
 import { scroller } from 'react-scroll'
+import queryString from 'query-string';
 import i18n from '../i18n';
-const queryString = require('query-string');
+import { token } from '../assets';
 
 export default class SendToAddress extends React.Component {
 
@@ -159,29 +160,29 @@ export default class SendToAddress extends React.Component {
 
   send = async () => {
     let { toAddress, amount } = this.state;
-    let {ERC20TOKEN, dollarDisplay, convertToDollar} = this.props
+    let { dollarDisplay, convertToDollar } = this.props
 
     amount = convertToDollar(amount)
     console.log("CONVERTED TO DOLLAR AMOUNT",amount)
 
     if(this.state.canSend){
-      if(ERC20TOKEN){
+      if(token){
         console.log("this is a token")
       }else{
         console.log("this is not a token")
       }
-      console.log("ERC20TOKEN",ERC20TOKEN,"this.props.balance",parseFloat(this.props.balance),"amount",parseFloat(amount))
+      console.log("ERC20TOKEN", token.name, "this.props.balance",parseFloat(this.props.balance),"amount",parseFloat(amount))
 
-      if(!ERC20TOKEN && parseFloat(this.props.balance) <= 0){
-        console.log("No funds!?!",ERC20TOKEN,parseFloat(this.props.balance))
+      if(!token && parseFloat(this.props.balance) <= 0){
+        console.log("No funds!?!", token.name, parseFloat(this.props.balance))
         this.props.changeAlert({type: 'warning', message: "No Funds."})
-      }else if(!ERC20TOKEN && parseFloat(this.props.balance)-0.0001<=parseFloat(amount)){
+      }else if(!token && parseFloat(this.props.balance)-0.0001<=parseFloat(amount)){
         let extraHint = ""
-        if(!ERC20TOKEN && parseFloat(amount)-parseFloat(this.props.balance)<=.01){
+        if(!token && parseFloat(amount)-parseFloat(this.props.balance)<=.01){
           extraHint = "(gas costs)"
         }
         this.props.changeAlert({type: 'warning', message: 'Not enough funds: '+dollarDisplay(Math.floor((parseFloat(this.props.balance)-0.0001)*100)/100)+' '+extraHint})
-      }else if((ERC20TOKEN && (parseFloat(this.props.balance)<parseFloat(amount)))){
+      }else if((token && (parseFloat(this.props.balance)<parseFloat(amount)))){
         console.log("SO THE BALANCE IS LESS!")
         this.props.changeAlert({type: 'warning', message: 'Not enough tokens: $'+parseFloat(this.props.balance)})
       }else{

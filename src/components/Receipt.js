@@ -8,18 +8,11 @@ import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
 import axios from 'axios';
-const QRCode = require('qrcode.react');
 
 
 const BockieSize = 12
 
 export default class Receive extends React.Component {
-
-  constructor(props) {
-    super(props);
-    let initialState = {
-    }
-  }
   componentDidMount(){
     console.log("RECEIPT LOADED",this.props)
     if(this.props.receipt && this.props.receipt.daiposOrderId){
@@ -50,7 +43,7 @@ export default class Receive extends React.Component {
     }
   }
   render() {
-    let {receipt,buttonStyle,ERC20TOKEN,address, balance, changeView, dollarDisplay,account} = this.props
+    const { receipt, dollarDisplay } = this.props
 
     let message = ""
 

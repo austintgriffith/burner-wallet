@@ -2,8 +2,11 @@ import React from 'react';
 import { Blockie } from "dapparatus";
 import Ruler from "./Ruler";
 import { Scaler } from "dapparatus";
+import { token } from '../assets';
 
-export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, address, recentTxs, block, changeView}) => {
+export default ({
+  dollarDisplay, view, max, buttonStyle, vendorName, address, recentTxs, block, changeView
+}) => {
   let txns = []
   let count=0
   if(!max) max=9999
@@ -39,7 +42,7 @@ export default ({dollarDisplay, view, max, buttonStyle, ERC20TOKEN, vendorName, 
       }
 
       let dollarView
-      if(ERC20TOKEN){
+      if(token){
         if(recentTxs[r].token){
           dollarView = (
             <span>
