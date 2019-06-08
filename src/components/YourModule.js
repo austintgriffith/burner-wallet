@@ -14,6 +14,10 @@ export default class YourModule extends React.Component {
       YourContract: false,
       yourContractBalance: 0,
       toAddress: (props.scannerState ? props.scannerState.toAddress : ""),
+      message: "",
+      messageCount: 0,
+      chat: [],
+      yourContractAddress: false,
     }
   }
 
@@ -27,40 +31,61 @@ export default class YourModule extends React.Component {
         src/contracts/YourContract.blocknumber.js // the block number it was deployed at (for efficient event loading)
         src/contracts/YourContract.bytecode.js // if you want to deploy the contract from the module (see deployYourContract())
     */
-    this.setState({
-     YourContract: this.props.contractLoader("YourContract")
-    },()=>{
-     console.log("YOURCONTRACT IS LOADED:",this.state.YourContract)
-    })
+    try {
+      this.setState({
+        YourContract: this.props.contractLoader("YourContract")
+      },()=>{
+        console.log("YOURCONTRACT IS LOADED:",this.state.YourContract)
+      })
+    } catch (error) {
+      console.log('error loading contract in componentDidMount');
+    }
 
-    setInterval(this.pollInterval.bind(this),2500)
+    setInterval(this.pollInterval.bind(this),50000)
     setTimeout(this.pollInterval.bind(this),30)
   }
 
   async pollInterval(){
     console.log("POLL")
-    if(this.state && this.state.YourContract){
-      let yourVar = await this.state.YourContract.YourVar().call()
+    if(this.state && this.state.YourContract) {
+      console.log("polling...")
+      //let yourVar = await this.state.YourContract.YourVar().call()
+      let yourVar = "nada"
       let yourContractBalance = await this.props.web3.eth.getBalance(this.state.YourContract._address)
       //let ensName = await this.props.ensLookup("austingriffith.eth")
       let mainnetBlockNumber = await this.props.mainnetweb3.eth.getBlockNumber()
       let xdaiBlockNumber = await this.props.xdaiweb3.eth.getBlockNumber()
-      yourContractBalance = this.props.web3.utils.fromWei(yourContractBalance,'ether')
+      //yourContractBalance = this.props.web3.utils.fromWei(yourContractBalance,'ether')
+      let count = await this.state.YourContract.messageCount().call();
       this.setState({yourVar,yourContractBalance,mainnetBlockNumber,xdaiBlockNumber})
-
+      this.setState({messageCount: count})
+      let messages = []
+      for (var i = 0; i < this.state.messageCount; i++) {
+        let message = await this.state.YourContract.chat(i).call();
+        messages.push(message);
+      }
+    this.setState({chat: messages});    } else {
+      console.log('skipped poll');
     }
   }
+
 
   clicked(name){
     console.log("secondary button "+name+" was clicked")
     /*
     Time to make a transaction with YourContract!
     */
+    if (name == "chat") {
+      this.props.tx(this.state.YourContract.sendMessage(this.state.message), 120000, 0, 0, (result) => {
+        console.log(result)
+      });
+    }
     this.props.tx(this.state.YourContract.updateVar(name),120000,0,0,(result)=>{
       console.log(result)
     })
 
   }
+
   deployYourContract() {
     console.log("Deploying YourContract...")
     //
@@ -126,7 +151,18 @@ export default class YourModule extends React.Component {
               The current price of ETH is {this.props.dollarDisplay(this.props.ethprice)}.
             </div>
 
+            <div>
+              # of messages: {this.state.messageCount}.
+            </div>
 
+            <div>
+            <ul>
+              {this.state.chat.map((item, index) => (
+                <li>{item}</li>
+              ))}
+              Chat Is: {this.state.chat}
+            </ul>
+            </div>
             <Ruler/>
 
             <button className="btn btn-large w-50" style={this.props.buttonStyle.secondary} onClick={async ()=>{
@@ -202,12 +238,6 @@ export default class YourModule extends React.Component {
                 it has {this.props.dollarDisplay(this.state.yourContractBalance)}
               </div>
 
-              <div style={{padding:5}}>
-                with <b>yourVar:</b>
-                <div>
-                  "{this.state.yourVar}"
-                </div>
-              </div>
 
             </div>
             </div>
@@ -237,10 +267,10 @@ export default class YourModule extends React.Component {
             </div>
             <div className="col-4 p-1">
               <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
-                this.clicked("grid")
+                this.clicked("chat")
               }}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-bone"></i> {"grid"}
+                  <i className="fas fa-bone"></i> {"Chat"}
                 </Scaler>
               </button>
             </div>
@@ -258,11 +288,21 @@ export default class YourModule extends React.Component {
           <Ruler/>
 
           <div className="content row">
-            <label htmlFor="amount_input">{"EXAMPLE ADDRESS INPUT:"}</label>
+            <label htmlFor="chat_input">{"SEND A MESSAGE:"}</label>
             <div className="input-group">
-              <input type="text" className="form-control" placeholder="0x..." value={this.state.toAddress}
+              <input type="text" className="form-control" placeholder="Enter a message" value={this.state.message}
+                ref={(input) => { this.messageInput = input; }}
+                onChange={event => {this.setState({message: event.target.value})}}
+              />
+            </div>
+          </div>
+
+          <div className="content row">
+            <label htmlFor="chat_address_input">{"CHAT ADDRESS INPUT:"}</label>
+            <div className="input-group">
+              <input type="text" className="form-control" placeholder="0x..."
                 ref={(input) => { this.addressInput = input; }}
-                onChange={event => this.updateState('toAddress', event.target.value)}
+                onChange={event => this.setState({yourContractAddress: event.target.value})}
               />
               <div className="input-group-append" onClick={() => {
                 this.props.openScanner({view:"yourmodule"})
@@ -296,8 +336,12 @@ export default class YourModule extends React.Component {
           </div>
 
           <button className={'btn btn-lg w-100'} style={this.props.buttonStyle.primary}
-                  onClick={()=>{alert("do something")}}>
-            Primary CTA
+                  onClick={()=>{
+                    let yourContract = this.props.contractLoader("YourContract", this.state.yourContractAddress)
+                    this.setState({YourContract: yourContract})
+                  }}
+          >
+            Load Chat Room
           </button>
 
         </div>
