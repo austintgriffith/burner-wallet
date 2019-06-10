@@ -66,9 +66,9 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "clevis": "^0.1.4",
-    "mocha": "^5.2.0",
     "chai": "^4.2.0",
+    "clevis": "^0.2.11",
+    "mocha": "^5.2.0",
     "openzeppelin-solidity": "^2.3.0",
     "webpack": "^4.28.4"
   }
