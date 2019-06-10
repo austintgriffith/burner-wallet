@@ -1,8 +1,8 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import "openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
-import "openzeppelin-solidity/contracts/token/ERC721/IERC721Receiver.sol";
+import "node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "node_modules/openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
+import "node_modules/openzeppelin-solidity/contracts/token/ERC721/IERC721Receiver.sol";
 
 /// @title Storage vault to send with a link.
 /// @author Ricardo Rius  - <ricardo@rius.info>
@@ -28,7 +28,7 @@ contract Vault is IERC721Receiver{
     /// @param _tokenId The NFT identifier which is being transferred
     /// @param _data Additional data with no specified format
     /// @return `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`
-    function onERC721Received(address _operator,address _from,uint256 _tokenId,bytes _data) public returns(bytes4){
+    function onERC721Received(address _operator,address _from,uint256 _tokenId,bytes memory _data) public returns(bytes4){
         return this.onERC721Received.selector;
     }
 
@@ -44,7 +44,7 @@ contract Vault is IERC721Receiver{
     /// @param _token Address of the token being transferred
     /// @param _to Address of the recipient of tokens
     /// @param _value Amount of tokens being transferred
-    function _linkTransfer(address _token, bytes4 _type, address _to, uint256 _value, uint256 _tokenId) internal returns(bool){
+    function _linkTransfer(address _token, bytes4 _type, address payable _to, uint256 _value, uint256 _tokenId) internal returns(bool){
         return _vaultTransfer(_token, _type, _to, _value, _tokenId);
     }
 
@@ -53,7 +53,7 @@ contract Vault is IERC721Receiver{
     /// @param _to Address of the recipient of tokens
     /// @param _value Amount of tokens being transferred
     /* solium-disable-next-line function-order */
-    function _vaultTransfer(address _token, bytes4 _type, address _to, uint256 _value, uint256 _tokenId) private returns(bool status) {
+    function _vaultTransfer(address _token, bytes4 _type, address payable _to, uint256 _value, uint256 _tokenId) private returns(bool status) {
 
         status = false;
         if (_token == NATIVE_TOKEN) {

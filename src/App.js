@@ -136,15 +136,6 @@ else if (window.location.hostname.indexOf("buffidai") >= 0) {
   ERC20IMAGE = bufficorn
   LOADERIMAGE = bufficorn
 }
-else if (window.location.hostname.indexOf("burnerwallet.io") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20NAME = 'BURN'
-  ERC20VENDOR = 'BurnerVendor'
-  ERC20TOKEN = 'Burner'
-  ERC20IMAGE = cypherpunk
-  LOADERIMAGE = cypherpunk
-}
 else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
   WEB3_PROVIDER = "https://dai.poa.network";
   ERC20NAME = false
