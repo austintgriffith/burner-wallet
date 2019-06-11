@@ -33,9 +33,9 @@ export default class YourModule extends React.Component {
         src/contracts/YourContract.bytecode.js // if you want to deploy the contract from the module (see deployYourContract())
     */
     this.setState({
-      YourContract: this.props.contractLoader("YourContract")
+     YourContract: this.props.contractLoader("YourContract")
     },()=>{
-      console.log("YOURCONTRACT IS LOADED:",this.state.YourContract)
+     console.log("YOURCONTRACT IS LOADED:",this.state.YourContract)
     })
 
     setInterval(this.pollInterval.bind(this),10000)
@@ -60,10 +60,9 @@ export default class YourModule extends React.Component {
         let message = await this.state.YourContract.chat(i).call();
         messages.push(message);
       }
-      this.setState({chat: messages}); 
+      this.setState({chat: messages});
     }
   }
-
 
   clicked(name){
     console.log("secondary button "+name+" was clicked")
@@ -80,7 +79,6 @@ export default class YourModule extends React.Component {
     })
 
   }
-
   deployYourContract() {
     console.log("Deploying YourContract...")
     //
