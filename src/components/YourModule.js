@@ -32,20 +32,15 @@ export default class YourModule extends React.Component {
         src/contracts/YourContract.blocknumber.js // the block number it was deployed at (for efficient event loading)
         src/contracts/YourContract.bytecode.js // if you want to deploy the contract from the module (see deployYourContract())
     */
-    try {
-      this.setState({
-        YourContract: this.props.contractLoader("YourContract")
-      },()=>{
-        console.log("YOURCONTRACT IS LOADED:",this.state.YourContract)
-      })
-    } catch (error) {
-      console.log('error loading contract in componentDidMount');
-    }
+    this.setState({
+      YourContract: this.props.contractLoader("YourContract")
+    },()=>{
+      console.log("YOURCONTRACT IS LOADED:",this.state.YourContract)
+    })
 
     setInterval(this.pollInterval.bind(this),10000)
     setTimeout(this.pollInterval.bind(this),30)
-  }
-
+}
   async pollInterval(){
     console.log("POLL")
     if(this.state && this.state.YourContract) {
@@ -56,7 +51,7 @@ export default class YourModule extends React.Component {
       //let ensName = await this.props.ensLookup("austingriffith.eth")
       let mainnetBlockNumber = await this.props.mainnetweb3.eth.getBlockNumber()
       let xdaiBlockNumber = await this.props.xdaiweb3.eth.getBlockNumber()
-      //yourContractBalance = this.props.web3.utils.fromWei(yourContractBalance,'ether')
+      yourContractBalance = this.props.web3.utils.fromWei(yourContractBalance,'ether')
       let count = await this.state.YourContract.messageCount().call();
       this.setState({yourVar,yourContractBalance,mainnetBlockNumber,xdaiBlockNumber})
       this.setState({messageCount: count})
@@ -65,8 +60,7 @@ export default class YourModule extends React.Component {
         let message = await this.state.YourContract.chat(i).call();
         messages.push(message);
       }
-    this.setState({chat: messages});    } else {
-      console.log('skipped poll');
+      this.setState({chat: messages}); 
     }
   }
 
