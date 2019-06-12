@@ -35,7 +35,7 @@ const configs = [
     }
   },
   {
-    DOMAINS: ["burner.leapdao.org"],
+    DOMAINS: ["s.peep.cash"],
     SIDECHAIN: {
       NAME: "Leap Testnet",
       RPC: "https://testnet-node.leapdao.org",
