@@ -1,5 +1,9 @@
 pragma solidity ^0.5.0;
 
+contract SafeBeacon {
+  function update(address account, address safe, uint256 mode) public { }
+}
+
 contract Enum {
     enum Operation {
         Call,
@@ -204,6 +208,9 @@ contract OwnerManager is SelfAuthorized {
     event RemovedOwner(address owner);
     event ChangedThreshold(uint256 threshold);
 
+    SafeBeacon beacon;
+    bool public beaconOn;
+
     address public constant SENTINEL_OWNERS = address(0x1);
 
     mapping(address => address) internal owners;
@@ -239,6 +246,15 @@ contract OwnerManager is SelfAuthorized {
         threshold = _threshold;
     }
 
+    //setup the beacon
+    function setupBeacon(address beaconContractAddress)
+        public
+        authorized
+    {
+        beacon = SafeBeacon(beaconContractAddress);
+        beaconOn = true;
+    }
+
     /// @dev Allows to add a new owner to the Safe and update the threshold at the same time.
     ///      This can only be done via a Safe transaction.
     /// @param owner New owner address.
@@ -255,6 +271,10 @@ contract OwnerManager is SelfAuthorized {
         owners[SENTINEL_OWNERS] = owner;
         ownerCount++;
         emit AddedOwner(owner);
+        //trigger the beacon if it's active 
+        if(beaconOn){
+          beacon.update(owner, address(this), 1);
+        }
         // Change threshold if threshold was changed.
         if (threshold != _threshold)
             changeThreshold(_threshold);
