@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events } from "dapparatus";
+import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events, Scaler } from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
@@ -40,6 +40,7 @@ import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 import incogDetect from './services/incogDetect.js'
+import gnosis from './gnosis.jpg';
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
@@ -54,6 +55,8 @@ import Wyre from './services/wyre';
 
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
+
+
 
 //const POA_XDAI_NODE = "https://dai-b.poa.network"
 const POA_XDAI_NODE = "https://dai.poa.network"
@@ -260,6 +263,7 @@ class App extends Component {
       hasUpdateOnce: false,
       badges: {},
       selectedBadge: false,
+      safe: localStorage.getItem("safe")
     };
     this.alertTimeout = null;
 
@@ -440,6 +444,24 @@ class App extends Component {
     window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
   async poll() {
+
+    if(this.state.web3 && this.state.safe && this.state.customLoader){
+      if(!this.state.safeContract){
+        this.setState({
+          safeContract: this.state.customLoader("GnosisSafe",this.state.safe)
+        })
+      }else{
+        this.setState({
+          safeVersion: await this.state.safeContract.VERSION().call()
+        })
+
+      }
+
+      //there is a gnosis safe deployed for this address
+      this.setState({
+        safeBalance: (await this.state.web3.eth.getBalance(this.state.safe))/10**18
+      })
+    }
 
     let badgeBalance = 0
     let singleBadgeId
@@ -1373,6 +1395,233 @@ render() {
             )
           }
 
+          let safeDisplay = ""
+          if(this.state.safe){
+            safeDisplay = (
+              <div>
+              <div onClick={async ()=>{
+                let to = this.state.safeContract._address
+                let value = 0
+                let data = this.state.safeContract.addOwnerWithThreshold("0x17c7ff1a4bade82d60633677abda7cf8932a3a74",1).encodeABI()
+                console.log("data",data)
+                let operation = 0
+                let safeTxGas = 200000
+                let baseGas = 100000
+                let gasPrice = 0
+                let gasToken = "0x0000000000000000000000000000000000000000"
+                let refundReceiver = "0x0000000000000000000000000000000000000000"
+
+                let nonce = await this.state.safeContract.nonce().call()
+
+                console.log("nonce",nonce)
+
+                /*
+                function encodeTransactionData(
+                    address to,
+                    uint256 value,
+                    bytes memory data,
+                    Enum.Operation operation,
+                    uint256 safeTxGas,
+                    uint256 baseGas,
+                    uint256 gasPrice,
+                    address gasToken,
+                    address refundReceiver,
+                    uint256 _nonce
+                )*/
+                /*
+                let txHashData = await this.state.safeContract.encodeTransactionData(
+                    to, value, data, operation, // Transaction info
+                    safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, // Payment info
+                    nonce
+                ).call();*/
+
+                let txHash = await this.state.safeContract.getTransactionHash(
+                    to, value, data, operation, // Transaction info
+                    safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, // Payment info
+                    nonce
+                ).call();
+
+
+
+
+                console.log("txHash",txHash)
+
+                let signatures = await this.state.web3.eth.personal.sign(""+txHash,this.state.account)
+
+                console.log("signatures",signatures)
+
+                console.log("calling on ",this.state.safeContract._address)
+
+                this.state.tx(
+                  this.state.safeContract.execTransaction(
+                      to,
+                      value,
+                      data,
+                      operation,
+                      safeTxGas,
+                      baseGas,
+                      gasPrice,
+                      gasToken,
+                      refundReceiver,
+                      signatures
+                  ),2000000,
+                  (result)=>{
+                    console.log("RESULT",result)
+                  }
+                )
+              }}>
+                ADD SIGNER
+              </div>
+                <div className="balance row" style={{opacity:1,paddingBottom:0,paddingLeft:20}} onClick={async ()=>{
+                  //address[] _owners, uint256 _threshold, address to, bytes data, address paymentToken, uint256 payment, address paymentReceiver
+
+
+                  let to = this.state.account
+                  let value = 0.1*10**18
+                  let data = "0x00"
+                  let operation = 0
+                  let safeTxGas = 200000
+                  let baseGas = 100000
+                  let gasPrice = 0
+                  let gasToken = "0x0000000000000000000000000000000000000000"
+                  let refundReceiver = "0x0000000000000000000000000000000000000000"
+
+                  let nonce = await this.state.safeContract.nonce().call()
+
+                  console.log("nonce",nonce)
+
+                  /*
+                  function encodeTransactionData(
+                      address to,
+                      uint256 value,
+                      bytes memory data,
+                      Enum.Operation operation,
+                      uint256 safeTxGas,
+                      uint256 baseGas,
+                      uint256 gasPrice,
+                      address gasToken,
+                      address refundReceiver,
+                      uint256 _nonce
+                  )*/
+                  /*
+                  let txHashData = await this.state.safeContract.encodeTransactionData(
+                      to, value, data, operation, // Transaction info
+                      safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, // Payment info
+                      nonce
+                  ).call();*/
+
+                  let txHash = await this.state.safeContract.getTransactionHash(
+                      to, value, data, operation, // Transaction info
+                      safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, // Payment info
+                      nonce
+                  ).call();
+
+
+
+
+                  console.log("txHash",txHash)
+                  let signatures
+                  if(this.state.metaAccount.privateKey){
+                    console.log(this.state.metaAccount.privateKey)
+                    signatures = this.state.web3.eth.accounts.sign(""+txHash, this.state.metaAccount.privateKey);
+                    signatures = signatures.signature
+                  }else{
+                    signatures = await this.state.web3.eth.personal.sign(""+txHash,this.state.account)
+                  }
+
+
+                  console.log("signatures",signatures)
+
+                  console.log("calling on ",this.state.safeContract._address)
+
+                  this.state.tx(
+                    this.state.safeContract.execTransaction(
+                        to,
+                        value,
+                        data,
+                        operation,
+                        safeTxGas,
+                        baseGas,
+                        gasPrice,
+                        gasToken,
+                        refundReceiver,
+                        signatures
+                    ),2000000,
+                    (result)=>{
+                      console.log("RESULT",result)
+                    }
+                  )
+                }}>
+                  <div className="avatar col p-0">
+                    <img src={gnosis} style={{maxWidth:50}}/>
+                    <div style={{position:'absolute',left:60,top:12,fontSize:14,opacity:0.77,width:150}}>
+                      Safe <span style={{opacity:0.5,fontSize:12,paddingLeft:10}}>v{this.state.safeVersion}</span>
+                    </div>
+                  </div>
+                  <div style={{position:"absolute",right:25,marginTop:15}}>
+                    <Scaler config={{startZoomAt:400,origin:"200px 30px",adjustedZoom:1}}>
+                      <div style={{fontSize:40,letterSpacing:-2}}>
+                        {dollarDisplay(this.state.safeBalance)}
+                      </div>
+                    </Scaler>
+                  </div>
+                </div>
+                <Ruler/>
+              </div>
+            )
+          }else if(this.state.xdaiBalance>0.0012){
+            safeDisplay = (
+              <div>
+
+                <div className="balance row" style={{opacity:0.75,paddingBottom:0,paddingLeft:20}} onClick={async ()=>{
+
+                  let creationNonce = 1
+
+                  const abi = require('ethereumjs-abi')
+
+                  //address[] _owners, uint256 _threshold, address to, bytes data, address paymentToken, uint256 payment, address paymentReceiver
+                  let initData = await this.state.contracts["GnosisSafe"].setup([this.state.account], 1, "0x0000000000000000000000000000000000000000", "0x", "0x0000000000000000000000000000000000000000", 0, "0x0000000000000000000000000000000000000000").encodeABI()
+
+                  let proxyCreationCode = await this.state.contracts["ProxyFactory"].proxyCreationCode().call()
+                  console.log("proxyCreationCode",proxyCreationCode)
+                  let constructorData = abi.rawEncode(
+                      ['address'],
+                      [ this.state.contracts["GnosisSafe"]._address ]
+                  ).toString('hex')
+                  let encodedNonce = abi.rawEncode(['uint256'], [creationNonce]).toString('hex')
+                  const ethUtil = require('ethereumjs-util')
+                  let target = "0x" + ethUtil.generateAddress2(this.state.contracts["ProxyFactory"]._address, ethUtil.keccak256("0x" + ethUtil.keccak256(initData).toString("hex") + encodedNonce), proxyCreationCode + constructorData).toString("hex")
+                  console.log("    Predicted safe address: " + target)
+
+                  console.log("initData",initData)
+                  this.state.tx(
+                    this.state.contracts["ProxyFactory"].createProxyWithNonce(this.state.contracts["GnosisSafe"]._address,initData,creationNonce),1100000,
+                    (result)=>{
+                      console.log("RESULT",result)
+                      localStorage.setItem("safe",target)
+                      this.setState({safe:target})
+                    }
+                  )
+                }}>
+                  <div className="avatar col p-0">
+                    <img src={gnosis} style={{maxWidth:50}}/>
+                    <div style={{position:'absolute',left:60,top:12,fontSize:14,opacity:0.77}}>
+                      Safe
+                    </div>
+                  </div>
+                  <div style={{position:"absolute",right:25,marginTop:15}}>
+                    <Scaler config={{startZoomAt:400,origin:"200px 30px",adjustedZoom:1}}>
+                      <div style={{fontSize:40,letterSpacing:-2}}>
+                        Click to Deploy
+                      </div>
+                    </Scaler>
+                  </div>
+                </div>
+                <Ruler/>
+              </div>
+            )
+          }
+
           switch(view) {
             case 'main':
             return (
@@ -1388,6 +1637,9 @@ render() {
                   <Ruler/>
                   <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
+
+                  {safeDisplay}
+
                   {badgeDisplay}
 
                   <MainCard
