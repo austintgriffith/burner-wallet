@@ -41,6 +41,12 @@ import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 import incogDetect from './services/incogDetect.js'
 
+import {
+  getSdkEnvironment,
+  SdkEnvironmentNames,
+  createSdk,
+} from '@archanova/sdk';
+
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
 
@@ -352,7 +358,39 @@ class App extends Component {
       }
     })
   }
+  async initAbridged(){
+    console.log("+===== INIT WITH PK",this.state.metaAccount.privateKey)
+    // 1. Select the ethereum network
+    let sdkEnv = getSdkEnvironment(SdkEnvironmentNames.Kovan); // kovan env by default
+    // 2. Create SDK instance
+    const sdk = new createSdk(sdkEnv);
+    const options = {
+      device: {
+        privateKey: ""+this.state.metaAccount.privateKey,
+      },
+    };
+
+    await sdk.initialize(options).then(() => console.log('initialized')).catch(console.error);
+    // 3. Initialize instance
+    //await sdk.initialize();
+    // 4. Create account
+    const account = await sdk.createAccount();
+    // 5. get account and device address information
+    const accountAddress = account.address;
+    const devices = await sdk.getConnectedAccountDevices();
+    const deviceAddress = devices.items[0].device.address;
+    this.setState({abridgedSdk:sdk})
+    console.log("++++++++++=========>>> deviceAddress",deviceAddress,"accountAddress",accountAddress)
+  }
   componentDidMount(){
+
+    /*await Auth.signUp({
+      username, password, attributes: {
+        email,
+        'custom:account_address': accountAddress,
+        'custom:device_address': deviceAddress
+      }
+    })*/
 
     document.body.style.backgroundColor = mainStyle.backgroundColor
 
@@ -1068,6 +1106,7 @@ render() {
         this.setState({contracts: contracts,customLoader: customLoader}, async () => {
           console.log("Contracts Are Ready:", contracts)
           this.checkClaim(tx, contracts);
+          this.initAbridged()
         })
       }}
       />
@@ -1391,6 +1430,7 @@ render() {
                   {badgeDisplay}
 
                   <MainCard
+                    abridgedSdk={this.state.abridgedSdk}
                     subBalanceDisplay={subBalanceDisplay}
                     buttonStyle={buttonStyle}
                     address={account}

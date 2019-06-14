@@ -5,7 +5,7 @@ import i18next from 'i18next';
 
 
 
-export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
+export default ({abridgedSdk, buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
 
 
   var w = window,
@@ -66,7 +66,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
     </div>
   )
 
-  if(ERC20TOKEN){
+  if(true){
     sendButtons = (
       <div>
         <div className="content ops row">
@@ -86,10 +86,22 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
           </div>
         </div>
         <div className="content ops row">
-          <div className="col-6 p-1" onClick={() => changeView('share')}>
-            <button className="btn btn-large w-100" onClick={() => changeView('share')} style={buttonStyle.secondary}>
+          <div className="col-6 p-1" onClick={() => {
+            abridgedSdk.estimateAccountDeployment()
+              .then(estimated => {
+                console.log('estimated', estimated)
+                console.log("GASPRICE",estimated.gasPrice)
+                abridgedSdk.deployAccount(estimated.gasPrice)
+                  .then(hash => console.log('hash', hash))
+                  .catch(console.error);
+              })
+              .catch(console.error);
+
+
+          }}>
+            <button className="btn btn-large w-100"  style={buttonStyle.secondary}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                <i className="fas fa-share"/> {i18next.t('main_card.share')}
+                <i className="fas fa-share"/> Deploy
               </Scaler>
             </button>
           </div>
