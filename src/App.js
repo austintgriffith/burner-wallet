@@ -1543,13 +1543,14 @@ render() {
                   const ethUtil = require('ethereumjs-util')
                   let target = "0x" + ethUtil.generateAddress2(this.state.contracts["ProxyFactory"]._address, ethUtil.keccak256("0x" + ethUtil.keccak256(initData).toString("hex") + encodedNonce), proxyCreationCode + constructorData).toString("hex")
                   console.log("    Predicted safe address: " + target)
-
+                  this.changeView('loader')
                   console.log("initData",initData)
                   this.state.tx(
-                    this.state.contracts["ProxyFactory"].createProxyWithNonce(this.state.contracts["GnosisSafe"]._address,initData,creationNonce),1100000,
+                    this.state.contracts["ProxyFactory"].createProxyWithNonce(this.state.contracts["GnosisSafe"]._address,initData,creationNonce),1100000,"0x00",0,
                     (result)=>{
                       console.log("RESULT",result)
                       localStorage.setItem("safe",target)
+                      this.changeView('main')
                       this.setState({
                         safeContract: this.state.customLoader("GnosisSafe",target),
                         safe:target

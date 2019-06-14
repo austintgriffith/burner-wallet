@@ -62,3 +62,6 @@ server.on('response', function (req, res, err, file, stat) {
   // NOTE: the response has already been sent at this point
 });
 */
+var server = http.createServer(function(req, res) {
+  console.log("Express server listening on port " + 80);
+}).listen(80);
