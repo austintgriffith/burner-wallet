@@ -14,7 +14,7 @@ export default class SendToAddress extends React.Component {
     super(props);
 
 
-
+    console.log("props.scannerState",props.scannerState)
     console.log("!!!!!!!!!!!!!!!!!!!!!!!! window.location.search",window.location.search,parsed)
 
     let startAmount = props.amount

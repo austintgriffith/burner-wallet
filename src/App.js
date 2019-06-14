@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events, Scaler } from "dapparatus";
+import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events, Scaler, Blockie } from "dapparatus";
 import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
@@ -41,10 +41,10 @@ import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 import incogDetect from './services/incogDetect.js'
 import gnosis from './gnosis.jpg';
+import Safe from './components/Safe'
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
-
 
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
@@ -55,8 +55,6 @@ import Wyre from './services/wyre';
 
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
-
-
 
 //const POA_XDAI_NODE = "https://dai-b.poa.network"
 const POA_XDAI_NODE = "https://dai.poa.network"
@@ -447,9 +445,17 @@ class App extends Component {
 
     if(this.state.web3 && this.state.safe && this.state.customLoader){
       if(this.state.safeContract){
-        this.setState({
-          safeVersion: await this.state.safeContract.VERSION().call()
-        })
+        let safeVersion = await this.state.safeContract.VERSION().call()
+        let safeOwners = await this.state.safeContract.getOwners().call()
+        //if(safeVersion){
+          this.setState({
+            safeVersion: safeVersion,
+            safeOwners: safeOwners
+          })
+        //}else{
+        //  console.log("Contract not returning version, missing safe? Delete it?")
+        //  localStorage.removeItem("safe")
+        //}
       }
 
       //there is a gnosis safe deployed for this address
@@ -1053,7 +1059,7 @@ syncFullTransactions(){
     this.setState({fullRecentTxs:recentTxs,fullTransactionsByAddress:transactionsByAddress})
   }
 }
-async safeCall(to,value,data) {
+async safeCall(to,value,data,cb) {
   let operation = 0
   let safeTxGas = 200000
   let baseGas = 100000
@@ -1090,9 +1096,12 @@ async safeCall(to,value,data) {
         gasToken,
         refundReceiver,
         signatures
-    ),2000000,
+    ),2000000,"0x00",0,
     (result)=>{
-      console.log("RESULT",result)
+      console.log("RRRRRRESULT",result)
+      if(typeof cb == "function"){
+        cb(result)
+      }
     }
   )
 }
@@ -1128,6 +1137,12 @@ render() {
         this.setState({contracts: contracts,customLoader: customLoader}, async () => {
           console.log("Contracts Are Ready:", contracts)
           this.checkClaim(tx, contracts);
+          let safeAddress = localStorage.getItem("safe")
+          if(safeAddress){
+            this.setState({
+              safeContract: this.state.customLoader("GnosisSafe",safeAddress)
+            })
+          }
         })
       }}
       />
@@ -1183,21 +1198,54 @@ render() {
     </div>
   )
   if(web3){
+    let safeBeacon = ""
+    if(this.state.contracts && this.state.contracts["SafeBeacon"]){
+      safeBeacon = (
+        <div>
+          <Events
+            contract={this.state.contracts["SafeBeacon"]}
+            eventName={"SafeUpdate"}
+            block={this.state.block}
+            filter={{account:this.state.account}}
+            onUpdate={async (eventData,allEvents)=>{
+              console.log("UPDATE FROM SAFE BEACON",eventData)
+              let safeContract = this.state.customLoader("GnosisSafe",eventData.safe)
+              let owners = await safeContract.getOwners().call()
+              for(let o in owners){
+                if(owners[0].toLowerCase() == this.state.account){
+                  localStorage.setItem("safe",eventData.safe)
+                  this.setState({
+                    safeContract: safeContract,
+                    safe:eventData.safe
+                  })
+                  break;
+                }
+              }
+
+            }}
+          />
+        </div>
+      )
+
+    }
     header = (
-      <Header
-        openScanner={this.openScanner.bind(this)}
-        network={this.state.network}
-        total={totalBalance}
-        ens={this.state.ens}
-        title={this.state.title}
-        titleImage={titleImage}
-        mainStyle={mainStyle}
-        address={this.state.account}
-        changeView={this.changeView}
-        balance={balance}
-        view={this.state.view}
-        dollarDisplay={dollarDisplay}
-      />
+      <div>
+        <Header
+          openScanner={this.openScanner.bind(this)}
+          network={this.state.network}
+          total={totalBalance}
+          ens={this.state.ens}
+          title={this.state.title}
+          titleImage={titleImage}
+          mainStyle={mainStyle}
+          address={this.state.account}
+          changeView={this.changeView}
+          balance={balance}
+          view={this.state.view}
+          dollarDisplay={dollarDisplay}
+        />
+        {safeBeacon}
+      </div>
     )
   }
 
@@ -1298,16 +1346,6 @@ render() {
             if(this.state.contracts){
               eventParser = (
                 <div style={{color:"#000000"}}>
-                  <Events
-                    config={{hide:false}}
-                    contract={this.state.contracts["SafeBeacon"]}
-                    eventName={"SafeUpdate"}
-                    block={this.state.block}
-                    filter={{account:this.state.account}}
-                    onUpdate={(eventData,allEvents)=>{
-                      console.log("UPDATE FROM BEACON",eventData)
-                    }}
-                  />
                   <Events
                     config={{hide:true}}
                     contract={this.state.contracts[ERC20TOKEN]}
@@ -1445,26 +1483,36 @@ render() {
 
           let safeDisplay = ""
           if(this.state.safe){
+
+            let versionDisplay = ""
+            if(this.state.safeBalance>0){
+              versionDisplay = "v"+this.state.safeVersion
+            }else{
+              versionDisplay = "click here to deposit funds"
+            }
+
+            let safeBalanceDisplay = dollarDisplay(this.state.safeBalance)
+            if(isNaN(this.state.safeBalance)){
+              safeBalanceDisplay = (
+                <div style={{fontSize:14,opacity:0.25}}>loading . . . </div>
+              )
+            }
+
             safeDisplay = (
               <div>
-              <div onClick={async ()=>{
-                this.safeCall(this.state.safeContract._address,0,this.state.safeContract.addOwnerWithThreshold("0x17c7ff1a4bade82d60633677abda7cf8932a3a74",1).encodeABI())
-              }}>
-                ADD SIGNER
-              </div>
-                <div className="balance row" style={{opacity:1,paddingBottom:0,paddingLeft:20}} onClick={async ()=>{
-                  this.safeCall(this.state.account,0.1*10**18,"0x00")
+                <div className="balance row" style={{cursor:"pointer",opacity:1,paddingBottom:0,paddingLeft:20}} onClick={async ()=>{
+                  this.changeView('safe')
                 }}>
                   <div className="avatar col p-0">
                     <img src={gnosis} style={{maxWidth:50}}/>
                     <div style={{position:'absolute',left:60,top:12,fontSize:14,opacity:0.77,width:150}}>
-                      Safe <span style={{opacity:0.5,fontSize:12,paddingLeft:10}}>v{this.state.safeVersion}</span>
+                      Safe <span style={{opacity:0.5,fontSize:12,paddingLeft:10}}>{versionDisplay}</span>
                     </div>
                   </div>
                   <div style={{position:"absolute",right:25,marginTop:15}}>
                     <Scaler config={{startZoomAt:400,origin:"200px 30px",adjustedZoom:1}}>
                       <div style={{fontSize:40,letterSpacing:-2}}>
-                        {dollarDisplay(this.state.safeBalance)}
+                        {safeBalanceDisplay}
                       </div>
                     </Scaler>
                   </div>
@@ -1519,7 +1567,7 @@ render() {
                   </div>
                   <div style={{position:"absolute",right:25,marginTop:15}}>
                     <Scaler config={{startZoomAt:400,origin:"200px 30px",adjustedZoom:1}}>
-                      <div style={{fontSize:40,letterSpacing:-2}}>
+                      <div style={{fontSize:30,letterSpacing:-2}}>
                         Create
                       </div>
                     </Scaler>
@@ -1819,6 +1867,46 @@ render() {
                 />
               </div>
             );
+            case 'safe':
+              return (
+                <div>
+                  <div className="main-card card w-100" style={{zIndex:1}}>
+                    <NavCard title={(
+                      <div>
+                      <Blockie
+                        address={this.state.safe}
+                        config={{size:2}}
+                      /> <a href="https://safe.gnosis.io/" target="_blank">Gnosis Safe</a>
+                      </div>
+                    )} goBack={this.goBack.bind(this)} />
+                    {safeDisplay}
+                    <Safe
+                      safeOwners={this.state.safeOwners}
+                      setReceipt={this.setReceipt}
+                      account = {this.state.account}
+                      scannerState={this.state.scannerState}
+                      openScanner={this.openScanner.bind(this)}
+                      safeCall={this.safeCall.bind(this)}
+                      safeContract={this.state.safeContract}
+                      returnToState={this.returnToState.bind(this)}
+                      safe={this.state.safe}
+                      safeBalance={this.state.safeBalance}
+                      title={url}
+                      url={url}
+                      mainStyle={mainStyle}
+                      balance={balance}
+                      address={account}
+                      changeAlert={this.changeAlert}
+                      goBack={this.goBack.bind(this)}
+                      buttonStyle={buttonStyle}
+                      changeView={this.changeView}
+                    />
+                  </div>
+                  <Bottom
+                    action={this.goBack.bind(this)}
+                  />
+                </div>
+              );
             case 'share':
 
               let url = window.location.protocol+"//"+window.location.hostname
