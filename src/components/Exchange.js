@@ -13,6 +13,9 @@ import i18n from '../i18n';
 
 import Wyre from '../services/wyre';
 import wyrelogo from '../wyre.png';
+import ethImg from '../images/ethereum.png';
+import daiImg from '../images/dai.jpg';
+import xdaiImg from '../images/xdai.jpg';
 
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
@@ -2224,7 +2227,7 @@ export default class Exchange extends React.Component {
 
           <div className="content ops row" style={{paddingBottom:20}}>
             <div className="col-2 p-1">
-              <img style={logoStyle} src={this.props.xdai} />
+              <img style={logoStyle} src={xdaiImg} />
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
               xDai
@@ -2249,7 +2252,7 @@ export default class Exchange extends React.Component {
 
           <div className="content ops row" style={{paddingBottom:20}}>
             <div className="col-2 p-1">
-              <img style={logoStyle} src={this.props.dai} />
+              <img style={logoStyle} src={daiImg} />
             </div>
             <div className="col-3 p-1" style={{marginTop:9}}>
               DAI
@@ -2273,7 +2276,7 @@ export default class Exchange extends React.Component {
 
           <div className="content ops row" style={{paddingBottom:20}}>
             <div className="col-2 p-1">
-              <img style={logoStyle} src={this.props.eth} />
+              <img style={logoStyle} src={ethImg} />
             </div>
             <div className="col-3 p-1" style={{marginTop:10}}>
               ETH
