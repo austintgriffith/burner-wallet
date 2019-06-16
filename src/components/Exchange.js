@@ -1667,8 +1667,8 @@ export default class Exchange extends React.Component {
 
                 let output = await uniswapContract.methods.getEthToTokenOutputPrice(amountOfDai).call()
                 output = parseFloat(output)
-                output = output - (output*0.0333)
-                console.log("Expected amount of ETH: ",output,webToUse.utils.fromWei(""+Math.round(output),'ether'))
+                output = Math.round(output - (output*0.0333))
+                console.log("Expected amount of ETH: ",output,webToUse.utils.fromWei(""+ output,'ether'))
 
                 let currentBlockNumber = await webToUse.eth.getBlockNumber()
                 let currentBlock = await webToUse.eth.getBlock(currentBlockNumber)

@@ -1,0 +1,109 @@
+{
+  "zh": {
+    "app_name": "Burner",
+    "about": "关于",
+    "code": "代码",
+    "burn": "销毁私钥",
+    "show": "显示私钥",
+    "copy": "复制私钥",
+    "create": "创建",
+    "receive_title": "收款",
+    "receipt_title": "收据",
+    "send_to_address_title": "发送到地址",
+    "advance": "高级功能",
+    "advance_title": "高级功能",
+    "loading": "加载中",
+    "cancel": "取消",
+    "done": "完成",
+    "exchange_title": "兑换",
+    "amount": "金额",
+    "send": "发送",
+    "withdraw": "提款",
+    "history_chat": "历史聊天",
+    "request_funds_title": "发起收款",
+    "request": "发起收款",
+    "vendors": "商户",
+    "main_card": {
+      "receive": "收款",
+      "send": "发送",
+      "share": "分享",
+      "link": "红包",
+      "vendors": "商户"
+    },
+    "send_with_link": {
+      "error": "请输入正确的金额"
+    },
+    "share": {
+      "copied": "URL 已经复制到剪贴板"
+    },
+    "vendor": {
+      "updating": "更新中",
+      "open": "已开启",
+      "closed": "已关闭",
+      "add_product": "新增产品",
+      "adding": "新增中"
+    },
+    "withdraw_from_private": {
+      "from_address": "从钱包地址提款",
+      "amount": "金额",
+      "withdraw": "提款",
+      "error": "请输入正确的提款金额"
+    },
+    "send_to_address": {
+      "to_address": "到此地址",
+      "send_amount": "发送金额",
+      "notice": "你只能发送",
+      "error": "请输入正确的钱包地址或者 ENS"
+    },
+    "send_by_scan": {
+      "try_again": "请再试一次",
+      "take_photo": "拍照",
+      "capture": "扫描二维码:"
+    },
+    "more_buttons": {
+      "request": "发起收款",
+      "exchange": "交易"
+    },
+    "receive": {
+      "address_copied": "钱包地址已经复制到剪贴板"
+    },
+    "history": {
+      "metamask_error": "无法通过 MetaMask 使用加密信息",
+      "wave": "打招呼"
+    },
+    "exchange": {
+      "withdrawal_explanation": "只有商户可以提取超过存款的金额",
+      "funds_transferred": "资金已发送",
+      "funds_bridged": "资金交易完成",
+      "insufficient_funds": "资金不足",
+      "invalid_to_address": "请输入正确的钱包地址",
+      "invalid_to_amount": "请输入正确的金额",
+      "calculate_gas_price": "正在计算矿工费...",
+      "go_to_etherscan": "在 Etherscan 查看",
+      "idk": "Bridge 是什么？"
+    },
+    "request_funds": {
+      "item_message": "商品信息",
+      "button": "发起收款",
+      "amount": "金额"
+    },
+    "admin": {
+      "add_admin": "新增管理员",
+      "adding": "新增中",
+      "add_vendor": "新增商户"
+    },
+    "advanced": {
+      "to_qr": "生成二维码"
+    },
+    "balance_display": {
+      "waiting_for_api": "等待 API",
+      "no_currency_api": "沒有 API 可用"
+    },
+    "burn_wallet": {
+      "burn_private_key_question": "你确定要销毁这组私钥吗？",
+      "disclaimer": "你会失去所有代币!",
+      "cancel": "不, 我要取消",
+      "burn": "销毁吧!"
+    }
+  }
+}

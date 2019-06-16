@@ -39,6 +39,7 @@ import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
+import incogDetect from './services/incogDetect.js'
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
@@ -237,6 +238,7 @@ let dollarDisplay = (amount)=>{
 
 let interval
 let intervalLong
+let originalStyle = {}
 
 class App extends Component {
   constructor(props) {
@@ -335,12 +337,41 @@ class App extends Component {
   saveKey(update){
     this.setState(update)
   }
+  detectContext(){
+    console.log("DETECTING CONTEXT....")
+    //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
+    incogDetect((result)=>{
+      if(result){
+        console.log("INCOG")
+        document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
+        document.body.style.backgroundColor = "#671c1c"
+        var contextElement = document.getElementById("context")
+        contextElement.innerHTML = 'INCOGNITO';
+      }else if (typeof web3 !== 'undefined') {
+        console.log("NOT INCOG",this.state.metaAccount)
+        if (window.web3 && window.web3.currentProvider && window.web3.currentProvider.isMetaMask === true) {
+          document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
+          document.body.style.backgroundColor = "#ca6e28"
+          var contextElement = document.getElementById("context")
+          contextElement.innerHTML = 'METAMASK';
+        } else if(this.state.account && !this.state.metaAccount) {
+          console.log("~~~*** WEB3",this.state.metaAccount,result)
+          document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
+          document.body.style.backgroundColor = "#305582"
+          var contextElement = document.getElementById("context")
+          contextElement.innerHTML = 'WEB3';
+        }
+      }
+    })
+  }
   componentDidMount(){
+
+    document.body.style.backgroundColor = mainStyle.backgroundColor
 
     Wyre.configure();
 
+    this.detectContext()
 
-    document.body.style.backgroundColor = mainStyle.backgroundColor
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
     if(window.location.pathname){
@@ -401,6 +432,9 @@ class App extends Component {
     intervalLong = setInterval(this.longPoll.bind(this),45000)
     setTimeout(this.longPoll.bind(this),150)
 
+    this.connectToRPC()
+  }
+  connectToRPC(){
     let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
     let ensContract = new mainnetweb3.eth.Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
     let daiContract
@@ -420,6 +454,7 @@ class App extends Component {
   async poll() {
 
     let badgeBalance = 0
+    let singleBadgeId
     if(this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown") && this.state.contracts.Badges){
       //check for badges for this user
       badgeBalance = await this.state.contracts.Badges.balanceOf(this.state.account).call()
@@ -427,6 +462,7 @@ class App extends Component {
         let update = false
         for(let b = 0;b<badgeBalance;b++){
           let thisBadgeId = await this.state.contracts.Badges.tokenOfOwnerByIndex(this.state.account,b).call()
+          singleBadgeId = thisBadgeId
           if(!this.state.badges[thisBadgeId]){
 
             let thisBadgeData = await this.state.contracts.Badges.tokenURI(thisBadgeId).call()
@@ -518,6 +554,7 @@ class App extends Component {
           }
         }catch(e){
           console.log(e)
+          this.connectToRPC()
         }
 
 
@@ -529,7 +566,14 @@ class App extends Component {
       }
 
       this.setState({ethBalance,daiBalance,xdaiBalance,badgeBalance,hasUpdateOnce:true})
+
+      if(xdaiBalance < 0.01 && singleBadgeId && !this.state.switchedToSingleBadge){
+        this.setState({switchedToSingleBadge:true})
+        this.selectBadge(singleBadgeId)
+      }
+
     }
+
 
 
   }
@@ -562,9 +606,14 @@ class App extends Component {
         console.log("this.state.xdaiBalance",this.state.xdaiBalance)
         console.log("this.state.daiBalance",this.state.daiBalance)
         console.log("this.state.isVendor",this.state.isVendor)
+        console.log("this.state.badges",this.state.badges)
+        let badgeCount = 0
+        for(let b in this.state.badges){
+          console.log("B",b,this.state.badges[b])
+          badgeCount++
+        }
 
-
-        if(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed)){
+        if(!this.state.metaAccount || this.state.balance>=0.05 || (badgeCount>0) || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed)){
           this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
             this.changeView('withdraw_from_private')
           })
@@ -1104,7 +1153,7 @@ render() {
 
   return (
     <I18nextProvider i18n={i18n}>
-    <div style={mainStyle}>
+    <div id="main" style={mainStyle}>
       <div style={innerStyle}>
         {extraHead}
         {networkOverlay}
@@ -1578,6 +1627,7 @@ render() {
                     {defaultBalanceDisplay}
                     <WithdrawFromPrivate
                       ERC20TOKEN={ERC20TOKEN}
+                      badges={this.state.badges}
                       products={this.state.products}
                       buttonStyle={buttonStyle}
                       balance={balance}
@@ -1600,6 +1650,13 @@ render() {
                 </div>
               );
             case 'send_badge':
+              if(!this.state.badges || !this.state.badges[this.state.selectedBadge] || !this.state.badges[this.state.selectedBadge].name){
+                return (
+                  <div>
+                    loading...
+                  </div>
+                )
+              }
             return (
               <div>
                 <div className="send-to-address card w-100" style={{zIndex:1}}>
@@ -2054,6 +2111,7 @@ render() {
           if (state.web3Provider) {
             state.web3 = new Web3(state.web3Provider)
             this.setState(state,()=>{
+              this.detectContext()
               //console.log("state set:",this.state)
               if(this.state.possibleNewPrivateKey){
                 this.dealWithPossibleNewPrivateKey()
@@ -2134,6 +2192,10 @@ render() {
           })
         }}
         />
+
+        <div id="context" style={{position:"absolute",right:5,top:-15,opacity:0.2,zIndex:100,fontSize:60,color:'#FFFFFF'}}>
+        </div>
+
         {eventParser}
       </div>
     </div>

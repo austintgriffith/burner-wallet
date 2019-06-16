@@ -170,37 +170,27 @@ module.exports = {
 
         // GAS UP YOUR RANDOM INCOG ACCOUNTS HERE:
 
-        result = await clevis("send","0.10","0","0xa9887c69538ccf8692066e0fd5d12a9593ab0403")///<<<-------- change this to your metamask accounts
+        result = await clevis("send","0.50","0","0xedf39c04c5e941789c08acc2b252e91faef73354")///<<<-------- change this to your metamask accounts
         printTxResult(result)
-        result = await clevis("send","0.10","0","0x3baa2f6302ce57eb2ad94c9571b19e1073b079be")///<<<-------- change this to your metamask accounts
-        printTxResult(result)
-
-        result = await clevis("send","0.10","0","0x3606affd391d37a0f413c261bd3caf573c6360e1")///<<<-------- change this to your metamask accounts
+        result = await clevis("send","0.10","0","0x3a48736d0e60b77e8fbe6791372091e1ba80c590")///<<<-------- change this to your metamask accounts
         printTxResult(result)
 
-
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/burner.json")
-        printTxResult(result)
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/burner.json")
-        printTxResult(result)
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffidai.json")
-        printTxResult(result)
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffidai.json")
-        printTxResult(result)
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x34aA3F359A9D614239015126635CE7732c18fDF3","https://badges.xdai.io/ethdenver/v1/json/buffidai.json")
+        result = await clevis("send","0.001","0","0x0876a604b2e4455fdfee24f042e1c95cb8cd4603")///<<<-------- change this to your metamask accounts
         printTxResult(result)
 
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa0ddb01deab4f240cf6dad304e50b58085055372","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
-        printTxResult(result)
-
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa0ddb01deab4f240cf6dad304e50b58085055372","https://badges.xdai.io/ethdenver/v1/json/gitcoin.json")
-        printTxResult(result)
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0xa0ddb01deab4f240cf6dad304e50b58085055372","https://badges.xdai.io/ethdenver/v1/json/consensys.json")
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x75b459791dad37746ba60c8665a065e1255bff63","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
         printTxResult(result)
 
 
-                result = await clevis("send","0.10","0","0xa0ddb01deab4f240cf6dad304e50b58085055372")///<<<-------- change this to your metamask accounts
-                printTxResult(result)
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x0876a604b2e4455fdfee24f042e1c95cb8cd4603","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
+        printTxResult(result)
+
+
+        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x3a48736d0e60b77e8fbe6791372091e1ba80c590","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
+        printTxResult(result)
+
+        result = await clevis("send","0.10","0","0x75b459791dad37746ba60c8665a065e1255bff63")///<<<-------- change this to your metamask accounts
+        printTxResult(result)
 
 
       });
