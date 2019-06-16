@@ -44,6 +44,7 @@ import namehash from 'eth-ens-namehash'
 import RNMessageChannel from 'react-native-webview-messaging';
 
 import YourModule from './components/YourModule'
+import CollectiblesModule from './components/Collectibles'
 
 
 import bufficorn from './bufficorn.png';
@@ -68,7 +69,7 @@ let ERC20VENDOR
 let ERC20IMAGE
 let ERC20NAME
 let LOADERIMAGE = burnerlogo
-let HARDCODEVIEW = "yourmodule"// = "loader"// = "receipt"
+let HARDCODEVIEW = "main"// = "loader"// = "receipt"
 let FAILCOUNT = 0
 
 let mainStyle = {
@@ -88,7 +89,7 @@ let titleImage = (
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  //XDAI_PROVIDER = "http://localhost:8545"
+  XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
   if(true){
@@ -100,7 +101,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
     ERC20IMAGE = bufficorn
-    //XDAI_PROVIDER = "http://localhost:8545"
+    XDAI_PROVIDER = "http://localhost:8545"
     WEB3_PROVIDER = "http://localhost:8545";
     LOADERIMAGE = bufficorn
   }
@@ -453,10 +454,8 @@ class App extends Component {
 
     }
 
-
     //console.log(">>>>>>> <<< >>>>>> Looking into iframe...")
     //console.log(document.getElementById('galleassFrame').contentWindow['web3'])
-
     if(ERC20TOKEN&&this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown")){
       let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
       gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
@@ -537,8 +536,8 @@ class App extends Component {
   longPoll() {
     axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
      .then((response)=>{
-      //  let ethprice = response.data.data.quotes.USD.price
-      //  this.setState({ethprice})
+       let ethprice = response.data.data.quotes.USD.price
+       this.setState({ethprice})
      })
   }
   setPossibleNewPrivateKey(value){
@@ -1424,9 +1423,9 @@ render() {
                   <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
                   <div style={{cursor:"pointer"}} onClick={()=>{
-                    this.changeView('yourmodule')
+                    this.changeView('collectibles')
                   }}>
-                  <Balance icon={cypherpunk} selected={"YOURMODULE"} text={"YOURMODULE"} amount={8.16} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance icon={cypherpunk} selected={i18n.t('collectibles.title')} text={i18n.t('collectibles.title')} amount={8.16} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
                   </div>
                   {badgeDisplay}
@@ -1463,6 +1462,73 @@ render() {
                 />
               </div>
             );
+            case 'collectibles':
+            if(!this.state || !this.state.customLoader || !this.state.tx || !this.state.contracts || !this.state.network){
+              return <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+            }else{
+              return (
+                <div>
+                  <div className="send-to-address card w-100" style={{zIndex:1}}>
+                    <NavCard title={`${i18n.t('collectibles.title')} ${i18n.t('collectibles.from')}`} titleLink={""} goBack={this.goBack.bind(this)}/>
+                    <CollectiblesModule
+                      privateKey={metaAccount.privateKey}
+
+                      web3={this.state.web3}
+                      tx={this.state.tx}
+                      send={this.state.send}
+
+                      address={account}
+                      balance={balance}
+
+                      network={this.state.network}
+                      block={this.state.block}
+
+                      contracts={this.state.contracts}
+                      contractLoader={this.state.customLoader}
+
+                      mainnetweb3={this.state.mainnetweb3}
+                      xdaiweb3={this.state.xdaiweb3}
+
+                      daiContract={this.state.daiContract}
+                      ensContract={this.state.ensContract}
+                      ensLookup={this.ensLookup.bind(this)}
+
+                      ethBalance={this.state.ethBalance}
+                      daiBalance={this.state.daiBalance}
+                      xdaiBalance={this.state.xdaiBalance}
+
+                      eth={eth}
+                      dai={dai}
+                      xdai={xdai}
+                      ERC20NAME={ERC20NAME}
+                      ERC20IMAGE={ERC20IMAGE}
+                      ERC20TOKEN={ERC20TOKEN}
+                      ERC20VENDOR={ERC20VENDOR}
+                      ethprice={this.state.ethprice}
+
+                      isVendor={this.state.isVendor}
+                      isAdmin={this.state.isAdmin}
+
+                      setGwei={this.setGwei}
+                      gwei={this.state.gwei}
+
+                      openScanner={this.openScanner.bind(this)}
+                      scannerState={this.state.scannerState}
+
+                      buttonStyle={buttonStyle}
+                      changeAlert={this.changeAlert}
+                      nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
+                      goBack={this.goBack.bind(this)}
+                      dollarDisplay={dollarDisplay}
+                    />
+                  </div>
+                  <Bottom
+                    text={"buttom button"}
+                    action={this.goBack.bind(this)}
+                  />
+                </div>
+              )
+            }
             case 'advanced':
             return (
               <div>
