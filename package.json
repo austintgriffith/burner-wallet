@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@aztec/contract-artifacts": "^1.8.1",
+    "@aztec/dev-utils": "1.10.0",
+    "@aztec/protocol": "0.8.1",
+    "aztec.js": "0.9.1",
+    "@aztec/secp256k1": "1.0.1",
     "autolinker": "^2.2.1",
     "axios": "^0.18.0",
     "base64url": "^3.0.1",

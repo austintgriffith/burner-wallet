@@ -41,6 +41,10 @@ import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 import incogDetect from './services/incogDetect.js'
 
+
+import Aztec from './components/Aztec';
+
+
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
 
@@ -1381,6 +1385,27 @@ render() {
 
 
                   {extraTokens}
+
+                  <Aztec {...this.state}
+                  convertToDollar={convertToDollar}
+                  dollarSymbol={dollarSymbol}
+                  parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                  openScanner={this.openScanner.bind(this)}
+                  scannerState={this.state.scannerState}
+                  ensLookup={this.ensLookup.bind(this)}
+                  ERC20TOKEN={ERC20TOKEN}
+                  buttonStyle={buttonStyle}
+                  balance={balance}
+                  web3={this.state.web3}
+                  address={account}
+                  send={send}
+                  goBack={this.goBack.bind(this)}
+                  changeView={this.changeView}
+                  setReceipt={this.setReceipt}
+                  changeAlert={this.changeAlert}
+                  dollarDisplay={dollarDisplay}
+                   />
+
 
                   <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
