@@ -380,6 +380,7 @@ class App extends Component {
     const devices = await sdk.getConnectedAccountDevices();
     const deviceAddress = devices.items[0].device.address;
     this.setState({abridgedSdk:sdk})
+    localStorage.setItem("abridgedAccount",accountAddress)
     console.log("++++++++++=========>>> deviceAddress",deviceAddress,"accountAddress",accountAddress)
   }
   componentDidMount(){
