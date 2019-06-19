@@ -800,7 +800,7 @@ export default class ScavengerHunt extends React.Component {
               <div>
                 <h3>Leader Board</h3>
                 {this.props.web3.utils.hexToString(this.state.status) == "Game Over" &&
-                  <h4 style={{backgroundColor: "#8762A6"}}>Winner: {this.state.winner} </h4>
+                  <h4 style={{backgroundColor: "#F76B1C", color:"#FFFFFF"}}>Winner: {this.state.winner} </h4>
                 }
                 <div className="content bridge row">
                   <div className="input-group">
