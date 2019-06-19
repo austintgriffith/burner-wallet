@@ -48,7 +48,7 @@ start the app:
 npm start
 ```
 
-### Meta Transaction Relay
+### Meta Transaction Relay (optional, not needed for regular dev)
 
 in a new terminal start the decentralized metatx relayer from Tabookey:
 ```
