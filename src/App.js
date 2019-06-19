@@ -330,7 +330,7 @@ class App extends Component {
   detectContext(){
     console.log("DETECTING CONTEXT....")
     //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
-    incogDetect((result)=>{
+    incogDetect(async (result)=>{
       if(result){
         console.log("INCOG")
         document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
@@ -339,7 +339,7 @@ class App extends Component {
         contextElement.innerHTML = 'INCOGNITO';
       }else if (typeof web3 !== 'undefined') {
         console.log("NOT INCOG",this.state.metaAccount)
-        if (window.web3 && window.web3.currentProvider && window.web3.currentProvider.isMetaMask === true) {
+        if (window.web3 && window.web3.currentProvider && window.web3.currentProvider.isMetaMask === true && window.web3.eth && typeof window.web3.eth.getAccounts == "function" && isArrayAndHasEntries(await window.web3.eth.getAccounts()))  {
           document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
           document.body.style.backgroundColor = "#ca6e28"
           var contextElement = document.getElementById("context")
@@ -2167,6 +2167,14 @@ let sortByBlockNumber = (a,b)=>{
     return 1
   }
   return 0
+}
+
+function isArrayAndHasEntries(array){
+  if (array === undefined || array.length == 0) {
+    // array empty or does not exist
+    return false;
+  }
+  return true;
 }
 
 export default App;
