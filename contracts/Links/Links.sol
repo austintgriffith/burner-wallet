@@ -1,10 +1,10 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
-import "tabookey-gasless/contracts/RelayRecipient.sol";
-import "tabookey-gasless/contracts/RecipientUtils.sol";
-import "../Vault/Vault.sol";
+import "node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "node_modules/openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
+import "node_modules/tabookey-gasless/contracts/RelayRecipient.sol";
+import "node_modules/tabookey-gasless/contracts/RecipientUtils.sol";
+import "Vault.sol";
 
 /// @title Send xDai/Eth with a link.
 /// @author Ricardo Rius  - <ricardo@rius.info>
@@ -135,7 +135,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         bytes32 _id,
         bytes memory _signature,
         bytes32 _claimHash,
-        address _destination
+        address payable _destination
     )
         public
         ifValidFund(_id)
@@ -227,7 +227,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         bytes32 _id,
         bytes memory _signature,
         bytes32 _claimHash,
-        address _destination
+        address payable _destination
     )
         private
         returns (bool)
@@ -237,7 +237,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         uint nonce = funds[_id].nonce;
         address token = funds[_id].token;
         uint amount = funds[_id].amount;
-        address sender = get_sender(); // Get sender for MetaTx instead of msg.sender
+        address payable sender = address(uint160(get_sender())); // Get sender for MetaTx instead of msg.sender
 
         assert(nonce < nonceId[_id]);
         // validate mutex/flag status
@@ -287,7 +287,7 @@ contract Links is Vault, RelayRecipient, RecipientUtils {
         public
         payable
     {
-        RelayHub(get_hub_addr()).depositFor.value(msg.value)(this);
+        RelayHub(get_hub_addr()).depositFor.value(msg.value)(address(this));
     }
 
     /// @dev decide whether this call should be allowed to called by a relay

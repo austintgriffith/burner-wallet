@@ -1,9 +1,9 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
-import "openzeppelin-solidity/contracts/token/ERC721/ERC721Enumerable.sol";
-import "openzeppelin-solidity/contracts/token/ERC721/ERC721MetadataMintable.sol";
-import "openzeppelin-solidity/contracts/token/ERC721/ERC721Metadata.sol";
+import "node_modules/openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
+import "node_modules/openzeppelin-solidity/contracts/token/ERC721/ERC721Enumerable.sol";
+import "node_modules/openzeppelin-solidity/contracts/token/ERC721/ERC721MetadataMintable.sol";
+import "node_modules/openzeppelin-solidity/contracts/token/ERC721/ERC721Metadata.sol";
 /**
  * @title Full ERC721 Token
  * This implementation includes all the required and some optional functionality of the ERC721 standard

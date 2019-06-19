@@ -1,8 +1,8 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
-import "../Vault/Vault.sol";
+import "node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "node_modules/openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
+import "Vault.sol";
 
 /// @title Send NFTs with a link.
 /// @author Ricardo Rius  - <ricardo@rius.info>
@@ -72,6 +72,7 @@ contract LinksNFT is Vault{
         public
         ifNotValidFund(_id)
         ifValidSig(_signature)
+        payable
         returns (bool)
     {
         address signer = ECDSA.recover(_id.toEthSignedMessageHash(),_signature);
@@ -111,7 +112,7 @@ contract LinksNFT is Vault{
         bytes32 _id,
         bytes memory _signature,
         bytes32 _claimHash,
-        address _destination
+        address payable _destination
     )
         public
         ifValidFund(_id)
@@ -184,7 +185,7 @@ contract LinksNFT is Vault{
         bytes32 _id,
         bytes memory _signature,
         bytes32 _claimHash,
-        address _destination
+        address payable _destination
     )
         private
         returns (bool)

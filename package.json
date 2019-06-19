@@ -49,7 +49,7 @@
     "react-stack-grid": "^0.7.1",
     "s3": "^4.4.0",
     "scrypt": "^6.0.3",
-    "tabookey-gasless": "0.3.3",
+    "tabookey-gasless": "^0.3.3-a",
     "web3": "1.0.0-beta.33"
   },
   "scripts": {
@@ -68,9 +68,10 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "clevis": "^0.1.4",
+    "chai": "^4.2.0",
+    "clevis": "^0.2.11",
     "mocha": "^5.2.0",
-    "openzeppelin-solidity": "2.0.0",
+    "openzeppelin-solidity": "^2.3.0",
     "webpack": "^4.28.4"
   }
 }

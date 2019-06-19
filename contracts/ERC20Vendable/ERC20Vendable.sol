@@ -1,7 +1,7 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "node_modules/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 contract ERC20Vendable is ERC20, Ownable {
   address public vendingMachine;
@@ -20,7 +20,7 @@ contract ERC20Vendable is ERC20, Ownable {
   }
 
   //to emulate how we send data with a transaction, we do that here on a token transfer to enable similar chat in the burner
-  function transferWithData(address to, uint256 value, bytes data) public returns (bool) {
+  function transferWithData(address to, uint256 value, bytes memory data) public returns (bool) {
     emit TransferWithData(msg.sender,to,value,data);
     return transfer(to, value);
   }
@@ -30,7 +30,7 @@ contract ERC20Vendable is ERC20, Ownable {
   //and we could make mint and burn onlyCreator.
   //However, to get the ERC20 contract deployed before we have all of the VendingMachine stuff ready,
   //the ability to change is required to allow us to keep iterating on the VendingMachine design
-  function changeVendingMachine(address newVendingMachine) onlyOwner {
+  function changeVendingMachine(address newVendingMachine) public onlyOwner {
     vendingMachine = newVendingMachine;
   }
 
