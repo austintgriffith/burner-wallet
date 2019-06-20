@@ -4,7 +4,7 @@ import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
 import gasless from 'tabookey-gasless';
-import { eth, dai, xdai } from '@burner-wallet/assets';
+import { eth, dai } from '@burner-wallet/assets';
 
 import i18n from './i18n';
 import './App.scss';
@@ -42,6 +42,7 @@ import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 import incogDetect from './services/incogDetect.js'
+import { mainAsset as xdai } from './core';
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
@@ -1345,7 +1346,7 @@ render() {
               <Balance
                 icon={xdaiImg}
                 selected={false}
-                text="xdai"
+                text={xdai.name}
                 amount={this.state.xdaiBalance}
                 address={account}
                 dollarDisplay={dollarDisplay}
@@ -1391,7 +1392,7 @@ render() {
                   <Balance
                     icon={xdaiImg}
                     selected={selected}
-                    text="xDai"
+                    text={xdai.name}
                     amount={this.state.xdaiBalance}
                     address={account}
                     dollarDisplay={dollarDisplay}

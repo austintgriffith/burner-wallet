@@ -11,8 +11,11 @@ What we need is a way to exchange an intuitive currency like DAI using a simple 
 
 ### Contributing as a Developer/Designer
 
+assuming you have [nodejs](https://nodejs.org/en/download/) and [git](https://git-scm.com/downloads) already installed...
+
 you'll need ganache installed and running
 ```
+npm install -g ganache-cli
 ganache-cli
 ```
 
