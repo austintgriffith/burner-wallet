@@ -1,172 +1,117 @@
-🔥👛Burner Wallet to move xDai quickly in a web browser. Sweep to cold storage when you get home. 🏠👨🏻‍🚒 [https://xdai.io](https://xdai.io)
+# Plasma Burner Wallet 🔥
 
-Read the full article here:
-[Ethereum in Emerging Economies - Mass adoption will start where decentralization is necessary](https://medium.com/@austin_48503/ethereum-in-emerging-economies-b235f8dac2f2)
+> A secure Plasma web wallet for super fast money transfers.
 
-Unfortunately, it is especially difficult to onboard new users because our ecosystem has such a steep learning curve. Traditional wallets put a huge burden on the user to understand a new currency and deal with seed phrases.
+## Installation
 
-What we need is a way to exchange an intuitive currency like DAI using a simple and ubiquitous platform like the mobile web browser.
+The Plasma Burner Wallet runs on LeapDAO's test network. Installation should be
+simple and straight forward:
 
-[![burnerwalletvideosplash](https://user-images.githubusercontent.com/2653167/50697319-23033280-0fff-11e9-8891-77965ecf1fcf.jpg)](https://youtu.be/k1Ssz1dvcpk)
-
-### Contributing as a Developer/Designer
-
-you'll need ganache installed and running
-```
-ganache-cli
+```bash
+$ git clone git@github.com:leapdao/burner-wallet.git
+$ npm i
+$ npm run start
 ```
 
-clone the burner wallet repo
-```
-git clone https://github.com/austintgriffith/burner-wallet.git
-cd burner-wallet
-```
+If you're experiencing issues in relation to HTTP, you can start the burner on
+HTTPS by running:
 
-initialize burner:
-```
-npx clevis init
-```
-(You'll need to hit enter a few times to specify some config directories.)
-
-install burner:
-```
-npm i
+```bash
+$ HTTPS=true npm run start
 ```
 
-link clevis 
-```
-alias clevis='./node_modules/clevis/bin.js'
-```
+## Contributing
 
-compile, deploy, test, and inject all contracts in the frontend:
-```
-clevis test full
-```
+LeapDAO is an open source community bringing scalability to Ethereum using
+Plasma. LeapDAO is a mixture of Holocracy and multi-signature wallets. For
+every issue that has a "bounty" label attached , you can earn DAI by doing the
+work and subsequently requesting payouts in LeapDAO's Slack. To start working,
+please sign up under [this
+link](https://docs.google.com/forms/d/e/1FAIpQLSd8_wDGDAi__HvfYEWNK_bvJzIkxwHHRVL6AFEfJewBd2Vn9A/viewform).
 
-start the app:
-```
-npm start
-```
+## Why fork upstream?
 
-### Meta Transaction Relay
+[We believe that Plasma is superior to POA networks.](https://medium.com/@timdaub/why-you-shouldnt-ship-to-a-poa-network-7e2b5aa83aa9)
 
-in a new terminal start the decentralized metatx relayer from Tabookey:
-```
-./startLocalRelay.sh
-```
+## Philosophy
 
-then deploy and test 
-```
-clevis test withrelay
-```
+Most cryptowallets suck! Hardware and software wallets alike. They require you
+to note down seed phrases and protect those and your device from malicious
+actors. Keeping large sums of your money in crypto today is a stressful and
+scary experience.
 
-### WTF is Clevis? (It's like truffle and drizzle I think.)
+![alt text](https://raw.githubusercontent.com/leapdao/burner-wallet/master/assets/maximalists.jpeg)
 
-Clevis is used to compile, deploy, and test the smart contracts. It is mainly for orchestration, but it also injects all the contracts into the Dapparatus (frontend). 
+Hence it is no surprise that Bitcoin maximalists eat paleo and arm themselves,
+as after all they'll only survive late-stage capitalism and what's to come by
+being able to defend themselves. 
 
-[clevis docs](https://github.com/austintgriffith/clevis):
+But is "Trust no one" really a sustainable and efficient way to build the
+society we'd like to life in? We don't think so!
 
+The burner-wallet by Austin Griffith was created out of the need to have a
+quick and easy way to pay your friends in crypto. Since then, Austin and
+his team of voluntary contributors have done an amazing job in building out
+UX-features that allow us to spend money easily and on-board even non-crypto
+friends quickly. In building the wallet, Austin deliberately ignored all the
+noise that is out there and focused on what truly provides value to his users.
+A simple to use, lightweight web wallet. It is this that makes the burner-wallet
+non-compatible to web3 dapps and most ERC20 tokens. Unfortunately, it's also
+the reason why there was less focus on security.
 
-### Testing locally
+The problem that's arising through this however is that while you might
+be able to use it as your daily driver to send money to your friends quickly,
+it doesn't resolve the now decade old problem of nobody wanting to be their own
+bank.
 
-Take a look at `tests/clevis.js`, the `metamask()` function in particular, to give your MetaMask accounts some ETH when you run the full test.
+Surely, it is tempting to be in full control of everything you own such that
+not even the state can seize your capital. Unfortunately though, it's as
+tempting as it is scary!
 
-# Original Video
+After all of Austin's evaluation and testing at crypto conferences however,
+we've come to the conclusion that there's indeed a way to store crypto securely
+and with peace of mind.
 
-[![burnerwalletscreencast](https://user-images.githubusercontent.com/2653167/48286964-83715b80-e424-11e8-9fc3-a1260bfb4a00.png)](https://youtu.be/KkOyrEvYqO8)
+Much of our today's world is built on trust. Unfortunately though, much of our
+trust has been put into large institutions that nowadays concentrate huge
+amounts of power. Today there's "system-critical" banks, nation states, federal
+reserves, social media giants and a fragile power grids.  We've built these
+systems in a centralized fashion because we believed that meant efficiency and
+safety for us all.
 
-Here are two phones exchanging value in a matter of seconds using burners:
+Many times in history however, we've had to learn the hard way that
+concentrating risk and power in nuclear reactors, particular cities or even
+sympathic leaders can and will lead to catastrophic outcomes for humanity as a
+whole.
 
-![burnerwalletdemo](https://user-images.githubusercontent.com/2653167/48271785-5dcf5c80-e3fa-11e8-98fb-143de75df7aa.gif)
+It is this collective memory, we think is the driver for decentralization and
+all it's related memes. And it is you the reader of this document, that
+intuitively was driven towards Bitcoin and cryptocurrencies, because you've
+intuitively understood that what's happening in the crypto space is not just
+"for the lols", but actually really important for us all!
 
-One mobile phone can send DAI to another in 5 seconds with a simple QR code scan without any wallet download, this works on web browsers. Users can even send value through messaging services like WhatsApp with a simple link!
+And so now you might be thinking: OK, get to be point, this is just a GitHub
+repo with a bunch of code, loser. And while you might be right, we believe it
+is also a chance to show the world that cryptocurrencies can indeed have a
+great user experience without compromising safety.
 
-The Burner Wallet runs on the xDai sidechain from POA. Since it is in DAI, a dApp can simply refer to amounts in USD. Plus, block times take 5 seconds and gas costs are virtually abstracted because they are so cheap and paid in DAI. Finally, the bridge between xDai and DAI/ETH is as simple as sending tokens to a specific address. 
+It's now 2019, and so we've had enough time to get familiar with the
+technology. We can now confidentially say what's "good" and what's "bad", and
+yet still we pad ourselves on the backs for being "unopinionated". We'd like to
+argue that it's time to stop!
 
-A burner wallet is automatically generated upon visiting https://xdai.io and your private key is stored in a cookie so it will be there when you come back. However, you should sweep any value you hold to a cold wallet regularly and burn your ephemeral private key. A burner wallet is analogous to cash; you won't carry too much because it can be lost but it's astonishingly easy to exchange. 
+If we want to on-board our friends and families to crypto currencies now
+safely, and if we want them to use software backed by strong ethics, we'd like
+to argue that it's now time to change our attitude and become opinionated.
 
-This can also be very handy in everyday use even for the crypto-initiated. If you are share a Lyft or a pizza with a friend and want to split the cost, just shoot their QR code with your camera and it will open up a new burner wallet to exchange value with them. Just don't forget to sweep to cold storage and burn your key when you get home!
+Hence, we'd like to build the Plasma burner-wallet according to a set of strong
+engineering principles to guarantee safety, performance and robustness while
+steadily making improvements in user experience. At this point, there's no
+easily skimmeable list of engineering principles we're promoting. In the future
+there might be. For now though, we'd like to encourage you to think for
+yourself why you're contributing to crypto and why you believe it will matter
+in the future.
 
-Here is a follow up video to show how to go from fiat to DAI to xDai and back:
-[![onrampscreencast](https://user-images.githubusercontent.com/2653167/48295187-cb08df00-e446-11e8-9506-ff74a6d19604.png)](https://youtu.be/sbHIyDMpqyY)
+## License
 
-----------
-
-
-#### Docker Dev Version
-
-You will want to fork this repo and then clone it down. Since I own the repo I'll just clone it:
-```
-cd ~;git clone https://github.com/austintgriffith/burner-wallet.git
-```
-
-Then, fire up a Docker container with your environment all prepared for you:
-```
-docker run -ti --rm --name clevis -p 3000:3000 -p 8545:8545 -p 18462:18462 -v ~/burner-wallet:/dapp austingriffith/clevis:latest
-```
-Note: You will be prompted for directories to store things, just use the defaults (hit enter):
-![image](https://user-images.githubusercontent.com/2653167/48425351-e4997780-e721-11e8-9228-f8e28d69704c.png)
-
-This will take a while. Eventually it will stand up React, Ganache, and Clevis. (Note: make sure you don't have anything running on port 3000 or 8545 already)
-
-If you visit http://localhost:3000 you will see an initial error that React is missing the injected contracts. To compile, deploy, and inject those contract, run:
-```
-🗜️ Clevis:/dapp 🗜️ clevis test full
-```
-
-Don't forget to point your MetaMask at the local RPC endpoint (http://localhost:8545):
-![image](https://user-images.githubusercontent.com/2653167/48443559-c007c480-e74e-11e8-9c23-5421785a1016.png)
-
-You can view and edit the code with your IDE of choice within the terminal (not from inside Docker container):
-```
-atom ~/burner-wallet
-```
-
-To bring up the relayer, you will want to set your http endpoint:
-```
-🗜️ Clevis:/dapp 🗜️ echo 'http://0.0.0.0:8545' > relayhttpprovider.env
-🗜️ Clevis:/dapp 🗜️ node xdairelay.js
-```
-
-To follow your React logs you run:
-```
-tail -f react.log
-```
-
-To follow your ganache/geth logs:
-```
-tail -f geth.log
-```
-
-If you would like to give your intial account some eth to start out:
-```
-🗜️ Clevis:/dapp 🗜️ clevis send 5 0 ***YOUR_ETH_ADDRESS***
-```
-
-Or better yet, edit the tests/clevis.js to send you xDai every time you run the test suite:
-![image](https://user-images.githubusercontent.com/2653167/48427338-c3d32100-e725-11e8-8751-fda17b113fad.png)
-
-Then run:
-```
-clevis test full
-```
-
-Your frontend should automatically reload and your account should have xDai:
-![image](https://user-images.githubusercontent.com/2653167/48427446-f54bec80-e725-11e8-9248-6f6cf9145a52.png)
-
-
---------
-
-
-
-Are you a developer or designer that would like to help build the next iteration of the 🔥👛Burner Wallet👛🔥? Here is a short intro video to explain how to get started:
-
-[![onrampscreencast](https://user-images.githubusercontent.com/2653167/48449772-ee8e9b00-e760-11e8-93dd-ab2105a1c28d.png)](https://youtu.be/bAHluAuyLqo)
-
-To learn more about Clevis and Dapparatus check out some of the following articles:
-
-[https://github.com/austintgriffith/clevis](https://github.com/austintgriffith/clevis)
-[https://github.com/austintgriffith/dapparatus](https://github.com/austintgriffith/dapparatus)
-[https://medium.com/@austin_48503/buidlguidl-0x0-clevis-dapparatus-533936a8236a](https://medium.com/@austin_48503/buidlguidl-0x0-clevis-dapparatus-533936a8236a)
-[https://medium.com/@austin_48503/buidlguidl-0x1-guidlcoin-3be30c6ac76f](https://medium.com/@austin_48503/buidlguidl-0x1-guidlcoin-3be30c6ac76f)
-[https://medium.com/@austin_48503/%EF%B8%8Fclevis-blockchain-orchestration-682d2396aeef](https://medium.com/@austin_48503/%EF%B8%8Fclevis-blockchain-orchestration-682d2396aeef)
+MIT
