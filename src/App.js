@@ -339,18 +339,23 @@ class App extends Component {
         contextElement.innerHTML = 'INCOGNITO';
       }else if (typeof web3 !== 'undefined') {
         console.log("NOT INCOG",this.state.metaAccount)
-        if (window.web3 && window.web3.currentProvider && window.web3.currentProvider.isMetaMask === true && window.web3.eth && typeof window.web3.eth.getAccounts == "function" && isArrayAndHasEntries(await window.web3.eth.getAccounts()))  {
-          document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
-          document.body.style.backgroundColor = "#ca6e28"
-          var contextElement = document.getElementById("context")
-          contextElement.innerHTML = 'METAMASK';
-        } else if(this.state.account && !this.state.metaAccount) {
-          console.log("~~~*** WEB3",this.state.metaAccount,result)
-          document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
-          document.body.style.backgroundColor = "#305582"
-          var contextElement = document.getElementById("context")
-          contextElement.innerHTML = 'WEB3';
+        try{
+          if (window.web3 && window.web3.currentProvider && window.web3.currentProvider.isMetaMask === true && window.web3.eth && typeof window.web3.eth.getAccounts == "function" && isArrayAndHasEntries(await window.web3.eth.getAccounts()))  {
+            document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
+            document.body.style.backgroundColor = "#ca6e28"
+            var contextElement = document.getElementById("context")
+            contextElement.innerHTML = 'METAMASK';
+          } else if(this.state.account && !this.state.metaAccount) {
+            console.log("~~~*** WEB3",this.state.metaAccount,result)
+            document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
+            document.body.style.backgroundColor = "#305582"
+            var contextElement = document.getElementById("context")
+            contextElement.innerHTML = 'WEB3';
+          }
+        }catch(ee){
+          console.log("CONTEXT ERR",ee)
         }
+        console.log("done with context")
       }
     })
   }
@@ -593,11 +598,20 @@ class App extends Component {
             this.changeView('withdraw_from_private')
           })
         }else{
-          this.setState({possibleNewPrivateKey:false,newPrivateKey:this.state.possibleNewPrivateKey})
+
           localStorage.setItem(this.state.account+"loadedBlocksTop","")
           localStorage.setItem(this.state.account+"recentTxs","")
           localStorage.setItem(this.state.account+"transactionsByAddress","")
-          this.setState({recentTxs:[],transactionsByAddress:{},fullRecentTxs:[],fullTransactionsByAddress:{}})
+          this.setState({
+            possibleNewPrivateKey:false,
+            newPrivateKey:this.state.possibleNewPrivateKey,
+            recentTxs:[],
+            transactionsByAddress:{},
+            fullRecentTxs:[],
+            fullTransactionsByAddress:{},
+            safe:""
+          })
+
         }
       }
     }else{
@@ -1798,6 +1812,7 @@ render() {
                       localStorage.setItem(this.state.account+"loadedBlocksTop","")
                       localStorage.setItem(this.state.account+"metaPrivateKey","")
                       localStorage.setItem(this.state.account+"recentTxs","")
+                      localStorage.setItem(this.state.account+"safe","")
                       localStorage.setItem(this.state.account+"transactionsByAddress","")
                       this.setState({recentTxs:[],transactionsByAddress:{}})
                     }
@@ -1959,6 +1974,7 @@ render() {
         newPrivateKey={this.state.newPrivateKey}
         fallbackWeb3Provider={WEB3_PROVIDER}
         onUpdate={async (state) => {
+          console.log("Dapparatus update",state)
           //console.log("DAPPARATUS UPDATE",state)
           if(ERC20TOKEN){
             delete state.balance
