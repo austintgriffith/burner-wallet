@@ -6,7 +6,9 @@
 
 💸 Press the `[Request]` button to instantly create a popup point-of-sale system and have a QR code to display in the window of your shop. Patrons can send you funds with [a simple scan in seconds](https://youtu.be/neZeaXAnkAg).
 
-🏦 Press the ‘[Exchange]’ button to move ETH or DAI that you sent to your burner into [xDai](https://poa.network/xdai). 
+🏦 Press the `[Exchange]` button to move ETH or DAI that you sent to your burner into [xDai](https://poa.network/xdai). 
+
+🔗 Press the `[Link]` button to send value in a link over chat or QR scan in person. We use a decentralized meta transaction relay system so the receiving party doesn't need to have a wallet or gas to claim.
 
 🗝️ If you would like more permanence, press the [Advanced] button and [use a short pass phrase](https://youtu.be/3zAFo-8p_tg?t=48) to seed a keypair. 
 
@@ -216,6 +218,7 @@ To learn more about Clevis and Dapparatus check out some of the following articl
 [https://medium.com/@austin_48503/buidlguidl-0x0-clevis-dapparatus-533936a8236a](https://medium.com/@austin_48503/buidlguidl-0x0-clevis-dapparatus-533936a8236a)
 [https://medium.com/@austin_48503/buidlguidl-0x1-guidlcoin-3be30c6ac76f](https://medium.com/@austin_48503/buidlguidl-0x1-guidlcoin-3be30c6ac76f)
 [https://medium.com/@austin_48503/%EF%B8%8Fclevis-blockchain-orchestration-682d2396aeef](https://medium.com/@austin_48503/%EF%B8%8Fclevis-blockchain-orchestration-682d2396aeef)
+
 
 
 
