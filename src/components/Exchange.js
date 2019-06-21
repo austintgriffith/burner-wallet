@@ -14,20 +14,8 @@ import {
 } from 'rimble-ui'
 
 import 'react-phone-number-input/style.css'
-import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 
-import {
-  Unspent,
-  Tx,
-  Input,
-  Output,
-  Outpoint,
-  OutpointJSON,
-  Type,
-  LeapTransaction,
-  helpers,
-  Exit,
-} from 'leap-core';
+import { Exit } from 'leap-core';
 
 import { fromRpcSig } from 'ethereumjs-util';
 import { bi, add, divide } from 'jsbi-utils';
@@ -828,15 +816,6 @@ export default class Exchange extends React.Component {
       }}>
         <i className="fas fa-times"/> {i18n.t('cancel')}
       </BorderButton>
-    let xdaiCancelButton = (
-      <span style={{padding:10,whiteSpace:"nowrap"}}>
-        <a href="#" style={{color:"#000000"}} onClick={()=>{
-          this.setState({amount:""})
-        }}>
-          <i className="fas fa-times"/> {i18n.t('cancel')}
-        </a>
-      </span>
-    )
     let bityCancelButton = (
       <span style={{padding:10,whiteSpace:"nowrap"}}>
         <a href="#" style={{color:"#000000"}} onClick={()=>{
