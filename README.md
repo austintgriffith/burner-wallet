@@ -48,7 +48,7 @@ clevis test full
 
 start the app:
 ```
-npm start
+npm run start-local
 ```
 
 ### Meta Transaction Relay (optional, not needed for regular dev)

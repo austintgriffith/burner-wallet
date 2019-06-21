@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@burner-wallet/assets": "0.0.4",
-    "@burner-wallet/core": "0.0.6",
+    "@burner-wallet/core": "0.0.10",
     "autolinker": "^2.2.1",
     "axios": "^0.18.0",
     "base64url": "^3.0.1",
@@ -54,6 +54,7 @@
   },
   "scripts": {
     "start": "PORT=3000 react-scripts start",
+    "start-local": "PORT=3000 REACT_APP_MODE=local react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
