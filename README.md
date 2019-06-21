@@ -12,7 +12,7 @@
 
 🗝️ If you would like more permanence, press the [Advanced] button and [use a short pass phrase](https://youtu.be/3zAFo-8p_tg?t=48) to seed a keypair. 
 
-💬 Did you know there is also native, [burner-to-burner encrypted chat](https://www.youtube.com/watch?v=k1Ssz1dvcpk)?
+💬 Did you know there is also native, [burner-to-burner encrypted chat](https://www.youtube.com/watch?v=k1Ssz1dvcpk&feature=youtu.be&t=558)?
 
 🌮 The Burner Wallet was [used at ETHDenver](https://medium.com/gitcoin/burner-wallet-at-ethdenver-was-faa3851ea833) by participants to purchase 4405 meals, we off-ramped $38,432.56 in DAI to the food trucks, and the total cost of transactions on [xDai](https://poa.network/xdai) was $0.20! 
 
