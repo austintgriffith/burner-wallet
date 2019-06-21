@@ -8,7 +8,7 @@
 
 🏦 Press the `[Exchange]` button to move ETH or DAI that you sent to your burner into [xDai](https://poa.network/xdai). 
 
-🔗 Press the `[Link]` button to send value in a link over chat or QR scan in person. We use a decentralized meta transaction relay system so the receiving party doesn't need to have a wallet or gas to claim.
+🔗 Press the `[Link]` button to send value in a link over chat or QR scan in person. We use a [decentralized meta transaction relay system](https://medium.com/tabookey/1-800-ethereum-gas-stations-network-for-toll-free-transactions-4bbfc03a0a56) so the receiving party doesn't need to have a wallet or gas to claim.
 
 🗝️ If you would like more permanence, press the [Advanced] button and [use a short pass phrase](https://youtu.be/3zAFo-8p_tg?t=48) to seed a keypair. 
 
