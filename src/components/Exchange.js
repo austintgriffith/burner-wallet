@@ -1,19 +1,17 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
+import Ruler from "./Ruler";
 import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
 import Web3 from 'web3';
 import i18n from '../i18n';
 import {
-  Button,
   Flex,
   Box,
   OutlineButton,
   Input as RInput,
-  Field
+  Field,
 } from 'rimble-ui'
-
-import 'react-phone-number-input/style.css'
 
 import { Exit } from 'leap-core';
 
@@ -21,7 +19,8 @@ import { fromRpcSig } from 'ethereumjs-util';
 import { bi, add, divide } from 'jsbi-utils';
 import getConfig from "../config";
 import { PrimaryButton, BorderButton } from "./Buttons";
-import { authenticate, verifyNumber, placeOrder, calculateEstimate } from '../services/bity';
+import { placeOrder, calculateEstimate } from '../services/bity';
+import bityLogo from '../assets/bity.png';
 
 const CONFIG = getConfig();
 const BN = Web3.utils.BN
@@ -96,7 +95,6 @@ export default class Exchange extends React.Component {
       xdaiMetaAccount: xdaiMetaAccount,
       daiToXdaiMode: false,
       ethToDaiMode: false,
-      bityView: 'exchange',
       bityName: '',
       bityAccountNumber: '',
       bity: {
@@ -599,29 +597,6 @@ export default class Exchange extends React.Component {
     }, 5000)
   }
 
-  authenticateWithPhoneNumber() {
-    const { phoneNumber } = this.state
-
-    authenticate(phoneNumber).then(result => {
-      this.setState({
-        bityPhoneToken: result.phone_token,
-        bityView: 'tan'
-      })
-    }).catch(err => console.log('Error ', err))
-
-  }
-
-  validateNumber() {
-    verifyNumber({tan: this.state.bityVerificationCode, token: this.state.bityPhoneToken}).then(() => {
-      this.setState({
-        bityView: 'exchange'
-      })
-      // localStorage.setItem('phoneNumber', this.state.phoneNumber);
-      // localStorage.setItem('bityToken', this.state.bityPhoneToken);
-    }).catch(err => console.log('Error ', err))
-
-  }
-
   async sendEth(){
     const { 
       ethSendAmount,
@@ -816,15 +791,6 @@ export default class Exchange extends React.Component {
       }}>
         <i className="fas fa-times"/> {i18n.t('cancel')}
       </BorderButton>
-    let bityCancelButton = (
-      <span style={{padding:10,whiteSpace:"nowrap"}}>
-        <a href="#" style={{color:"#000000"}} onClick={()=>{
-          this.setState({bityView:'default'})
-        }}>
-          <i className="fas fa-times"/> {i18n.t('cancel')}
-        </a>
-      </span>
-    )
 
     let buttonsDisabled = (
       daiToXdaiMode==="sending" || daiToXdaiMode==="withdrawing" || daiToXdaiMode==="depositing" ||
@@ -1501,73 +1467,6 @@ export default class Exchange extends React.Component {
 
     }
 
-    let bitlyRow = ""
-    if (this.state.bityView === 'exchange') {
-      bitlyRow = (
-      <div className="content ops row">
-            <div className="col-12 p-1">
-              <p className="mb-3">[Add info here]</p>
-              <Scaler config={{startZoomAt: 400, origin: "50% 50%"}}>
-              <div className="input-group">
-                <RInput width={1} placeholder="Your Name" value={this.state.bityName} onChange={e => this.updateState('bityName', e.target.value)} />
-              </div>
-              </Scaler>
-            </div>
-            <div className="col-12 p-1">
-              <Scaler config={{startZoomAt: 400, origin: "50% 50%"}}>
-              <div className="input-group">
-                <RInput width={1} placeholder="Bank Account Number" value={this.state.bityAccountNumber} onChange={e => this.updateState('bityAccountNumber', e.target.value)} />
-              </div>
-              </Scaler>
-            </div>
-            <div className="col-4 p-1">
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <div className="input-group">
-                <RInput
-                  width={1}
-                  step="0.1"
-                  type="number"
-                  placeholder="Amount in ETH"
-                  value={this.state.amount}
-                  onChange={event => this.handleEstimate(event.target.value)} />
-              </div>
-              </Scaler>
-            </div>
-            <div className="col-3 p-1">
-              <Scaler config={{startZoomAt:650,origin:"0% 85%"}}>
-              {bityCancelButton}
-              </Scaler>
-            </div>
-            <div className="col-5 p-1">
-              <Button
-                disabled={buttonsDisabled || this.state.bity.amountInEth <= 0}
-                onClick={()=>{
-                  this.placeOrder();
-                console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
-              }}>
-                <Scaler config={{startZoomAt:600,origin:"10% 50%"}}>
-                  <i className="fas fa-arrow-up" /> Send
-                </Scaler>
-              </Button>
-
-            </div>
-          </div>
-          );
-    } else {
-      bitlyRow = (
-        <Flex width={1} px={3}>
-            <Button width={1} mr={2} icon={'ArrowUpward'} onClick={()=>{
-                this.setState({ bityView: 'exchange' })
-            }}>
-              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                Exchange via Bity
-              </Scaler>
-            </Button>
-        </Flex>
-      )
-          }
-
-
     let sendDaiButton = (
       <OutlineButton
         width={1}
@@ -1884,11 +1783,28 @@ export default class Exchange extends React.Component {
           </div>
 
           {sendEthRow}
+          
+          <Ruler />
 
-          <div className="main-card card w-100">
-          {bitlyRow}
-          </div>
-
+          <div className="content ops row" style={{paddingBottom:20}}>
+            <div className="col-2 p-1">
+              <img style={logoStyle} src={bityLogo} alt="bity logo" />
+            </div>
+            <div className="col-10 p-1" style={{marginTop:10}}>
+            <PrimaryButton
+              width={1}
+              mr={2}
+              icon={'ArrowForward'}
+              disabled={buttonsDisabled}
+              onClick={()=>{
+                this.props.changeView("cashout");
+            }}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+                Your Bank Account
+              </Scaler>
+            </PrimaryButton>
+           </div>
+        </div>
       </Box>
     )
   }

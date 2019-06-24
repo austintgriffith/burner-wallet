@@ -10,6 +10,7 @@ import Header from './components/Header';
 import NavCard from './components/NavCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
+import Cashout from './components/Cashout';
 import WithdrawFromPrivate from './components/WithdrawFromPrivate';
 import RequestFunds from './components/RequestFunds';
 import Receive from './components/Receive'
@@ -903,6 +904,29 @@ export default class App extends Component {
                       />
                     </div>
                   );
+                  case 'cashout':
+                    return (
+                      <div>
+                        {this.state.scannerOpen ? sendByScan : null}
+                        <Card>
+                          <NavCard title="Transfer to your Bank Account" goBack={this.goBack.bind(this)}/>
+                          <div>
+                            <Balance
+                              icon={eth}
+                              selected={selected}
+                              text={"ETH"}
+                              amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)}
+                              address={account}
+                              dollarDisplay={dollarDisplay} />
+                          </div>
+                          <Cashout />
+                        </Card>
+                        <Bottom
+                          text={i18n.t('done')}
+                          action={this.goBack.bind(this)}
+                        />
+                      </div>
+                    );
                   case 'advanced':
                   return (
                     <div>
@@ -1195,6 +1219,7 @@ export default class App extends Component {
                           isAdmin={this.state.isAdmin}
                           buttonStyle={buttonStyle}
                           changeAlert={this.changeAlert}
+                          changeView={this.changeView}
                           setGwei={this.setGwei}
                           network={this.state.network}
                           tx={this.state.tx}
