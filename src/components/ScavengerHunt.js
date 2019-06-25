@@ -828,11 +828,9 @@ export default class ScavengerHunt extends React.Component {
           <Ruler/>
 
           <div className="content bridge row">
-            <div className="col-4 p-1">
-            </div>
-            <div className="col-4 p-1">
-            <div style={{padding:15,textAlign:'center'}}>
-            <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
+            <div className="col-2 p-1"></div>
+            <div className="col-8 p-1">
+              <button className="btn btn-large w-100" style={this.props.buttonStyle.secondary} onClick={()=>{
                 let toAddress = this.state.YourContract._address
                 let amount = "1"
                 this.props.send(toAddress, amount, 120000,"0x00", (result) => {
@@ -842,9 +840,17 @@ export default class ScavengerHunt extends React.Component {
                 })
               }}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  <i className="fas fa-arrow-circle-down"></i> {"deposit 1 to pot"}
+                  <i className="fas fa-arrow-circle-down"></i> {"Deposit 1 to pot"}
                 </Scaler>
               </button>
+            </div>
+            <div className="col-2 p-1"></div>
+          </div>
+          <div className="content bridge row">
+            <div className="col-4 p-1">
+            </div>
+            <div className="col-4 p-1">
+            <div style={{padding:15,textAlign:'center'}}>
               Your contract is
               <Blockie
                 address={this.state.YourContract._address}
