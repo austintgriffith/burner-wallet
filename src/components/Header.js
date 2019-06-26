@@ -9,8 +9,6 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     sendButtonOpacity = 0
   }
 
-
-
   let name = ens
   if(!name){
     name = address.substring(2,8)
@@ -104,11 +102,23 @@ export  default ({openScanner, network, total, dollarDisplay, ens, title, titleI
     </div>
   )
 
+  let lossWarning = ""
+  /*
+  let context = document.getElementById("context").innerHTML
+  console.log("context",context,"balance",balance)
+  if(context=="INCOGNITO" && balance>0){
+    lossWarning =  (
+      <div style={{marginTop:50, fontSize:28}}>
+        WARNING: If you close this window you will lose these funds.
+      </div>
+    )
+  }*/
 
   return (
     <div className="header" style={{opacity}}>
       {topLeft}
       {topRight}
+      {lossWarning}
       {bottomRight}
     </div>
   )

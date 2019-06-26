@@ -3,8 +3,10 @@ import { ContractLoader, Dapparatus, Transactions, Gas, Address, Events, Scaler,
 import Web3 from 'web3';
 import axios from 'axios';
 import { I18nextProvider } from 'react-i18next';
-import i18n from './i18n';
 import gasless from 'tabookey-gasless';
+import { eth, dai } from '@burner-wallet/assets';
+
+import i18n from './i18n';
 import './App.scss';
 import Header from './components/Header';
 import NavCard from './components/NavCard';
@@ -42,15 +44,17 @@ import namehash from 'eth-ens-namehash'
 import incogDetect from './services/incogDetect.js'
 import gnosis from './gnosis.jpg';
 import Safe from './components/Safe'
+import { mainAsset as xdai } from './core';
+
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
 
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
-import eth from './ethereum.png';
-import dai from './dai.jpg';
-import xdai from './xdai.jpg';
+import ethImg from './images/ethereum.png';
+import daiImg from './images/dai.jpg';
+import xdaiImg from './images/xdai.jpg';
 import Wyre from './services/wyre';
 
 let base64url = require('base64url')
@@ -330,7 +334,7 @@ class App extends Component {
   detectContext(){
     console.log("DETECTING CONTEXT....")
     //snagged from https://stackoverflow.com/questions/52759238/private-incognito-mode-detection-for-ios-12-safari
-    incogDetect((result)=>{
+    incogDetect(async (result)=>{
       if(result){
         console.log("INCOG")
         document.getElementById("main").style.backgroundImage = "linear-gradient(#862727, #671c1c)"
@@ -339,18 +343,23 @@ class App extends Component {
         contextElement.innerHTML = 'INCOGNITO';
       }else if (typeof web3 !== 'undefined') {
         console.log("NOT INCOG",this.state.metaAccount)
-        if (window.web3 && window.web3.currentProvider && window.web3.currentProvider.isMetaMask === true) {
-          document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
-          document.body.style.backgroundColor = "#ca6e28"
-          var contextElement = document.getElementById("context")
-          contextElement.innerHTML = 'METAMASK';
-        } else if(this.state.account && !this.state.metaAccount) {
-          console.log("~~~*** WEB3",this.state.metaAccount,result)
-          document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
-          document.body.style.backgroundColor = "#305582"
-          var contextElement = document.getElementById("context")
-          contextElement.innerHTML = 'WEB3';
+        try{
+          if (window.web3 && window.web3.currentProvider && window.web3.currentProvider.isMetaMask === true && window.web3.eth && typeof window.web3.eth.getAccounts == "function" && isArrayAndHasEntries(await window.web3.eth.getAccounts()))  {
+            document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
+            document.body.style.backgroundColor = "#ca6e28"
+            var contextElement = document.getElementById("context")
+            contextElement.innerHTML = 'METAMASK';
+          } else if(this.state.account && !this.state.metaAccount) {
+            console.log("~~~*** WEB3",this.state.metaAccount,result)
+            document.getElementById("main").style.backgroundImage = "linear-gradient(#234063, #305582)"
+            document.body.style.backgroundColor = "#305582"
+            var contextElement = document.getElementById("context")
+            contextElement.innerHTML = 'WEB3';
+          }
+        }catch(ee){
+          console.log("CONTEXT ERR",ee)
         }
+        console.log("done with context")
       }
     })
   }
@@ -551,34 +560,17 @@ class App extends Component {
 
 
     if(this.state.account){
-      let ethBalance = 0.00
-      let daiBalance = 0.00
-      let xdaiBalance = 0.00
+      const ethBalance = await eth.getDisplayBalance(this.state.account, 20);
+      const daiBalance = await dai.getDisplayBalance(this.state.account, 20);
+      const xdaiBalance = await xdai.getDisplayBalance(this.state.account, 20);
 
-      if(this.state.mainnetweb3){
-
-        try{
-          ethBalance = await this.state.mainnetweb3.eth.getBalance(this.state.account)
-          ethBalance = this.state.mainnetweb3.utils.fromWei(""+ethBalance,'ether')
-
-          if(this.state.daiContract){
-            daiBalance = await this.state.daiContract.methods.balanceOf(this.state.account).call()
-            daiBalance = this.state.mainnetweb3.utils.fromWei(""+daiBalance,'ether')
-          }
-        }catch(e){
-          console.log(e)
-          this.connectToRPC()
-        }
-
-
-
-      }
-      if(this.state.xdaiweb3){
-        xdaiBalance = await this.state.xdaiweb3.eth.getBalance(this.state.account)
-        xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
-      }
-
-      this.setState({ethBalance,daiBalance,xdaiBalance,badgeBalance,hasUpdateOnce:true})
+      this.setState({
+        ethBalance,
+        daiBalance,
+        xdaiBalance,
+        badgeBalance,
+        hasUpdateOnce:true
+      });
 
       if(xdaiBalance < 0.01 && singleBadgeId && !this.state.switchedToSingleBadge){
         this.setState({switchedToSingleBadge:true})
@@ -631,11 +623,20 @@ class App extends Component {
             this.changeView('withdraw_from_private')
           })
         }else{
-          this.setState({possibleNewPrivateKey:false,newPrivateKey:this.state.possibleNewPrivateKey})
+
           localStorage.setItem(this.state.account+"loadedBlocksTop","")
           localStorage.setItem(this.state.account+"recentTxs","")
           localStorage.setItem(this.state.account+"transactionsByAddress","")
-          this.setState({recentTxs:[],transactionsByAddress:{},fullRecentTxs:[],fullTransactionsByAddress:{}})
+          this.setState({
+            possibleNewPrivateKey:false,
+            newPrivateKey:this.state.possibleNewPrivateKey,
+            recentTxs:[],
+            transactionsByAddress:{},
+            fullRecentTxs:[],
+            fullTransactionsByAddress:{},
+            safe:""
+          })
+
         }
       }
     }else{
@@ -1451,7 +1452,14 @@ render() {
 
           let defaultBalanceDisplay = (
             <div>
-              <Balance icon={xdai} selected={false} text={"xdai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+              <Balance
+                icon={xdaiImg}
+                selected={false}
+                text={xdai.name}
+                amount={this.state.xdaiBalance}
+                address={account}
+                dollarDisplay={dollarDisplay}
+              />
               <Ruler/>
             </div>
           )
@@ -1520,7 +1528,7 @@ render() {
                 <Ruler/>
               </div>
             )
-          }else if(this.state.xdaiBalance>0.0012){
+          }else if(this.state.xdaiBalance>0.0012 && this.state.contracts["GnosisSafe"]){
             safeDisplay = (
               <div>
 
@@ -1588,11 +1596,32 @@ render() {
 
                   {extraTokens}
 
-                  <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance
+                    icon={xdaiImg}
+                    selected={selected}
+                    text={xdai.name}
+                    amount={this.state.xdaiBalance}
+                    address={account}
+                    dollarDisplay={dollarDisplay}
+                  />
                   <Ruler/>
-                  <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance
+                    icon={daiImg}
+                    selected={selected}
+                    text="DAI"
+                    amount={this.state.daiBalance}
+                    address={account}
+                    dollarDisplay={dollarDisplay}
+                  />
                   <Ruler/>
-                  <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance
+                    icon={ethImg}
+                    selected={selected}
+                    text="ETH"
+                    amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)}
+                    address={account}
+                    dollarDisplay={dollarDisplay}
+                  />
                   <Ruler/>
 
                   {safeDisplay}
@@ -2034,6 +2063,7 @@ render() {
                       localStorage.setItem(this.state.account+"loadedBlocksTop","")
                       localStorage.setItem(this.state.account+"metaPrivateKey","")
                       localStorage.setItem(this.state.account+"recentTxs","")
+                      localStorage.setItem(this.state.account+"safe","")
                       localStorage.setItem(this.state.account+"transactionsByAddress","")
                       this.setState({recentTxs:[],transactionsByAddress:{}})
                     }
@@ -2075,9 +2105,6 @@ render() {
 
                   <NavCard title={i18n.t('exchange_title')} goBack={this.goBack.bind(this)}/>
                   <Exchange
-                    eth={eth}
-                    dai={dai}
-                    xdai={xdai}
                     ERC20NAME={ERC20NAME}
                     ERC20IMAGE={ERC20IMAGE}
                     ERC20TOKEN={ERC20TOKEN}
@@ -2198,6 +2225,7 @@ render() {
         newPrivateKey={this.state.newPrivateKey}
         fallbackWeb3Provider={WEB3_PROVIDER}
         onUpdate={async (state) => {
+          console.log("Dapparatus update",state)
           //console.log("DAPPARATUS UPDATE",state)
           if(ERC20TOKEN){
             delete state.balance
@@ -2406,6 +2434,14 @@ let sortByBlockNumber = (a,b)=>{
     return 1
   }
   return 0
+}
+
+function isArrayAndHasEntries(array){
+  if (array === undefined || array.length == 0) {
+    // array empty or does not exist
+    return false;
+  }
+  return true;
 }
 
 export default App;
