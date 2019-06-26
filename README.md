@@ -203,9 +203,25 @@ Your frontend should automatically reload and your account should have xDai:
 ![image](https://user-images.githubusercontent.com/2653167/48427446-f54bec80-e725-11e8-9248-6f6cf9145a52.png)
 
 
+
 --------
 
+### Troubleshooting 
 
+If you receive this error:
+```
+../../nan/nan.h:104:40: note: expanded from macro 'NAN_DEPRECATED'
+# define NAN_DEPRECATED __attribute__((deprecated))
+                                       ^
+8 warnings and 7 errors generated.
+make: *** [Release/obj.target/scrypt/src/node-boilerplate/scrypt_params_async.o] Error 1
+gyp ERR! build error 
+```
+
+Try upgrading/downgrading your version of Node to `10.16.0`
+
+
+### Older Contributing Content
 
 Are you a developer or designer that would like to help build the next iteration of the 🔥👛Burner Wallet👛🔥? Here is a short intro video to explain how to get started:
 
