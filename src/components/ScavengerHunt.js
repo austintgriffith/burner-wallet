@@ -258,7 +258,7 @@ export default class ScavengerHunt extends React.Component {
     let answer = document.getElementById("question_" + question).value
     console.log('answer', answer)
     let hashedAnswer = await this.state.YourContract.getSaltedHash(this.props.web3.utils.utf8ToHex(answer), this.state.playerSalt).call();
-    this.props.tx(this.state.YourContract.commitAnswer(hashedAnswer, question), 160000, 0, 0, (result)=> {
+    this.props.tx(this.state.YourContract.commitAnswer(hashedAnswer, question), 250000, 0, 0, (result)=> {
       console.log(result);
       this.props.changeAlert({
         type: 'info',
@@ -270,7 +270,7 @@ export default class ScavengerHunt extends React.Component {
   async revealAnswer(question) {
     let answer = document.getElementById("answer_" + question).value
     console.log('answer', answer)
-    this.props.tx(this.state.YourContract.revealAnswer(this.props.web3.utils.utf8ToHex(answer), question, this.state.playerSalt), 160000, 0, 0, (result)=> {
+    this.props.tx(this.state.YourContract.revealAnswer(this.props.web3.utils.utf8ToHex(answer), question, this.state.playerSalt), 250000, 0, 0, (result)=> {
       console.log('revealAnswer', result)
       this.props.changeAlert({
         type: 'info',
