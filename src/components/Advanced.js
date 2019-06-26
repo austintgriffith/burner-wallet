@@ -37,17 +37,6 @@ export default class Advanced extends React.Component {
       )
     }
 
-    let showingQr = ""
-    if(this.state.showingQr){
-      showingQr = (
-        <div className="main-card card w-100">
-          <div className="content qr row">
-            <QRCode className="qr-code" value={this.state.showingQr} size={qrSize}/>
-          </div>
-        </div>
-      )
-    }
-
 
     let inputPrivateEyeButton = ""
 
@@ -207,29 +196,6 @@ export default class Advanced extends React.Component {
         {inputPrivateKeyRow}
 
         {inputSeedRow}
-
-        <hr style={{paddingTop:20}}/>
-        <div style={{width:"100%",textAlign:"center"}}><h5>Extra Tools</h5></div>
-
-        <div className="content ops row settings-row">
-          <Input
-            type="text"
-            autocorrect="off"
-            autocapitalize="none"
-            className="form-control"
-            placeholder="any text to encode"
-            value={this.state.newQr}
-            onChange={event => this.setState({newQr:event.target.value})}
-          />
-          <PrimaryButton width={1} onClick={()=>{
-            this.setState({showingQr:this.state.newQr})
-          }}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-qrcode"/> {i18n.t('advanced.to_qr')}
-            </Scaler>
-          </PrimaryButton>
-        </div>
-        {showingQr}
 
         {isVendor &&
         <div>
