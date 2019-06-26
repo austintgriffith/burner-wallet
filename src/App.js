@@ -40,6 +40,7 @@ import dai from './assets/dai.png';
 import pdai from './assets/pdai.png';
 import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
+import styled from "styled-components";
 
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
@@ -101,6 +102,11 @@ let dollarDisplay = (amount)=>{
 
 let interval
 let intervalLong
+
+const Warning = styled.p`
+  text-align: center;
+  color: #F4511E
+`;
 
 export default class App extends Component {
   constructor(props) {
@@ -839,6 +845,8 @@ export default class App extends Component {
                         <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
 
                         <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
+
+                        <Warning>💀 This product is currently in early alpha. Use at your own risk! 💀</Warning>
 
                         <MainCard
                           buttonStyle={buttonStyle}
