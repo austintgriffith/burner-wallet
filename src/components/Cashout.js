@@ -129,53 +129,54 @@ class Cashout extends Component {
         payment_details: { crypto_address }
       } = await getOrder(orderId);
 
-      let gwei;
-      try {
-        gwei = await gasPrice();
-      } catch (err) {
-        console.log("Error getting gas price", err);
-      }
-
       let receipt;
-      if (gwei !== undefined) {
-        if (metaAccount) {
-          const tx = {
-            from: address,
-            value: mainnetweb3.utils.toWei(amountInEth, "ether"),
-            gas: 240000,
-            gasPrice: mainnetweb3.utils.toWei(gwei.toString(), "ether"),
-            to: crypto_address
-          };
-
-          const signed = await mainnetweb3.eth.accounts.signTransaction(
-            tx,
-            metaAccount.privateKey
-          );
-
-          try {
-            receipt = await mainnetweb3.eth.sendSignedTransaction(
-              signed.rawTransaction
-            );
-          } catch (err) {
-            // TODO: Propagate to user
-            console.log(err);
-          }
-        } else {
-          receipt = await web3.eth.sendTransaction({
-            from: address,
-            to: crypto_address,
-            value: mainnetweb3.utils.toWei(amountInEth, "ether")
-          });
+      if (metaAccount) {
+        let gwei;
+        try {
+          gwei = await gasPrice();
+        } catch (err) {
+          // TODO: Propagate to user
+          console.log("Error getting gas price", err);
+          return;
         }
-        const receiptObj = {
-          to: "bity.com",
+        const tx = {
           from: address,
-          amount: amount.value,
-          result: receipt
+          value: mainnetweb3.utils.toWei(amountInEth, "ether"),
+          gas: 240000,
+          gasPrice: Math.round(gwei * 1000000000),
+          to: crypto_address
         };
-        setReceipt(receiptObj);
-        changeView("receipt");
+
+        const signed = await mainnetweb3.eth.accounts.signTransaction(
+          tx,
+          metaAccount.privateKey
+        );
+
+        try {
+          receipt = await mainnetweb3.eth.sendSignedTransaction(
+            signed.rawTransaction
+          );
+        } catch (err) {
+          // TODO: Propagate to user
+          console.log(err);
+        }
+      } else {
+        receipt = await web3.eth.sendTransaction({
+          from: address,
+          to: crypto_address,
+          value: mainnetweb3.utils.toWei(amountInEth, "ether")
+        });
       }
+      const receiptObj = {
+        to: "bity.com",
+        from: address,
+        amount: amount.value,
+        result: receipt,
+        message:
+          "Transfer successful! Check your bank account in the next 24 hours."
+      };
+      setReceipt(receiptObj);
+      changeView("receipt");
     }
   }
 
