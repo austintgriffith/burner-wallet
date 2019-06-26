@@ -10,16 +10,14 @@ import {
   Box,
   OutlineButton,
   Input as RInput,
-  Field,
+  Field
 } from 'rimble-ui'
 
 import { Exit } from 'leap-core';
-
 import { fromRpcSig } from 'ethereumjs-util';
 import { bi, add, divide } from 'jsbi-utils';
 import getConfig from "../config";
 import { PrimaryButton, BorderButton } from "./Buttons";
-import { placeOrder, calculateEstimate } from '../services/bity';
 import bityLogo from '../assets/bity.png';
 import { gasPrice } from "../services/core";
 
@@ -75,15 +73,6 @@ export default class Exchange extends React.Component {
       xdaiMetaAccount: xdaiMetaAccount,
       daiToXdaiMode: false,
       ethToDaiMode: false,
-      bityName: '',
-      bityAccountNumber: '',
-      bity: {
-        amountInEth: 0,
-        amountInFiat: 0
-      },
-      phoneNumber: '',
-      bityPhoneToken: '',
-      bityVerificationCode: '',
       loaderBarStatusText: i18n.t('loading'),
       loaderBarStartTime:Date.now(),
       loaderBarPercent: 2,
@@ -537,44 +526,6 @@ export default class Exchange extends React.Component {
   canSendXdai() {
     console.log("canSendXdai",this.state.xdaiSendToAddress,this.state.xdaiSendToAddress.length,parseFloat(this.state.xdaiSendAmount),parseFloat(this.props.xdaiBalance))
     return (this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length === 42 && parseFloat(this.state.xdaiSendAmount)>0 && parseFloat(this.state.xdaiSendAmount) <= parseFloat(this.props.xdaiBalance))
-  }
-
-  placeOrder() {
-    const { bity, bityAccountNumber } = this.state
-    const { address } = this.props
-    const { amountInEth, name } = bity
-    const data = {
-      address,
-      amountInEth,
-      name,
-      bityAccountNumber
-    }
-    placeOrder(data).then(result => {
-      this.props.changeAlert({type: 'success', message: 'Your request is being processed.'})
-    }).catch(err => {
-      console.log('Error ', err)
-      this.props.changeAlert({type: 'warning', message: err.errors.length > 1 ? 'An error occured. Please try again.' : err.errors[0].message});
-    })
-  }
-
-  handleEstimate(value) {
-    const data = {
-      amount: parseFloat(value)
-    }
-    setTimeout(() => {
-      calculateEstimate(data)
-      .then(result => {
-        this.setState({
-          bity: {
-            amountInEth: result.input.amount,
-            amountInFiat: result.output.amount
-          }
-        })
-      }).catch(err => {
-        console.log('Error ', err)
-        this.props.changeAlert({type: 'error', message: 'An error occured. Please try again'})
-      })
-    }, 5000)
   }
 
   async sendEth(){
