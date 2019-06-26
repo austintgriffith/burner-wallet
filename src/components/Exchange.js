@@ -1732,7 +1732,7 @@ export default class Exchange extends React.Component {
                 this.props.changeView("cashout");
             }}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                Your Bank Account
+              {i18n.t("offramp.account")}
               </Scaler>
             </PrimaryButton>
            </div>

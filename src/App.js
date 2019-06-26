@@ -909,7 +909,7 @@ export default class App extends Component {
                       <div>
                         {this.state.scannerOpen ? sendByScan : null}
                         <Card>
-                          <NavCard title="Transfer to your Bank Account" goBack={this.goBack.bind(this)}/>
+                          <NavCard title={i18n.t("offramp.title")} goBack={this.goBack.bind(this)}/>
                           <div>
                             <Balance
                               icon={eth}

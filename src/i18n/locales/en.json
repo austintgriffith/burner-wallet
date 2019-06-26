@@ -119,7 +119,22 @@
       }
     },
     "currency": {
-      "label": "Display currency"
+        "label": "Display currency"
+    },
+    "offramp": {
+        "title": "Transfer to your Bank Account",
+        "success": "Transfer successful! Check your bank account in the next 24 hours.",
+        "required": "This field is required.",
+        "country_not_supported": "This country is not yet supported by bity.com. Currently supported countries: Austria, Belgium, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Iceland, Ireland, Italy, Latvia, Liechtenstein, Lithuania, Luxembourg, Malta, Monaco, Netherlands, Norway, Poland, Portugal, Romania, San Marino, Spain, Slovakia, Slovenia, Sweden, Switzerland, UK and Northern Ireland.",
+        "iban_incorrect": "The entered IBAN is incorrect.",
+        "amount_too_small": "You can only cash out amounts greater than",
+        "amount_too_big": "The amount you'd like to cash out exceeds your ether balance.",
+        "account": "Your Bank Account",
+        "form": {
+            "owner": "Bank Account Owner",
+            "amount": "Amount",
+            "submit": "Cash out!"
+        }
     }
   }
 }

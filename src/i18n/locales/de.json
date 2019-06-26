@@ -117,6 +117,21 @@
       "movie": {
         "name": "Name des Films"
       }
+    },
+    "offramp": {
+        "title": "Zum Bankkonto überweisen",
+        "success": "Überweisung erfolgreich. Überprüfen sie ihr Konto in den nächsten 24 Stunden.",
+        "required": "Dieses Feld ist erforderlich.",
+        "country_not_supported": "Dieses Land wird momentan noch nicht von Bity.com unterstützt. Unterstützte Länder sind: Österreich, Belgien, Bulgarien, Kroatien, Zypern, Tschechien, Dänemark, Estland, Finland, Frankreich, Deutschland, Griechenland, Ungarn, Island, Irland, Italien, Lettland, Liechtenstein, Litauen, Luxembourg, Malta, Monaco, Niederlande, Norwegen, Polen, Portugal, Rumänien, San Marino, Spanien, Slovakai, Slowenien, Schweden, Schweiz, Großbritannien",
+        "iban_incorrect": "Die eingegebene IBAN ist inkorrekt.",
+        "amount_too_small": "Sie können Beträge auszahlen die größer als",
+        "amount_too_big": "Der auszuzahlende Betrag übersteigt ihren gesamten Ether Betrag.",
+        "account": "Dein Bank Konto",
+        "form": {
+            "owner": "Kontoinhaber",
+            "amount": "Wert",
+            "submit": "Auszahlen!"
+        }
     }
   }
 }

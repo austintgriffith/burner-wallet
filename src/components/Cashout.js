@@ -1,5 +1,6 @@
 //@format
 import React, { Component } from "react";
+import i18n from "../i18n";
 import { Box, Field, Input } from "rimble-ui";
 import { PrimaryButton } from "./Buttons";
 import { format } from "@tammo/react-iban";
@@ -93,6 +94,10 @@ class Cashout extends Component {
     this.cashout = this.cashout.bind(this);
   }
 
+  componentDidMount() {
+    this.refs.name.focus();
+  }
+
   async cashout() {
     const { IBAN } = this.validate("IBAN")();
     const { metaAccount } = this.state;
@@ -172,8 +177,7 @@ class Cashout extends Component {
         from: address,
         amount: amount.value,
         result: receipt,
-        message:
-          "Transfer successful! Check your bank account in the next 24 hours."
+        message: i18n.t("offramp.success")
       };
       setReceipt(receiptObj);
       changeView("receipt");
@@ -258,7 +262,7 @@ class Cashout extends Component {
           name: {
             value: name,
             valid: name !== "",
-            message: name === "" ? "This field is required." : null
+            message: name === "" ? i18n.t("offramp.required") : null
           }
         });
       } else if (input === "IBAN") {
@@ -270,11 +274,10 @@ class Cashout extends Component {
           valid = true;
         } else if (validReason === "country") {
           valid = false;
-          message =
-            "This country is not yet supported by bity.com. Currently supported countries: Austria, Belgium, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Iceland, Ireland, Italy, Latvia, Liechtenstein, Lithuania, Luxembourg, Malta, Monaco, Netherlands, Norway, Poland, Portugal, Romania, San Marino, Spain, Slovakia, Slovenia, Sweden, Switzerland, UK and Northern Ireland.";
+          message = i18n.t("offramp.country_not_supported");
         } else {
           valid = false;
-          message = "The IBAN you've entered is incorrect.";
+          message = i18n.t("offramp.iban_incorrect");
         }
         newFields = Object.assign(fields, {
           IBAN: {
@@ -292,11 +295,12 @@ class Cashout extends Component {
         let valid, message;
         if (amount < min) {
           valid = false;
-          message = `You can only cash out amounts greater than $${MIN_AMOUNT_DOLLARS}.`;
+          message = `${i18n.t(
+            "offramp.amount_too_small"
+          )} $${MIN_AMOUNT_DOLLARS}.`;
         } else if (amount > max) {
           valid = false;
-          message =
-            "The amount you'd like to cash out exceeds your ether balance..";
+          message = i18n.t("offramp.amount_too_big");
         } else {
           valid = true;
         }
@@ -319,6 +323,7 @@ class Cashout extends Component {
     return (
       <div>
         <Box mb={4}>
+          {/* TODO: How to put this into i18n without creating a mess?*/}
           <P>
             Transfer your ether directly to your bank account with{" "}
             <b>just one click</b> using bity.com, the secure swiss crypto
@@ -334,12 +339,12 @@ class Cashout extends Component {
             </a>
             .
           </P>
-          <Field mb={3} label="Bank Account Owner">
+          <Field mb={3} label={i18n.t("offramp.form.owner")}>
             <Input
               width={1}
               type="text"
               ref="name"
-              placeholder="e.g. Satoshi Nakamoto"
+              placeholder="Satoshi Nakamoto"
               onChange={this.validate("name")}
               borderColor={
                 fields.name.valid === null || fields.name.valid ? "grey" : "red"
@@ -351,7 +356,7 @@ class Cashout extends Component {
             <Input
               width={1}
               type="text"
-              placeholder="e.g. DE89 3704 0044 0532 0130 00"
+              placeholder="DE89 3704 0044 0532 0130 00"
               ref="IBAN"
               value={fields.IBAN.value}
               onChange={this.formatIBAN}
@@ -361,7 +366,7 @@ class Cashout extends Component {
             />
             {fields.IBAN.message ? <Error>{fields.IBAN.message}</Error> : null}
           </Field>
-          <Field mb={3} label="Amount">
+          <Field mb={3} label={i18n.t("offramp.form.amount")}>
             <Input
               ref="amount"
               width={1}
@@ -385,7 +390,7 @@ class Cashout extends Component {
           disabled={!(fields.name.valid && fields.amount.valid)}
           onClick={this.cashout}
         >
-          Cash out!
+          {i18n.t("offramp.form.submit")}
         </PrimaryButton>
       </div>
     );
