@@ -48,6 +48,7 @@ import ScavengerHunt from './components/ScavengerHunt'
 
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
+import scavengerhunt from './scavengerhunt.png';
 import eth from './ethereum.png';
 import dai from './dai.jpg';
 import xdai from './xdai.jpg';
@@ -1343,7 +1344,7 @@ render() {
             }else{
               return (
                 <div>
-                  <div className="send-to-address card w-100" style={{zIndex:1}}>
+                  <div className="main-card card w-100" style={{zIndex:1}}>
                     <NavCard title={"SCAVENGER HUNT"} titleLink={""} goBack={this.goBack.bind(this)}/>
                     <ScavengerHunt
                       privateKey={metaAccount.privateKey}
@@ -1398,7 +1399,6 @@ render() {
                     />
                   </div>
                   <Bottom
-                    text={"buttom button"}
                     action={this.goBack.bind(this)}
                   />
                 </div>
@@ -1426,7 +1426,7 @@ render() {
                   <div style={{cursor:"pointer"}} onClick={()=>{
                     this.changeView('scavengerhunt')
                   }}>
-                  <Balance icon={cypherpunk} selected={"SCAVENGERHUNT"} text={"SCAVENGERHUNT"} amount={8.16} address={account} dollarDisplay={dollarDisplay}/>
+                  <Balance icon={scavengerhunt} selected={"SCAVENGERHUNT"} text={"SCAVENGERHUNT"} amount={8.16} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
                   </div>
                   {badgeDisplay}

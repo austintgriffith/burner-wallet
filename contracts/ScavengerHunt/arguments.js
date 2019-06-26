@@ -9,6 +9,5 @@ module.exports = [
   "0xece3496425af2abc40d388acd96f7222e002ed94c1d795dddf45f96c985682a9",
   "0x73a280069bbf1298843afe69d81ddcdd5009a6116572e5ba0dfeeaa999d1b95d",
   "0x4b1319e40357667bc2ec6c0fd6d8cf471220fb864cc46fa7be92dff936dcdcb7"],
-  60 * 5,
-  60 * 5 
+  60 * 5
 ]
