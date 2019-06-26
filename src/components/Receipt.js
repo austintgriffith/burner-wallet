@@ -3,6 +3,8 @@
 import React from 'react';
 import { Blockie } from "dapparatus";
 import i18n from '../i18n';
+import bityLogo from '../assets/bity.png';
+import { Image } from "rimble-ui";
 
 const BockieSize = 12
 
@@ -82,10 +84,13 @@ export default class Receive extends React.Component {
                 {sendAmount}
               </div>
               <div className="col-4" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
-                <Blockie
-                  address={receipt.to}
-                  config={{size:BockieSize}}
-                />
+                {receipt.to === "bity.com" ?
+                  <Image style={{marginTop: "20px"}} src={bityLogo} height={"50px"} width={"100px"} mr={3} bg="transparent" /> :
+                  <Blockie
+                    address={receipt.to}
+                    config={{size:BockieSize}}
+                    />
+                }
               </div>
             </div>
             {message}

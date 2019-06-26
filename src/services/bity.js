@@ -1,83 +1,67 @@
-export const authenticate = data => {
-  return fetch("https://bity.com/api/v2/login/phone", {
-    method: "POST",
-    body: JSON.stringify({
-      phone_number: data
-    }),
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json"
-    }
-  })
-    .then(response => response.json())
-    .then(response => response)
-    .catch(error => error);
-};
+// @format
 
-export const verifyNumber = data => {
-  return fetch("https://bity.com/api/v2/login/phone", {
-    method: "POST",
-    body: JSON.stringify({
-      phone_number: localStorage.getItem("phoneNumber"),
-      tan: data.tan
-    }),
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      "X-Phone-Token": data.token
-    }
-  })
-    .then(response => response)
-    .catch(error => error);
-};
+const API = "https://exchange.api.bity.com/v2/";
 
-export const placeOrder = data => {
-  return fetch("https://exchange.api.bity.com/v2/orders", {
+export const placeOrder = (name, IBAN, amount, address) => {
+  return fetch(API + "orders", {
     method: "POST",
+    credentials: "include",
     body: JSON.stringify({
       input: {
-        amount: data.amountInEth,
+        amount,
         currency: "ETH",
         type: "crypto_address",
-        crypto_address: data.address
+        crypto_address: address
       },
       output: {
         currency: "EUR",
         type: "bank_account",
-        iban: data.bityAccountNumber,
+        iban: IBAN,
         owner: {
-          name: data.name
+          name
         }
       }
     }),
     headers: {
       "Content-Type": "application/json",
-      Accept: "application/json"
+      "Accept": "application/json"
     }
-  })
-    .then(response => response.json())
-    .then(response => response)
-    .catch(error => error);
+  });
 };
 
-export const calculateEstimate = data => {
-  return fetch("https://exchange.api.bity.com/v2/orders/estimate", {
-    method: "POST",
-    body: JSON.stringify({
-      input: {
-        currency: "ETH",
-        amount: data.amount.toFixed(4)
-      },
-      output: {
-        currency: "EUR"
-      }
-    }),
+export const getOrder = id => {
+  return fetch(`${API}orders/${id}`, {
+    method: "GET",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json"
     }
-  })
-    .then(response => response.json())
-    .then(response => response)
-    .catch(error => error);
+  }).then(res => res.json());
+};
+
+// TODO: Figure out what this does
+export const calculateEstimate = data => {
+  return (
+    fetch("https://exchange.api.bity.com/v2/orders/estimate", {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify({
+        input: {
+          currency: "ETH",
+          amount: data.amount.toFixed(4)
+        },
+        output: {
+          currency: "EUR"
+        }
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(response => response.json())
+      // TODO: I don't think we need this
+      .then(response => response)
+      .catch(error => error)
+  );
 };

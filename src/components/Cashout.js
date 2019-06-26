@@ -5,6 +5,8 @@ import { PrimaryButton } from "./Buttons";
 import { format } from "@tammo/react-iban";
 import styled from "styled-components";
 import { isValid } from "iban";
+import { placeOrder, getOrder } from "../services/bity";
+import { gasPrice } from "../services/core";
 
 const P = styled.p`
   color: gray;
@@ -54,13 +56,19 @@ const SUPPORTED_COUNTRIES = [
   "GB"
 ];
 
-const MIN_AMOUNT_DOLLARS = 11;
+const MIN_AMOUNT_DOLLARS = 15;
 
 let prevFormattedIBAN;
 
 class Cashout extends Component {
   constructor(props) {
     super(props);
+
+    const pk = localStorage.getItem("metaPrivateKey");
+    let metaAccount;
+    if (pk && pk !== "0") {
+      metaAccount = props.mainnetweb3.eth.accounts.privateKeyToAccount(pk);
+    }
 
     this.state = {
       fields: {
@@ -76,7 +84,8 @@ class Cashout extends Component {
           value: null,
           valid: null
         }
-      }
+      },
+      metaAccount
     };
 
     this.validate = this.validate.bind(this);
@@ -84,10 +93,89 @@ class Cashout extends Component {
     this.cashout = this.cashout.bind(this);
   }
 
-  cashout() {
+  async cashout() {
     const { IBAN } = this.validate("IBAN")();
+    const { metaAccount } = this.state;
+    const { name, amount } = this.state.fields;
+    const {
+      address,
+      ethPrice,
+      mainnetweb3,
+      web3,
+      changeView,
+      setReceipt
+    } = this.props;
     if (IBAN.valid) {
-      // submit the order
+      changeView("loader");
+
+      let order;
+      const amountInEth = (amount.value / ethPrice).toString();
+      try {
+        order = await placeOrder(
+          name.value,
+          IBAN.value.replace(/\s/g, ""),
+          amountInEth,
+          address
+        );
+      } catch (err) {
+        // TODO: Propagate to user
+        console.log(err);
+        return;
+      }
+
+      const orderURI = order.headers.get("Location").split("/");
+      const orderId = orderURI[orderURI.length - 1];
+      const {
+        payment_details: { crypto_address }
+      } = await getOrder(orderId);
+
+      let gwei;
+      try {
+        gwei = await gasPrice();
+      } catch (err) {
+        console.log("Error getting gas price", err);
+      }
+
+      let receipt;
+      if (gwei !== undefined) {
+        if (metaAccount) {
+          const tx = {
+            from: address,
+            value: mainnetweb3.utils.toWei(amountInEth, "ether"),
+            gas: 240000,
+            gasPrice: mainnetweb3.utils.toWei(gwei.toString(), "ether"),
+            to: crypto_address
+          };
+
+          const signed = await mainnetweb3.eth.accounts.signTransaction(
+            tx,
+            metaAccount.privateKey
+          );
+
+          try {
+            receipt = await mainnetweb3.eth.sendSignedTransaction(
+              signed.rawTransaction
+            );
+          } catch (err) {
+            // TODO: Propagate to user
+            console.log(err);
+          }
+        } else {
+          receipt = await web3.eth.sendTransaction({
+            from: address,
+            to: crypto_address,
+            value: mainnetweb3.utils.toWei(amountInEth, "ether")
+          });
+        }
+        const receiptObj = {
+          to: "bity.com",
+          from: address,
+          amount: amount.value,
+          result: receipt
+        };
+        setReceipt(receiptObj);
+        changeView("receipt");
+      }
     }
   }
 
@@ -195,15 +283,28 @@ class Cashout extends Component {
           }
         });
       } else if (input === "amount") {
-        const amount = this.refs.amount.value;
+        const amount = parseFloat(this.refs.amount.value);
+        const { ethPrice, ethBalance } = this.props;
+        const min = MIN_AMOUNT_DOLLARS;
+        const max = parseFloat(ethPrice) * parseFloat(ethBalance);
+
+        let valid, message;
+        if (amount < min) {
+          valid = false;
+          message = `You can only cash out amounts greater than $${MIN_AMOUNT_DOLLARS}.`;
+        } else if (amount > max) {
+          valid = false;
+          message =
+            "The amount you'd like to cash out exceeds your ether balance..";
+        } else {
+          valid = true;
+        }
+
         newFields = Object.assign(fields, {
           amount: {
             value: amount,
-            valid: parseFloat(amount) >= MIN_AMOUNT_DOLLARS,
-            message:
-              parseFloat(amount) < MIN_AMOUNT_DOLLARS
-                ? "You can only cash out amounts greater than $X."
-                : null
+            valid,
+            message
           }
         });
       }

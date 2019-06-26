@@ -21,6 +21,7 @@ import getConfig from "../config";
 import { PrimaryButton, BorderButton } from "./Buttons";
 import { placeOrder, calculateEstimate } from '../services/bity';
 import bityLogo from '../assets/bity.png';
+import { gasPrice } from "../services/core";
 
 const CONFIG = getConfig();
 const BN = Web3.utils.BN
@@ -38,27 +39,6 @@ const uniswapContractObject = {
 }
 
 let metaReceiptTracker = {}
-
-/**
- * @returns gas price in gwei
- */
-// TODO: move to burner-core
-function gasPrice() {
-  return fetch('https://ethgasstation.info/json/ethgasAPI.json', {
-    mode: 'cors',
-    method: 'get',
-  })
-    .then(r => r.json())
-    .then((response)=>{
-      console.log(response);
-      if(response.average > 0 && response.average < 200){
-        const avg = response.average + (response.average*CONFIG.ROOTCHAIN.GAS.BOOST_BY)
-        return Math.round(avg * 100) / 1000;
-      }
-
-      return Promise.reject('Average out of range (0–200)');
-    });
-}
 
 export default class Exchange extends React.Component {
 
@@ -636,6 +616,7 @@ export default class Exchange extends React.Component {
       try {
         gwei = await gasPrice();
       } catch(err) {
+        // TODO: Propagate error to user
         console.log("Error getting gas price",err)
       }
 

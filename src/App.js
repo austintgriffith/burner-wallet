@@ -919,7 +919,15 @@ export default class App extends Component {
                               address={account}
                               dollarDisplay={dollarDisplay} />
                           </div>
-                          <Cashout />
+                          <Cashout
+                            address={this.state.account}
+                            ethPrice={this.state.ethprice}
+                            web3={this.state.web3}
+                            mainnetweb3={this.state.mainnetweb3}
+                            ethBalance={this.state.ethBalance}
+                            changeView={this.changeView.bind(this)}
+                            setReceipt={this.setReceipt.bind(this)}
+                          />
                         </Card>
                         <Bottom
                           text={i18n.t('done')}
