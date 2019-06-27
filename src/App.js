@@ -30,7 +30,7 @@ import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
 import Card from './components/StyledCard';
 import incogDetect from './services/incogDetect.js'
-import { ThemeProvider } from 'rimble-ui';
+import { ThemeProvider, Text } from 'rimble-ui';
 import theme from "./theme";
 import getConfig from "./config";
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
@@ -103,10 +103,11 @@ let dollarDisplay = (amount)=>{
 let interval
 let intervalLong
 
-const Warning = styled.p`
-  text-align: center;
-  color: #F4511E
-`;
+const Warning = styled(Text).attrs(()=>({
+  fontSize: 2,
+  color: "#F4511E",
+  textAlign: 'center'
+}))``;
 
 export default class App extends Component {
   constructor(props) {
@@ -846,6 +847,7 @@ export default class App extends Component {
 
                         <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
 
+                        {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
                         <Warning>💀 This product is currently in early alpha. Use at your own risk! 💀</Warning>
 
                         <MainCard
