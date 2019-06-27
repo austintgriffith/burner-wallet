@@ -4788,10 +4788,10 @@ damerau-levenshtein@^1.0.0, damerau-levenshtein@^1.0.4:
   resolved "https://registry.yarnpkg.com/damerau-levenshtein/-/damerau-levenshtein-1.0.5.tgz#780cf7144eb2e8dbd1c3bb83ae31100ccc31a414"
   integrity sha512-CBCRqFnpu715iPmw1KrdOrzRqbdFwQTwAWyyyYS42+iAgHCuXZ+/TdMgQkUENPomxEz9z1BEzuQU2Xw0kUuAgA==
 
-dapparatus@^1.0.76:
-  version "1.0.78"
-  resolved "https://registry.yarnpkg.com/dapparatus/-/dapparatus-1.0.78.tgz#32d2cf03782f08036e2e3319ad9fd9c41dbef7f6"
-  integrity sha512-4j0cBzPeX8cMiEZq7fF99B+YLS340Lola8ERY1wyaDo9WUhcywDVUN8yXmdXJt43YQjuqHgbFxdLQvvF4kWfyw==
+dapparatus@^1.0.81:
+  version "1.0.81"
+  resolved "https://registry.yarnpkg.com/dapparatus/-/dapparatus-1.0.81.tgz#143a545709bd979a48f7026ff054e61c8698cda6"
+  integrity sha512-urCYt/AWmIdiaFPviAKr2boBii61MGv1ip9U2Nry1KqTsnzFjt7dza3MeZ2xOTEpg7nP34cV65TPKWgIwgeD2Q==
   dependencies:
     axios "^0.18.0"
     deepmerge "^2.1.1"
