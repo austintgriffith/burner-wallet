@@ -6,7 +6,7 @@ import { PrimaryButton } from "./Buttons";
 import { format } from "@tammo/react-iban";
 import styled from "styled-components";
 import { isValid } from "iban";
-import { placeOrder, getOrder } from "../services/bity";
+import { placeOrder, getOrder, getEstimate } from "../services/bity";
 import { gasPrice } from "../services/core";
 
 const P = styled.p`
@@ -57,7 +57,7 @@ const SUPPORTED_COUNTRIES = [
   "GB"
 ];
 
-const MIN_AMOUNT_DOLLARS = 15;
+let MIN_AMOUNT_DOLLARS = 15;
 
 let prevFormattedIBAN;
 
@@ -94,8 +94,22 @@ class Bity extends Component {
     this.cashout = this.cashout.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.refs.name.focus();
+    await this.getMinAmount();
+  }
+
+  async getMinAmount() {
+    const { ethPrice } = this.props;
+    let estimate;
+    try {
+      estimate = await getEstimate("1");
+    } catch (err) {
+      // TODO: Propagate to user
+      console.log(err);
+    }
+
+    MIN_AMOUNT_DOLLARS = Math.round(estimate.input.minimum_amount * ethPrice);
   }
 
   async cashout() {

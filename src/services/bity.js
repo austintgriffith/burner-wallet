@@ -24,7 +24,7 @@ export const placeOrder = (name, IBAN, amount, address) => {
     }),
     headers: {
       "Content-Type": "application/json",
-      "Accept": "application/json"
+      Accept: "application/json"
     }
   });
 };
@@ -40,28 +40,21 @@ export const getOrder = id => {
   }).then(res => res.json());
 };
 
-// TODO: Figure out what this does
-export const calculateEstimate = data => {
-  return (
-    fetch("https://exchange.api.bity.com/v2/orders/estimate", {
-      method: "POST",
-      credentials: "include",
-      body: JSON.stringify({
-        input: {
-          currency: "ETH",
-          amount: data.amount.toFixed(4)
-        },
-        output: {
-          currency: "EUR"
-        }
-      }),
-      headers: {
-        "Content-Type": "application/json"
+export const getEstimate = amount => {
+  return fetch("https://exchange.api.bity.com/v2/orders/estimate", {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify({
+      input: {
+        currency: "ETH",
+        amount: amount
+      },
+      output: {
+        currency: "EUR"
       }
-    })
-      .then(response => response.json())
-      // TODO: I don't think we need this
-      .then(response => response)
-      .catch(error => error)
-  );
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.json());
 };
