@@ -85,7 +85,7 @@ export default class Receive extends React.Component {
               </div>
               <div className="col-4" style={{textAlign:'center',whiteSpace:"nowrap",letterSpacing:-1}}>
                 {receipt.to === "bity.com" ?
-                  <Image style={{marginTop: "20px"}} src={bityLogo} height={"50px"} width={"100px"} mr={3} bg="transparent" /> :
+                  <Image style={{marginTop: "20px"}} src={bityLogo} height="auto" width={"100px"} mr={3} bg="transparent" /> :
                   <Blockie
                     address={receipt.to}
                     config={{size:BockieSize}}

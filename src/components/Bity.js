@@ -109,7 +109,7 @@ class Bity extends Component {
       console.log(err);
     }
 
-    MIN_AMOUNT_DOLLARS = Math.round(estimate.input.minimum_amount * ethPrice);
+    MIN_AMOUNT_DOLLARS = Math.ceil(estimate.input.minimum_amount * ethPrice);
   }
 
   async cashout() {
@@ -186,6 +186,20 @@ class Bity extends Component {
           value: mainnetweb3.utils.toWei(amountInEth, "ether")
         });
       }
+
+      const storageName = `${address}recentTxs`;
+      const recentTxs = JSON.parse(localStorage.getItem(storageName));
+      recentTxs.push({
+        blockNumber: receipt.blockNumber,
+        from: address,
+        to: "bity.com",
+        hash: receipt.transactionHash,
+        value: amount.value,
+        orderId
+      });
+
+      localStorage.setItem(storageName, JSON.stringify(recentTxs));
+
       const receiptObj = {
         to: "bity.com",
         from: address,

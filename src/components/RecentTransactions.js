@@ -1,6 +1,8 @@
 import React from 'react';
 import { Blockie } from "dapparatus";
 import { Scaler } from "dapparatus";
+import { Image } from "rimble-ui";
+import bityLogo from "../assets/bity.png";
 
 export default ({currencyDisplay, view, max, buttonStyle, vendorName, address, recentTxs, block, changeView}) => {
   let txns = []
@@ -14,12 +16,18 @@ export default ({currencyDisplay, view, max, buttonStyle, vendorName, address, r
           {currencyDisplay(recentTxs[r].value)}
         </span>
       )
-      let toBlockie = (
-        <Blockie
-          address={recentTxs[r].to}
-          config={{size:4}}
-        />
-      )
+
+      let toBlockie;
+      if (recentTxs[r].to === "bity.com") {
+        toBlockie = <Image src={bityLogo} height={"30px"} ml="3em" width="auto" bg="transparent" />
+      } else {
+        toBlockie = (
+          <Blockie
+            address={recentTxs[r].to}
+            config={{size:4}}
+          />
+        )
+      }
       if(recentTxs[r].to===address && recentTxs[r].data) {
         let message = recentTxs[r].data
         let limit = 18
@@ -34,11 +42,9 @@ export default ({currencyDisplay, view, max, buttonStyle, vendorName, address, r
       }
 
       if(count++<max){
-        //if(txns.length>0){
-          txns.push(
-            <hr key={"ruler"+recentTxs[r].hash} style={{ "color": "#DFDFDF",marginTop:0,marginBottom:7 }}/>
-          )
-        //}
+        txns.push(
+          <hr key={"ruler"+recentTxs[r].hash} style={{ "color": "#DFDFDF",marginTop:0,marginBottom:7 }}/>
+        )
 
         let blockAge = block-recentTxs[r].blockNumber
 

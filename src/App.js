@@ -887,7 +887,6 @@ export default class App extends Component {
                           currencyDisplay={this.currencyDisplay}
                           view={this.state.view}
                           buttonStyle={buttonStyle}
-                          transactionsByAddress={this.state.transactionsByAddress}
                           changeView={this.changeView}
                           address={account}
                           block={this.state.block}
