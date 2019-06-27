@@ -134,6 +134,17 @@
             "owner": "Bank Account Owner",
             "amount": "Amount",
             "submit": "Cash out!"
+        },
+        "history": {
+            "title": "Order Status",
+            "status_title": "Status",
+            "disclaimer": "The amount of EURO that will show up in your bank account. Currently, guaranteeing bity.com's price rate is not possible. If you're interesting in helping to fix this, ",
+            "click": "click here",
+            "status": {
+                "created": "Created your order with ID: ",
+                "received": "Received your ether.",
+                "executed": "Swapped your ether for EURO."
+            }
         }
     }
   }

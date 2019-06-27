@@ -131,6 +131,17 @@
             "owner": "Kontoinhaber",
             "amount": "Wert",
             "submit": "Auszahlen!"
+        },
+        "history": {
+            "title": "Auftragsstatus",
+            "status_title": "Status",
+            "disclaimer": "Dieser Beitrag an EURO wird in wenigen Stunden auf dein Bankkonto überwiesen. Leider ist es im Moment nicht möglich eine Wechselrate (ETH/EUR) zu garantieren. Solltest du interessiert sein zu helfen, ",
+            "click": "klicke hier",
+            "status": {
+                "created": "Auftrag erstellt mit ID: ",
+                "received": "Ether erhalten.",
+                "received": "Ether gegen EURO getauscht."
+            }
         }
     }
   }

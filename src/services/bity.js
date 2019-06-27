@@ -40,6 +40,17 @@ export const getOrder = id => {
   }).then(res => res.json());
 };
 
+export const getOrders = () => {
+  return fetch(`${API}orders`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json"
+    }
+  }).then(res => res.json());
+};
+
 export const getEstimate = amount => {
   return fetch("https://exchange.api.bity.com/v2/orders/estimate", {
     method: "POST",

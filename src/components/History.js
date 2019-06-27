@@ -11,7 +11,6 @@ import { OutlineButton } from 'rimble-ui'
 import Transaction from "ethereumjs-tx";
 import EthUtil from 'ethereumjs-util';
 import EthCrypto from 'eth-crypto';
-import { getOrder } from "../services/bity";
 
 const CONFIG = getConfig();
 

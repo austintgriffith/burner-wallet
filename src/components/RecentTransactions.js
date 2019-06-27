@@ -51,8 +51,12 @@ export default ({currencyDisplay, view, max, buttonStyle, vendorName, address, r
         if(blockAge<=1&&recentTxs[r].to===address){
           txns.push(
             <div style={{position:'relative',cursor:'pointer',paddingTop:10,paddingBottom:10}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
+              console.log(recentTxs);
               if(recentTxs[r].from===address){
                 changeView("account_"+recentTxs[r].to)
+              } else if (recentTxs[r].to === "bity.com") {
+                console.log("hello");
+                changeView("bity_"+recentTxs[r].orderId);
               }else{
                 changeView("account_"+recentTxs[r].from)
               }
@@ -79,7 +83,10 @@ export default ({currencyDisplay, view, max, buttonStyle, vendorName, address, r
         }else{
           txns.push(
             <div style={{position:'relative',cursor:'pointer'}} key={recentTxs[r].hash} className="content bridge row" onClick={()=>{
-              if(recentTxs[r].from===address){
+              if (recentTxs[r].to === "bity.com") {
+                console.log("hello");
+                changeView("bity_"+recentTxs[r].orderId);
+              } else if(recentTxs[r].from===address ){
                 changeView("account_"+recentTxs[r].to)
               }else{
                 changeView("account_"+recentTxs[r].from)

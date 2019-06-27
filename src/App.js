@@ -11,6 +11,7 @@ import NavCard from './components/NavCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
 import Bity from './components/Bity';
+import BityHistory from "./components/BityHistory";
 import WithdrawFromPrivate from './components/WithdrawFromPrivate';
 import RequestFunds from './components/RequestFunds';
 import Receive from './components/Receive'
@@ -799,19 +800,15 @@ export default class App extends Component {
                   </div>
                 )
 
-                if(view.indexOf("account_")===0) {
-
-                  let targetAddress = view.replace("account_","")
-                  console.log("TARGET",targetAddress)
+                // NOTE: This view is to show specific historical transactions.
+                if(view.includes("account_")) {
+                  const targetAddress = view.replace("account_","")
                   return (
                     <div>
                       <Card>
-
-                        <NavCard title={(
-                          <div>
-                            {i18n.t('history_chat')}
-                          </div>
-                        )} goBack={this.goBack.bind(this)}/>
+                        <NavCard 
+                          title={i18n.t('history_chat')}
+                          goBack={this.goBack.bind(this)}/>
                         {defaultBalanceDisplay}
                         <History
                           buttonStyle={buttonStyle}
@@ -831,6 +828,31 @@ export default class App extends Component {
                         />
                       </Card>
 
+                      <Bottom
+                        action={()=>{
+                          this.changeView('main')
+                        }}
+                      />
+                    </div>
+
+                  )
+                }
+
+                // NOTE: This view shows specific historical transactions to
+                // bity.com
+                if (view.includes("bity_")) {
+                  const orderId = view.replace("bity_","")
+                  return (
+                    <div>
+                      <Card>
+                        <NavCard
+                          title={i18n.t('offramp.history.title')}
+                          goBack={this.goBack.bind(this)}/>
+                        <BityHistory 
+                          address={this.state.account}
+                          orderId={orderId} 
+                        />
+                      </Card>
                       <Bottom
                         action={()=>{
                           this.changeView('main')
