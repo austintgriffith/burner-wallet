@@ -42,7 +42,7 @@ import Bottom from './components/Bottom';
 import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 import incogDetect from './services/incogDetect.js'
-import { mainAsset as xdai } from './core';
+import core, { mainAsset as xdai } from './core';
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
@@ -60,6 +60,8 @@ const EthCrypto = require('eth-crypto');
 
 //const POA_XDAI_NODE = "https://dai-b.poa.network"
 const POA_XDAI_NODE = "https://dai.poa.network"
+
+const MAINNET_CHAIN_ID = '1';
 
 let XDAI_PROVIDER = POA_XDAI_NODE
 
@@ -431,16 +433,15 @@ class App extends Component {
     this.connectToRPC()
   }
   connectToRPC(){
-    let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
-    let ensContract = new mainnetweb3.eth.Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
+    const { Contract } = core.getWeb3(MAINNET_CHAIN_ID).eth;
+    const ensContract = new Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
     let daiContract
     try{
-      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359")
+      daiContract = new Contract(require("./contracts/StableCoin.abi.js"),"0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359")
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
-    let xdaiweb3 = new Web3(new Web3.providers.HttpProvider(XDAI_PROVIDER))
-    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract})
+    this.setState({ ensContract, daiContract });
   }
   componentWillUnmount() {
     clearInterval(interval)
@@ -652,7 +653,8 @@ class App extends Component {
     let resolver = await this.state.ensContract.methods.resolver(hash).call()
     if(resolver=="0x0000000000000000000000000000000000000000") return "0x0000000000000000000000000000000000000000"
     console.log("resolver",resolver)
-    let ensResolver = new this.state.mainnetweb3.eth.Contract(require("./contracts/ENSResolver.abi.js"),resolver)
+    const { Contract } = core.getWeb3(MAINNET_CHAIN_ID).eth;
+    const ensResolver = new Contract(require("./contracts/ENSResolver.abi.js"),resolver)
     console.log("ensResolver:",ensResolver)
     return ensResolver.methods.addr(hash).call()
   }
@@ -1863,8 +1865,6 @@ render() {
                     ethBalance={this.state.ethBalance}
                     daiBalance={this.state.daiBalance}
                     xdaiBalance={this.state.xdaiBalance}
-                    mainnetweb3={this.state.mainnetweb3}
-                    xdaiweb3={this.state.xdaiweb3}
                     daiContract={this.state.daiContract}
                     ensContract={this.state.ensContract}
                     isVendor={this.state.isVendor}

@@ -19,6 +19,10 @@ import xdaiImg from '../images/xdai.jpg';
 
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
+import core from '../core';
+
+const MAINNET_CHAIN_ID = '1';
+const XDAI_CHAIN_ID = '100';
 
 const GASBOOSTPRICE = 0.25
 
@@ -59,23 +63,15 @@ export default class Exchange extends React.Component {
   constructor(props) {
     super(props);
 
-    let xdaiweb3 = this.props.xdaiweb3
-    //make it easier for local debugging...
-    if(false && window.location.hostname.indexOf("localhost")>=0){
-      console.log("WARNING, USING LOCAL RPC")
-      xdaiweb3 = new Web3(new Web3.providers.HttpProvider("http://0.0.0.0:8545"))
-    }
-    //let mainnetweb3 = new Web3("https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac")
-    let mainnetweb3 = props.mainnetweb3
     let pk = localStorage.getItem('metaPrivateKey')
     let mainnetMetaAccount = false
     let xdaiMetaAccount = false
     let daiAddress = false
     let xdaiAddress = false
     if(pk&&pk!="0"){
-      mainnetMetaAccount =  mainnetweb3.eth.accounts.privateKeyToAccount(pk)
+      mainnetMetaAccount =  core.getWeb3(MAINNET_CHAIN_ID).eth.accounts.privateKeyToAccount(pk)
       daiAddress = mainnetMetaAccount.address.toLowerCase();
-      xdaiMetaAccount = xdaiweb3.eth.accounts.privateKeyToAccount(pk)
+      xdaiMetaAccount = core.getWeb3(XDAI_CHAIN_ID).eth.accounts.privateKeyToAccount(pk)
       xdaiAddress = xdaiMetaAccount.address.toLowerCase();
     }else{
       daiAddress = this.props.address
@@ -103,9 +99,7 @@ export default class Exchange extends React.Component {
       xdaiSendToAddress: "",
       wyreBalance: 0,
       denDaiBalance:0,
-      mainnetweb3: mainnetweb3,
       mainnetMetaAccount: mainnetMetaAccount,
-      xdaiweb3:xdaiweb3,
       xdaiMetaAccount: xdaiMetaAccount,
       dendaiContract: dendaiContract,
       vendorContract: vendorContract,
@@ -134,7 +128,7 @@ export default class Exchange extends React.Component {
     setTimeout(this.poll.bind(this),250)
   }
   async poll(){
-    let { vendorContract, dendaiContract, mainnetweb3, xdaiweb3, xdaiAddress} = this.state
+    let { vendorContract, dendaiContract, xdaiAddress} = this.state
     /*let { daiContract } = this.props
     if(daiContract){
       let daiBalance = await daiContract.methods.balanceOf(this.state.daiAddress).call()
@@ -280,14 +274,14 @@ export default class Exchange extends React.Component {
 
     if(this.props.ERC20TOKEN&&dendaiContract){
       let denDaiBalance = await dendaiContract.methods.balanceOf(this.state.daiAddress).call()
-      denDaiBalance = mainnetweb3.utils.fromWei(denDaiBalance,"ether")
+      denDaiBalance = core.getWeb3(MAINNET_CHAIN_ID).utils.fromWei(denDaiBalance,"ether")
       if(denDaiBalance!=this.state.denDaiBalance){
         this.setState({denDaiBalance})
       }
 
       console.log("vendorContract",vendorContract)
       let maxWithdrawlAmount = await vendorContract.methods.allowance(this.state.daiAddress).call()
-      maxWithdrawlAmount = mainnetweb3.utils.fromWei(maxWithdrawlAmount,"ether")
+      maxWithdrawlAmount = core.getWeb3(MAINNET_CHAIN_ID).utils.fromWei(maxWithdrawlAmount,"ether")
       if(maxWithdrawlAmount!=this.state.maxWithdrawlAmount){
         this.setState({maxWithdrawlAmount})
       }
@@ -536,14 +530,14 @@ export default class Exchange extends React.Component {
           paramsObject.to = this.props.daiContract._address
           paramsObject.data = this.props.daiContract.methods.transfer(
             destination,
-            this.state.mainnetweb3.utils.toWei(""+amount,"ether")
+            core.getWeb3(MAINNET_CHAIN_ID).utils.toWei(""+amount,"ether")
           ).encodeABI()
 
           console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
-          this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+          core.getWeb3(MAINNET_CHAIN_ID).eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
             console.log("========= >>> SIGNED",signed)
-              this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+              core.getWeb3(MAINNET_CHAIN_ID).eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                 console.log("META RECEIPT",receipt)
                 if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
                   metaReceiptTracker[receipt.transactionHash] = true
@@ -568,7 +562,7 @@ export default class Exchange extends React.Component {
           console.log("CURRENT DAI CONTRACT YOU NEED TO GET ABI FROM:",this.props.daiContract)
           this.props.tx(metaMaskDaiContract.methods.transfer(
             destination,
-            this.state.mainnetweb3.utils.toWei(""+amount,"ether")
+            core.getWeb3(MAINNET_CHAIN_ID).utils.toWei(""+amount,"ether")
             ///TODO LET ME PASS IN A CERTAIN AMOUNT OF GAS INSTEAD OF LEANING BACK ON THE <GAS> COMPONENT!!!!!
           ),120000,0,0,(receipt)=>{
             if(receipt){
@@ -663,7 +657,7 @@ export default class Exchange extends React.Component {
       this.setState({sendEth:false})
       //i think without inject meta mask this needs to be adjusted?!?!
       if(this.state.mainnetMetaAccount){
-        actualEthSendAmount = this.state.mainnetweb3.utils.toWei(""+Math.round(actualEthSendAmount*10000)/10000,'ether')
+        actualEthSendAmount = core.getWeb3(MAINNET_CHAIN_ID).utils.toWei(""+Math.round(actualEthSendAmount*10000)/10000,'ether')
       }
       ////for some reason I needed this in and now I dont?!?!?
       this.transferEth(this.state.ethSendToAddress,false,actualEthSendAmount,"Sending $"+this.state.ethSendAmount+" of ETH to "+this.state.ethSendToAddress+"...",()=>{
@@ -718,9 +712,9 @@ export default class Exchange extends React.Component {
 
           console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
-          this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+          core.getWeb3(MAINNET_CHAIN_ID).eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
             console.log("========= >>> SIGNED",signed)
-              this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+              core.getWeb3(MAINNET_CHAIN_ID).eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                 console.log("META RECEIPT",receipt)
                 if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
                   metaReceiptTracker[receipt.transactionHash] = true
@@ -871,7 +865,7 @@ export default class Exchange extends React.Component {
               <div className="col-3 p-1">
                 <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
 
-                  let amountOfxDaiToDeposit = this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether')
+                  let amountOfxDaiToDeposit = core.getWeb3(XDAI_CHAIN_ID).utils.toWei(""+this.state.amount,'ether')
                   console.log("Using DenDai contract to deposit "+amountOfxDaiToDeposit+" xDai")
 
                   this.setState({
@@ -903,9 +897,9 @@ export default class Exchange extends React.Component {
 
                     console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
-                    this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
+                    core.getWeb3(XDAI_CHAIN_ID).eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
                       console.log("========= >>> SIGNED",signed)
-                        this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                        core.getWeb3(XDAI_CHAIN_ID).eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                           console.log("META RECEIPT",receipt)
                           if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
                             metaReceiptTracker[receipt.transactionHash] = true
@@ -998,7 +992,7 @@ export default class Exchange extends React.Component {
                 <div className="col-3 p-1">
                   <button className="btn btn-large w-100"  disabled={buttonsDisabled} style={this.props.buttonStyle.primary} onClick={async ()=>{
 
-                    let amountOfxDaiToWithdraw = this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether')
+                    let amountOfxDaiToWithdraw = core.getWeb3(XDAI_CHAIN_ID).utils.toWei(""+this.state.amount,'ether')
                     console.log("Using "+this.props.ERC20NAME+" contract to withdraw "+amountOfxDaiToWithdraw+" xDai")
 
                     this.setState({
@@ -1030,9 +1024,9 @@ export default class Exchange extends React.Component {
 
                       console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
-                      this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
+                      core.getWeb3(XDAI_CHAIN_ID).eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
                         console.log("========= >>> SIGNED",signed)
-                          this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                          core.getWeb3(XDAI_CHAIN_ID).eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                             console.log("META RECEIPT",receipt)
                             if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
                               metaReceiptTracker[receipt.transactionHash] = true
@@ -1319,16 +1313,16 @@ export default class Exchange extends React.Component {
                   let paramsObject = {
                     from: this.state.daiAddress,
                     to: toDaiBridgeAccount,
-                    value: this.state.xdaiweb3.utils.toWei(""+this.state.amount,'ether'),
+                    value: core.getWeb3(XDAI_CHAIN_ID).utils.toWei(""+this.state.amount,'ether'),
                     gas: 120000,
                     gasPrice: Math.round(1.1 * 1000000000)
                   }
                   console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
                   console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
-                  this.state.xdaiweb3.eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
+                  core.getWeb3(XDAI_CHAIN_ID).eth.accounts.signTransaction(paramsObject, this.state.xdaiMetaAccount.privateKey).then(signed => {
                     console.log("========= >>> SIGNED",signed)
-                      this.state.xdaiweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                      core.getWeb3(XDAI_CHAIN_ID).eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                         console.log("META RECEIPT",receipt)
                         if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
                           metaReceiptTracker[receipt.transactionHash] = true
@@ -1516,7 +1510,7 @@ export default class Exchange extends React.Component {
 
                 let webToUse = this.props.web3
                 if(this.state.mainnetMetaAccount){
-                  webToUse = this.state.mainnetweb3
+                  webToUse = core.getWeb3(MAINNET_CHAIN_ID);
                 }
 
                 console.log("AMOUNT:",this.state.amount,"DAI BALANCE:",this.props.daiBalance)
@@ -1657,7 +1651,7 @@ export default class Exchange extends React.Component {
 
                 let webToUse = this.props.web3
                 if(this.state.mainnetMetaAccount){
-                  webToUse = this.state.mainnetweb3
+                  webToUse = core.getWeb3(MAINNET_CHAIN_ID);
                 }
 
                 console.log("AMOUNT:",this.state.amount,"ETH BALANCE:",this.props.ethBalance)
@@ -1739,9 +1733,9 @@ export default class Exchange extends React.Component {
 
                         console.log("APPROVE TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
-                        this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+                        core.getWeb3(MAINNET_CHAIN_ID).eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
                           console.log("========= >>> SIGNED",signed)
-                            this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', async (receipt)=>{
+                            core.getWeb3(MAINNET_CHAIN_ID).eth.sendSignedTransaction(signed.rawTransaction).on('receipt', async (receipt)=>{
                               console.log("META RECEIPT",receipt)
                               if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
                                 metaReceiptTracker[receipt.transactionHash] = true
@@ -1752,7 +1746,7 @@ export default class Exchange extends React.Component {
                                   ethBalanceShouldBe:eventualEthBalance,
                                 })
 
-                                let manualNonce = await this.state.mainnetweb3.eth.getTransactionCount(this.state.daiAddress)
+                                let manualNonce = await core.getWeb3(MAINNET_CHAIN_ID).eth.getTransactionCount(this.state.daiAddress)
                                 console.log("manually grabbed nonce as ",manualNonce)
                                 paramsObject = {
                                   nonce: manualNonce,
@@ -1768,9 +1762,9 @@ export default class Exchange extends React.Component {
 
                                 console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
-                                this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+                                core.getWeb3(MAINNET_CHAIN_ID).eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
                                   console.log("========= >>> SIGNED",signed)
-                                    this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                                    core.getWeb3(MAINNET_CHAIN_ID).eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                                       console.log("META RECEIPT",receipt)
                                       if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
                                         metaReceiptTracker[receipt.transactionHash] = true
@@ -1811,9 +1805,9 @@ export default class Exchange extends React.Component {
 
                         console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
 
-                        this.state.mainnetweb3.eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
+                        core.getWeb3(MAINNET_CHAIN_ID).eth.accounts.signTransaction(paramsObject, this.state.mainnetMetaAccount.privateKey).then(signed => {
                           console.log("========= >>> SIGNED",signed)
-                            this.state.mainnetweb3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
+                            core.getWeb3(MAINNET_CHAIN_ID).eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt)=>{
                               console.log("META RECEIPT",receipt)
                               if(receipt&&receipt.transactionHash&&!metaReceiptTracker[receipt.transactionHash]){
                                 metaReceiptTracker[receipt.transactionHash] = true
