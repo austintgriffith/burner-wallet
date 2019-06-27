@@ -61,7 +61,7 @@ const MIN_AMOUNT_DOLLARS = 15;
 
 let prevFormattedIBAN;
 
-class Cashout extends Component {
+class Bity extends Component {
   constructor(props) {
     super(props);
 
@@ -397,4 +397,4 @@ class Cashout extends Component {
   }
 }
 
-export default Cashout;
+export default Bity;

@@ -10,7 +10,7 @@ import Header from './components/Header';
 import NavCard from './components/NavCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
-import Cashout from './components/Cashout';
+import Bity from './components/Bity';
 import WithdrawFromPrivate from './components/WithdrawFromPrivate';
 import RequestFunds from './components/RequestFunds';
 import Receive from './components/Receive'
@@ -919,7 +919,7 @@ export default class App extends Component {
                               address={account}
                               dollarDisplay={dollarDisplay} />
                           </div>
-                          <Cashout
+                          <Bity
                             address={this.state.account}
                             ethPrice={this.state.ethprice}
                             web3={this.state.web3}
