@@ -50,7 +50,7 @@
     "s3": "^4.4.0",
     "scrypt": "^6.0.3",
     "tabookey-gasless": "^0.3.3-a",
-    "web3": "1.0.0-beta.33"
+    "web3": "1.0.0-beta.55"
   },
   "scripts": {
     "start": "PORT=3000 react-scripts start",
