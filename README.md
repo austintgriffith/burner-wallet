@@ -1,4 +1,4 @@
-🔥👛 The [Burner Wallet](https://xdai.io) is a quick web wallet used to move small amounts of crypto quickly. On page load an Ethereum keypair is automatically generated and used to sign transactions with an incredibly simple interface. Sending funds is as easy as a QR code scan. 
+🔥 The [Burner Wallet](https://xdai.io) is a quick web wallet used to move small amounts of crypto quickly. On page load an Ethereum keypair is automatically generated and used to sign transactions with an incredibly simple interface. Sending funds is as easy as a QR code scan. 
 
 💵 Burners are analogous to cash: quick and easy but less secure. You wouldn't stuff thousands of dollars in your pocket on the way out the door at night, don't trust a seed phrase in localstorage with more than you are willing to lose.
 
@@ -38,7 +38,7 @@
 
 ✊ You can support our efforts by contributing to the [Burner Wallet Gitcoin Grant](https://gitcoin.co/grants/20/burner-wallet) or sending mainnet funds to [burnerwallet.eth](https://etherscan.io/address/0xda6a87d5d23cdfa286104119f0e406197ea387da)
 
-🙏 Thanks! - Austin Griffith ( @austingrifith / austin@concurrence.io )
+🙏 Thanks! - Austin Griffith ( @austingriffith / austin@concurrence.io )
 
 🛠️ If you are interested in contributing development to the Burner Wallet, read on...
 
