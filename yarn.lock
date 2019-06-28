@@ -3815,7 +3815,7 @@ clean-css@4.2.x:
   dependencies:
     source-map "~0.6.0"
 
-clevis@^0.2.11:
+clevis@^0.2.16:
   version "0.2.16"
   resolved "https://registry.yarnpkg.com/clevis/-/clevis-0.2.16.tgz#a07e7e6258e0783886b319230a7bbfc033011fa4"
   integrity sha512-iPxAiz00Bw7nOq9dEt5RU05Ygy4qjquyrUISAFOsr1j0lAD1K14Ibd98KkfTs6eHsAacZ2JLjtwOlFYVaYkh6Q==

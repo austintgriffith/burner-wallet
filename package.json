@@ -70,7 +70,7 @@
   ],
   "devDependencies": {
     "chai": "^4.2.0",
-    "clevis": "^0.2.11",
+    "clevis": "^0.2.16",
     "mocha": "^5.2.0",
     "openzeppelin-solidity": "^2.3.0",
     "webpack": "^4.28.4"
