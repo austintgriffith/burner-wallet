@@ -142,6 +142,10 @@
                 "received": "Ether erhalten.",
                 "received": "Ether gegen EURO getauscht."
             }
+        },
+        "errors": {
+            "bity_connection": "Es gab ein Problem damit eine Verbindung zu unserer Partnerbörse bity.com herzustellen. Bitte versuche es später nochmal.",
+            "ethgasstation_connection": "Es gab ein Problem damit die zuletzt aktuellen Gaspreise für das Ethereum Netzwerk zu bestimmen. Bitte versuche daher deine Transaktion zu einem späteren Zeitpunkt zu senden."
         }
     }
   }

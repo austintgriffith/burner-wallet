@@ -145,6 +145,10 @@
                 "received": "Received your ether.",
                 "executed": "Swapped your ether for EURO."
             }
+        },
+        "errors": {
+            "bity_connection": "There was a problem connecting to our exchange provider bity.com. Please try again later.",
+            "ethgasstation_connection": "There was a problem getting the latest gas prices. Please try sending your transaction later."
         }
     }
   }

@@ -95,19 +95,19 @@ class Bity extends Component {
   }
 
   async componentDidMount() {
+    const { changeAlert } = this.props;
+
     this.refs.name.focus();
-    await this.getMinAmount();
+    try {
+      await this.getMinAmount();
+    } catch (err) {
+      changeAlert("warning", i18n.t("offramp.errors.bity_connection"));
+    }
   }
 
   async getMinAmount() {
     const { ethPrice } = this.props;
-    let estimate;
-    try {
-      estimate = await getEstimate("1");
-    } catch (err) {
-      // TODO: Propagate to user
-      console.log(err);
-    }
+    const estimate = await getEstimate("1");
 
     MIN_AMOUNT_DOLLARS = Math.ceil(estimate.input.minimum_amount * ethPrice);
   }
@@ -122,7 +122,8 @@ class Bity extends Component {
       mainnetweb3,
       web3,
       changeView,
-      setReceipt
+      setReceipt,
+      changeAlert
     } = this.props;
     if (IBAN.valid) {
       changeView("loader");
@@ -137,8 +138,7 @@ class Bity extends Component {
           address
         );
       } catch (err) {
-        // TODO: Propagate to user
-        console.log(err);
+        changeAlert("warning", i18n.t("offramp.errors.bity_connection"));
         return;
       }
 
@@ -154,8 +154,7 @@ class Bity extends Component {
         try {
           gwei = await gasPrice();
         } catch (err) {
-          // TODO: Propagate to user
-          console.log("Error getting gas price", err);
+          changeAlert("warning", i18n.t("offramp.errors.ethgasstation_connection"));
           return;
         }
         const tx = {
@@ -171,14 +170,9 @@ class Bity extends Component {
           metaAccount.privateKey
         );
 
-        try {
-          receipt = await mainnetweb3.eth.sendSignedTransaction(
-            signed.rawTransaction
-          );
-        } catch (err) {
-          // TODO: Propagate to user
-          console.log(err);
-        }
+        receipt = await mainnetweb3.eth.sendSignedTransaction(
+          signed.rawTransaction
+        );
       } else {
         receipt = await web3.eth.sendTransaction({
           from: address,

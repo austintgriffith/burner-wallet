@@ -849,6 +849,7 @@ export default class App extends Component {
                           title={i18n.t('offramp.history.title')}
                           goBack={this.goBack.bind(this)}/>
                         <BityHistory 
+                          changeAlert={this.changeAlert}
                           address={this.state.account}
                           orderId={orderId} 
                         />
