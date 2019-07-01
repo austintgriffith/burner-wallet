@@ -26,8 +26,7 @@ LeapDAO is an open source community bringing scalability to Ethereum using
 Plasma. LeapDAO is a mixture of Holocracy and multi-signature wallets. For
 every issue that has a "bounty" label attached , you can earn DAI by doing the
 work and subsequently requesting payouts in LeapDAO's Slack. To start working,
-please sign up under [this
-link](https://docs.google.com/forms/d/e/1FAIpQLSd8_wDGDAi__HvfYEWNK_bvJzIkxwHHRVL6AFEfJewBd2Vn9A/viewform).
+please sign up under http://join.leapdao.org.
 
 ## Why fork upstream?
 
