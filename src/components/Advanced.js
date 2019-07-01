@@ -4,9 +4,13 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import i18n from '../i18n';
 import {
   Input,
-  QR as QRCode
+  QR as QRCode,
+  Field,
+  Select,
+  Box,
 } from 'rimble-ui'
 import { PrimaryButton, BorderButton } from '../components/Buttons'
+import { currencies } from '../services/currencies'
 
 export default class Advanced extends React.Component {
   constructor(props) {
@@ -14,9 +18,23 @@ export default class Advanced extends React.Component {
     this.state = {
       privateKeyQr:false,
       seedPhraseHidden:true,
-      privateKeyHidden:true
+      privateKeyHidden:true,
+      currency: ''
     }
   }
+
+  componentDidMount() {
+    let currency = localStorage.getItem('currency')
+    this.setState({ currency })
+  }
+
+  updateCurrency = e => {
+    let { value } = e.target
+    console.log(value);
+    this.setState({ currency: value })
+    localStorage.setItem('currency', value)
+  }
+
   render(){
     let {isVendor, balance, privateKey, changeAlert, changeView, setPossibleNewPrivateKey} = this.props
 
@@ -126,7 +144,12 @@ export default class Advanced extends React.Component {
 
     return (
       <div style={{marginTop:20}}>
-
+      <Box width={1}>
+        <Field label={i18n.t('currency.label')}>
+          <Select items={currencies} onChange={this.updateCurrency} width={'100%'}/>
+        </Field>
+      </Box>
+      <hr style={{paddingTop:20}}/>
       <div>
         <div style={{width:"100%",textAlign:"center"}}><h5>Learn More</h5></div>
         <div className="content ops row settings-row" style={{marginBottom:10}}>

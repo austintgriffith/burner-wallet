@@ -37,13 +37,13 @@ export default class Receive extends React.Component {
     }
   }
   render() {
-    let {receipt, dollarDisplay} = this.props
+    let {receipt, currencyDisplay} = this.props
 
     let message = ""
 
     let sendAmount = (
       <div>
-        <span style={{opacity:0.15}}>-</span>{dollarDisplay(receipt.amount)}<span style={{opacity:0.15}}>-></span>
+        <span style={{opacity:0.15}}>-</span>{currencyDisplay(receipt.amount)}<span style={{opacity:0.15}}>-></span>
       </div>
     )
 

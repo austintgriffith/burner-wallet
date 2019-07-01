@@ -23,7 +23,7 @@ export default class Receive extends React.Component {
       address,
       changeAlert,
       changeView,
-      dollarDisplay,
+      currencyDisplay,
     } = this.props
 
     return (
@@ -48,7 +48,7 @@ export default class Receive extends React.Component {
           </div>
 
           <RecentTransactions
-            dollarDisplay={dollarDisplay}
+            currencyDisplay={currencyDisplay}
             view={view}
             max={5}
             buttonStyle={buttonStyle}

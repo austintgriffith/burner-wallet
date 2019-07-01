@@ -1,5 +1,6 @@
 const configs = [
   {
+    EXCHANGE_RATE_QUERY: 5000,
     DOMAINS: ["localhost", "10.0.0.107", "sundai.fritz.box"],
     SIDECHAIN: {
       NAME: "Leap Testnet",
@@ -103,7 +104,7 @@ const configs = [
         DAI_ETH_ADDRESS: "0x09cabec1ead1c0ba254b09efb3ee13841712be14"
       }
     }
-  }
+  },
 ];
 
 function findConfig(hostname) {

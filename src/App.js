@@ -95,13 +95,14 @@ let convertToDollar = (amount)=>{
 let convertFromDollar = (amount)=>{
   return (parseFloat(amount)*dollarConversion)
 }
-let dollarDisplay = (amount)=>{
+let currencyDisplay = (amount)=>{
   amount = Math.floor(amount*100)/100
   return dollarSymbol+convertFromDollar(amount).toFixed(2)
 }
 
 let interval
 let intervalLong
+let exchangeRatesQueryTimer
 
 const Warning = styled(Text).attrs(()=>({
   fontSize: 2,
@@ -139,6 +140,9 @@ export default class App extends Component {
       vendors: {},
       ethprice: 0.00,
       hasUpdateOnce: false,
+      exchangeRate: {
+        USD: 0.00
+      }
     };
     this.alertTimeout = null;
 
@@ -159,6 +163,20 @@ export default class App extends Component {
     }catch(e){console.log(e)}
 
   }
+
+  currencyDisplay = (amount)=>{
+    let { exchangeRate } = this.state
+    amount = Math.floor(amount * 100) / 100
+    
+    let symbol = Object.keys(exchangeRate)[0]
+    let rate = Object.values(exchangeRate)[0]
+    return `${symbol} ${this.convertExchangeRate(rate, amount).toFixed(2)}`
+  }
+
+  convertExchangeRate = (rate, amount)=>{
+    return (parseFloat(amount) * rate)
+  }
+
   parseAndCleanPath(path){
     let parts = path.split(";")
     //console.log("PARTS",parts)
@@ -282,6 +300,7 @@ export default class App extends Component {
     this.poll.bind(this)();
     interval = setInterval(this.poll.bind(this),1500)
     intervalLong = setInterval(this.longPoll.bind(this),45000)
+    exchangeRatesQueryTimer = setInterval(this.queryExchangeWithNativeCurrency.bind(this), CONFIG.EXCHANGE_RATE_QUERY)
     setTimeout(this.longPoll.bind(this),150)
 
     this.connectToRPC()
@@ -300,6 +319,7 @@ export default class App extends Component {
   componentWillUnmount() {
     clearInterval(interval)
     clearInterval(intervalLong)
+    clearInterval(exchangeRatesQueryTimer)
     window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
 
@@ -343,6 +363,18 @@ export default class App extends Component {
         this.setState({ethprice})
       })
   }
+
+  queryExchangeWithNativeCurrency() {
+    let currency = localStorage.getItem('currency')
+    fetch(`https://min-api.cryptocompare.com/data/price?fsym=DAI&tsyms=${currency}`)
+      .then(response => response.json())
+      .then(response => {
+        this.setState({
+          'exchangeRate': response
+        })
+      })
+  }
+
   setPossibleNewPrivateKey(value){
     this.setState({possibleNewPrivateKey:value},()=>{
       this.dealWithPossibleNewPrivateKey()
@@ -738,7 +770,7 @@ export default class App extends Component {
           changeView={this.changeView}
           balance={balance}
           view={this.state.view}
-          dollarDisplay={dollarDisplay}
+          currencyDisplay={currencyDisplay}
         />
       )
     }
@@ -773,7 +805,7 @@ export default class App extends Component {
 
                 let defaultBalanceDisplay = (
                   <div>
-                    <Balance icon={pdai} selected={false} text={"PDAI"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay} />
+                    <Balance icon={pdai} selected={false} text={"PDAI"} amount={this.state.xdaiBalance} address={account} currencyDisplay={this.currencyDisplay} />
                   </div>
                 )
 
@@ -805,7 +837,7 @@ export default class App extends Component {
                           send={this.state.send}
                           web3={this.state.web3}
                           goBack={this.goBack.bind(this)}
-                          dollarDisplay={dollarDisplay}
+                          currencyDisplay={this.currencyDisplay}
                         />
                       </Card>
 
@@ -841,11 +873,11 @@ export default class App extends Component {
                       <Card>
                         {extraTokens}
 
-                        <Balance icon={pdai} selected={selected} text={"PDAI"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                        <Balance icon={pdai} selected={selected} text={"PDAI"} amount={this.state.xdaiBalance} address={account} currencyDisplay={this.currencyDisplay}/>
 
-                        <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
+                        <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} currencyDisplay={this.currencyDisplay}/>
 
-                        <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
+                        <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} currencyDisplay={this.currencyDisplay}/>
 
                         {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
                         <Warning>💀 This product is currently in early alpha. Use at your own risk! 💀</Warning>
@@ -856,13 +888,13 @@ export default class App extends Component {
                           balance={balance}
                           changeAlert={this.changeAlert}
                           changeView={this.changeView}
-                          dollarDisplay={dollarDisplay}
+                          currencyDisplay={currencyDisplay}
                         />
 
                         {moreButtons}
 
                         <RecentTransactions
-                          dollarDisplay={dollarDisplay}
+                          currencyDisplay={this.currencyDisplay}
                           view={this.state.view}
                           buttonStyle={buttonStyle}
                           transactionsByAddress={this.state.transactionsByAddress}
@@ -896,7 +928,7 @@ export default class App extends Component {
                           changeView={this.changeView}
                           privateKey={metaAccount.privateKey}
                           changeAlert={this.changeAlert}
-                          dollarDisplay={dollarDisplay}
+                          currencyDisplay={this.currencyDisplay}
                           tokenSendV2={tokenSendV2.bind(this)}
                           metaAccount={this.state.metaAccount}
                         />
@@ -930,7 +962,7 @@ export default class App extends Component {
                             changeAlert={this.changeAlert}
                             block={this.state.block}
                             send={this.state.send}
-                            dollarDisplay={dollarDisplay}
+                            currencyDisplay={this.currencyDisplay}
                             tokenSendV2={tokenSendV2.bind(this)}
                           />
                         </Card>
@@ -961,7 +993,7 @@ export default class App extends Component {
                           changeView={this.changeView}
                           setReceipt={this.setReceipt}
                           changeAlert={this.changeAlert}
-                          dollarDisplay={dollarDisplay}
+                          currencyDisplay={currencyDisplay}
                           convertToDollar={convertToDollar}
                         />
                       </Card>
@@ -989,7 +1021,7 @@ export default class App extends Component {
                           goBack={this.goBack.bind(this)}
                           changeView={this.changeView}
                           changeAlert={this.changeAlert}
-                          dollarDisplay={dollarDisplay}
+                          currencyDisplay={this.currencyDisplay}
                           transactionsByAddress={this.state.transactionsByAddress}
                           fullTransactionsByAddress={this.state.fullTransactionsByAddress}
                           fullRecentTxs={this.state.fullRecentTxs}
@@ -1019,7 +1051,7 @@ export default class App extends Component {
                           goBack={this.goBack.bind(this)}
                           changeView={this.changeView}
                           changeAlert={this.changeAlert}
-                          dollarDisplay={dollarDisplay}
+                          currencyDisplay={this.currencyDisplay}
                           transactionsByAddress={this.state.transactionsByAddress}
                           fullTransactionsByAddress={this.state.fullTransactionsByAddress}
                           fullRecentTxs={this.state.fullRecentTxs}
@@ -1049,7 +1081,7 @@ export default class App extends Component {
                             goBack={this.goBack.bind(this)}
                             changeView={this.changeView}
                             changeAlert={this.changeAlert}
-                            dollarDisplay={dollarDisplay}
+                            currencyDisplay={this.currencyDisplay}
                             transactionsByAddress={this.state.transactionsByAddress}
                             fullTransactionsByAddress={this.state.fullTransactionsByAddress}
                             fullRecentTxs={this.state.fullRecentTxs}
@@ -1089,7 +1121,7 @@ export default class App extends Component {
                               goBack={this.goBack.bind(this)}
                               changeView={this.changeView}
                               changeAlert={this.changeAlert}
-                              dollarDisplay={dollarDisplay}
+                              currencyDisplay={this.currencyDisplay}
                             />
                           </Card>
                           <Bottom
@@ -1129,7 +1161,7 @@ export default class App extends Component {
                           address={account}
                           balance={balance}
                           goBack={this.goBack.bind(this)}
-                          dollarDisplay={dollarDisplay}
+                          currencyDisplay={this.currencyDisplay}
                           burnWallet={()=>{
                             burnMetaAccount()
                             if(RNMessageChannel){
@@ -1185,7 +1217,7 @@ export default class App extends Component {
                           address={account}
                           balance={balance}
                           goBack={this.goBack.bind(this)}
-                          dollarDisplay={dollarDisplay}
+                          currencyDisplay={this.currencyDisplay}
                           tokenSendV2={tokenSendV2.bind(this)}
                         />
                       </Card>

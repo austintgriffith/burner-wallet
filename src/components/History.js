@@ -182,7 +182,7 @@ export default class History extends React.Component {
         if(value){
           messageValue = (
             <div style={{width:"100%",textAlign:"center",marginTop:5,marginBottom:-15,opacity:0.7,fontSize:14}}>
-              -{this.props.dollarDisplay(theseTransactionsByAddress[r].value)}{"->"}
+              -{this.props.currencyDisplay(theseTransactionsByAddress[r].value)}{"->"}
             </div>
           )
         }
@@ -232,7 +232,7 @@ export default class History extends React.Component {
         if(value){
           messageValue = (
             <div style={{width:"100%",textAlign:"center",marginTop:5,marginBottom:-15,opacity:0.7,fontSize:14}}>
-              {"<-"}${this.props.dollarDisplay(theseTransactionsByAddress[r].value)}-
+              {"<-"}${this.props.currencyDisplay(theseTransactionsByAddress[r].value)}-
             </div>
           )
         }

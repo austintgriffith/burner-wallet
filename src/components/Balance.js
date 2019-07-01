@@ -1,7 +1,7 @@
 import React from 'react';
 import { Flex, Text, Image } from "rimble-ui";
 
-export  default ({icon, text, selected, amount, dollarDisplay}) => {
+export  default ({icon, text, selected, amount, currencyDisplay}) => {
 
   let opacity = 0.65
   if(text === selected){
@@ -28,7 +28,7 @@ export  default ({icon, text, selected, amount, dollarDisplay}) => {
       </Flex>
 
       <Text fontSize={4}>
-        {dollarDisplay(amount)}
+        {currencyDisplay(amount)}
       </Text>
     </Flex>
   )

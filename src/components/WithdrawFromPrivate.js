@@ -133,7 +133,7 @@ export default class SendToAddress extends React.Component {
                   }}
                   style={this.props.buttonStyle.secondary}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    {this.props.web3.utils.hexToUtf8(prod.name)} {this.props.dollarDisplay(costInDollars)}
+                    {this.props.web3.utils.hexToUtf8(prod.name)} {this.props.currencyDisplay(costInDollars)}
                   </Scaler>
                 </button>
               </div>
@@ -181,7 +181,7 @@ export default class SendToAddress extends React.Component {
                   <div className="col-6 p-1 w-100">
                     <div style={{fontSize:64,letterSpacing:-2,fontWeight:500,whiteSpace:"nowrap"}}>
                       <Scaler config={{startZoomAt:1000,origin:"0% 50%"}}>
-                        {this.props.dollarDisplay(this.state.fromBalance)}
+                        {this.props.currencyDisplay(this.state.fromBalance)}
                       </Scaler>
                     </div>
                   </div>

@@ -31,7 +31,7 @@ export  default ({openScanner, network, total, ens, address, changeView, view}) 
   }else{
     /*moneyDisplay = (
       <div>
-        {dollarDisplay(total)}
+        {currencyDisplay(total)}
       </div>
     )*/
     moneyDisplay = (
