@@ -290,7 +290,6 @@ export default class App extends Component {
     setTimeout(this.longPoll.bind(this),150)
 
     this.connectToRPC()
-    this.setDefaultCurrency()
   }
   connectToRPC(){
     const mainnetweb3 = new Web3(CONFIG.ROOTCHAIN.RPC);
@@ -302,13 +301,6 @@ export default class App extends Component {
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
     this.setState({mainnetweb3,daiContract,bridgeContract})
-  }
-
-  setDefaultCurrency() {
-    let nativeCurrency = localStorage.getItem('currency')
-    if(nativeCurrency === null) {
-      localStorage.setItem('currency', CONFIG.DEFAULT_CURRENCY)
-    }
   }
   
   componentWillUnmount() {
@@ -360,13 +352,7 @@ export default class App extends Component {
   }
 
   queryExchangeWithNativeCurrency() {
-    let currency = ""
-    let nativeCurrency = localStorage.getItem('currency')
-    if (nativeCurrency === null) {
-      currency = "USD"
-    } else {
-      currency = nativeCurrency
-    }
+    let currency = localStorage.getItem('currency') || CONFIG.DEFAULT_CURRENCY
     fetch(`https://min-api.cryptocompare.com/data/price?fsym=DAI&tsyms=${currency}`)
       .then(response => response.json())
       .then(response => {
