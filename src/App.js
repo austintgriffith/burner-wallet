@@ -156,7 +156,7 @@ export default class App extends Component {
     
     let symbol = Object.keys(exchangeRate)[0]
     let rate = Object.values(exchangeRate)[0]
-    return new Intl.NumberFormat(locale, { style: 'currency', currency: symbol }).format(this.convertExchangeRate(rate, balance).toFixed(2))
+    return new Intl.NumberFormat(locale, { style: 'currency', currency: symbol, maximumFractionDigits: 2 }).format(this.convertExchangeRate(rate, balance))
   }
 
   convertExchangeRate = (rate, amount)=>{
