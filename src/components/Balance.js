@@ -3,17 +3,13 @@ import { Flex, Text, Image } from "rimble-ui";
 
 export  default ({icon, text, selected, amount, currencyDisplay}) => {
 
-  let opacity = 0.65
+  let opacity = 1
   if(text === selected){
     opacity=0.95
   }
 
   if(isNaN(amount) || typeof amount === "undefined"){
     amount = 0.00
-    opacity = 0.25
-  }
-
-  if(opacity < 0.9 && parseFloat(amount) <= 0.0){
     opacity = 0.05
   }
 
