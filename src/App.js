@@ -305,7 +305,8 @@ export default class App extends Component {
   }
 
   setDefaultCurrency() {
-    if(localStorage.getItem('currency') === null) {
+    let nativeCurrency = localStorage.getItem('currency')
+    if(nativeCurrency === null) {
       localStorage.setItem('currency', CONFIG.DEFAULT_CURRENCY)
     }
   }
@@ -360,10 +361,11 @@ export default class App extends Component {
 
   queryExchangeWithNativeCurrency() {
     let currency = ""
-    if (localStorage.getItem('currency') === null) {
+    let nativeCurrency = localStorage.getItem('currency')
+    if (nativeCurrency === null) {
       currency = "USD"
     } else {
-      currency = localStorage.getItem('currency')
+      currency = nativeCurrency
     }
     fetch(`https://min-api.cryptocompare.com/data/price?fsym=DAI&tsyms=${currency}`)
       .then(response => response.json())
