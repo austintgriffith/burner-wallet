@@ -5,12 +5,14 @@ import i18n from '../i18n';
 import {
   Input,
   QR as QRCode,
-  Field,
+  Text,
   Select,
-  Box,
+  Flex,
 } from 'rimble-ui'
 import { PrimaryButton, BorderButton } from '../components/Buttons'
-import { currencies } from '../services/currencies'
+import getConfig from '../config'
+
+const CONFIG = getConfig()
 
 export default class Advanced extends React.Component {
   constructor(props) {
@@ -30,13 +32,13 @@ export default class Advanced extends React.Component {
 
   updateCurrency = e => {
     let { value } = e.target
-    console.log(value);
     this.setState({ currency: value })
     localStorage.setItem('currency', value)
   }
 
   render(){
     let {isVendor, balance, privateKey, changeAlert, changeView, setPossibleNewPrivateKey} = this.props
+    let { currency } = this.state
 
     let url = window.location.protocol+"//"+window.location.hostname
     if(window.location.port&&window.location.port!==80&&window.location.port!==443){
@@ -144,11 +146,10 @@ export default class Advanced extends React.Component {
 
     return (
       <div style={{marginTop:20}}>
-      <Box width={1}>
-        <Field label={i18n.t('currency.label')}>
-          <Select items={currencies} onChange={this.updateCurrency} width={'100%'}/>
-        </Field>
-      </Box>
+      <Flex alignItems='center' justifyContent='space-between' width={1}>
+        <Text>{i18n.t('currency.label')}</Text>
+        <Select items={CONFIG.CURRENCIES} onChange={this.updateCurrency} value={currency}/>
+      </Flex>
       <hr style={{paddingTop:20}}/>
       <div>
         <div style={{width:"100%",textAlign:"center"}}><h5>Learn More</h5></div>

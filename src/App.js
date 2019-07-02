@@ -85,21 +85,6 @@ let buttonStyle = {
 const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32
 const MAX_BLOCK_TO_LOOK_BACK = 512//don't look back more than 512 blocks
 
-let dollarSymbol = "$"
-let dollarConversion = 1.0
-//let dollarSymbol = "€"
-//let dollarConversion = 0.88
-let convertToDollar = (amount)=>{
-  return (parseFloat(amount)/dollarConversion)
-}
-let convertFromDollar = (amount)=>{
-  return (parseFloat(amount)*dollarConversion)
-}
-let currencyDisplay = (amount)=>{
-  amount = Math.floor(amount*100)/100
-  return dollarSymbol+convertFromDollar(amount).toFixed(2)
-}
-
 let interval
 let intervalLong
 let exchangeRatesQueryTimer
@@ -166,11 +151,12 @@ export default class App extends Component {
 
   currencyDisplay = (amount)=>{
     let { exchangeRate } = this.state
-    amount = Math.floor(amount * 100) / 100
+    let locale = localStorage.getItem('i18nextLng')
+    let balance = Math.floor(amount * 100) / 100
     
     let symbol = Object.keys(exchangeRate)[0]
     let rate = Object.values(exchangeRate)[0]
-    return `${symbol} ${this.convertExchangeRate(rate, amount).toFixed(2)}`
+    return new Intl.NumberFormat(locale, { style: 'currency', currency: symbol }).format(this.convertExchangeRate(rate, balance).toFixed(2))
   }
 
   convertExchangeRate = (rate, amount)=>{
@@ -304,6 +290,7 @@ export default class App extends Component {
     setTimeout(this.longPoll.bind(this),150)
 
     this.connectToRPC()
+    this.setDefaultCurrency()
   }
   connectToRPC(){
     const mainnetweb3 = new Web3(CONFIG.ROOTCHAIN.RPC);
@@ -316,6 +303,13 @@ export default class App extends Component {
     }
     this.setState({mainnetweb3,daiContract,bridgeContract})
   }
+
+  setDefaultCurrency() {
+    if(localStorage.getItem('currency') === null) {
+      localStorage.setItem('currency', CONFIG.DEFAULT_CURRENCY)
+    }
+  }
+  
   componentWillUnmount() {
     clearInterval(interval)
     clearInterval(intervalLong)
@@ -365,7 +359,12 @@ export default class App extends Component {
   }
 
   queryExchangeWithNativeCurrency() {
-    let currency = localStorage.getItem('currency')
+    let currency = ""
+    if (localStorage.getItem('currency') === null) {
+      currency = "USD"
+    } else {
+      currency = localStorage.getItem('currency')
+    }
     fetch(`https://min-api.cryptocompare.com/data/price?fsym=DAI&tsyms=${currency}`)
       .then(response => response.json())
       .then(response => {
@@ -770,7 +769,7 @@ export default class App extends Component {
           changeView={this.changeView}
           balance={balance}
           view={this.state.view}
-          currencyDisplay={currencyDisplay}
+          currencyDisplay={this.currencyDisplay}
         />
       )
     }
@@ -888,7 +887,7 @@ export default class App extends Component {
                           balance={balance}
                           changeAlert={this.changeAlert}
                           changeView={this.changeView}
-                          currencyDisplay={currencyDisplay}
+                          currencyDisplay={this.currencyDisplay}
                         />
 
                         {moreButtons}
@@ -993,8 +992,7 @@ export default class App extends Component {
                           changeView={this.changeView}
                           setReceipt={this.setReceipt}
                           changeAlert={this.changeAlert}
-                          currencyDisplay={currencyDisplay}
-                          convertToDollar={convertToDollar}
+                          currencyDisplay={this.currencyDisplay}
                         />
                       </Card>
                       <Bottom

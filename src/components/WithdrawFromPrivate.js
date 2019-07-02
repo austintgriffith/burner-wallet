@@ -117,7 +117,7 @@ export default class SendToAddress extends React.Component {
       let prod = this.props.products[p]
       if(prod.exists){
         if(prod.isAvailable){
-          let costInDollars = this.props.web3.utils.fromWei(prod.cost,'ether')
+          let costInNativeCurrency = this.props.web3.utils.fromWei(prod.cost,'ether')
           products.push(
             <div key={p} className="content bridge row">
               <div className="col-12 p-1">
@@ -125,15 +125,15 @@ export default class SendToAddress extends React.Component {
                   onClick={()=>{
                     console.log(prod.id,prod.name,prod.cost,prod.isAvailable)
                     let currentAmount = this.state.amount
-                    if(currentAmount) currentAmount+=parseFloat(costInDollars)
-                    else currentAmount = parseFloat(costInDollars)
+                    if(currentAmount) currentAmount+=parseFloat(costInNativeCurrency)
+                    else currentAmount = parseFloat(costInNativeCurrency)
                     if(currentAmount!==this.state.amount){
                       this.setState({amount:currentAmount})
                     }
                   }}
                   style={this.props.buttonStyle.secondary}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    {this.props.web3.utils.hexToUtf8(prod.name)} {this.props.currencyDisplay(costInDollars)}
+                    {this.props.web3.utils.hexToUtf8(prod.name)} {this.props.currencyDisplay(costInNativeCurrency)}
                   </Scaler>
                 </button>
               </div>

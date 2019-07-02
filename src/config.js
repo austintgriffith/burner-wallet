@@ -1,6 +1,8 @@
 const configs = [
   {
     EXCHANGE_RATE_QUERY: 5000,
+    CURRENCIES: ["EUR", "USD", "GBP"],
+    DEFAULT_CURRENCY: 'USD',
     DOMAINS: ["localhost", "10.0.0.107", "sundai.fritz.box"],
     SIDECHAIN: {
       NAME: "Leap Testnet",

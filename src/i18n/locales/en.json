@@ -119,7 +119,7 @@
       }
     },
     "currency": {
-      "label": "Set default currency"
+      "label": "Default currency"
     }
   }
 }
