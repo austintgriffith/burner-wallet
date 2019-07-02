@@ -10,7 +10,7 @@ export  default ({icon, text, selected, amount, currencyDisplay}) => {
 
   if(isNaN(amount) || typeof amount === "undefined"){
     amount = 0.00
-    opacity = 0.05
+    opacity = 0.25
   }
 
   return (
