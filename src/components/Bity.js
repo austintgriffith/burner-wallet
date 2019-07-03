@@ -7,7 +7,7 @@ import { format } from "@tammo/react-iban";
 import styled from "styled-components";
 import { isValid } from "iban";
 import { placeOrder, getOrder, getEstimate } from "../services/bity";
-import { gasPrice } from "../services/core";
+import { price } from "../services/ethgasstation";
 
 const P = styled.p`
   color: gray;
@@ -152,7 +152,7 @@ class Bity extends Component {
       if (metaAccount) {
         let gwei;
         try {
-          gwei = await gasPrice();
+          gwei = await price();
         } catch (err) {
           changeAlert(
             "warning",
