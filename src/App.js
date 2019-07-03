@@ -147,6 +147,9 @@ export default class App extends Component {
       })
     }catch(e){console.log(e)}
 
+    this.poll = this.poll.bind(this)
+    this.longPoll = this.longPoll.bind(this)
+    this.queryExchangeWithNativeCurrency = this.queryExchangeWithNativeCurrency.bind(this)
   }
 
   currencyDisplay = (amount)=>{
@@ -283,11 +286,10 @@ export default class App extends Component {
         }
       }
     }
-    this.poll.bind(this)();
-    interval = setInterval(this.poll.bind(this),1500)
-    intervalLong = setInterval(this.longPoll.bind(this),45000)
-    exchangeRatesQueryTimer = setInterval(this.queryExchangeWithNativeCurrency.bind(this), CONFIG.CURRENCY.EXCHANGE_RATE_QUERY)
-    setTimeout(this.longPoll.bind(this),150)
+    interval = setInterval(this.poll,1500)
+    intervalLong = setInterval(this.longPoll,45000)
+    exchangeRatesQueryTimer = setInterval(this.queryExchangeWithNativeCurrency, CONFIG.CURRENCY.EXCHANGE_RATE_QUERY)
+    setTimeout(this.longPoll,150)
 
     this.connectToRPC()
   }
