@@ -12,7 +12,7 @@ import {
 import { PrimaryButton, BorderButton } from '../components/Buttons'
 import getConfig from '../config'
 
-const { CURRENCIES: currencyList } = getConfig()
+const { CURRENCY } = getConfig()
 
 export default class Advanced extends React.Component {
   constructor(props) {
@@ -148,7 +148,7 @@ export default class Advanced extends React.Component {
       <div style={{marginTop:20}}>
       <Flex alignItems='center' justifyContent='space-between' width={1}>
         <Text>{i18n.t('currency.label')}</Text>
-        <Select items={currencyList} onChange={this.updateCurrency} value={currency}/>
+        <Select items={CURRENCY.CURRENCY_LIST} onChange={this.updateCurrency} value={currency}/>
       </Flex>
       <hr style={{paddingTop:20}}/>
       <div>

@@ -14,19 +14,17 @@ export  default ({icon, text, selected, amount, currencyDisplay}) => {
   }
 
   return (
-    <div style={{opacity}}>
-      <Flex justifyContent={"space-between"} alignItems={"center"} borderBottom={1} borderColor={"#DFDFDF"} mb={3} pb={3}>
-        <Flex alignItems={"center"}>
-          <Image src={icon} height={"50px"} width={"50px"} mr={3} bg="transparent" />
-          <Text>
-            {text}
-          </Text>
-        </Flex>
-
-        <Text fontSize={4}>
-          {currencyDisplay(amount)}
+    <Flex opacity={opacity} justifyContent={"space-between"} alignItems={"center"} borderBottom={1} borderColor={"#DFDFDF"} mb={3} pb={3}>
+      <Flex alignItems={"center"}>
+        <Image src={icon} height={"50px"} width={"50px"} mr={3} bg="transparent" />
+        <Text>
+          {text}
         </Text>
       </Flex>
-    </div>
+
+      <Text fontSize={4}>
+        {currencyDisplay(amount)}
+      </Text>
+    </Flex>
   )
 };

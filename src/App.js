@@ -286,7 +286,7 @@ export default class App extends Component {
     this.poll.bind(this)();
     interval = setInterval(this.poll.bind(this),1500)
     intervalLong = setInterval(this.longPoll.bind(this),45000)
-    exchangeRatesQueryTimer = setInterval(this.queryExchangeWithNativeCurrency.bind(this), CONFIG.EXCHANGE_RATE_QUERY)
+    exchangeRatesQueryTimer = setInterval(this.queryExchangeWithNativeCurrency.bind(this), CONFIG.CURRENCY.EXCHANGE_RATE_QUERY)
     setTimeout(this.longPoll.bind(this),150)
 
     this.connectToRPC()
@@ -352,7 +352,7 @@ export default class App extends Component {
   }
 
   queryExchangeWithNativeCurrency() {
-    let currency = localStorage.getItem('currency') || CONFIG.DEFAULT_CURRENCY
+    let currency = localStorage.getItem('currency') || CONFIG.CURRENCY.DEFAULT_CURRENCY
     fetch(`https://min-api.cryptocompare.com/data/price?fsym=DAI&tsyms=${currency}`)
       .then(response => response.json())
       .then(response => {
