@@ -132,7 +132,7 @@ export default class SendToAddress extends React.Component {
         this.props.changeAlert({type: 'warning', message: 'Not enough funds: '+currencyDisplay(Math.floor((parseFloat(this.props.balance))*100)/100)})
       }else{
         console.log("SWITCH TO LOADER VIEW...",amount)
-        this.props.changeView('loader')
+        this.props.changeView('loader_SIDECHAIN')
         setTimeout(()=>{window.scrollTo(0,0)},60)
 
         console.log("web3",this.props.web3)

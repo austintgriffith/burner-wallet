@@ -126,7 +126,7 @@ class Bity extends Component {
       changeAlert
     } = this.props;
     if (IBAN.valid) {
-      changeView("loader");
+      changeView("loader_ROOTCHAIN");
 
       let order;
       const amountInEth = (amount.value / ethPrice).toString();

@@ -1,8 +1,10 @@
 // @format
 import React, { Component } from "react";
 import { time } from "../services/ethgasstation";
+import getConfig from "../config";
 
 let interval;
+const CONFIG = getConfig();
 const RATE = {
   PERCENT: 3,
   EACH: 250
@@ -27,10 +29,10 @@ class Loader extends Component {
     const { network } = this.props;
 
     let t;
-    if (network === "ROOT_CHAIN") {
+    if (network === "ROOTCHAIN") {
       t = await time();
-    } else if (network === "SIDE_CHAIN") {
-      t = 1000; //ms
+    } else if (network === "SIDECHAIN") {
+      t = CONFIG.SIDECHAIN.TIME_ESTIMATES.TX; //ms
       throw new Error("Network not yet supported");
     } else {
       // 8ms was Loader's default value.
@@ -43,7 +45,6 @@ class Loader extends Component {
       percent: RATE.PERCENT
     };
     this.setState({ rate }, () => {
-      console.log(rate.each);
       interval = setInterval(this.progress, rate.each);
     });
   }
@@ -58,15 +59,18 @@ class Loader extends Component {
     let newProgress = progress + rate.percent;
     if (newProgress > 100) {
       newProgress = 100;
+      clearInterval(interval);
     }
     this.setState({ progress: newProgress });
   }
 
   render() {
     const { progress } = this.state;
+    const { loaderImage } = this.props;
+
     return (
       <div className="loader">
-        <img src={this.props.loaderImage} className="loader__logo" alt="" />
+        <img src={loaderImage} className="loader__logo" alt="" />
         <div className="loader__progress">
           <div
             className="loader__progress_fill"

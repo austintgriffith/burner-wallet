@@ -864,6 +864,22 @@ export default class App extends Component {
                   )
                 }
 
+                if (view.includes("loader_")) {
+                  const network = view.replace("loader_");
+                  return (
+                    <div>
+                      <div
+                        style={{zIndex:1,position:"relative",color:"#dddddd"}}>
+
+                        <NavCard
+                          title={"Sending..."}
+                          goBack={this.goBack.bind(this)} />
+                      </div>
+                      <Loader loaderImage={LOADERIMAGE} network={network} />
+                    </div>
+                  );
+                }
+
                 const sendByScan = (
                   <SendByScan
                     parseAndCleanPath={this.parseAndCleanPath.bind(this)}

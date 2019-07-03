@@ -22,7 +22,8 @@ const configs = [
         // is dependent on how often blocks are submitted to the network.
         // Ultimately, we want to remove this value from the code base somehow.
         EXIT: 160000,
-        DEPOSIT: 330000
+        DEPOSIT: 330000,
+        TX: 1000,
       }
     },
     ROOTCHAIN: {
@@ -57,7 +58,8 @@ const configs = [
         // is dependent on how often blocks are submitted to the network.
         // Ultimately, we want to remove this value from the code base somehow.
         EXIT: 160000,
-        DEPOSIT: 330000
+        DEPOSIT: 330000,
+        TX: 1000,
       }
     },
     ROOTCHAIN: {
@@ -92,7 +94,8 @@ const configs = [
         // is dependent on how often blocks are submitted to the network.
         // Ultimately, we want to remove this value from the code base somehow.
         EXIT: 160000,
-        DEPOSIT: 330000
+        DEPOSIT: 330000,
+        TX: 1000,
       }
     },
     ROOTCHAIN: {
