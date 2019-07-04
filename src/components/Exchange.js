@@ -1087,18 +1087,7 @@ export default class Exchange extends React.Component {
       }
 
     }else if(ethToDaiMode==="withdraw"){
-      if(!this.state.mainnetMetaAccount && this.props.network!=="Mainnet"){
-        ethToDaiDisplay = (
-          <div className="content ops row" style={{textAlign:'center'}}>
-            <div className="col-12 p-1">
-              Error: MetaMask network must be: <span style={{fontWeight:"bold",marginLeft:5}}>Mainnet</span>
-              <a href="#" onClick={()=>{this.setState({ethToDaiMode:false})}} style={{marginLeft:40,color:"#666666"}}>
-                <i className="fas fa-times"/> dismiss
-              </a>
-            </div>
-          </div>
-        )
-      }else if(this.props.ethBalance<=0){
+      if(this.props.ethBalance<=0){
         ethToDaiDisplay = (
           <div className="content ops row" style={{textAlign:'center'}}>
             <div className="col-12 p-1">
@@ -1155,7 +1144,7 @@ export default class Exchange extends React.Component {
               console.log("timestamp",timestamp)
 
               let deadline = timestamp+600
-              let mineth = output
+              let mineth = parseInt(output);
               console.log("tokenToEthSwapInput",amountOfDai,mineth,deadline)
 
 
