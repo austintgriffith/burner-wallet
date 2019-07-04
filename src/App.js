@@ -125,7 +125,9 @@ export default class App extends Component {
       vendors: {},
       ethprice: 0.00,
       hasUpdateOnce: false,
-      exchangeRate: {}
+      exchangeRate: {
+        USD: 0.00
+      }
     };
     this.alertTimeout = null;
 
@@ -155,8 +157,8 @@ export default class App extends Component {
     let locale = localStorage.getItem('i18nextLng')
     let balance = Math.floor(amount * 100) / 100
     
-    let symbol = Object.keys(exchangeRate)[0] || localStorage.getItem('currency');
-    let rate = Object.values(exchangeRate)[0] || 0.00;
+    let symbol = localStorage.getItem('currency') || Object.keys(exchangeRate)[0];
+    let rate = Object.values(exchangeRate)[0];
     return new Intl.NumberFormat(locale, { style: 'currency', currency: symbol, maximumFractionDigits: 2 }).format(this.convertExchangeRate(rate, balance))
   }
 
