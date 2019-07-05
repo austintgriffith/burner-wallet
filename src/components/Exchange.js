@@ -1675,7 +1675,7 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-4 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  {this.props.dollarDisplay(this.props.xdaiBalance)}
+                  {this.props.currencyDisplay(this.props.xdaiBalance)}
                 </Scaler>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
@@ -1700,7 +1700,7 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-4 p-1" style={{marginTop:9,whiteSpace:"nowrap"}}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                {this.props.dollarDisplay(this.props.daiBalance)}
+                {this.props.currencyDisplay(this.props.daiBalance)}
               </Scaler>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
@@ -1724,7 +1724,7 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-4 p-1" style={{marginTop:10,whiteSpace:"nowrap"}}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                {this.props.dollarDisplay(this.props.ethBalance*this.props.ethprice)}
+                {this.props.currencyDisplay(this.props.ethBalance*this.props.ethprice)}
               </Scaler>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>

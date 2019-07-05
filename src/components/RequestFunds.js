@@ -39,7 +39,7 @@ export default class RequestFunds extends React.Component {
 
   render() {
     let { canRequest, message, amount, requested } = this.state;
-    let {dollarDisplay,view,buttonStyle,ERC20TOKEN,address, changeView} = this.props
+    let {currencyDisplay,view,buttonStyle,ERC20TOKEN,address, changeView} = this.props
     if(requested){
 
       let url = window.location.protocol+"//"+window.location.hostname
@@ -55,7 +55,7 @@ export default class RequestFunds extends React.Component {
           }}>
           <div style={{width:"100%",textAlign:'center'}}>
             <div style={{fontSize:30,cursor:"pointer",textAlign:"center",width:"100%"}}>
-              {dollarDisplay(amount)}
+              {currencyDisplay(amount)}
             </div>
 
             <div style={{cursor:"pointer",textAlign:"center",width:"100%"}}>
@@ -80,7 +80,7 @@ export default class RequestFunds extends React.Component {
             </div>
           </CopyToClipboard>
           <RecentTransactions
-            dollarDisplay={dollarDisplay}
+            currencyDisplay={currencyDisplay}
             view={view}
             max={5}
             buttonStyle={buttonStyle}

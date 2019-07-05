@@ -4,9 +4,15 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import i18n from '../i18n';
 import {
   Input,
-  QR as QRCode
+  QR as QRCode,
+  Text,
+  Select,
+  Flex,
 } from 'rimble-ui'
 import { PrimaryButton, BorderButton } from '../components/Buttons'
+import getConfig from '../config'
+
+const { CURRENCY } = getConfig()
 
 export default class Advanced extends React.Component {
   constructor(props) {
@@ -14,11 +20,25 @@ export default class Advanced extends React.Component {
     this.state = {
       privateKeyQr:false,
       seedPhraseHidden:true,
-      privateKeyHidden:true
+      privateKeyHidden:true,
+      currency: ''
     }
   }
+
+  componentDidMount() {
+    let currency = localStorage.getItem('currency')
+    this.setState({ currency })
+  }
+
+  updateCurrency = e => {
+    let { value } = e.target
+    this.setState({ currency: value })
+    localStorage.setItem('currency', value)
+  }
+
   render(){
     let {isVendor, balance, privateKey, changeAlert, changeView, setPossibleNewPrivateKey} = this.props
+    let { currency } = this.state
 
     let url = window.location.protocol+"//"+window.location.hostname
     if(window.location.port&&window.location.port!==80&&window.location.port!==443){
@@ -126,7 +146,11 @@ export default class Advanced extends React.Component {
 
     return (
       <div style={{marginTop:20}}>
-
+      <Flex alignItems='center' justifyContent='space-between' width={1}>
+        <Text>{i18n.t('currency.label')}</Text>
+        <Select items={CURRENCY.CURRENCY_LIST} onChange={this.updateCurrency} value={currency}/>
+      </Flex>
+      <hr style={{paddingTop:20}}/>
       <div>
         <div style={{width:"100%",textAlign:"center"}}><h5>Learn More</h5></div>
         <div className="content ops row settings-row" style={{marginBottom:10}}>

@@ -119,9 +119,9 @@ export default class SendToAddress extends React.Component {
 
   send = async () => {
     let { toAddress, amount } = this.state;
-    let {dollarDisplay, convertToDollar} = this.props
+    let {currencyDisplay} = this.props
 
-    amount = convertToDollar(amount)
+    amount = currencyDisplay(amount)
     console.log("CONVERTED TO DOLLAR AMOUNT",amount)
 
     if(this.state.canSend){
@@ -129,7 +129,7 @@ export default class SendToAddress extends React.Component {
       if(parseFloat(this.props.balance) <= 0){
         this.props.changeAlert({type: 'warning', message: "No Funds."})
       }else if(parseFloat(this.props.balance)<parseFloat(amount)){
-        this.props.changeAlert({type: 'warning', message: 'Not enough funds: '+dollarDisplay(Math.floor((parseFloat(this.props.balance))*100)/100)})
+        this.props.changeAlert({type: 'warning', message: 'Not enough funds: '+currencyDisplay(Math.floor((parseFloat(this.props.balance))*100)/100)})
       }else{
         console.log("SWITCH TO LOADER VIEW...",amount)
         this.props.changeView('loader')

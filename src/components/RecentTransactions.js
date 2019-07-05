@@ -2,7 +2,7 @@ import React from 'react';
 import { Blockie } from "dapparatus";
 import { Scaler } from "dapparatus";
 
-export default ({dollarDisplay, view, max, buttonStyle, vendorName, address, recentTxs, block, changeView}) => {
+export default ({currencyDisplay, view, max, buttonStyle, vendorName, address, recentTxs, block, changeView}) => {
   let txns = []
   let count=0
   if(!max) max=9999
@@ -11,7 +11,7 @@ export default ({dollarDisplay, view, max, buttonStyle, vendorName, address, rec
     if(thisValue>0.0){
       let dollarView = (
         <span style={{opacity:0.5,fontSize:14}}>
-          {dollarDisplay(recentTxs[r].value)}
+          {currencyDisplay(recentTxs[r].value)}
         </span>
       )
       let toBlockie = (

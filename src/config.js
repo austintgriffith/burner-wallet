@@ -1,5 +1,10 @@
 const configs = [
   {
+    CURRENCY: {
+      EXCHANGE_RATE_QUERY: 5000,
+      CURRENCY_LIST: ["EUR", "USD", "GBP"],
+      DEFAULT_CURRENCY: "USD"
+    },
     DOMAINS: ["localhost", "10.0.0.107", "sundai.fritz.box"],
     SIDECHAIN: {
       NAME: "Leap Testnet",
@@ -17,7 +22,7 @@ const configs = [
         // is dependent on how often blocks are submitted to the network.
         // Ultimately, we want to remove this value from the code base somehow.
         EXIT: 160000,
-        DEPOSIT: 330000,
+        DEPOSIT: 330000
       }
     },
     ROOTCHAIN: {
@@ -52,7 +57,7 @@ const configs = [
         // is dependent on how often blocks are submitted to the network.
         // Ultimately, we want to remove this value from the code base somehow.
         EXIT: 160000,
-        DEPOSIT: 330000,
+        DEPOSIT: 330000
       }
     },
     ROOTCHAIN: {
@@ -87,7 +92,7 @@ const configs = [
         // is dependent on how often blocks are submitted to the network.
         // Ultimately, we want to remove this value from the code base somehow.
         EXIT: 160000,
-        DEPOSIT: 330000,
+        DEPOSIT: 330000
       }
     },
     ROOTCHAIN: {
