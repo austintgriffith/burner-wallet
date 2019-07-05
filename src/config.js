@@ -1,11 +1,11 @@
 const configs = [
   {
+    DOMAINS: ["localhost", "10.0.0.107", "sundai.fritz.box"],
     CURRENCY: {
       EXCHANGE_RATE_QUERY: 5000,
       CURRENCY_LIST: ["EUR", "USD", "GBP"],
       DEFAULT_CURRENCY: "USD"
     },
-    DOMAINS: ["localhost", "10.0.0.107", "sundai.fritz.box"],
     SIDECHAIN: {
       NAME: "Leap Testnet",
       RPC: "https://testnet-node.leapdao.org",
@@ -41,6 +41,11 @@ const configs = [
   },
   {
     DOMAINS: ["s.peep.cash"],
+    CURRENCY: {
+      EXCHANGE_RATE_QUERY: 5000,
+      CURRENCY_LIST: ["EUR", "USD", "GBP"],
+      DEFAULT_CURRENCY: "USD"
+    },
     SIDECHAIN: {
       NAME: "Leap Testnet",
       RPC: "https://testnet-node.leapdao.org",
@@ -76,6 +81,11 @@ const configs = [
   },
   {
     DOMAINS: ["sundai.io"],
+    CURRENCY: {
+      EXCHANGE_RATE_QUERY: 5000,
+      CURRENCY_LIST: ["EUR", "USD", "GBP"],
+      DEFAULT_CURRENCY: "USD"
+    },
     SIDECHAIN: {
       NAME: "Leap Network",
       RPC: "wss://mainnet-node1.leapdao.org:1443",
