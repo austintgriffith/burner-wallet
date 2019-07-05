@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@tammo/react-iban": "0.0.2",
     "base64url": "^3.0.1",
     "bootstrap": "^4.1.3",
     "dapparatus": "leapdao/dapparatus#5591152",
@@ -11,6 +12,7 @@
     "ethereumjs-util": "^6.0.0",
     "i18next": "^13.1.5",
     "i18next-browser-languagedetector": "^2.2.4",
+    "iban": "0.0.12",
     "identity-obj-proxy": "3.0.0",
     "jsbi-utils": "^1.0.0",
     "leap-core": "^0.32.0",
@@ -31,8 +33,8 @@
     "react-native-webview-messaging": "^1.2.3",
     "react-qr-reader": "^2.1.1",
     "react-scroll": "^1.7.10",
-    "styled-components": "^4.1.3",
     "rimble-ui": "^0.4.2",
+    "styled-components": "^4.1.3",
     "web3": "1.0.0-beta.36"
   },
   "scripts": {

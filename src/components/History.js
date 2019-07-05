@@ -38,6 +38,7 @@ export default class History extends React.Component {
   componentWillUnmount(){
     clearInterval(interval)
   }
+  // NOTE: Not sure what this function does.
   async poll(){
     let {transactionsByAddress,target} = this.props
     let theseTransactionsByAddress = []
@@ -115,6 +116,7 @@ export default class History extends React.Component {
       this.sendChat();
     }
   }
+  // TODO: Delete, the LeapDAO burner doesn't support chat.
   async sendChat(){
     this.setState({sendingChat:true})
     let value = 0
@@ -167,6 +169,7 @@ export default class History extends React.Component {
 
     let txns = []
     for(let r in theseTransactionsByAddress){
+      console.log(r);
 
       let messageValue = ""
       let value = parseFloat(theseTransactionsByAddress[r].value)

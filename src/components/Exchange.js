@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
+import Ruler from "./Ruler";
 import Blockies from 'react-blockies';
 import { Scaler } from "dapparatus";
 import Web3 from 'web3';
@@ -11,11 +12,14 @@ import {
   Input as RInput,
   Field
 } from 'rimble-ui'
+
 import { Exit } from 'leap-core';
 import { fromRpcSig } from 'ethereumjs-util';
 import { bi, add, divide } from 'jsbi-utils';
 import getConfig from "../config";
 import { PrimaryButton, BorderButton } from "./Buttons";
+import bityLogo from '../assets/bity.png';
+import { gasPrice } from "../services/core";
 
 const CONFIG = getConfig();
 const BN = Web3.utils.BN
@@ -33,27 +37,6 @@ const uniswapContractObject = {
 }
 
 let metaReceiptTracker = {}
-
-/**
- * @returns gas price in gwei
- */
-// TODO: move to burner-core
-function gasPrice() {
-  return fetch('https://ethgasstation.info/json/ethgasAPI.json', {
-    mode: 'cors',
-    method: 'get',
-  })
-    .then(r => r.json())
-    .then((response)=>{
-      console.log(response);
-      if(response.average > 0 && response.average < 200){
-        const avg = response.average + (response.average*CONFIG.ROOTCHAIN.GAS.BOOST_BY)
-        return Math.round(avg * 100) / 1000;
-      }
-
-      return Promise.reject('Average out of range (0–200)');
-    });
-}
 
 export default class Exchange extends React.Component {
 
@@ -584,6 +567,7 @@ export default class Exchange extends React.Component {
       try {
         gwei = await gasPrice();
       } catch(err) {
+        // TODO: Propagate error to user
         console.log("Error getting gas price",err)
       }
 
@@ -725,7 +709,7 @@ export default class Exchange extends React.Component {
     }
   }
   render() {
-    let {daiToXdaiMode,ethToDaiMode} = this.state
+    let {daiToXdaiMode,ethToDaiMode } = this.state
 
     let ethCancelButton = <BorderButton className="btn-cancel" onClick={()=>{
           this.setState({amount:"",ethToDaiMode:false})
@@ -1415,9 +1399,6 @@ export default class Exchange extends React.Component {
 
     }
 
-
-
-
     let sendDaiButton = (
       <OutlineButton
         width={1}
@@ -1586,6 +1567,7 @@ export default class Exchange extends React.Component {
         </button>
       )
     }
+    
 
     let sendXdaiButton = (
       <OutlineButton
@@ -1733,7 +1715,28 @@ export default class Exchange extends React.Component {
           </div>
 
           {sendEthRow}
+          
+          <Ruler />
 
+          <div className="content ops row" style={{paddingBottom:20}}>
+            <div className="col-2 p-1">
+              <img style={logoStyle} src={bityLogo} alt="bity logo" />
+            </div>
+            <div className="col-10 p-1" style={{marginTop:10}}>
+            <PrimaryButton
+              width={1}
+              mr={2}
+              icon={'ArrowForward'}
+              disabled={buttonsDisabled}
+              onClick={()=>{
+                this.props.changeView("cashout");
+            }}>
+              <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              {i18n.t("offramp.account")}
+              </Scaler>
+            </PrimaryButton>
+           </div>
+        </div>
       </Box>
     )
   }

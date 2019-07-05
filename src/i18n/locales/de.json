@@ -117,6 +117,36 @@
       "movie": {
         "name": "Name des Films"
       }
+    },
+    "offramp": {
+        "title": "Zum Bankkonto überweisen",
+        "success": "Überweisung erfolgreich. Überprüfen sie ihr Konto in den nächsten 24 Stunden.",
+        "required": "Dieses Feld ist erforderlich.",
+        "country_not_supported": "Dieses Land wird momentan noch nicht von Bity.com unterstützt. Unterstützte Länder sind: Österreich, Belgien, Bulgarien, Kroatien, Zypern, Tschechien, Dänemark, Estland, Finland, Frankreich, Deutschland, Griechenland, Ungarn, Island, Irland, Italien, Lettland, Liechtenstein, Litauen, Luxembourg, Malta, Monaco, Niederlande, Norwegen, Polen, Portugal, Rumänien, San Marino, Spanien, Slovakai, Slowenien, Schweden, Schweiz, Großbritannien",
+        "iban_incorrect": "Die eingegebene IBAN ist inkorrekt.",
+        "amount_too_small": "Sie können Beträge auszahlen die größer als",
+        "amount_too_big": "Der auszuzahlende Betrag übersteigt ihren gesamten Ether Betrag.",
+        "account": "Dein Bank Konto",
+        "form": {
+            "owner": "Kontoinhaber",
+            "amount": "Wert",
+            "submit": "Auszahlen!"
+        },
+        "history": {
+            "title": "Auftragsstatus",
+            "status_title": "Status",
+            "disclaimer": "Dieser Beitrag an EURO wird in wenigen Stunden auf dein Bankkonto überwiesen. Leider ist es im Moment nicht möglich eine Wechselrate (ETH/EUR) zu garantieren. Solltest du interessiert sein zu helfen, ",
+            "click": "klicke hier",
+            "status": {
+                "created": "Auftrag erstellt mit ID: ",
+                "received": "Ether erhalten.",
+                "received": "Ether gegen EURO getauscht."
+            }
+        },
+        "errors": {
+            "bity_connection": "Es gab ein Problem damit eine Verbindung zu unserer Partnerbörse bity.com herzustellen. Bitte versuche es später nochmal.",
+            "ethgasstation_connection": "Es gab ein Problem damit die zuletzt aktuellen Gaspreise für das Ethereum Netzwerk zu bestimmen. Bitte versuche daher deine Transaktion zu einem späteren Zeitpunkt zu senden."
+        }
     }
   }
 }

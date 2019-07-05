@@ -10,6 +10,8 @@ import Header from './components/Header';
 import NavCard from './components/NavCard';
 import SendByScan from './components/SendByScan';
 import SendToAddress from './components/SendToAddress';
+import Bity from './components/Bity';
+import BityHistory from "./components/BityHistory";
 import WithdrawFromPrivate from './components/WithdrawFromPrivate';
 import RequestFunds from './components/RequestFunds';
 import Receive from './components/Receive'
@@ -798,19 +800,15 @@ export default class App extends Component {
                   </div>
                 )
 
-                if(view.indexOf("account_")===0) {
-
-                  let targetAddress = view.replace("account_","")
-                  console.log("TARGET",targetAddress)
+                // NOTE: This view is to show specific historical transactions.
+                if(view.includes("account_")) {
+                  const targetAddress = view.replace("account_","")
                   return (
                     <div>
                       <Card>
-
-                        <NavCard title={(
-                          <div>
-                            {i18n.t('history_chat')}
-                          </div>
-                        )} goBack={this.goBack.bind(this)}/>
+                        <NavCard 
+                          title={i18n.t('history_chat')}
+                          goBack={this.goBack.bind(this)}/>
                         {defaultBalanceDisplay}
                         <History
                           buttonStyle={buttonStyle}
@@ -830,6 +828,32 @@ export default class App extends Component {
                         />
                       </Card>
 
+                      <Bottom
+                        action={()=>{
+                          this.changeView('main')
+                        }}
+                      />
+                    </div>
+
+                  )
+                }
+
+                // NOTE: This view shows specific historical transactions to
+                // bity.com
+                if (view.includes("bity_")) {
+                  const orderId = view.replace("bity_","")
+                  return (
+                    <div>
+                      <Card>
+                        <NavCard
+                          title={i18n.t('offramp.history.title')}
+                          goBack={this.goBack.bind(this)}/>
+                        <BityHistory 
+                          changeAlert={this.changeAlert}
+                          address={this.state.account}
+                          orderId={orderId} 
+                        />
+                      </Card>
                       <Bottom
                         action={()=>{
                           this.changeView('main')
@@ -886,7 +910,6 @@ export default class App extends Component {
                           currencyDisplay={this.currencyDisplay}
                           view={this.state.view}
                           buttonStyle={buttonStyle}
-                          transactionsByAddress={this.state.transactionsByAddress}
                           changeView={this.changeView}
                           address={account}
                           block={this.state.block}
@@ -903,6 +926,37 @@ export default class App extends Component {
                       />
                     </div>
                   );
+                  case 'cashout':
+                    return (
+                      <div>
+                        {this.state.scannerOpen ? sendByScan : null}
+                        <Card>
+                          <NavCard title={i18n.t("offramp.title")} goBack={this.goBack.bind(this)}/>
+                          <div>
+                            <Balance
+                              icon={eth}
+                              selected={selected}
+                              text={"ETH"}
+                              amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)}
+                              currencyDisplay={this.currencyDisplay}
+                              address={account} />
+                          </div>
+                          <Bity
+                            address={this.state.account}
+                            ethPrice={this.state.ethprice}
+                            web3={this.state.web3}
+                            mainnetweb3={this.state.mainnetweb3}
+                            ethBalance={this.state.ethBalance}
+                            changeView={this.changeView.bind(this)}
+                            setReceipt={this.setReceipt.bind(this)}
+                          />
+                        </Card>
+                        <Bottom
+                          text={i18n.t('done')}
+                          action={this.goBack.bind(this)}
+                        />
+                      </div>
+                    );
                   case 'advanced':
                   return (
                     <div>
@@ -1195,6 +1249,7 @@ export default class App extends Component {
                           isAdmin={this.state.isAdmin}
                           buttonStyle={buttonStyle}
                           changeAlert={this.changeAlert}
+                          changeView={this.changeView}
                           setGwei={this.setGwei}
                           network={this.state.network}
                           tx={this.state.tx}
