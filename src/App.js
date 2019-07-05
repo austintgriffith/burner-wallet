@@ -938,8 +938,8 @@ export default class App extends Component {
                               selected={selected}
                               text={"ETH"}
                               amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)}
-                              address={account}
-                              dollarDisplay={dollarDisplay} />
+                              currencyDisplay={this.currencyDisplay}
+                              address={account} />
                           </div>
                           <Bity
                             address={this.state.account}
