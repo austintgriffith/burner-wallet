@@ -154,7 +154,10 @@ class Bity extends Component {
         try {
           gwei = await gasPrice();
         } catch (err) {
-          changeAlert("warning", i18n.t("offramp.errors.ethgasstation_connection"));
+          changeAlert(
+            "warning",
+            i18n.t("offramp.errors.ethgasstation_connection")
+          );
           return;
         }
         const tx = {
@@ -347,19 +350,17 @@ class Bity extends Component {
         <Box mb={4}>
           {/* TODO: How to put this into i18n without creating a mess?*/}
           <P>
-            Transfer your ether directly to your bank account with{" "}
-            <b>just one click</b> using bity.com, the secure swiss crypto
-            gateway. No cumbersome "Know Your Customer" (KYC) is required. Just
-            filling out the three fields below. For more information, visit
-            bity.com by{" "}
+            Transfer your ether directly to your bank account with just one
+            click using{" "}
             <a
               href="https://bity.com/"
               target="_blank"
               rel="noopener noreferrer"
             >
-              clicking here
+              bity.com
             </a>
-            .
+            , the secure swiss crypto gateway. No KYC is required within
+            bity.com's 5000 CHF (~4500 EUR) annual limit.
           </P>
           <Field mb={3} label={i18n.t("offramp.form.owner")}>
             <Input
