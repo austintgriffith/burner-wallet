@@ -119,7 +119,7 @@
       }
     },
     "currency": {
-      "label": "Default currency"
+      "label": "Display currency"
     }
   }
 }
