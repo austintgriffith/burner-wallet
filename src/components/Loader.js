@@ -70,7 +70,11 @@ class Loader extends Component {
 
     return (
       <div className="loader">
-        <img src={loaderImage} className="loader__logo" alt="" />
+        <img
+          alt="Burner Wallet Logo"
+          src={loaderImage}
+          className="loader__logo"
+        />
         <div className="loader__progress">
           <div
             className="loader__progress_fill"
