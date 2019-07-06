@@ -19,7 +19,7 @@ import { bi, add, divide } from 'jsbi-utils';
 import getConfig from "../config";
 import { PrimaryButton, BorderButton } from "./Buttons";
 import bityLogo from '../assets/bity.png';
-import { gasPrice } from "../services/core";
+import { price } from "../services/ethgasstation";
 
 const CONFIG = getConfig();
 const BN = Web3.utils.BN
@@ -311,7 +311,7 @@ export default class Exchange extends React.Component {
 
       let gwei;
       try {
-        gwei = await gasPrice();
+        gwei = await price();
       } catch(err) {
         console.log("Error getting gas price",err)
       }
@@ -375,7 +375,7 @@ export default class Exchange extends React.Component {
   async depositDai(destination, amount, message, cb) {
     let gwei
     try {
-      gwei = await gasPrice();
+      gwei = await price();
     } catch(err) {
       console.log("Error getting gas price",err)
     }
@@ -565,7 +565,7 @@ export default class Exchange extends React.Component {
 
       let gwei;
       try {
-        gwei = await gasPrice();
+        gwei = await price();
       } catch(err) {
         // TODO: Propagate error to user
         console.log("Error getting gas price",err)
@@ -630,7 +630,7 @@ export default class Exchange extends React.Component {
     if(this.state.mainnetMetaAccount){
       //send funds using metaaccount on mainnet
 
-      gasPrice()
+      price()
       .catch((err)=>{
         console.log("Error getting gas price",err)
       })
@@ -1159,7 +1159,7 @@ export default class Exchange extends React.Component {
               if(this.state.mainnetMetaAccount){
                 //send funds using metaaccount on mainnet
 
-                gasPrice()
+                price()
                   .catch((err)=>{
                     console.log("Error getting gas price",err)
                   })
@@ -1514,7 +1514,7 @@ export default class Exchange extends React.Component {
                 ml={2}
                 onClick={() => {
                   console.log("Getting gas price...")
-                  gasPrice()
+                  price()
                   .catch((err)=>{
                     console.log("Error getting gas price",err)
                   })
