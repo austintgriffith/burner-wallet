@@ -127,6 +127,7 @@ export default class App extends Component {
       vendors: {},
       ethprice: 0.00,
       hasUpdateOnce: false,
+      possibleNewPrivateKey: '',
       exchangeRate: {
         USD: 0.00
       }
@@ -152,6 +153,7 @@ export default class App extends Component {
     this.poll = this.poll.bind(this)
     this.longPoll = this.longPoll.bind(this)
     this.queryExchangeWithNativeCurrency = this.queryExchangeWithNativeCurrency.bind(this)
+    this.setPossibleNewPrivateKey = this.setPossibleNewPrivateKey.bind(this)
   }
 
   currencyDisplay = (amount)=>{
@@ -367,9 +369,13 @@ export default class App extends Component {
   }
 
   setPossibleNewPrivateKey(value){
-    this.setState({possibleNewPrivateKey:value},()=>{
-      this.dealWithPossibleNewPrivateKey()
+    this.setState({ possibleNewPrivateKey: value }, async () => {
+      await this.dealWithPossibleNewPrivateKey()
     })
+    // await this.dealWithPossibleNewPrivateKey()
+    // this.setState({possibleNewPrivateKey:value},()=>{
+      // this.dealWithPossibleNewPrivateKey()
+    // })
   }
   async dealWithPossibleNewPrivateKey(){
     //this happens as page load and you need to wait until
@@ -974,6 +980,7 @@ export default class App extends Component {
                           currencyDisplay={this.currencyDisplay}
                           tokenSendV2={tokenSendV2.bind(this)}
                           metaAccount={this.state.metaAccount}
+                          setPossibleNewPrivateKey={this.setPossibleNewPrivateKey}
                         />
                       </Card>
                       <Bottom
