@@ -111,6 +111,7 @@ export default class SendToAddress extends React.Component {
 
   render() {
     let { canWithdraw, fromAddress } = this.state;
+    let { currencyDisplay } = this.props;
 
     let products = []
     for(let p in this.props.products){
@@ -133,7 +134,7 @@ export default class SendToAddress extends React.Component {
                   }}
                   style={this.props.buttonStyle.secondary}>
                   <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                    {this.props.web3.utils.hexToUtf8(prod.name)} {this.props.currencyDisplay(costInNativeCurrency)}
+                    {this.props.web3.utils.hexToUtf8(prod.name)} {currencyDisplay(costInNativeCurrency)}
                   </Scaler>
                 </button>
               </div>
@@ -181,7 +182,7 @@ export default class SendToAddress extends React.Component {
                   <div className="col-6 p-1 w-100">
                     <div style={{fontSize:64,letterSpacing:-2,fontWeight:500,whiteSpace:"nowrap"}}>
                       <Scaler config={{startZoomAt:1000,origin:"0% 50%"}}>
-                        {this.props.currencyDisplay(this.state.fromBalance)}
+                        {currencyDisplay(this.state.fromBalance)}
                       </Scaler>
                     </div>
                   </div>
@@ -192,7 +193,7 @@ export default class SendToAddress extends React.Component {
                 <RInput
                   width={1}
                   type="number"
-                  placeholder="$0.00"
+                  placeholder={currencyDisplay(0)}
                   value={this.state.amount}
                   onChange={event => this.updateState('amount', event.target.value)} />
               </div>
