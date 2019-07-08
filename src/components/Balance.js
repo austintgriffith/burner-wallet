@@ -1,15 +1,11 @@
 import React from 'react';
 import { Flex, Text, Image } from "rimble-ui";
 
-export  default ({icon, text, selected, amount, currencyDisplay}) => {
+export  default ({icon, text, amount, currencyDisplay}) => {
 
   let opacity = 1
-  if(text === selected){
-    opacity=0.95
-  }
 
-  if(isNaN(amount) || typeof amount === "undefined"){
-    amount = 0.00
+  if(isNaN(amount)){
     opacity = 0.25
   }
 
@@ -23,7 +19,11 @@ export  default ({icon, text, selected, amount, currencyDisplay}) => {
       </Flex>
 
       <Text fontSize={4}>
-        {currencyDisplay(amount)}
+        
+      {/* NOTE: Sometimes the exchangeRate to fiat wasn't loaded yet and hence
+        * amount can become NaN. In this case, we simply pass 0 to
+        *  currencyDisplay.*/}
+        {isNaN(amount) ? currencyDisplay(0) : currencyDisplay(amount)}
       </Text>
     </Flex>
   )
