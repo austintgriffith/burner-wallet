@@ -156,6 +156,8 @@ export default class App extends Component {
     this.setPossibleNewPrivateKey = this.setPossibleNewPrivateKey.bind(this)
   }
 
+  // NOTE: This function is for _displaying_ a currency value to a user. It
+  // adds a currency unit to the beginning or end of the number!
   currencyDisplay = amount => {
     // NOTE: For some reason, this function seems to take very long.
     const { exchangeRate } = this.state
@@ -170,6 +172,9 @@ export default class App extends Component {
     }).format(convertedAmount)
   }
 
+  // NOTE: This function is for telling a computer the converted value between
+  // two currencies. Please do not use this function to display values to
+  // users but use `currencyDisplay`.
   convertExchangeRate = amount => {
     const { exchangeRate } = this.state
     const rate = Object.values(exchangeRate)[0];
@@ -369,13 +374,22 @@ export default class App extends Component {
 
   queryExchangeWithNativeCurrency() {
     let currency = localStorage.getItem('currency') || CONFIG.CURRENCY.DEFAULT_CURRENCY
-    fetch(`https://min-api.cryptocompare.com/data/price?fsym=DAI&tsyms=${currency}`)
-      .then(response => response.json())
-      .then(response => {
-        this.setState({
-          'exchangeRate': response
+    if (currency === "USD") {
+      // NOTE: 1 DAI === 1 USD. Veritas in numeris! :)
+      this.setState({
+        exchangeRate: {
+          USD: 1
+        }
+      });
+    } else {
+      fetch(`https://min-api.cryptocompare.com/data/price?fsym=DAI&tsyms=${currency}`)
+        .then(response => response.json())
+        .then(response => {
+          this.setState({
+            'exchangeRate': response
+          })
         })
-      })
+    }
   }
 
   setPossibleNewPrivateKey(value){
@@ -1087,6 +1101,7 @@ export default class App extends Component {
                           changeView={this.changeView}
                           setReceipt={this.setReceipt}
                           changeAlert={this.changeAlert}
+                          convertExchangeRate={this.convertExchangeRate}
                           currencyDisplay={this.currencyDisplay}
                         />
                       </Card>
