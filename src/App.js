@@ -302,6 +302,10 @@ export default class App extends Component {
         }
       }
     }
+    let nativeCurrency = localStorage.getItem('currency')
+    if (nativeCurrency === null) {
+      localStorage.setItem('currency', CONFIG.CURRENCY.DEFAULT_CURRENCY)
+    }
     interval = setInterval(this.poll,1500)
     intervalLong = setInterval(this.longPoll,45000)
     // NOTE: We query once before starting the interval to define the value
@@ -396,11 +400,8 @@ export default class App extends Component {
     this.setState({ possibleNewPrivateKey: value }, async () => {
       await this.dealWithPossibleNewPrivateKey()
     })
-    // await this.dealWithPossibleNewPrivateKey()
-    // this.setState({possibleNewPrivateKey:value},()=>{
-      // this.dealWithPossibleNewPrivateKey()
-    // })
   }
+
   async dealWithPossibleNewPrivateKey(){
     //this happens as page load and you need to wait until
     if(this.state && this.state.hasUpdateOnce){
