@@ -31,7 +31,10 @@ export default class RequestFunds extends React.Component {
 
   request = () => {
     if(this.state.canRequest){
-      this.setState({requested:true})
+      this.setState({
+        requested:true,
+        amount: this.props.toDollars(this.state.amount)
+      })
     }else{
       this.props.changeAlert({type: 'warning', message: 'Please enter a valid amount'})
     }
@@ -39,7 +42,7 @@ export default class RequestFunds extends React.Component {
 
   render() {
     let { canRequest, message, amount, requested } = this.state;
-    let {currencyDisplay,view,buttonStyle,ERC20TOKEN,address, changeView} = this.props
+    let { currencyDisplay, view, buttonStyle, address, changeView } = this.props
     if(requested){
 
       let url = window.location.protocol+"//"+window.location.hostname
@@ -70,13 +73,6 @@ export default class RequestFunds extends React.Component {
               <Input type='url' readOnly value={qrValue} width={1} />
             </Box>
 
-            {/* <div className="input-group">
-              <input type="text" className="form-control" value={qrValue} disabled/>
-              <div className="input-group-append">
-                <span className="input-group-text"><i className="fas fa-copy"/></span>
-              </div>
-            </div> */}
-
             </div>
           </CopyToClipboard>
           <RecentTransactions
@@ -84,12 +80,11 @@ export default class RequestFunds extends React.Component {
             view={view}
             max={5}
             buttonStyle={buttonStyle}
-            ERC20TOKEN={ERC20TOKEN}
-            transactionsByAddress={ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
+            transactionsByAddress={this.props.transactionsByAddress}
             changeView={changeView}
             address={address}
             block={this.props.block}
-            recentTxs={ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
+            recentTxs={this.props.recentTxs}
           />
         </div>
       )
@@ -100,7 +95,7 @@ export default class RequestFunds extends React.Component {
             <Input
               type="number"
               width={1}
-              placeholder="$0.00"
+              placeholder={this.props.currencyDisplay(0)}
               value={this.state.amount}
               onChange={event => this.updateState('amount', event.target.value)}
             />

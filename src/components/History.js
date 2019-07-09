@@ -169,7 +169,6 @@ export default class History extends React.Component {
 
     let txns = []
     for(let r in theseTransactionsByAddress){
-      console.log(r);
 
       let messageValue = ""
       let value = parseFloat(theseTransactionsByAddress[r].value)

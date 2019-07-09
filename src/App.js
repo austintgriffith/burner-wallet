@@ -163,7 +163,7 @@ export default class App extends Component {
     const { exchangeRate } = this.state
     const locale = localStorage.getItem('i18nextLng') 
     const symbol = localStorage.getItem('currency') || Object.keys(exchangeRate)[0];
-    const convertedAmount = this.convertExchangeRate(amount);
+    const convertedAmount = this.fromDollars(amount);
 
     return new Intl.NumberFormat(locale, {
       style: 'currency',
@@ -172,14 +172,20 @@ export default class App extends Component {
     }).format(convertedAmount)
   }
 
-  // NOTE: This function is for telling a computer the converted value between
-  // two currencies. Please do not use this function to display values to
-  // users but use `currencyDisplay`.
-  convertExchangeRate = amount => {
+  // `fromDollars` and `toDollars` is used to convert floats from one currency
+  // to another without adding a currency unit symbol.
+  fromDollars = amount => {
     const { exchangeRate } = this.state
     const rate = Object.values(exchangeRate)[0];
 
     return amount * rate;
+  }
+
+  toDollars = amount => {
+    const { exchangeRate } = this.state
+    const rate = Object.values(exchangeRate)[0];
+
+    return amount / rate;
   }
 
   parseAndCleanPath(path){
@@ -1013,6 +1019,8 @@ export default class App extends Component {
                             ethBalance={this.state.ethBalance}
                             changeView={this.changeView.bind(this)}
                             setReceipt={this.setReceipt.bind(this)}
+                            currencyDisplay={this.currencyDisplay}
+                            toDollars={this.toDollars}
                           />
                         </Card>
                         <Bottom
@@ -1103,6 +1111,7 @@ export default class App extends Component {
                           changeAlert={this.changeAlert}
                           convertExchangeRate={this.convertExchangeRate}
                           currencyDisplay={this.currencyDisplay}
+                          toDollars={this.toDollars}
                         />
                       </Card>
                       <Bottom
@@ -1190,6 +1199,7 @@ export default class App extends Component {
                             changeView={this.changeView}
                             changeAlert={this.changeAlert}
                             currencyDisplay={this.currencyDisplay}
+                            toDollars={this.toDollars}
                             transactionsByAddress={this.state.transactionsByAddress}
                             fullTransactionsByAddress={this.state.fullTransactionsByAddress}
                             fullRecentTxs={this.state.fullRecentTxs}
@@ -1327,6 +1337,7 @@ export default class App extends Component {
                           balance={balance}
                           goBack={this.goBack.bind(this)}
                           currencyDisplay={this.currencyDisplay}
+                          toDollars={this.toDollars}
                           tokenSendV2={tokenSendV2.bind(this)}
                         />
                       </Card>
