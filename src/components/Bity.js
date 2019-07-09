@@ -114,8 +114,10 @@ class Bity extends Component {
 
   async cashout() {
     const { IBAN } = this.validate("IBAN")();
-    const { metaAccount } = this.state;
-    const { name } = this.state.fields;
+    const {
+      metaAccount,
+      fields: { name }
+    } = this.state;
     const {
       address,
       ethPrice,
