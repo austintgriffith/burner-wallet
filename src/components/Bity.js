@@ -114,8 +114,10 @@ class Bity extends Component {
 
   async cashout() {
     const { IBAN } = this.validate("IBAN")();
-    const { metaAccount } = this.state;
-    const { name, amount } = this.state.fields;
+    const {
+      metaAccount,
+      fields: { name }
+    } = this.state;
     const {
       address,
       ethPrice,
@@ -123,12 +125,17 @@ class Bity extends Component {
       web3,
       changeView,
       setReceipt,
-      changeAlert
+      changeAlert,
+      toDollars
     } = this.props;
+    let { amount } = this.state.fields;
+
     if (IBAN.valid) {
       changeView("loader_ROOTCHAIN");
 
       let order;
+
+      amount.value = toDollars(amount.value);
       const amountInEth = (amount.value / ethPrice).toString();
       try {
         order = await placeOrder(
@@ -313,16 +320,16 @@ class Bity extends Component {
         });
       } else if (input === "amount") {
         const amount = parseFloat(this.refs.amount.value);
-        const { ethPrice, ethBalance } = this.props;
+        const { ethPrice, ethBalance, currencyDisplay } = this.props;
         const min = MIN_AMOUNT_DOLLARS;
         const max = parseFloat(ethPrice) * parseFloat(ethBalance);
 
         let valid, message;
         if (amount < min) {
           valid = false;
-          message = `${i18n.t(
-            "offramp.amount_too_small"
-          )} $${MIN_AMOUNT_DOLLARS}.`;
+          message = `${i18n.t("offramp.amount_too_small")} ${currencyDisplay(
+            MIN_AMOUNT_DOLLARS
+          )}.`;
         } else if (amount > max) {
           valid = false;
           message = i18n.t("offramp.amount_too_big");
@@ -345,6 +352,8 @@ class Bity extends Component {
 
   render() {
     const { fields } = this.state;
+    const { currencyDisplay } = this.props;
+
     return (
       <div>
         <Box mb={4}>
@@ -400,7 +409,7 @@ class Bity extends Component {
                   ? "grey"
                   : "red"
               }
-              placeholder="$0.00"
+              placeholder={currencyDisplay(0)}
             />
             {fields.amount.message ? (
               <Error>{fields.amount.message}</Error>
