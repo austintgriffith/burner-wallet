@@ -48,7 +48,7 @@ import core, { mainAsset as xdai } from './core';
 import RNMessageChannel from 'react-native-webview-messaging';
 
 
-import bufficorn from './bufficorn.png';
+import bufficorn from './daog.png';
 import cypherpunk from './cypherpunk.png';
 import ethImg from './images/ethereum.png';
 import daiImg from './images/dai.jpg';
@@ -95,12 +95,12 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(true){
+  if(false){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
   }else{
-    ERC20NAME = 'BUFF'
+    ERC20NAME = 'DAOG'
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
     ERC20IMAGE = bufficorn
@@ -149,12 +149,12 @@ else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
 }
 
 
-if(ERC20NAME=="BUFF"){
-  mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
-  mainStyle.backgroundColor = "#20012d"
-  mainStyle.mainColor = "#b6299e"
-  mainStyle.mainColorAlt = "#de3ec3"
-  title = "BuffiDai.io"
+if(ERC20NAME=="DAOG"){
+  mainStyle.backgroundImage = "linear-gradient(#666666, #111111)"
+  mainStyle.backgroundColor = "#111111"
+  mainStyle.mainColor = "#666666"
+  mainStyle.mainColorAlt = "#888888"
+  title = "wallet.daog.io"
   titleImage = (
     <img src={bufficorn} style={{
       maxWidth:50,
