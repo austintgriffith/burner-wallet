@@ -184,7 +184,7 @@ export default class Exchange extends React.Component {
                   console.log("Error getting gas price",err)
                 })
                 .then((response)=>{
-                  if(response && response.data.average>0&&response.data.average<200){
+                  if(response && response.data.average>0&&response.data.average<1000){
                     console.log("gas prices",response.data.average)
                     let gwei = Math.round(response.data.average*100)/1000
                     console.log("gwei:",gwei)
@@ -510,7 +510,7 @@ export default class Exchange extends React.Component {
       console.log("Error getting gas price",err)
     })
     .then((response)=>{
-      if(response && response.data.average>0&&response.data.average<200){
+      if(response && response.data.average>0&&response.data.average<1000){
 
         this.setState({
           loaderBarColor:"#f5eb4a",
@@ -689,7 +689,7 @@ export default class Exchange extends React.Component {
         console.log("Error getting gas price",err)
       })
       .then((response)=>{
-        if(response && response.data.average>0&&response.data.average<200){
+        if(response && response.data.average>0&&response.data.average<1000){
 
           this.setState({
             loaderBarColor:"#f5eb4a",
@@ -1463,13 +1463,13 @@ export default class Exchange extends React.Component {
                        onChange={event => this.updateState('amount', event.target.value)} />
                  <div className="input-group-append" onClick={() => {
 
-                   console.log("Getting gas price...")
+                   console.log("Getting gas price......")
                    axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
                    .catch((err)=>{
                      console.log("Error getting gas price",err)
                    })
                    .then((response)=>{
-                     if(response && response.data.average>0&&response.data.average<200){
+                     if(response && response.data.average>0&&response.data.average<1000){
                        response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
                        let gwei = Math.round(response.data.average*100)/1000
 
@@ -1712,7 +1712,7 @@ export default class Exchange extends React.Component {
                     console.log("Error getting gas price",err)
                   })
                   .then((response)=>{
-                    if(response && response.data.average>0&&response.data.average<200){
+                    if(response && response.data.average>0&&response.data.average<1000){
                       response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
                       let gwei = Math.round(response.data.average*100)/1000
 
@@ -2097,7 +2097,7 @@ export default class Exchange extends React.Component {
                          console.log("Error getting gas price",err)
                        })
                        .then((response)=>{
-                         if(response && response.data.average>0&&response.data.average<200){
+                         if(response && response.data.average>0&&response.data.average<1000){
                            response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
                            let gwei = Math.round(response.data.average*100)/1000
 
