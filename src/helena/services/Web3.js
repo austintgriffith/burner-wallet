@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 import { getConfig } from '../utils/config';
+import Decimal from 'decimal.js';
 
 export default class Web3Service {
   get web3IsPresent() {
@@ -14,10 +15,8 @@ export default class Web3Service {
     // await window.web3.currentProvider.enable();
     // this.web3 = new Web3(window.web3.currentProvider);
 
-    // setInterval(async () => {
-    //   const accounts = await this.web3.eth.getAccounts();
-    //   this.account = accounts[0];
-    // }, 1000);
+    const accounts = await this.web3.eth.getAccounts();
+    this.account = accounts[0];
     return true;
   }
 
@@ -42,6 +41,7 @@ export default class Web3Service {
     if (!this.isReady()) {
       return 'web3 not ready';
     }
+
     if (!this.account) {
       throw new Error('No Account available');
     }
@@ -49,7 +49,7 @@ export default class Web3Service {
     const balance = await this.web3.eth.getBalance(this.account);
 
     if (typeof balance !== 'undefined') {
-      return balance;
+      return Decimal(balance).div(1e18).toString();
       // return weiToEth(balance.toString());
     }
 

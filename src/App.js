@@ -280,7 +280,8 @@ class App extends Component {
       hasUpdateOnce: false,
       badges: {},
       selectedBadge: false,
-      allOneMarkets: false
+      allOneMarkets: false,
+      helenaBalance: 0
     };
     this.alertTimeout = null;
 
@@ -1309,247 +1310,50 @@ render() {
 
           switch(view) {
             case 'yourmodule':
+            const balanceDisplay = <div>
+              <Balance icon={ERC20IMAGE} selected={selected} text={ERC20NAME} amount={this.state.helenaBalance} address={account} dollarDisplay={dollarDisplay} />
+              <Ruler/>
+            </div>
+
             if(!this.state || !this.state.customLoader || !this.state.tx || !this.state.contracts || !this.state.network){
               return <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
             }else{
+              // HELENA CONFIG
+              if (!this.state.allOneMarkets) {
+                const oneMarket = new HelenaOneMarket({ web3: this.state.web3 });
+                
+
+                oneMarket.init()
+                  .then(() => {
+                    return oneMarket.getMarkets();
+                  })
+                  .then((markets) => {
+                    const allOneMarkets = markets.map((market) => (
+                      <div style={{ position: 'relative', marginTop: 10 }}>
+                        {oneMarket.market({
+                          marketId: market.address
+                        })}
+                        <Ruler />
+                      </div>
+                    ));
+                    this.setState({ allOneMarkets });
+                    return oneMarket.getBalance();
+                  })
+                  .then((balance) => {
+                    this.setState({ helenaBalance: balance });
+                  })
+
+              }
+              //
+
               return (
                 <div>
-                  <div className="send-to-address card w-100" style={{zIndex:1}}>
-
-                    <NavCard title={"Prediction Markets"} titleLink={""} goBack={this.goBack.bind(this)}/>
-                    {defaultBalanceDisplay}
-                    <YourModule
-                      privateKey={metaAccount.privateKey}
-
-                      marketAddress={"0x3d87a5a7bf9bd4056b231e4ada1792028051fa90"}
-
-                      web3={this.state.web3}
-                      tx={this.state.tx}
-                      send={this.state.send}
-
-                      address={account}
-                      balance={balance}
-
-                      network={this.state.network}
-                      block={this.state.block}
-
-                      contracts={this.state.contracts}
-                      contractLoader={this.state.customLoader}
-
-                      mainnetweb3={this.state.mainnetweb3}
-                      xdaiweb3={this.state.xdaiweb3}
-
-                      daiContract={this.state.daiContract}
-                      ensContract={this.state.ensContract}
-                      ensLookup={this.ensLookup.bind(this)}
-
-                      ethBalance={this.state.ethBalance}
-                      daiBalance={this.state.daiBalance}
-                      xdaiBalance={this.state.xdaiBalance}
-
-                      eth={eth}
-                      dai={dai}
-                      xdai={xdai}
-                      ERC20NAME={ERC20NAME}
-                      ERC20IMAGE={ERC20IMAGE}
-                      ERC20TOKEN={ERC20TOKEN}
-                      ERC20VENDOR={ERC20VENDOR}
-                      ethprice={this.state.ethprice}
-
-                      isVendor={this.state.isVendor}
-                      isAdmin={this.state.isAdmin}
-
-                      setGwei={this.setGwei}
-                      gwei={this.state.gwei}
-
-                      openScanner={this.openScanner.bind(this)}
-                      scannerState={this.state.scannerState}
-
-                      buttonStyle={buttonStyle}
-                      changeAlert={this.changeAlert}
-                      nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
-                      goBack={this.goBack.bind(this)}
-                      dollarDisplay={dollarDisplay}
-                      changeView={this.changeView}
-                    />
-
-                    <RulerDark/>
-
-                    <YourModule
-                      privateKey={metaAccount.privateKey}
-
-                      marketAddress={"0xf1d5d53909f826d445ad1e33f8b83cd51386d63f"}
-
-                      web3={this.state.web3}
-                      tx={this.state.tx}
-                      send={this.state.send}
-
-                      address={account}
-                      balance={balance}
-
-                      network={this.state.network}
-                      block={this.state.block}
-
-                      contracts={this.state.contracts}
-                      contractLoader={this.state.customLoader}
-
-                      mainnetweb3={this.state.mainnetweb3}
-                      xdaiweb3={this.state.xdaiweb3}
-
-                      daiContract={this.state.daiContract}
-                      ensContract={this.state.ensContract}
-                      ensLookup={this.ensLookup.bind(this)}
-
-                      ethBalance={this.state.ethBalance}
-                      daiBalance={this.state.daiBalance}
-                      xdaiBalance={this.state.xdaiBalance}
-
-                      eth={eth}
-                      dai={dai}
-                      xdai={xdai}
-                      ERC20NAME={ERC20NAME}
-                      ERC20IMAGE={ERC20IMAGE}
-                      ERC20TOKEN={ERC20TOKEN}
-                      ERC20VENDOR={ERC20VENDOR}
-                      ethprice={this.state.ethprice}
-
-                      isVendor={this.state.isVendor}
-                      isAdmin={this.state.isAdmin}
-
-                      setGwei={this.setGwei}
-                      gwei={this.state.gwei}
-
-                      openScanner={this.openScanner.bind(this)}
-                      scannerState={this.state.scannerState}
-
-                      buttonStyle={buttonStyle}
-                      changeAlert={this.changeAlert}
-                      nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
-                      goBack={this.goBack.bind(this)}
-                      dollarDisplay={dollarDisplay}
-                      changeView={this.changeView}
-                    />
-
-
-
-
-                          <RulerDark/>
-
-                          <YourModule
-                            privateKey={metaAccount.privateKey}
-
-                            marketAddress={"0x3b9fd4791eb5bb1329684b1da059f3d21b242b59"}
-
-                            web3={this.state.web3}
-                            tx={this.state.tx}
-                            send={this.state.send}
-
-                            address={account}
-                            balance={balance}
-
-                            network={this.state.network}
-                            block={this.state.block}
-
-                            contracts={this.state.contracts}
-                            contractLoader={this.state.customLoader}
-
-                            mainnetweb3={this.state.mainnetweb3}
-                            xdaiweb3={this.state.xdaiweb3}
-
-                            daiContract={this.state.daiContract}
-                            ensContract={this.state.ensContract}
-                            ensLookup={this.ensLookup.bind(this)}
-
-                            ethBalance={this.state.ethBalance}
-                            daiBalance={this.state.daiBalance}
-                            xdaiBalance={this.state.xdaiBalance}
-
-                            eth={eth}
-                            dai={dai}
-                            xdai={xdai}
-                            ERC20NAME={ERC20NAME}
-                            ERC20IMAGE={ERC20IMAGE}
-                            ERC20TOKEN={ERC20TOKEN}
-                            ERC20VENDOR={ERC20VENDOR}
-                            ethprice={this.state.ethprice}
-
-                            isVendor={this.state.isVendor}
-                            isAdmin={this.state.isAdmin}
-
-                            setGwei={this.setGwei}
-                            gwei={this.state.gwei}
-
-                            openScanner={this.openScanner.bind(this)}
-                            scannerState={this.state.scannerState}
-
-                            buttonStyle={buttonStyle}
-                            changeAlert={this.changeAlert}
-                            nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
-                            goBack={this.goBack.bind(this)}
-                            dollarDisplay={dollarDisplay}
-                            changeView={this.changeView}
-                          />
-
-
-
-
-                        <RulerDark/>
-
-                        <YourModule
-                          privateKey={metaAccount.privateKey}
-
-                          marketAddress={"0x6fb683af2922133d98f82d4356f171edd9b7031b"}
-
-                          web3={this.state.web3}
-                          tx={this.state.tx}
-                          send={this.state.send}
-
-                          address={account}
-                          balance={balance}
-
-                          network={this.state.network}
-                          block={this.state.block}
-
-                          contracts={this.state.contracts}
-                          contractLoader={this.state.customLoader}
-
-                          mainnetweb3={this.state.mainnetweb3}
-                          xdaiweb3={this.state.xdaiweb3}
-
-                          daiContract={this.state.daiContract}
-                          ensContract={this.state.ensContract}
-                          ensLookup={this.ensLookup.bind(this)}
-
-                          ethBalance={this.state.ethBalance}
-                          daiBalance={this.state.daiBalance}
-                          xdaiBalance={this.state.xdaiBalance}
-
-                          eth={eth}
-                          dai={dai}
-                          xdai={xdai}
-                          ERC20NAME={ERC20NAME}
-                          ERC20IMAGE={ERC20IMAGE}
-                          ERC20TOKEN={ERC20TOKEN}
-                          ERC20VENDOR={ERC20VENDOR}
-                          ethprice={this.state.ethprice}
-
-                          isVendor={this.state.isVendor}
-                          isAdmin={this.state.isAdmin}
-
-                          setGwei={this.setGwei}
-                          gwei={this.state.gwei}
-
-                          openScanner={this.openScanner.bind(this)}
-                          scannerState={this.state.scannerState}
-
-                          buttonStyle={buttonStyle}
-                          changeAlert={this.changeAlert}
-                          nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
-                          goBack={this.goBack.bind(this)}
-                          dollarDisplay={dollarDisplay}
-                          changeView={this.changeView}
-                        />
-
+                  <div className="send-to-address card w-100" style={{zIndex:1,backgroundColor: '#f6f6f6'}}>
+                    <NavCard title={"Helena Markets"} titleLink={""} goBack={this.goBack.bind(this)}/>
+                    {balanceDisplay}
+
+                    {this.state.allOneMarkets}
+                    
                   </div>
                   <Bottom
                     text={"done"}
@@ -1985,7 +1789,7 @@ render() {
                     if(RNMessageChannel){
                       RNMessageChannel.send("burn")
                     }
-                    if(localStorage&&typeof localStorage.setItem == "function"){
+                    if(localStorage&&typeof localStorage.setItem === "function"){
                       localStorage.setItem(this.state.account+"loadedBlocksTop","")
                       localStorage.setItem(this.state.account+"metaPrivateKey","")
                       localStorage.setItem(this.state.account+"recentTxs","")
@@ -2126,7 +1930,7 @@ render() {
                   let upperBoundOfSearch = this.state.block
                   //parse through recent transactions and store in local storage
 
-                  if(localStorage&&typeof localStorage.setItem == "function"){
+                  if(localStorage&&typeof localStorage.setItem === "function"){
 
                     let initResult = this.initRecentTxs()
                     let recentTxs = initResult[0]
@@ -2216,14 +2020,14 @@ async function tokenSend(to,value,gasLimit,txData,cb){
   let weiValue =  this.state.web3.utils.toWei(""+value, 'ether')
 
   let setGasLimit = 60000
-  if(typeof gasLimit == "function"){
+  if(typeof gasLimit === "function"){
     cb=gasLimit
   }else if(gasLimit){
     setGasLimit=gasLimit
   }
 
   let data = false
-  if(typeof txData == "function"){
+  if(typeof txData === "function"){
     cb = txData
   }else{
     data = txData
@@ -2268,7 +2072,7 @@ async function tokenSend(to,value,gasLimit,txData,cb){
 
   }else{
     let data = false
-    if(typeof txData == "function"){
+    if(typeof txData === "function"){
       cb = txData
     }else{
       data = txData

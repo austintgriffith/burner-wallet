@@ -28,4 +28,5 @@ export const initServices = async ({ web3 }) => {
   helenaService = new HelenaService(helenaHttpService);
   pmService = new PMService(pmHttpService);
   web3Service = new Web3Service(web3);
+  await web3Service.init();
 }
