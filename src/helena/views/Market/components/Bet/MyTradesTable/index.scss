@@ -1,0 +1,42 @@
+
+$indexWidth: 36px;
+$groupWidth: 20%;
+
+.marketMyTrades {
+  
+  .shareTable {
+    table-layout: fixed;
+  }
+
+  .shareTableRow {
+    vertical-align: middle;
+
+    td {
+      vertical-align: middle !important;
+      border-top: 1px solid #ddd;
+
+      &:first-of-type {
+        border-top: 0;
+      }
+    }
+  }
+}
+
+.shareOutcomeColor {
+  display: inline-block;
+  vertical-align: middle;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 4px;
+}
+
+.tableHeading {
+  &.first {
+    width: 36px;
+  }
+
+  font-weight: 400;
+  border-bottom: none !important;
+}

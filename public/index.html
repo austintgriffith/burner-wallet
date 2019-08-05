@@ -1,111 +1,101 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="theme-color" content="#fd7e14" />
 
-    <link rel="apple-touch-icon" href="/icons/icon-512x512.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+<head>
+  <meta charset="utf-8" />
+  <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="theme-color" content="#fd7e14" />
 
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
-      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
-      crossorigin="anonymous"
-    />
-    <title>Burner</title>
-    <meta name="description" content="Trasfer xDai quickly then burn your private key." />
-    <meta
-      name="keywords"
-      content="dai, xdai, wallet, burner, crypto, ethereum, poa, payment, transactions"
-    />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@austingriffith" />
-    <meta name="twitter:title" content="Burner" />
-    <meta name="twitter:description" content="Trasfer xDai quickly then burn your private key." />
-    <meta
-      name="twitter:img:src"
-      content="https://xdai.io/burner-wallet-banner.png"
-    />
-    <meta name="og:title" content="Burner" />
-    <meta name="og:type" content="website" />
-    <meta name="og:url" content="https://xdai.io" />
-    <meta name="og:image" content="https://xdai.io/burnercard2.jpg" />
-    <meta name="og:description" content="Trasfer xDai quickly then burn your private key." />
-    <meta name="og:site_name" content="Burner" />
-    <link
-      href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed"
-      rel="stylesheet"
-    />
-    <link href="https://fonts.googleapis.com/css?family=Overpass" rel="stylesheet">
-    <script src="https://verify.sendwyre.com/js/widget-loader.js"></script>
-  </head>
-  <body style="background-color:#222222;text-align:'center'">
-    <noscript> You need to enable JavaScript to run this app. </noscript>
-    <div id="root">
-      <div style="padding-top:60px;text-align:center;width:100%">
+  <link rel="apple-touch-icon" href="/icons/icon-512x512.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-        <div>
-          <img src="whiteburn.png" style="max-width:25%;padding-bottom:5%"/>
-          <div style="text-align: center;padding-top:5%;width:100%;padding-left:20%">
-            <div style="width: 75%; height: 1px; background-color: rgb(68, 68, 68);">
-              <div id="firstLoaderBar" style="width: 5%; height: 1px; background-color: rgb(255, 255, 255); box-shadow: rgb(255, 255, 255) 0px 0px 2px, rgb(255, 255, 255) 0px 0px 2.66667px, rgb(255, 255, 255) 0px 0px 4px, rgb(255, 255, 255) 0px 0px 8px, rgb(255, 255, 255) 0px 0px 16px, rgb(255, 255, 255) 0px 0px 26.6667px, rgb(255, 255, 255) 0px 0px 80px;">
-              </div>
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+    integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous" />
+  <title>Burner</title>
+  <meta name="description" content="Trasfer xDai quickly then burn your private key." />
+  <meta name="keywords" content="dai, xdai, wallet, burner, crypto, ethereum, poa, payment, transactions" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@austingriffith" />
+  <meta name="twitter:title" content="Burner" />
+  <meta name="twitter:description" content="Trasfer xDai quickly then burn your private key." />
+  <meta name="twitter:img:src" content="https://xdai.io/burner-wallet-banner.png" />
+  <meta name="og:title" content="Burner" />
+  <meta name="og:type" content="website" />
+  <meta name="og:url" content="https://xdai.io" />
+  <meta name="og:image" content="https://xdai.io/burnercard2.jpg" />
+  <meta name="og:description" content="Trasfer xDai quickly then burn your private key." />
+  <meta name="og:site_name" content="Burner" />
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Overpass" rel="stylesheet">
+  <script src="https://verify.sendwyre.com/js/widget-loader.js"></script>
+</head>
+
+<body style="background-color:#222222;text-align:'center'">
+  <noscript> You need to enable JavaScript to run this app. </noscript>
+  <div id="root">
+    <div style="padding-top:60px;text-align:center;width:100%">
+
+      <div>
+        <img src="whiteburn.png" style="max-width:25%;padding-bottom:5%" />
+        <div style="text-align: center;padding-top:5%;width:100%;padding-left:20%">
+          <div style="width: 75%; height: 1px; background-color: rgb(68, 68, 68);">
+            <div id="firstLoaderBar"
+              style="width: 5%; height: 1px; background-color: rgb(255, 255, 255); box-shadow: rgb(255, 255, 255) 0px 0px 2px, rgb(255, 255, 255) 0px 0px 2.66667px, rgb(255, 255, 255) 0px 0px 4px, rgb(255, 255, 255) 0px 0px 8px, rgb(255, 255, 255) 0px 0px 16px, rgb(255, 255, 255) 0px 0px 26.6667px, rgb(255, 255, 255) 0px 0px 80px;">
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div id="log" style="position:absolute;left:0px;top:0px;z-index:99;color:#ffffff;background-color:#000000;opacity:0.5;">
-    </div>
-    <script>
-      //uncomment to move logs to html for debugging devices
-      /*
-      (function () {
-          var old = console.log;
-          var logger = document.getElementById('log');
-          console.log = function (message) {
-              if (typeof message == 'object') {
-                  logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
-              } else {
-                  logger.innerHTML += message + '<br />';
-              }
-          }
-          console.error = function (message) {
-              if (typeof message == 'object') {
-                  logger.innerHTML += "ERRRRR;;"+(JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
-              } else {
-                  logger.innerHTML += "ERRRRR;;"+message + '<br />';
-              }
-          }
-      })();
-      */
-
-      var currentFirstLoaderValue = 15
-      var moveLoader = function(){
-        var firstLoader = document.getElementById('firstLoaderBar')
-        if(firstLoader){
-          if(parseInt(currentFirstLoaderValue)>=100){
-            currentFirstLoaderValue = "100%"
-            clearInterval(firstLoaderInterval)
-            return
-          }
-          firstLoader.style.width=currentFirstLoaderValue+"%"
-          currentFirstLoaderValue+=Math.random()*15
-        }else{
-          clearInterval(firstLoaderInterval)
+  </div>
+  <div id="log"
+    style="position:absolute;left:0px;top:0px;z-index:99;color:#ffffff;background-color:#000000;opacity:0.5;">
+  </div>
+  <script>
+    //uncomment to move logs to html for debugging devices
+    /*
+    (function () {
+        var old = console.log;
+        var logger = document.getElementById('log');
+        console.log = function (message) {
+            if (typeof message == 'object') {
+                logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
+            } else {
+                logger.innerHTML += message + '<br />';
+            }
         }
-      }
-      var firstLoaderInterval = setInterval(moveLoader,250)
-      moveLoader()
-    </script>
+        console.error = function (message) {
+            if (typeof message == 'object') {
+                logger.innerHTML += "ERRRRR;;"+(JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
+            } else {
+                logger.innerHTML += "ERRRRR;;"+message + '<br />';
+            }
+        }
+    })();
+    */
 
-  </body>
+    var currentFirstLoaderValue = 15
+    var moveLoader = function () {
+      var firstLoader = document.getElementById('firstLoaderBar')
+      if (firstLoader) {
+        if (parseInt(currentFirstLoaderValue) >= 100) {
+          currentFirstLoaderValue = "100%"
+          clearInterval(firstLoaderInterval)
+          return
+        }
+        firstLoader.style.width = currentFirstLoaderValue + "%"
+        currentFirstLoaderValue += Math.random() * 15
+      } else {
+        clearInterval(firstLoaderInterval)
+      }
+    }
+    var firstLoaderInterval = setInterval(moveLoader, 250)
+    moveLoader()
+  </script>
+
+</body>
+
 </html>

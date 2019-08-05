@@ -1,0 +1,29 @@
+{
+  "ethereum": {
+    "protocol": "https",
+    "host": "dai.poa.network",
+    "port": 443
+  },
+  "tradingdb": {
+    "protocol": "https",
+    "host": "burner-api.helena.network",
+    "port": 443
+  },
+  "collateralToken": {
+    "options": {
+      "address": "0xe081bd80ecbdd209d5688ff64ca7b13c49ba8bec",
+      "icon": "/assets/img/icons/icon_etherTokens.svg",
+      "symbol": "xP+"
+    },
+    "source": "address"
+  },
+  "helenaUsers": {
+    "protocol": "http",
+    "host": "localhost",
+    "port": 8000
+  },
+  "instance": {
+    "name": "Helena One Market",
+    "contact": "support@helena.network"
+  }
+}

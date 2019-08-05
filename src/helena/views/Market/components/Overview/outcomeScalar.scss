@@ -1,0 +1,75 @@
+
+$expandable-arrow-size: 7px;
+.control-label {
+  margin-left: 10px !important;
+}
+
+.outcome-control {
+  padding: 2px !important;
+  color: rgb(201, 177, 42) !important;
+}
+
+.scalarOutcome {
+  width: 100%;
+  display: table;
+  margin-top: 30px;
+  white-space: nowrap;
+}
+
+.currentPrediction {
+  position: relative;
+  height: 30px;
+  width: 100%;
+}
+
+
+.currentPredictionLine {
+  position: absolute;
+  background-color: gray;
+  height: 2px;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-1px);
+}
+
+.currentPredictionValue {
+  position: absolute;
+  background-color: #CCB185;
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+  top: 50%;
+  transform: translate(-50%, -38px);
+  transition: left 1s ease;
+  left: 0;
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    margin-left: -$expandable-arrow-size;
+    width: 0;
+    height: 0;
+    border-left: $expandable-arrow-size solid transparent;
+    border-right: $expandable-arrow-size solid transparent;
+    border-top: $expandable-arrow-size solid #CCB185;
+  }
+}
+
+.outcomeBound {
+  display: table-cell;
+  width: 15%;
+  height: 30px;
+  vertical-align: middle;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+
+  .lower {
+    text-align: left;
+  }
+  
+  .upper {
+    text-align: right;
+  }
+}

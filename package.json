@@ -51,6 +51,18 @@
     "s3": "^4.4.0",
     "scrypt": "^6.0.3",
     "tabookey-gasless": "0.3.3",
+    "@gnosis.pm/olympia-token": "^1.4.0",
+    "@material-ui/core": "^3.9.3",
+    "@material-ui/icons": "^3.0.2",
+    "classnames": "^2.2.6",
+    "d3": "^5.9.2",
+    "d3-scale-chromatic": "^1.3.3",
+    "decimal.js": "^10.1.1",
+    "moment": "^2.24.0",
+    "recharts": "^1.6.1",
+    "sass-loader": "^7.1.0",
+    "sha1": "^1.1.1",
+    "style-loader": "^0.23.1",
     "web3": "1.0.0-beta.33"
   },
   "scripts": {
