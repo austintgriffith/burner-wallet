@@ -149,11 +149,7 @@ module.exports = {
         let result = await clevis("send","1","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")///<<<-------- change this to your metamask accounts
         printTxResult(result)
 
-        let accounts = await clevis("accounts")
-        await clevis('contract', 'adminMint', 'VendingMachine', "0", accounts[1], '10000000000000000000')
 
-        result = await clevis("contract","adminMint","VendingMachine","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb","10000000000000000000")
-        printTxResult(result)
 
         result = await clevis("send","0.10","0","0x34aa3f359a9d614239015126635ce7732c18fdf3")///<<<-------- change this to your metamask accounts
          printTxResult(result)
@@ -170,16 +166,6 @@ module.exports = {
         result = await clevis("send","0.001","0","0x0876a604b2e4455fdfee24f042e1c95cb8cd4603")///<<<-------- change this to your metamask accounts
         printTxResult(result)
 
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x75b459791dad37746ba60c8665a065e1255bff63","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
-        printTxResult(result)
-
-
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x0876a604b2e4455fdfee24f042e1c95cb8cd4603","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
-        printTxResult(result)
-
-
-        result = await clevis("contract","mintNextTokenWithTokenURI","Badges","0","0x3a48736d0e60b77e8fbe6791372091e1ba80c590","https://badges.xdai.io/ethdenver/v1/json/buffalo.json")
-        printTxResult(result)
 
         result = await clevis("send","0.10","0","0x75b459791dad37746ba60c8665a065e1255bff63")///<<<-------- change this to your metamask accounts
         printTxResult(result)
@@ -273,13 +259,6 @@ module.exports = {
       it('should deploy all contracts', async function() {
         this.timeout(6000000)
         let result = await clevis("test","deploy")
-        assert(result==0,"deploy ERRORS")
-      });
-    });
-    describe(bigHeader('AFTERDEPLOY'), function() {
-      it('should do afterDeploy actions', async function() {
-        this.timeout(6000000)
-        let result = await clevis("test","afterDeploy")
         assert(result==0,"deploy ERRORS")
       });
     });

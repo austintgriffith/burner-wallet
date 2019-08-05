@@ -102,7 +102,7 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   }else{
     ERC20NAME = 'DAOG'
     ERC20VENDOR = 'VendingMachine'
-    ERC20TOKEN = 'ERC20Vendable'
+    ERC20TOKEN = 'StableCoin'
     ERC20IMAGE = bufficorn
     XDAI_PROVIDER = "http://localhost:8545"
     WEB3_PROVIDER = "http://localhost:8545";
@@ -146,6 +146,15 @@ else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
   ERC20NAME = false
   ERC20TOKEN = false
   ERC20IMAGE = false
+}
+else if (window.location.hostname.indexOf("wallet.daog") >= 0) {
+  WEB3_PROVIDER = POA_XDAI_NODE;
+  CLAIM_RELAY = 'https://x.xdai.io'
+  ERC20NAME = 'DAOG'
+  ERC20VENDOR = 'VendingMachine'
+  ERC20TOKEN = 'StableCoin'
+  ERC20IMAGE = bufficorn
+  LOADERIMAGE = bufficorn
 }
 
 
@@ -498,11 +507,11 @@ class App extends Component {
       let tokenBalance = await this.state.contracts[ERC20TOKEN].balanceOf(this.state.account).call()
       //console.log("balance is ",tokenBalance)
       tokenBalance = this.state.web3.utils.fromWei(""+tokenBalance,'ether')
-
+      /*
       //console.log("Getting admin from ",this.state.contracts[ERC20VENDOR])
-      let isAdmin = await this.state.contracts[ERC20VENDOR].isAdmin(this.state.account).call()
+      //let isAdmin = await this.state.contracts[ERC20VENDOR].isAdmin(this.state.account).call()
       //console.log("ISADMIN",this.state.account,isAdmin)
-      let isVendor = await this.state.contracts[ERC20VENDOR].vendors(this.state.account).call()
+      //let isVendor = await this.state.contracts[ERC20VENDOR].vendors(this.state.account).call()
       //console.log("isVendor",isVendor)
 
       let vendorObject = this.state.vendorObject
@@ -511,7 +520,7 @@ class App extends Component {
         //console.log("LOADING VENDOR PRODUCTS")
         let id = 0
         if(!vendorObject){
-          let vendorData = await this.state.contracts[ERC20VENDOR].vendors(this.state.account).call()
+          //let vendorData = await this.state.contracts[ERC20VENDOR].vendors(this.state.account).call()
           //console.log("vendorData",vendorData)
           vendorData.name = this.state.web3.utils.hexToUtf8(vendorData.name)
           vendorObject = vendorData
@@ -529,10 +538,10 @@ class App extends Component {
             found=false
           }
         }
-      }
+      }*/
       //console.log("isVendor",isVendor,"SAVING PRODUCTS",products)
 
-      this.setState({gasBalance:gasBalance,balance:tokenBalance,isAdmin:isAdmin,isVendor:isVendor,hasUpdateOnce:true,vendorObject,products})
+      this.setState({gasBalance:gasBalance,balance:tokenBalance,/*,isAdmin:isAdmin,isVendor:isVendor,*/hasUpdateOnce:true})
     }
 
 

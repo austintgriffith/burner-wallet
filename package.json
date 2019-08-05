@@ -48,7 +48,7 @@
   },
   "scripts": {
     "start": "PORT=3000 node scripts/start.js",
-    "build": "node scripts/build.js",
+    "build": "node --expose-gc --max-old-space-size=32276 scripts/build.js",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {

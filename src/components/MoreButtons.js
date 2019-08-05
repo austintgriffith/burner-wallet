@@ -12,7 +12,7 @@ export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert,
   let exchangeButton
 
 
-    exchangeButton  = (
+    exchangeButton  = ""/*(
       <button className="btn btn-large w-100" style={buttonStyle.secondary} onClick={()=>{
         changeView('exchange')}
       }>
@@ -20,7 +20,7 @@ export default ({isVendor, buttonStyle,ERC20TOKEN,address, balance, changeAlert,
           <i className="fa fa-random"></i> {i18n.t('more_buttons.exchange')}
         </Scaler>
       </button>
-    )
+    )*/
 
 
 
