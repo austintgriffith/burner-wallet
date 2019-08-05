@@ -55,6 +55,7 @@ import xdai from './xdai.jpg';
 //import Wyre from './services/wyre';
 
 import helena from './helena.jpg';
+import HelenaOneMarket from './helena';
 
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
@@ -279,6 +280,7 @@ class App extends Component {
       hasUpdateOnce: false,
       badges: {},
       selectedBadge: false,
+      allOneMarkets: false
     };
     this.alertTimeout = null;
 
@@ -1844,12 +1846,35 @@ render() {
                 url = url+":"+window.location.port
               }
 
+              // HELENA CONFIG
+              if (!this.state.allOneMarkets) {
+                const oneMarket = new HelenaOneMarket({ web3: this.state.web3 });
+
+                 oneMarket.init()
+                  .then(() => {
+                    return oneMarket.getMarkets();
+                  })
+                  .then((markets) => {
+                    const allOneMarkets = markets.map((market) => (
+                      <div style={{ position: 'relative', marginTop: 10 }}>
+                        {oneMarket.market({
+                          marketId: market.address
+                        })}
+                        <Ruler />
+                      </div>
+                    ));
+                    this.setState({ allOneMarkets });
+                  })
+              }
+              //
+
+
               return (
                 <div>
-                  <div className="main-card card w-100" style={{zIndex:1}}>
+                  <div className="main-card card w-100" style={{zIndex:1, backgroundColor: '#f6f6f6'}}>
 
                     <NavCard title={url} goBack={this.goBack.bind(this)} />
-                    <Share
+                    {/* <Share
                       title={url}
                       url={url}
                       mainStyle={mainStyle}
@@ -1859,7 +1884,8 @@ render() {
                       address={account}
                       changeAlert={this.changeAlert}
                       goBack={this.goBack.bind(this)}
-                    />
+                    /> */}
+                    {this.state.allOneMarkets}
                   </div>
                   <Bottom
                     action={this.goBack.bind(this)}

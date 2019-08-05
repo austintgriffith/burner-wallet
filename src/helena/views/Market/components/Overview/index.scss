@@ -1,0 +1,114 @@
+.nav-icon {
+  height: 5px;
+}
+
+.bar-chart {
+  padding: 6px;
+}
+
+.title-header {
+  color: black;
+
+  .title {
+    font-weight: 300;
+    font-size: 20px;
+    text-align: center;
+  }
+  
+  .subtitle {
+    font-size: 13px;
+    margin-top: 2px;
+    color: #484b4e;
+  }
+}
+
+.bet {
+  background-color: white;
+  border-radius: 5px;
+  border: 2px solid #CCB185;
+  padding-bottom: 10px;
+}
+
+.input-amount {
+  padding: 0px 5px;
+}
+
+.market-info {
+  width: 100%;
+  text-align: center;
+  height: 100px;
+
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -webkit-flex;
+  display: flex;
+  
+  .market-resolved {
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+  }
+}
+
+
+.outcomes {
+  margin-top: 10px;
+  display: flex;
+
+  .button {
+    border-color: #CCB185 !important;
+    border-width: 1px !important;
+    font-weight: 300 !important;
+    margin: 0px 5px;
+  }
+
+  .scalar-button {
+    width: 50%;
+  }
+
+  .cat-button {
+    width: 100%;
+  }
+}
+
+
+.market-nav {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
+
+  .nav-button {
+    font-size: 15px;
+    font-weight: 300;
+    text-transform: capitalize;
+  }
+
+  .bet-button {
+    color: white;
+    background-color: #CCB185;
+    box-shadow: none;
+  }
+
+  .pull-right {
+    margin-left: auto;
+  }
+
+  .pull-left {
+    margin-right: auto;
+  }
+}
+
+.details {
+  width: 100%;
+  display: flex;
+  font-size: 12px;
+
+  .resolution-date {
+    margin-right: auto;
+  }
+
+  .volume {
+    margin-left: auto;
+  }
+}

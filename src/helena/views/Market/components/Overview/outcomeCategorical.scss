@@ -1,0 +1,68 @@
+
+$outcome-bar-height: 15px;
+$outcome-bar-height-leading: 30px;
+
+.outcome {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.outcomeWrapper {
+  max-width: 75%;
+  display: flex;
+  align-items: center;
+}
+
+.outcomeBar {
+  display: inline-block;
+  position: relative;
+  width: 60%;
+  margin: 5px 0;
+}
+
+.outcomeBarInner {
+  height: $outcome-bar-height;
+  position: relative;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  transition: width 1s ease;
+}
+
+.outcomeBarValue {
+  line-height: $outcome-bar-height;
+  vertical-align: middle;
+  padding-left: 5px;
+  display: inline;
+  min-width: 30px;
+  color: black;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.outcomeBarLabel {
+  margin-left: 100%;
+  padding-left: 5px;
+  line-height: $outcome-bar-height;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+.outcomeLabel {
+  display: inline-block;
+}
+
+.date {
+  margin-left: 7px;
+}
+
+.trendingOutcomeCategoricalContainer {
+  display: flex;
+  align-items: center;
+}

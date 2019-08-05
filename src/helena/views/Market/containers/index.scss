@@ -1,0 +1,26 @@
+.container {
+  position: relative;
+  min-height: 250px;
+  height: auto;
+  max-width: 600px;
+  padding: 6px;
+
+  * {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 100;
+    letter-spacing: 0.01em;
+  }
+}
+
+// .main > div {
+//   top: 0;
+//   left: 0;
+//   position: absolute;
+//   width: 600px;
+//   height: auto;
+//   display: flex;
+//   // justify-content: center;
+//   // align-items: center;
+//   color: black;
+//   will-change: transform, opacity;
+// }
