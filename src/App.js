@@ -377,7 +377,13 @@ class App extends Component {
       if(window.location.pathname.indexOf("/pk")>=0){
         let tempweb3 = new Web3();
         let base64encodedPK = window.location.hash.replace("#","")
-        let rawPK = tempweb3.utils.bytesToHex(base64url.toBuffer(base64encodedPK))
+        let rawPK
+        if(base64encodedPK.length==64||base64encodedPK.length==66){
+          console.log("raw pk ",base64encodedPK)
+          rawPK=base64encodedPK
+        }else{
+          rawPK=tempweb3.utils.bytesToHex(base64url.toBuffer(base64encodedPK))
+        }
         this.setState({possibleNewPrivateKey:rawPK})
         window.history.pushState({},"", "/");
       }else if(window.location.pathname.length==43){
