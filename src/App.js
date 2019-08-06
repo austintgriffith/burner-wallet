@@ -72,7 +72,7 @@ let ERC20VENDOR
 let ERC20IMAGE
 let ERC20NAME
 let LOADERIMAGE = burnerlogo
-let HARDCODEVIEW = "yourmodule"// = "loader"// = "receipt"
+let HARDCODEVIEW = ""; // "yourmodule"// = "loader"// = "receipt"
 let FAILCOUNT = 0
 
 let gnosis

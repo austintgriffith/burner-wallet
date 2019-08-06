@@ -6,12 +6,12 @@
   },
   "tradingdb": {
     "protocol": "https",
-    "host": "api.helena.network",
+    "host": "burner-api.helena.network",
     "port": 443
   },
   "collateralToken": {
     "options": {
-      "address": "0x499d16e1e84b2074f49f526af2556287b189ff36",
+      "address": "0xe22dca93cea79855202bba1bf2a1db48294efb13",
       "icon": "/assets/img/icons/icon_etherTokens.svg",
       "symbol": "xP+"
     },
