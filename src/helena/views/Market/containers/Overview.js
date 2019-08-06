@@ -94,7 +94,6 @@ export default class OverviewContainer extends React.Component {
   };
 
   onChangeAmount = (ev) => {
-    console.log('amoun')
     const value = ev.target.value;
     const investmentValue = value.trim();
 

@@ -21,8 +21,8 @@ export default class Market extends React.Component {
       direction: 1,
       index: 0,
       market: {},
-      balance: null,
-      web3Ready: web3Service.isReady()
+      balance: 0,
+      web3Ready: web3Service.isReady(),
     };
   }
 
@@ -33,6 +33,10 @@ export default class Market extends React.Component {
       this.refreshMarket,
       INTERVAL_MARKET_REFRESH
     );
+
+    if (web3Service.isReady()) {
+      getTokenBalance().then((balance) => this.setState({ balance }));
+    }
 
     this.balanceInterval = setInterval(() => {
       if (web3Service.isReady()) {
