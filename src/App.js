@@ -1245,6 +1245,7 @@ render() {
                     buttonStyle={buttonStyle}
                     changeView={this.changeView}
                     isVendor={false}
+                    privateKey={metaAccount.privateKey}
                   />
                 </div>
               )
