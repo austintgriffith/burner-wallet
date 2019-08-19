@@ -6,12 +6,37 @@ import helena from '../helena.jpg';
 import emojicoin from '../emojicoin.png';
 import daog from '../daog.png';
 import Ruler from "./Ruler";
+import Web3 from "web3";
+import base64url from "base64url";
 
-let base64url = require('base64url')
-
-function pkToUrl(web3,pk) {
-  return base64url(web3.utils.hexToBytes(pk))
-}
+const AppLink = ({ name, image, onClick, url, privateKey, verb }) => (
+  <div>
+    <div
+      className="balance row"
+      style={{cursor:"pointer",paddingBottom:0,paddingLeft:20}}
+      onClick={url ? () => {
+        window.open(privateKey
+          ? url + "pk#" + base64url(Web3.utils.hexToBytes(privateKey))
+          : url, "_blank");
+      } : onClick}
+    >
+      <div className="avatar col p-0">
+        <img src={image} style={{maxWidth: 50}}/>
+        <div style={{position:'absolute',whiteSpace:"nowrap",left:60,top:12,fontSize:14,opacity:0.77}}>
+          {name}
+        </div>
+      </div>
+      <div style={{position:"absolute",right:25,marginTop:15}}>
+        <Scaler config={{startZoomAt:400,origin:"200px 30px",adjustedZoom:1}}>
+          <div style={{fontSize:30,letterSpacing:-2}}>
+            {verb || 'Play'}
+          </div>
+        </Scaler>
+      </div>
+    </div>
+    <Ruler/>
+  </div>
+);
 
 export default class Apps extends React.Component {
   constructor(props) {
@@ -39,11 +64,7 @@ export default class Apps extends React.Component {
     }
 
 
-    let safeDisplay = (
-      <div>
-
-      <div className="balance row" style={{cursor:"pointer",paddingBottom:0,paddingLeft:20}} onClick={async ()=>{
-
+    const openGnosis = async () => {
         let creationNonce = 1
 
         const abi = require('ethereumjs-abi')
@@ -71,92 +92,14 @@ export default class Apps extends React.Component {
             this.props.changeView('main')
           }
         )
-      }}>
-      <div className="avatar col p-0">
-      <img src={gnosis} style={{maxWidth:50}}/>
-      <div style={{position:'absolute',whiteSpace:"nowrap",left:60,top:12,fontSize:14,opacity:0.77}}>
-      Gnosis Safe
-      </div>
-      </div>
-      <div style={{position:"absolute",right:25,marginTop:15}}>
-      <Scaler config={{startZoomAt:400,origin:"200px 30px",adjustedZoom:1}}>
-      <div style={{fontSize:30,letterSpacing:-2}}>
-      Install
-      </div>
-      </Scaler>
-      </div>
-      </div>
-      <Ruler/>
-      </div>
-    )
+    }
 
     return (
       <div>
-        {safeDisplay}
-        <div>
-        <div className="balance row" style={{cursor:"pointer",paddingBottom:0,paddingLeft:20}} onClick={async ()=>{
-            window.location = "https://burner.helena.network/pk#"+pkToUrl(this.props.web3,this.props.privateKey)
-        }}>
-        <div className="avatar col p-0">
-        <img src={helena} style={{maxWidth:50}}/>
-        <div style={{position:'absolute',whiteSpace:"nowrap",left:60,top:12,fontSize:14,opacity:0.77}}>
-        Helena Prediction Markets
-        </div>
-        </div>
-        <div style={{position:"absolute",right:25,marginTop:15}}>
-        <Scaler config={{startZoomAt:400,origin:"200px 30px",adjustedZoom:1}}>
-        <div style={{fontSize:30,letterSpacing:-2}}>
-        Play
-        </div>
-        </Scaler>
-        </div>
-        </div>
-        <Ruler/>
-        </div>
-
-
-        <div>
-        <div className="balance row" style={{cursor:"pointer",paddingBottom:0,paddingLeft:20}} onClick={async ()=>{
-            window.location = "https://emojicoin.exchange/pk#"+pkToUrl(this.props.web3,this.props.privateKey)
-        }}>
-        <div className="avatar col p-0">
-        <img src={emojicoin} style={{maxWidth:50}}/>
-        <div style={{position:'absolute',whiteSpace:"nowrap",left:60,top:12,fontSize:14,opacity:0.77}}>
-        Emojicoin.Exchange
-        </div>
-        </div>
-        <div style={{position:"absolute",right:25,marginTop:15}}>
-        <Scaler config={{startZoomAt:400,origin:"200px 30px",adjustedZoom:1}}>
-        <div style={{fontSize:30,letterSpacing:-2}}>
-        Play
-        </div>
-        </Scaler>
-        </div>
-        </div>
-        <Ruler/>
-        </div>
-
-
-        <div>
-        <div className="balance row" style={{cursor:"pointer",paddingBottom:0,paddingLeft:20}} onClick={async ()=>{
-            window.location = "https://daog.io/pk#"+pkToUrl(this.props.web3,this.props.privateKey)
-        }}>
-        <div className="avatar col p-0">
-        <img src={daog} style={{maxWidth:50}}/>
-        <div style={{position:'absolute',whiteSpace:"nowrap",left:60,top:12,fontSize:14,opacity:0.77}}>
-        The DAOG
-        </div>
-        </div>
-        <div style={{position:"absolute",right:25,marginTop:15}}>
-        <Scaler config={{startZoomAt:400,origin:"200px 30px",adjustedZoom:1}}>
-        <div style={{fontSize:30,letterSpacing:-2}}>
-        Play
-        </div>
-        </Scaler>
-        </div>
-        </div>
-        <Ruler/>
-        </div>
+        <AppLink name="Gnosis Safe" image={gnosis} onClick={openGnosis} verb="Install" />
+        <AppLink name="Helena Prediction Markets" image={helena} url="https://burner.helena.network/" privateKey={this.props.privateKey} />
+        <AppLink name="Emojicoin.Exchange" image={emojicoin} url="https://emojicoin.exchange/" privateKey={this.props.privateKey} />
+        <AppLink name="The DAOG" image={daog} url="https://daog.io/" privateKey={this.props.privateKey} />
       </div>
     );
   }
