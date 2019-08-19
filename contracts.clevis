@@ -3,3 +3,6 @@ LinksNFT
 ERC20Vendable
 VendingMachine
 Badges
+GnosisSafe
+SafeBeacon
+ProxyFactory

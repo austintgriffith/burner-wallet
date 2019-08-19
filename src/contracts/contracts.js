@@ -1,1 +1,1 @@
-module.exports = ["Links","LinksNFT","ERC20Vendable","VendingMachine","Badges"]
+module.exports = ["Links","LinksNFT","ERC20Vendable","VendingMachine","Badges","GnosisSafe","SafeBeacon","ProxyFactory"]

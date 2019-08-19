@@ -2055,12 +2055,12 @@ export default class Exchange extends React.Component {
       ><Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
         <div style={{flex: '0 0 30px', textAlign: 'center'}}>
             {this.state.wyreWidgetOpen ? (
-                <>
+                <div>
                     <span style={{paddingRight: '10px'}}>
                         <i class="fas fa-spinner fa-spin"></i>
                     </span>
                     <span>Loading...</span>
-                </>) : `Buy $${this.state.wyreFundAmount}`}
+                </div>) : `Buy $${this.state.wyreFundAmount}`}
         </div>
         </Scaler>
       </button>
@@ -2313,7 +2313,7 @@ export default class Exchange extends React.Component {
                     </div>*/}
                     <div className="wyre-slider" style={{padding: '0 20px', display: 'flex', alignItems: 'center', paddingTop: '15px',}}>
                     <InputRange
-                        maxValue={25}
+                        maxValue={40}
                         minValue={5}
                         value={this.state.wyreFundAmount}
                         formatLabel={value => `$${value}`}
