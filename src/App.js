@@ -2005,6 +2005,7 @@ render() {
             if(localStorage&&typeof localStorage.setItem == "function"){
               localStorage.setItem(this.state.account+"loadedBlocksTop","")
               localStorage.setItem(this.state.account+"metaPrivateKey","")
+              localStorage.setItem("metaPrivateKey","")
               localStorage.setItem(this.state.account+"recentTxs","")
               localStorage.setItem(this.state.account+"safe","")
               localStorage.setItem(this.state.account+"transactionsByAddress","")
