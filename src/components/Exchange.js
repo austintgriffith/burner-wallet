@@ -2293,7 +2293,7 @@ export default class Exchange extends React.Component {
           </div>
 
 
-          { (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("wyre.xdai.io") >= 0 || window.location.hostname.indexOf("s.xdai.io") >= 0) && (
+
             <div className="send-to-address card w-100" style={{marginTop:20,borderBottom:0,paddingTop:50}}>
               <div className="content ops row">
                 <div className="col-2 p-1">
@@ -2336,7 +2336,7 @@ export default class Exchange extends React.Component {
                 </div>
               </div>
             </div>
-          )}
+          
 
 
           {sendEthRow}
