@@ -2,12 +2,12 @@ import React from 'react';
 import { Scaler } from "dapparatus";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18next from 'i18next';
+import { token } from '../assets';
 
 
-
-export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay}) => {
-
-
+export default ({
+  buttonStyle, address, balance, changeAlert, changeView, dollarDisplay, subBalanceDisplay
+}) => {
   var w = window,
   d = document,
   e = d.documentElement,
@@ -66,7 +66,7 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
     </div>
   )
 
-  if(ERC20TOKEN){
+  if(token){
     sendButtons = (
       <div>
         <div className="content ops row">

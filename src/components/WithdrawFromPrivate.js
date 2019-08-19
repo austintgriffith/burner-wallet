@@ -7,6 +7,7 @@ import Badges from "../components/Badges";
 import Blockies from 'react-blockies';
 import axios from 'axios';
 import i18n from '../i18n';
+import { token } from '../assets';
 
 let pollInterval
 let metaReceiptTracker = {}
@@ -86,8 +87,8 @@ export default class SendToAddress extends React.Component {
 
 
     let fromBalance
-    if(this.props.ERC20TOKEN){
-      fromBalance = await this.props.contracts[this.props.ERC20TOKEN].balanceOf('' + this.state.fromAddress).call()
+    if(token){
+      fromBalance = await token.getBalance(this.state.fromAddress);
     }else{
       fromBalance = await this.props.web3.eth.getBalance('' + this.state.fromAddress)
     }
@@ -122,10 +123,10 @@ export default class SendToAddress extends React.Component {
         let tx
 
         if(amount>0){
-          if(this.props.ERC20TOKEN){
+          if(token){
             tx={
-              to:this.props.contracts[this.props.ERC20TOKEN]._address,
-              data: this.props.contracts[this.props.ERC20TOKEN].transfer(this.props.address,this.props.web3.utils.toWei(""+amount,'ether')).encodeABI(),
+              to: token.address,
+              data: this.props.contracts.ERC20Vendable.transfer(this.props.address,this.props.web3.utils.toWei(""+amount,'ether')).encodeABI(),
               gas: 60000,
               gasPrice: Math.round(1100000000)//1.1gwei
             }

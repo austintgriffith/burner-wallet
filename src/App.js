@@ -35,7 +35,6 @@ import Vendors from './components/Vendors';
 import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
-import burnerlogo from './burnerwallet.png';
 import BurnWallet from './components/BurnWallet'
 import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
@@ -43,13 +42,13 @@ import customRPCHint from './customRPCHint.png';
 import namehash from 'eth-ens-namehash'
 import incogDetect from './services/incogDetect.js'
 import core, { mainAsset as xdai } from './core';
+import { token, XDAI_PROVIDER, WEB3_PROVIDER, ERC20IMAGE, LOADERIMAGE, } from './assets';
+import bufficorn from './bufficorn.png';
 
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
 
 
-import bufficorn from './bufficorn.png';
-import cypherpunk from './cypherpunk.png';
 import ethImg from './images/ethereum.png';
 import daiImg from './images/dai.jpg';
 import xdaiImg from './images/xdai.jpg';
@@ -58,20 +57,6 @@ import Wyre from './services/wyre';
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
 
-//const POA_XDAI_NODE = "https://dai-b.poa.network"
-const POA_XDAI_NODE = "https://dai.poa.network"
-
-const MAINNET_CHAIN_ID = '1';
-
-let XDAI_PROVIDER = POA_XDAI_NODE
-
-let WEB3_PROVIDER
-let CLAIM_RELAY
-let ERC20TOKEN
-let ERC20VENDOR
-let ERC20IMAGE
-let ERC20NAME
-let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
 let FAILCOUNT = 0
 
@@ -90,66 +75,9 @@ let titleImage = (
   <span style={{paddingRight:20,paddingLeft:16}}><i className="fas fa-fire" /></span>
 )
 
-//<i className="fas fa-fire" />
-if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "http://localhost:8545"
-  WEB3_PROVIDER = "http://localhost:8545";
-  CLAIM_RELAY = 'http://localhost:18462'
-  if(true){
-    ERC20NAME = false
-    ERC20TOKEN = false
-    ERC20IMAGE = false
-  }else{
-    ERC20NAME = 'BUFF'
-    ERC20VENDOR = 'VendingMachine'
-    ERC20TOKEN = 'ERC20Vendable'
-    ERC20IMAGE = bufficorn
-    XDAI_PROVIDER = "http://localhost:8545"
-    WEB3_PROVIDER = "http://localhost:8545";
-    LOADERIMAGE = bufficorn
-  }
-
-}
-else if (window.location.hostname.indexOf("s.xdai.io") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false//'Burner'
-}
-else if (window.location.hostname.indexOf("wallet.galleass.io") >= 0) {
-  //WEB3_PROVIDER = "https://rinkeby.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac";
-  WEB3_PROVIDER = "http://localhost:8545"
-  //CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false//'Burner'
-  document.domain = 'galleass.io'
-}
-else if (window.location.hostname.indexOf("qreth") >= 0) {
-  WEB3_PROVIDER = "https://mainnet.infura.io/v3/e0ea6e73570246bbb3d4bd042c4b5dac"
-  CLAIM_RELAY = false
-  ERC20TOKEN = false
-}
-else if (window.location.hostname.indexOf("xdai") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20TOKEN = false
-}
-else if (window.location.hostname.indexOf("buffidai") >= 0) {
-  WEB3_PROVIDER = POA_XDAI_NODE;
-  CLAIM_RELAY = 'https://x.xdai.io'
-  ERC20NAME = 'BUFF'
-  ERC20VENDOR = 'VendingMachine'
-  ERC20TOKEN = 'ERC20Vendable'
-  ERC20IMAGE = bufficorn
-  LOADERIMAGE = bufficorn
-}
-else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
-  WEB3_PROVIDER = "https://dai.poa.network";
-  ERC20NAME = false
-  ERC20TOKEN = false
-  ERC20IMAGE = false
-}
 
 
-if(ERC20NAME=="BUFF"){
+if(token && token.name === "BUFF"){
   mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
   mainStyle.backgroundColor = "#20012d"
   mainStyle.mainColor = "#b6299e"
@@ -157,20 +85,6 @@ if(ERC20NAME=="BUFF"){
   title = "BuffiDai.io"
   titleImage = (
     <img src={bufficorn} style={{
-      maxWidth:50,
-      maxHeight:50,
-      marginRight:15,
-      marginTop:-10
-    }}/>
-  )
-} else if(ERC20NAME=="BURN"){
-  mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
-  mainStyle.backgroundColor = "#6c0664"
-  mainStyle.mainColor = "#e72da3"
-  mainStyle.mainColorAlt = "#f948b8"
-  title = "Burner"
-  titleImage = (
-    <img src={cypherpunk} style={{
       maxWidth:50,
       maxHeight:50,
       marginRight:15,
@@ -493,55 +407,6 @@ class App extends Component {
 
     }
 
-
-    //console.log(">>>>>>> <<< >>>>>> Looking into iframe...")
-    //console.log(document.getElementById('galleassFrame').contentWindow['web3'])
-
-    if(ERC20TOKEN&&this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown")){
-      let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
-      gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
-      //console.log("Getting balanceOf "+this.state.account+" in contract ",this.state.contracts[ERC20TOKEN])
-      let tokenBalance = await this.state.contracts[ERC20TOKEN].balanceOf(this.state.account).call()
-      //console.log("balance is ",tokenBalance)
-      tokenBalance = this.state.web3.utils.fromWei(""+tokenBalance,'ether')
-
-      //console.log("Getting admin from ",this.state.contracts[ERC20VENDOR])
-      let isAdmin = await this.state.contracts[ERC20VENDOR].isAdmin(this.state.account).call()
-      //console.log("ISADMIN",this.state.account,isAdmin)
-      let isVendor = await this.state.contracts[ERC20VENDOR].vendors(this.state.account).call()
-      //console.log("isVendor",isVendor)
-
-      let vendorObject = this.state.vendorObject
-      let products = []//this.state.products
-      if(isVendor.isAllowed){
-        //console.log("LOADING VENDOR PRODUCTS")
-        let id = 0
-        if(!vendorObject){
-          let vendorData = await this.state.contracts[ERC20VENDOR].vendors(this.state.account).call()
-          //console.log("vendorData",vendorData)
-          vendorData.name = this.state.web3.utils.hexToUtf8(vendorData.name)
-          vendorObject = vendorData
-        }
-        //console.log("Looking up products for vendor ",this.state.account)
-        if(!products){
-          products = []
-        }
-        let found = true
-        while(found){
-          let nextProduct = await this.state.contracts[ERC20VENDOR].products(this.state.account,id).call()
-          if(nextProduct.exists){
-            products[id++] = nextProduct
-          }else{
-            found=false
-          }
-        }
-      }
-      //console.log("isVendor",isVendor,"SAVING PRODUCTS",products)
-
-      this.setState({gasBalance:gasBalance,balance:tokenBalance,isAdmin:isAdmin,isVendor:isVendor,hasUpdateOnce:true,vendorObject,products})
-    }
-
-
     if(this.state.account){
       const ethBalance = await eth.getDisplayBalance(this.state.account, 20);
       const daiBalance = await dai.getDisplayBalance(this.state.account, 20);
@@ -560,6 +425,42 @@ class App extends Component {
         this.selectBadge(singleBadgeId)
       }
 
+      if(token){
+        const gasAsset = token.network === '100' ? xdai : eth;
+        const gasBalance = await gasAsset.getDisplayBalance(this.state.account, 10);
+        const tokenBalance = await token.getDisplayBalance(this.state.account, 10);
+
+        const isAdmin = await this.state.contracts.VendingMachine.isAdmin(this.state.account).call();
+        const isVendor = await this.state.contracts.VendingMachine.vendors(this.state.account).call();
+
+        let vendorObject = this.state.vendorObject
+        const products = [];
+        if(isVendor.isAllowed){
+          if(!vendorObject){
+            let vendorData = await this.state.contracts.VendingMachine.vendors(this.state.account).call();
+            vendorData.name = this.state.web3.utils.hexToUtf8(vendorData.name)
+            vendorObject = vendorData
+          }
+
+          let id = 0;
+          let lastProduct = null;
+          do {
+            lastProduct = await this.state.contracts.VendingMachine.products(this.state.account,id).call();
+            products.push(lastProduct);
+            id++;
+          } while (lastProduct);
+        }
+
+        this.setState({
+          hasUpdateOnce: true,
+          gasBalance,
+          balance: tokenBalance,
+          isAdmin,
+          isVendor,
+          vendorObject,
+          products,
+        });
+      }
     }
 
 
@@ -992,7 +893,7 @@ sortAndSaveTransactions(recentTxs,transactionsByAddress){
   localStorage.setItem(this.state.account+"transactionsByAddress",JSON.stringify(transactionsByAddress))
 
   this.setState({recentTxs:recentTxs,transactionsByAddress:transactionsByAddress},()=>{
-    if(ERC20TOKEN){
+    if(token){
       this.syncFullTransactions()
     }
   })
@@ -1006,7 +907,7 @@ async addAllTransactionsFromList(recentTxs,transactionsByAddress,theList){
     cleanEvent.to = cleanEvent.to.toLowerCase()
     cleanEvent.from = cleanEvent.from.toLowerCase()
     cleanEvent.value = this.state.web3.utils.fromWei(""+cleanEvent.value,'ether')
-    cleanEvent.token = ERC20TOKEN
+    cleanEvent.token = token ? 'ERC20Vendable' : null;
     if(cleanEvent.data) {
       let decrypted = await this.decryptInput(cleanEvent.data)
       if(decrypted){
@@ -1091,7 +992,7 @@ render() {
       metaAccount={metaAccount}
       onReady={(state) => {
         console.log("Transactions component is ready:", state);
-        if(ERC20TOKEN){
+        if(token){
           state.nativeSend = state.send
           //delete state.send
           state.send = tokenSend.bind(this)
@@ -1122,7 +1023,7 @@ render() {
   }
 
   let totalBalance = parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice) + parseFloat(this.state.daiBalance) + parseFloat(this.state.xdaiBalance)
-  if(ERC20TOKEN){
+  if(token){
     totalBalance += parseFloat(this.state.balance)
   }
 
@@ -1174,7 +1075,7 @@ render() {
           )
 
           let subBalanceDisplay = ""
-          if(ERC20TOKEN){
+          if(token){
             if(!this.state.gasBalance){
               subBalanceDisplay = ""
             }else{
@@ -1190,8 +1091,6 @@ render() {
               moreButtons = (
                 <div>
                   <Admin
-                    ERC20VENDOR={ERC20VENDOR}
-                    ERC20TOKEN={ERC20TOKEN}
                     vendors={this.state.vendors}
                     buttonStyle={buttonStyle}
                     changeView={this.changeView}
@@ -1210,7 +1109,6 @@ render() {
               moreButtons = (
                 <div>
                   <Vendor
-                    ERC20VENDOR={ERC20VENDOR}
                     products={this.state.products}
                     address={account}
                     buttonStyle={buttonStyle}
@@ -1229,7 +1127,7 @@ render() {
                   />
                 </div>
               )
-            }else if(ERC20TOKEN){
+            }else if(token){
               moreButtons = (
                 <div>
                   <MoreButtons
@@ -1248,7 +1146,7 @@ render() {
                 <div style={{color:"#000000"}}>
                   <Events
                     config={{hide:true}}
-                    contract={this.state.contracts[ERC20TOKEN]}
+                    contract={this.state.contracts.ERC20Vendable}
                     eventName={"Transfer"}
                     block={this.state.block}
                     filter={{from:this.state.account}}
@@ -1256,7 +1154,7 @@ render() {
                   />
                   <Events
                     config={{hide:true}}
-                    contract={this.state.contracts[ERC20TOKEN]}
+                    contract={this.state.contracts.ERC20Vendable}
                     eventName={"Transfer"}
                     block={this.state.block}
                     filter={{to:this.state.account}}
@@ -1264,7 +1162,7 @@ render() {
                   />
                   <Events
                     config={{hide:true}}
-                    contract={this.state.contracts[ERC20TOKEN]}
+                    contract={this.state.contracts.ERC20Vendable}
                     eventName={"TransferWithData"}
                     block={this.state.block}
                     filter={{from:this.state.account}}
@@ -1272,7 +1170,7 @@ render() {
                   />
                   <Events
                     config={{hide:true}}
-                    contract={this.state.contracts[ERC20TOKEN]}
+                    contract={this.state.contracts.ERC20Vendable}
                     eventName={"TransferWithData"}
                     block={this.state.block}
                     filter={{to:this.state.account}}
@@ -1280,7 +1178,7 @@ render() {
                   />
                   <Events
                     config={{hide:true}}
-                    contract={this.state.contracts[ERC20VENDOR]}
+                    contract={this.state.contracts.ERC20Vendable}
                     eventName={"UpdateVendor"}
                     block={this.state.block}
                     onUpdate={(vendor, all)=>{
@@ -1323,7 +1221,7 @@ render() {
                     buttonStyle={buttonStyle}
                     saveKey={this.saveKey.bind(this)}
                     metaAccount={this.state.metaAccount}
-                    transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                    transactionsByAddress={token ? this.state.fullTransactionsByAddress : this.state.transactionsByAddress}
                     address={account}
                     balance={balance}
                     changeAlert={this.changeAlert}
@@ -1363,11 +1261,18 @@ render() {
             </div>
           )
 
-          if(ERC20TOKEN){
-            selected = ERC20NAME
+          if(token){
+            selected = token.name
             extraTokens = (
               <div>
-                <Balance icon={ERC20IMAGE} selected={selected} text={ERC20NAME} amount={this.state.balance} address={account} dollarDisplay={dollarDisplay} />
+                <Balance
+                  icon={ERC20IMAGE}
+                  selected={selected}
+                  text={token.name}
+                  amount={this.state.balance}
+                  address={account}
+                  dollarDisplay={dollarDisplay}
+                />
                 <Ruler/>
               </div>
             )
@@ -1434,19 +1339,17 @@ render() {
                     changeAlert={this.changeAlert}
                     changeView={this.changeView}
                     dollarDisplay={dollarDisplay}
-                    ERC20TOKEN={ERC20TOKEN}
                   />
                   {moreButtons}
                   <RecentTransactions
                     dollarDisplay={dollarDisplay}
                     view={this.state.view}
                     buttonStyle={buttonStyle}
-                    ERC20TOKEN={ERC20TOKEN}
-                    transactionsByAddress={ERC20TOKEN?this.state.fullTransactionsByAddress:this.state.transactionsByAddress}
+                    transactionsByAddress={token ? this.state.fullTransactionsByAddress : this.state.transactionsByAddress}
                     changeView={this.changeView}
                     address={account}
                     block={this.state.block}
-                    recentTxs={ERC20TOKEN?this.state.fullRecentTxs:this.state.recentTxs}
+                    recentTxs={token ? this.state.fullRecentTxs : this.state.recentTxs}
                   />
                 </div>
                 <Bottom
@@ -1465,7 +1368,7 @@ render() {
 
                   <NavCard title={i18n.t('advance_title')} goBack={this.goBack.bind(this)}/>
                   <Advanced
-                    isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
+                    isVendor={this.state.isVendor}
                     buttonStyle={buttonStyle}
                     address={account}
                     balance={balance}
@@ -1506,7 +1409,6 @@ render() {
                     <NavCard title={i18n.t('withdraw')} goBack={this.goBack.bind(this)}/>
                     {defaultBalanceDisplay}
                     <WithdrawFromPrivate
-                      ERC20TOKEN={ERC20TOKEN}
                       badges={this.state.badges}
                       products={this.state.products}
                       buttonStyle={buttonStyle}
@@ -1544,7 +1446,6 @@ render() {
                   <SendBadge
                     changeView={this.changeView}
                     ensLookup={this.ensLookup.bind(this)}
-                    ERC20TOKEN={ERC20TOKEN}
                     buttonStyle={buttonStyle}
                     balance={balance}
                     web3={this.state.web3}
@@ -1580,7 +1481,6 @@ render() {
                     openScanner={this.openScanner.bind(this)}
                     scannerState={this.state.scannerState}
                     ensLookup={this.ensLookup.bind(this)}
-                    ERC20TOKEN={ERC20TOKEN}
                     buttonStyle={buttonStyle}
                     balance={balance}
                     web3={this.state.web3}
@@ -1610,7 +1510,6 @@ render() {
                     view={this.state.view}
                     block={this.state.block}
                     ensLookup={this.ensLookup.bind(this)}
-                    ERC20TOKEN={ERC20TOKEN}
                     buttonStyle={buttonStyle}
                     balance={balance}
                     web3={this.state.web3}
@@ -1643,7 +1542,6 @@ render() {
                     view={this.state.view}
                     block={this.state.block}
                     ensLookup={this.ensLookup.bind(this)}
-                    ERC20TOKEN={ERC20TOKEN}
                     buttonStyle={buttonStyle}
                     balance={balance}
                     web3={this.state.web3}
@@ -1754,18 +1652,18 @@ render() {
                   <SendWithLink balance={balance}
                     buttonStyle={buttonStyle}
                     changeAlert={this.changeAlert}
-                    sendWithLink={(amount,cb)=>{
+                    sendWithLink={(amount, cb)=>{
                       let randomHash = this.state.web3.utils.sha3(""+Math.random())
                       let randomWallet = this.state.web3.eth.accounts.create()
                       let sig = this.state.web3.eth.accounts.sign(randomHash, randomWallet.privateKey);
                       console.log("STATE",this.state,this.state.contracts)
                       // Use xDai as default token
-                      const tokenAddress = ERC20TOKEN === false ? 0 : this.state.contracts[ERC20TOKEN]._address;
+                      const tokenAddress = token ? 0 : token.address;
                       // -- Temp hacks
                       const expirationTime = 365; // Hard-coded to 1 year link expiration.
                       const amountToSend = amount*10**18 ; // Conversion to wei
                       // --
-                      if(!ERC20TOKEN)
+                      if(!token)
                       {
                         this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (receipt)=>{
                           this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
@@ -1774,7 +1672,7 @@ render() {
                           cb(receipt)
                         })
                       } else{
-                        this.state.tx(this.state.contracts[ERC20TOKEN].approve(this.state.contracts.Links._address, amountToSend),21000,false,0,async (approveReceipt)=>{
+                        this.state.tx(this.state.contracts.ERC20Vendable.approve(this.state.contracts.Links._address, amountToSend),21000,false,0,async (approveReceipt)=>{
                           //cb(approveReceipt)
                           this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (sendReceipt)=>{
                             this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
@@ -1863,10 +1761,6 @@ render() {
 
                   <NavCard title={i18n.t('exchange_title')} goBack={this.goBack.bind(this)}/>
                   <Exchange
-                    ERC20NAME={ERC20NAME}
-                    ERC20IMAGE={ERC20IMAGE}
-                    ERC20TOKEN={ERC20TOKEN}
-                    ERC20VENDOR={ERC20VENDOR}
                     ethprice={this.state.ethprice}
                     ethBalance={this.state.ethBalance}
                     daiBalance={this.state.daiBalance}
@@ -1902,7 +1796,6 @@ render() {
 
                   <NavCard title={i18n.t('vendors')} goBack={this.goBack.bind(this)}/>
                   <Vendors
-                    ERC20VENDOR={ERC20VENDOR}
                     products={this.state.products}
                     vendorObject={this.state.vendorObject}
                     vendors={this.state.vendors}
@@ -1983,7 +1876,7 @@ render() {
         onUpdate={async (state) => {
           console.log("Dapparatus update",state)
           //console.log("DAPPARATUS UPDATE",state)
-          if(ERC20TOKEN){
+          if(token){
             delete state.balance
           }
           if (state.web3Provider) {
@@ -2113,15 +2006,15 @@ async function tokenSend(to,value,gasLimit,txData,cb){
     console.log("sending with meta account:",this.state.metaAccount.address)
 
     let tx={
-      to:this.state.contracts[ERC20TOKEN]._address,
+      to: token.address,
       value: 0,
       gas: setGasLimit,
       gasPrice: Math.round(this.state.gwei * 1010101010)
     }
     if(data){
-      tx.data = this.state.contracts[ERC20TOKEN].transferWithData(to,weiValue,data).encodeABI()
+      tx.data = this.state.contracts.ERC20Vendable.transferWithData(to,weiValue,data).encodeABI()
     }else{
-      tx.data = this.state.contracts[ERC20TOKEN].transfer(to,weiValue).encodeABI()
+      tx.data = this.state.contracts.ERC20Vendable.transfer(to,weiValue).encodeABI()
     }
     console.log("TX SIGNED TO METAMASK:",tx)
     this.state.web3.eth.accounts.signTransaction(tx, this.state.metaAccount.privateKey).then(signed => {
@@ -2152,16 +2045,16 @@ async function tokenSend(to,value,gasLimit,txData,cb){
     }
     let txObject = {
       from:this.state.account,
-      to:this.state.contracts[ERC20TOKEN]._address,
+      to: token.address,
       value: 0,
       gas: setGasLimit,
       gasPrice: Math.round(this.state.gwei * 1010101010)
     }
 
     if(data){
-      txObject.data = this.state.contracts[ERC20TOKEN].transferWithData(to,weiValue,data).encodeABI()
+      txObject.data = this.state.contracts.ERC20Vendable.transferWithData(to,weiValue,data).encodeABI()
     }else{
-      txObject.data = this.state.contracts[ERC20TOKEN].transfer(to,weiValue).encodeABI()
+      txObject.data = this.state.contracts.ERC20Vendable.transfer(to,weiValue).encodeABI()
     }
 
     console.log("sending with injected web3 account",txObject)

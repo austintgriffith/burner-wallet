@@ -6,17 +6,12 @@ import Blockies from 'react-blockies';
 import RecentTransactions from './RecentTransactions';
 import { scroller } from 'react-scroll'
 import i18n from '../i18n';
-const QRCode = require('qrcode.react');
+import QRCode from 'qrcode.react';
+import { token } from '../assets';
 
 export default class Receive extends React.Component {
-
-  constructor(props) {
-    super(props);
-    let initialState = {
-    }
-  }
   render() {
-    let {dollarDisplay,view,buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeView, subBalanceDisplay,account} = this.props
+    const {dollarDisplay,view,buttonStyle,address, changeAlert, changeView } = this.props
 
 
     let qrSize = Math.min(document.documentElement.clientWidth,512)-90
@@ -49,12 +44,11 @@ export default class Receive extends React.Component {
             view={view}
             max={5}
             buttonStyle={buttonStyle}
-            ERC20TOKEN={ERC20TOKEN}
-            transactionsByAddress={ERC20TOKEN?this.props.fullTransactionsByAddress:this.props.transactionsByAddress}
+            transactionsByAddress={token ? this.props.fullTransactionsByAddress : this.props.transactionsByAddress}
             changeView={changeView}
             address={address}
             block={this.props.block}
-            recentTxs={ERC20TOKEN?this.props.fullRecentTxs:this.props.recentTxs}
+            recentTxs={token ? this.props.fullRecentTxs : this.props.recentTxs}
           />
         </div>
         <div name="theVeryBottom" className="text-center bottom-text">

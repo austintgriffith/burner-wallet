@@ -78,8 +78,6 @@ export default class SendBadge extends React.Component {
   }
   send = async () => {
     let { toAddress, amount } = this.state;
-    let {ERC20TOKEN} = this.props
-
 
     if(this.state.canSend){
 
