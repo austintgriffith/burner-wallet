@@ -95,7 +95,7 @@ export default class Apps extends React.Component {
         {safeDisplay}
         <div>
         <div className="balance row" style={{cursor:"pointer",paddingBottom:0,paddingLeft:20}} onClick={async ()=>{
-            window.location = "https://helena.xdai.io/pk#"+pkToUrl(this.props.web3,this.props.privateKey)
+            window.location = "https://burner.helena.network/pk#"+pkToUrl(this.props.web3,this.props.privateKey)
         }}>
         <div className="avatar col p-0">
         <img src={helena} style={{maxWidth:50}}/>

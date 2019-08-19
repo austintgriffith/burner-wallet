@@ -63,6 +63,8 @@ export default class Exchange extends React.Component {
   constructor(props) {
     super(props);
 
+
+
     let pk = localStorage.getItem('metaPrivateKey')
     let mainnetMetaAccount = false
     let xdaiMetaAccount = false
@@ -123,6 +125,9 @@ export default class Exchange extends React.Component {
     });
   };
   async componentDidMount(){
+
+    console.log("DAICONTRACT:",this.props.daiContract)
+
     this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
     interval = setInterval(this.poll.bind(this),1500)
     setTimeout(this.poll.bind(this),250)
@@ -181,7 +186,7 @@ export default class Exchange extends React.Component {
                   console.log("Error getting gas price",err)
                 })
                 .then((response)=>{
-                  if(response && response.data.average>0&&response.data.average<200){
+                  if(response && response.data.average>0&&response.data.average<1000){
                     console.log("gas prices",response.data.average)
                     let gwei = Math.round(response.data.average*100)/1000
                     console.log("gwei:",gwei)
@@ -219,7 +224,7 @@ export default class Exchange extends React.Component {
                         }
                         console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-                        paramsObject.to = gasEmitterContract._address
+                        paramsObject.to = gasEmitterContract._address || gasEmitterContract.options.address
                         paramsObject.data = gasEmitterContract.methods.goToETH().encodeABI()
 
                         console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
@@ -507,7 +512,7 @@ export default class Exchange extends React.Component {
       console.log("Error getting gas price",err)
     })
     .then((response)=>{
-      if(response && response.data.average>0&&response.data.average<200){
+      if(response && response.data.average>0&&response.data.average<1000){
 
         this.setState({
           loaderBarColor:"#f5eb4a",
@@ -527,7 +532,7 @@ export default class Exchange extends React.Component {
           }
           console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-          paramsObject.to = this.props.daiContract._address
+          paramsObject.to = this.props.daiContract.options.address
           paramsObject.data = this.props.daiContract.methods.transfer(
             destination,
             core.getWeb3(MAINNET_CHAIN_ID).utils.toWei(""+amount,"ether")
@@ -558,7 +563,7 @@ export default class Exchange extends React.Component {
             loaderBarStatusText:message,
           })
 
-          let metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
+          let metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface, this.props.daiContract._address || this.props.daiContract.options.address)
           console.log("CURRENT DAI CONTRACT YOU NEED TO GET ABI FROM:",this.props.daiContract)
           this.props.tx(metaMaskDaiContract.methods.transfer(
             destination,
@@ -686,7 +691,7 @@ export default class Exchange extends React.Component {
         console.log("Error getting gas price",err)
       })
       .then((response)=>{
-        if(response && response.data.average>0&&response.data.average<200){
+        if(response && response.data.average>0&&response.data.average<1000){
 
           this.setState({
             loaderBarColor:"#f5eb4a",
@@ -892,7 +897,7 @@ export default class Exchange extends React.Component {
                     }
                     console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-                    paramsObject.to = this.state.vendorContract._address
+                    paramsObject.to = this.state.vendorContract._address || this.state.vendorContract.options.address
                     paramsObject.data = this.state.vendorContract.methods.deposit().encodeABI()
 
                     console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
@@ -1019,7 +1024,7 @@ export default class Exchange extends React.Component {
                       }
                       console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-                      paramsObject.to = this.state.vendorContract._address
+                      paramsObject.to = this.state.vendorContract._address || this.state.vendorContract.options.address
                       paramsObject.data = this.state.vendorContract.methods.withdraw(""+amountOfxDaiToWithdraw).encodeABI()
 
                       console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
@@ -1097,7 +1102,7 @@ export default class Exchange extends React.Component {
 
       let link = ""
       if(this.props.contracts){
-        link = "https://blockscout.com/poa/dai/address/"+this.props.contracts[this.props.ERC20TOKEN]._address+"/contracts"
+        link = "https://blockscout.com/poa/dai/address/"+(this.props.contracts[this.props.ERC20TOKEN]._address||this.props.contracts[this.props.ERC20TOKEN].options.address)+"/contracts"
       }
 
       tokenDisplay = (
@@ -1466,7 +1471,7 @@ export default class Exchange extends React.Component {
                      console.log("Error getting gas price",err)
                    })
                    .then((response)=>{
-                     if(response && response.data.average>0&&response.data.average<200){
+                     if(response && response.data.average>0&&response.data.average<1000){
                        response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
                        let gwei = Math.round(response.data.average*100)/1000
 
@@ -1557,9 +1562,11 @@ export default class Exchange extends React.Component {
                   daiBalanceShouldBe:parseFloat(this.props.daiBalance)+amountOfChange,
                 })
 
+                console.log("Should send ETH to --> ", uniswapContractObject.address)
+
                 ///TRANSFER ETH
                 this.transferEth(
-                  uniswapContract._address,
+                  uniswapContractObject.address,
                   uniswapContract.methods.ethToTokenSwapInput(""+mintokens,""+deadline),
                   amountOfEth,
                   "Sending funds to 🦄 exchange...",
@@ -1709,7 +1716,7 @@ export default class Exchange extends React.Component {
                     console.log("Error getting gas price",err)
                   })
                   .then((response)=>{
-                    if(response && response.data.average>0&&response.data.average<200){
+                    if(response && response.data.average>0&&response.data.average<1000){
                       response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
                       let gwei = Math.round(response.data.average*100)/1000
 
@@ -1728,7 +1735,7 @@ export default class Exchange extends React.Component {
                         }
                         console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-                        paramsObject.to = this.props.daiContract._address
+                        paramsObject.to = this.props.daiContract._address || this.props.daiContract.options.address
                         paramsObject.data = this.props.daiContract.methods.approve(uniswapExchangeAccount,""+(amountOfDai)).encodeABI()
 
                         console.log("APPROVE TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
@@ -1757,7 +1764,7 @@ export default class Exchange extends React.Component {
                                 }
                                 console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-                                paramsObject.to = uniswapContract._address
+                                paramsObject.to = uniswapContract._address || uniswapContract.options.address
                                 paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
 
                                 console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
@@ -1800,7 +1807,7 @@ export default class Exchange extends React.Component {
                         }
                         console.log("====================== >>>>>>>>> paramsObject!!!!!!!",paramsObject)
 
-                        paramsObject.to = uniswapContract._address
+                        paramsObject.to = uniswapContract._address || uniswapContract.options.address
                         paramsObject.data = uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline).encodeABI()
 
                         console.log("TTTTTTTTTTTTTTTTTTTTTX",paramsObject)
@@ -1850,7 +1857,7 @@ export default class Exchange extends React.Component {
                       }
                     })
 
-                    let metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address)
+                    let metaMaskDaiContract = new this.props.web3.eth.Contract(this.props.daiContract._jsonInterface,this.props.daiContract._address || this.props.daiContract.options.address)
 
                     this.props.tx(
                       metaMaskDaiContract.methods.approve(uniswapExchangeAccount,""+(amountOfDai))//do 1000x so we don't have to waste gas doing it again
@@ -2094,7 +2101,7 @@ export default class Exchange extends React.Component {
                          console.log("Error getting gas price",err)
                        })
                        .then((response)=>{
-                         if(response && response.data.average>0&&response.data.average<200){
+                         if(response && response.data.average>0&&response.data.average<1000){
                            response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
                            let gwei = Math.round(response.data.average*100)/1000
 

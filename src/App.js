@@ -74,7 +74,7 @@ let ERC20VENDOR
 let ERC20IMAGE
 let ERC20NAME
 let LOADERIMAGE = burnerlogo
-let HARDCODEVIEW = "apps"// = "receipt"
+let HARDCODEVIEW = false//"apps"// = "receipt"
 let FAILCOUNT = 0
 
 let mainStyle = {
