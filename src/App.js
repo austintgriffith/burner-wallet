@@ -1998,7 +1998,7 @@ render() {
           goBack={this.goBack.bind(this)}
           dollarDisplay={dollarDisplay}
           burnWallet={()=>{
-            burnMetaAccount()
+
             if(RNMessageChannel){
               RNMessageChannel.send("burn")
             }
@@ -2011,6 +2011,7 @@ render() {
               localStorage.setItem(this.state.account+"transactionsByAddress","")
               this.setState({recentTxs:[],transactionsByAddress:{}})
             }
+            burnMetaAccount()
           }}
           />
           </div>
