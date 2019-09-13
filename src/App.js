@@ -70,7 +70,7 @@ let ERC20VENDOR
 let ERC20IMAGE
 let ERC20NAME
 let LOADERIMAGE = burnerlogo
-let HARDCODEVIEW = "main"// = "loader"// = "receipt"
+let HARDCODEVIEW// = "loader"// = "receipt"
 let FAILCOUNT = 0
 
 let mainStyle = {
@@ -1572,8 +1572,8 @@ render() {
                     />
                   </div>
                   <Bottom
-                    text={"buttom button"}
-                    action={this.goBack.bind(this)}
+					text={i18n.t('done')}
+					action={this.goBack.bind(this)}
                   />
                 </div>
               )
