@@ -104,6 +104,10 @@
       "disclaimer": "Don't do it! You will lose all funds!",
       "cancel": "No, Cancel",
       "burn": "Burn It!"
+    },
+    "collectibles": {
+      "title": "Collectibles",
+      "from": "by opensea.io"
     }
   }
 }

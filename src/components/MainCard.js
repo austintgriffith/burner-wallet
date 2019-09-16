@@ -2,6 +2,7 @@ import React from 'react';
 import { Scaler } from "dapparatus";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import i18next from 'i18next';
+import i18n from '../i18n';
 
 
 
@@ -48,10 +49,17 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
         </div>
       </div>
       <div className="content ops row">
-        <div className="col-6 p-1" onClick={() => changeView('share')}>
-          <button className="btn btn-large w-100" onClick={() => changeView('share')} style={buttonStyle.secondary}>
+        <div className="col-6 p-1" onClick={() => changeView('yourmodule')}>
+          <button className="btn btn-large w-100" onClick={() => changeView('yourmodule')} style={buttonStyle.secondary}>
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-share"/> {i18next.t('main_card.share')}
+              <i className="fas fa-share"/> {'Your Module'}
+            </Scaler>
+          </button>
+        </div>
+        <div className="col-6 p-1" onClick={() => changeView('collectibles')}>
+          <button className="btn btn-large w-100" onClick={() => changeView('collectibles')} style={buttonStyle.secondary}>
+            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
+              <i className="fas fa-share"/> {i18n.t('collectibles.title')}
             </Scaler>
           </button>
         </div>

@@ -44,6 +44,9 @@ import incogDetect from './services/incogDetect.js'
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
 
+import YourModule from './components/YourModule'
+import CollectiblesModule from './components/Collectibles'
+
 
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
@@ -487,10 +490,8 @@ class App extends Component {
 
     }
 
-
     //console.log(">>>>>>> <<< >>>>>> Looking into iframe...")
     //console.log(document.getElementById('galleassFrame').contentWindow['web3'])
-
     if(ERC20TOKEN&&this.state.contracts&&(this.state.network=="xDai"||this.state.network=="Unknown")){
       let gasBalance = await this.state.web3.eth.getBalance(this.state.account)
       gasBalance = this.state.web3.utils.fromWei(""+gasBalance,'ether')
@@ -1382,7 +1383,76 @@ render() {
             )
           }
 
+
           switch(view) {
+            case 'yourmodule':
+            if(!this.state || !this.state.customLoader || !this.state.tx || !this.state.contracts || !this.state.network){
+              return <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+            }else{
+              return (
+                <div>
+                  <div className="send-to-address card w-100" style={{zIndex:1}}>
+                    <NavCard title={"YOURMODULE NAV TITLE"} titleLink={""} goBack={this.goBack.bind(this)}/>
+                    <YourModule
+                      privateKey={metaAccount.privateKey}
+
+                      web3={this.state.web3}
+                      tx={this.state.tx}
+                      send={this.state.send}
+
+                      address={account}
+                      balance={balance}
+
+                      network={this.state.network}
+                      block={this.state.block}
+
+                      contracts={this.state.contracts}
+                      contractLoader={this.state.customLoader}
+
+                      mainnetweb3={this.state.mainnetweb3}
+                      xdaiweb3={this.state.xdaiweb3}
+
+                      daiContract={this.state.daiContract}
+                      ensContract={this.state.ensContract}
+                      ensLookup={this.ensLookup.bind(this)}
+
+                      ethBalance={this.state.ethBalance}
+                      daiBalance={this.state.daiBalance}
+                      xdaiBalance={this.state.xdaiBalance}
+
+                      eth={eth}
+                      dai={dai}
+                      xdai={xdai}
+                      ERC20NAME={ERC20NAME}
+                      ERC20IMAGE={ERC20IMAGE}
+                      ERC20TOKEN={ERC20TOKEN}
+                      ERC20VENDOR={ERC20VENDOR}
+                      ethprice={this.state.ethprice}
+
+                      isVendor={this.state.isVendor}
+                      isAdmin={this.state.isAdmin}
+
+                      setGwei={this.setGwei}
+                      gwei={this.state.gwei}
+
+                      openScanner={this.openScanner.bind(this)}
+                      scannerState={this.state.scannerState}
+
+                      buttonStyle={buttonStyle}
+                      changeAlert={this.changeAlert}
+                      nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
+                      goBack={this.goBack.bind(this)}
+                      dollarDisplay={dollarDisplay}
+                    />
+                  </div>
+                  <Bottom
+                    text={"buttom button"}
+                    action={this.goBack.bind(this)}
+                  />
+                </div>
+              )
+            }
+
             case 'main':
             return (
               <div>
@@ -1393,10 +1463,20 @@ render() {
 
                   <Balance icon={xdai} selected={selected} text={"xDai"} amount={this.state.xdaiBalance} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
+
+
+
+
                   <Balance icon={dai} selected={selected} text={"DAI"} amount={this.state.daiBalance} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
                   <Balance icon={eth} selected={selected} text={"ETH"} amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)} address={account} dollarDisplay={dollarDisplay}/>
                   <Ruler/>
+                  <div style={{cursor:"pointer"}} onClick={()=>{
+                    this.changeView('collectibles')
+                  }}>
+                  <Balance icon={cypherpunk} selected={i18n.t('collectibles.title')} text={i18n.t('collectibles.title')} amount={8.16} address={account} dollarDisplay={dollarDisplay}/>
+                  <Ruler/>
+                  </div>
                   {badgeDisplay}
 
                   <MainCard
@@ -1431,6 +1511,73 @@ render() {
                 />
               </div>
             );
+            case 'collectibles':
+            if(!this.state || !this.state.customLoader || !this.state.tx || !this.state.contracts || !this.state.network){
+              return <Loader loaderImage={LOADERIMAGE} mainStyle={mainStyle}/>
+            }else{
+              return (
+                <div>
+                  <div className="send-to-address card w-100" style={{zIndex:1}}>
+                    <NavCard title={`${i18n.t('collectibles.title')} ${i18n.t('collectibles.from')}`} titleLink={""} goBack={this.goBack.bind(this)}/>
+                    <CollectiblesModule
+                      privateKey={metaAccount.privateKey}
+
+                      web3={this.state.web3}
+                      tx={this.state.tx}
+                      send={this.state.send}
+
+                      address={account}
+                      balance={balance}
+
+                      network={this.state.network}
+                      block={this.state.block}
+
+                      contracts={this.state.contracts}
+                      contractLoader={this.state.customLoader}
+
+                      mainnetweb3={this.state.mainnetweb3}
+                      xdaiweb3={this.state.xdaiweb3}
+
+                      daiContract={this.state.daiContract}
+                      ensContract={this.state.ensContract}
+                      ensLookup={this.ensLookup.bind(this)}
+
+                      ethBalance={this.state.ethBalance}
+                      daiBalance={this.state.daiBalance}
+                      xdaiBalance={this.state.xdaiBalance}
+
+                      eth={eth}
+                      dai={dai}
+                      xdai={xdai}
+                      ERC20NAME={ERC20NAME}
+                      ERC20IMAGE={ERC20IMAGE}
+                      ERC20TOKEN={ERC20TOKEN}
+                      ERC20VENDOR={ERC20VENDOR}
+                      ethprice={this.state.ethprice}
+
+                      isVendor={this.state.isVendor}
+                      isAdmin={this.state.isAdmin}
+
+                      setGwei={this.setGwei}
+                      gwei={this.state.gwei}
+
+                      openScanner={this.openScanner.bind(this)}
+                      scannerState={this.state.scannerState}
+
+                      buttonStyle={buttonStyle}
+                      changeAlert={this.changeAlert}
+                      nativeSend={this.state.nativeSend} //this is used to send xDai when you are running on an ERC20 token
+                      goBack={this.goBack.bind(this)}
+                      dollarDisplay={dollarDisplay}
+                    />
+                  </div>
+                  <Bottom
+					text={i18n.t('done')}
+					action={this.goBack.bind(this)}
+                  />
+                </div>
+              )
+            }
             case 'advanced':
             return (
               <div>
