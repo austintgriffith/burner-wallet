@@ -50,7 +50,7 @@ import core, { mainAsset as xdai } from './core';
 import RNMessageChannel from 'react-native-webview-messaging';
 
 
-import bufficorn from './bufficorn.png';
+import bufficorn from './cowboy.png';
 import cypherpunk from './cypherpunk.png';
 import ethImg from './images/ethereum.png';
 import daiImg from './images/dai.jpg';
@@ -97,12 +97,12 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
-  if(true){
+  if(false){
     ERC20NAME = false
     ERC20TOKEN = false
     ERC20IMAGE = false
   }else{
-    ERC20NAME = 'BUFF'
+    ERC20NAME = 'CowboyCoin'
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
     ERC20IMAGE = bufficorn
@@ -151,28 +151,14 @@ else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
 }
 
 
-if(ERC20NAME=="BUFF"){
-  mainStyle.backgroundImage = "linear-gradient(#540d48, #20012d)"
-  mainStyle.backgroundColor = "#20012d"
-  mainStyle.mainColor = "#b6299e"
-  mainStyle.mainColorAlt = "#de3ec3"
-  title = "BuffiDai.io"
+if(ERC20NAME=="CowboyCoin"){
+  mainStyle.backgroundImage = "linear-gradient(#012469, #201d4a)"
+  mainStyle.backgroundColor = "#201d4a"
+  mainStyle.mainColor = "#ca0438"
+  mainStyle.mainColorAlt = "#bd0031"
+  title = "CowboyCoin.io"
   titleImage = (
     <img src={bufficorn} style={{
-      maxWidth:50,
-      maxHeight:50,
-      marginRight:15,
-      marginTop:-10
-    }}/>
-  )
-} else if(ERC20NAME=="BURN"){
-  mainStyle.backgroundImage = "linear-gradient(#4923d8, #6c0664)"
-  mainStyle.backgroundColor = "#6c0664"
-  mainStyle.mainColor = "#e72da3"
-  mainStyle.mainColorAlt = "#f948b8"
-  title = "Burner"
-  titleImage = (
-    <img src={cypherpunk} style={{
       maxWidth:50,
       maxHeight:50,
       marginRight:15,
