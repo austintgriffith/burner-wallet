@@ -93,7 +93,7 @@ let titleImage = (
 )
 
 //<i className="fas fa-fire" />
-if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
+if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0 || window.location.hostname.indexOf("cowboycoin.io") >= 0) {
   XDAI_PROVIDER = "http://localhost:8545"
   WEB3_PROVIDER = "http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
@@ -106,8 +106,8 @@ if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostna
     ERC20VENDOR = 'VendingMachine'
     ERC20TOKEN = 'ERC20Vendable'
     ERC20IMAGE = bufficorn
-    XDAI_PROVIDER = "http://localhost:8545"
-    WEB3_PROVIDER = "http://localhost:8545";
+    XDAI_PROVIDER = "https://dai.poa.network"
+    WEB3_PROVIDER = "https://dai.poa.network";
     LOADERIMAGE = bufficorn
   }
 
@@ -152,10 +152,10 @@ else if (window.location.hostname.indexOf("burnerwithrelays") >= 0) {
 
 
 if(ERC20NAME=="CowboyCoin"){
-  mainStyle.backgroundImage = "linear-gradient(#012469, #201d4a)"
-  mainStyle.backgroundColor = "#201d4a"
-  mainStyle.mainColor = "#ca0438"
-  mainStyle.mainColorAlt = "#bd0031"
+  mainStyle.backgroundImage = "linear-gradient(#000068, #000060)"
+  mainStyle.backgroundColor = "#000060"
+  mainStyle.mainColor = "#c90002"
+  mainStyle.mainColorAlt = "#c00204"
   title = "CowboyCoin.io"
   titleImage = (
     <img src={bufficorn} style={{
