@@ -46,16 +46,16 @@ import gnosis from './gnosis.jpg';
 import Safe from './components/Safe'
 import core, { mainAsset as xdai } from './core';
 
-//https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
-import RNMessageChannel from 'react-native-webview-messaging';
-
-
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
 import ethImg from './images/ethereum.png';
 import daiImg from './images/dai.jpg';
 import xdaiImg from './images/xdai.jpg';
 import Wyre from './services/wyre';
+
+//https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
+//import RNMessageChannel from 'react-native-webview-messaging';
+const RNMessageChannel = false //disable React Native for now, it is breaking Safari
 
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
@@ -1998,7 +1998,6 @@ render() {
           goBack={this.goBack.bind(this)}
           dollarDisplay={dollarDisplay}
           burnWallet={()=>{
-
             if(RNMessageChannel){
               RNMessageChannel.send("burn")
             }
