@@ -32,7 +32,7 @@
 
 🧑‍🤝‍🧑 The [Burner Wallet Collective](https://burnerwallet.co) is forming around fundamental development on this repo toward a shared mission of building a cleaner more extensible burner wallet. [Join our telegram](https://t.me/joinchat/KByvmROSyXhuMESDUL5YVA) and [tackle some issues](https://github.com/austintgriffith/burner-wallet/issues) to earn a bounty reward!
 
-✅ All projects should have a 'burner' version of their product. Take simple fundamentals from your app and put them in an easy to access web version before the barriers to entry. Use this to educate your users about your product and incentivized them to take the next step and download your app. 
+✅ All projects should have a 'burner' version of their product. Take simple fundamentals from your app and put them in an easy to access web version before the barriers to entry. Use this to educate your users about your product and incentivize them to take the next step and download your app. 
 
 🗺 The Burner Wallet all started while exploring the intersection of smooth UX and Frontier Markets. The theory is that [mass adoption will start where decentralization in necessary (emerging economies)](https://medium.com/@austin_48503/ethereum-in-emerging-economies-b235f8dac2f2).
 
