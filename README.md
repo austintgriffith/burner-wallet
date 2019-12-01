@@ -32,7 +32,7 @@
 
 🧑‍🤝‍🧑 The [Burner Wallet Collective](https://burnerwallet.co) is forming around fundamental development on this repo toward a shared mission of building a cleaner more extensible burner wallet. [Join our telegram](https://t.me/joinchat/KByvmROSyXhuMESDUL5YVA) and [tackle some issues](https://github.com/austintgriffith/burner-wallet/issues) to earn a bounty reward!
 
-✅ All projects should have a 'burner' version of their product. Take simple fundamentals from your app and put them in an easy to access web version before the barriers to entry. Use this to educate your users about your product and incentivized them to take the next step and download your app. 
+✅ All projects should have a 'burner' version of their product. Take simple fundamentals from your app and put them in an easy to access web version before the barriers to entry. Use this to educate your users about your product and incentivize them to take the next step and download your app. 
 
 🗺 The Burner Wallet all started while exploring the intersection of smooth UX and Frontier Markets. The theory is that [mass adoption will start where decentralization in necessary (emerging economies)](https://medium.com/@austin_48503/ethereum-in-emerging-economies-b235f8dac2f2).
 
@@ -133,7 +133,7 @@ The Burner Wallet runs on the xDai sidechain from POA. Since it is in DAI, a dAp
 
 A burner wallet is automatically generated upon visiting https://xdai.io and your private key is stored in a cookie so it will be there when you come back. However, you should sweep any value you hold to a cold wallet regularly and burn your ephemeral private key. A burner wallet is analogous to cash; you won't carry too much because it can be lost but it's astonishingly easy to exchange. 
 
-This can also be very handy in everyday use even for the crypto-initiated. If you are share a Lyft or a pizza with a friend and want to split the cost, just shoot their QR code with your camera and it will open up a new burner wallet to exchange value with them. Just don't forget to sweep to cold storage and burn your key when you get home!
+This can also be very handy in everyday use even for the crypto-initiated. If you share a Lyft or a pizza with a friend and want to split the cost, just shoot their QR code with your camera and it will open up a new burner wallet to exchange value with them. Just don't forget to sweep to cold storage and burn your key when you get home!
 
 Here is a follow up video to show how to go from fiat to DAI to xDai and back:
 [![onrampscreencast](https://user-images.githubusercontent.com/2653167/48295187-cb08df00-e446-11e8-9506-ff74a6d19604.png)](https://youtu.be/sbHIyDMpqyY)
