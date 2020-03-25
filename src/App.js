@@ -45,6 +45,7 @@ import incogDetect from './services/incogDetect.js'
 import RNMessageChannel from 'react-native-webview-messaging';
 
 
+
 import bufficorn from './bufficorn.png';
 import cypherpunk from './cypherpunk.png';
 import eth from './ethereum.png';
@@ -54,6 +55,15 @@ import Wyre from './services/wyre';
 
 let base64url = require('base64url')
 const EthCrypto = require('eth-crypto');
+
+
+
+const uniswapExchangeAccount = "0x2a1530c4c41db0b0b2bb646cb5eb1a67b7158667"
+const uniswapContractObject = {
+  address:uniswapExchangeAccount,
+  abi:require("./contracts/Exchange.abi.js"),
+  blocknumber:6627956,
+}
 
 //const POA_XDAI_NODE = "https://dai-b.poa.network"
 const POA_XDAI_NODE = "https://dai.poa.network"
@@ -432,8 +442,7 @@ class App extends Component {
     setTimeout(this.poll.bind(this),150)
     setTimeout(this.poll.bind(this),650)
     interval = setInterval(this.poll.bind(this),1500)
-    intervalLong = setInterval(this.longPoll.bind(this),45000)
-    setTimeout(this.longPoll.bind(this),150)
+
 
     this.connectToRPC()
   }
@@ -442,12 +451,15 @@ class App extends Component {
     let ensContract = new mainnetweb3.eth.Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
     let daiContract
     try{
-      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359")
+      daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),"0x6B175474E89094C44Da98b954EedeAC495271d0F")
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
     let xdaiweb3 = new Web3(new Web3.providers.HttpProvider(XDAI_PROVIDER))
-    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract})
+    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract},()=>{
+      intervalLong = setInterval(this.longPoll.bind(this),45000)
+      setTimeout(this.longPoll.bind(this),150)
+    })
   }
   componentWillUnmount() {
     clearInterval(interval)
@@ -582,12 +594,22 @@ class App extends Component {
 
 
   }
-  longPoll() {
-    axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
-     .then((response)=>{
-       let ethprice = response.data.data.quotes.USD.price
-       this.setState({ethprice})
-     })
+  async longPoll() {
+    let web3 = this.state.web3
+    if(web3){
+      let uniswapContract = new web3.eth.Contract(uniswapContractObject.abi,uniswapContractObject.address)
+      let outputPrice = await (uniswapContract.methods.getTokenToEthOutputPrice(10000000)).call()
+      let ethprice = outputPrice/10000000
+      console.log("ethprice",ethprice)
+      this.setState({ethprice})
+      //axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
+      //.then((response)=>{
+      //   = response.data.data.quotes.USD.price
+      //  this.setState({ethprice})
+      //})
+    }else{
+      console.log("CANT LOAD web3 YET")
+    }
   }
   setPossibleNewPrivateKey(value){
     this.setState({possibleNewPrivateKey:value},()=>{

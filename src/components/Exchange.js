@@ -40,7 +40,7 @@ const exchangeEstimatedTime = 300000
 const toXdaiBridgeAccount = "0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016"
 const toDaiBridgeAccount = "0x7301cfa0e1756b71869e93d4e4dca5c7d0eb0aa6"
 
-const uniswapExchangeAccount = "0x09cabec1ead1c0ba254b09efb3ee13841712be14"
+const uniswapExchangeAccount = "0x2a1530c4c41db0b0b2bb646cb5eb1a67b7158667"
 const uniswapContractObject = {
   address:uniswapExchangeAccount,
   abi:require("../contracts/Exchange.abi.js"),
@@ -2058,12 +2058,12 @@ export default class Exchange extends React.Component {
       ><Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
         <div style={{flex: '0 0 30px', textAlign: 'center'}}>
             {this.state.wyreWidgetOpen ? (
-                <>
+                <div>
                     <span style={{paddingRight: '10px'}}>
                         <i class="fas fa-spinner fa-spin"></i>
                     </span>
                     <span>Loading...</span>
-                </>) : `Buy $${this.state.wyreFundAmount}`}
+                </div>) : `Buy $${this.state.wyreFundAmount}`}
         </div>
         </Scaler>
       </button>
