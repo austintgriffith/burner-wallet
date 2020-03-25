@@ -53,6 +53,17 @@ import daiImg from './images/dai.jpg';
 import xdaiImg from './images/xdai.jpg';
 import Wyre from './services/wyre';
 
+
+//GOING TO START USING UNISWAP AS A PRICE ORACLE INSTEAD OF PAYING FOR COINMARKETCAP API
+const uniswapExchangeAccount = "0x2a1530c4c41db0b0b2bb646cb5eb1a67b7158667"//"0x09cabec1ead1c0ba254b09efb3ee13841712be14"
+const uniswapContractObject = {
+  address:uniswapExchangeAccount,
+  abi:require("./contracts/Exchange.abi.js"),
+  blocknumber:6627956,
+}
+
+
+
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 //import RNMessageChannel from 'react-native-webview-messaging';
 const RNMessageChannel = false //disable React Native for now, it is breaking Safari
@@ -435,8 +446,7 @@ class App extends Component {
     setTimeout(this.poll.bind(this),150)
     setTimeout(this.poll.bind(this),650)
     interval = setInterval(this.poll.bind(this),1500)
-    intervalLong = setInterval(this.longPoll.bind(this),45000)
-    setTimeout(this.longPoll.bind(this),150)
+
 
     this.connectToRPC()
   }
@@ -445,11 +455,14 @@ class App extends Component {
     const ensContract = new Contract(require("./contracts/ENS.abi.js"),require("./contracts/ENS.address.js"))
     let daiContract
     try{
-      daiContract = new Contract(require("./contracts/StableCoin.abi.js"),"0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359")
+      daiContract = new Contract(require("./contracts/StableCoin.abi.js"),"0x6B175474E89094C44Da98b954EedeAC495271d0F")//UPDATED TO DAI!!!
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
     this.setState({ ensContract, daiContract });
+
+    intervalLong = setInterval(this.longPoll.bind(this),45000)
+    setTimeout(this.longPoll.bind(this),150)
   }
   componentWillUnmount() {
     clearInterval(interval)
@@ -577,7 +590,11 @@ class App extends Component {
 
 
     if(this.state.account){
+
+
+      //console.log("GETTING ETH BALANCE FROM ",eth)
       const ethBalance = await eth.getDisplayBalance(this.state.account, 20);
+      //console.log("ethBalance",ethBalance)
       const daiBalance = await dai.getDisplayBalance(this.state.account, 20);
       const xdaiBalance = await xdai.getDisplayBalance(this.state.account, 20);
 
@@ -599,12 +616,26 @@ class App extends Component {
 
 
   }
-  longPoll() {
-    axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
-    .then((response)=>{
-      let ethprice = response.data.data.quotes.USD.price
+  async longPoll() {
+
+    let web3 = core.getWeb3(MAINNET_CHAIN_ID)
+    if(web3){
+      //console.log("WEB3")
+      let uniswapContract = new web3.eth.Contract(uniswapContractObject.abi,uniswapContractObject.address)
+      let outputPrice = await (uniswapContract.methods.getTokenToEthOutputPrice(10000000)).call()
+      let ethprice = outputPrice/10000000
+      console.log("ethprice",ethprice)
       this.setState({ethprice})
-    })
+      //axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
+      //.then((response)=>{
+      //   = response.data.data.quotes.USD.price
+      //  this.setState({ethprice})
+      //})
+    }else{
+      console.log("CANT LOAD web3 YET")
+    }
+
+
   }
   setPossibleNewPrivateKey(value){
     this.setState({possibleNewPrivateKey:value},()=>{

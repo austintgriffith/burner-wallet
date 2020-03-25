@@ -47,7 +47,7 @@ const exchangeEstimatedTime = 300000
 const toXdaiBridgeAccount = "0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016"
 const toDaiBridgeAccount = "0x7301cfa0e1756b71869e93d4e4dca5c7d0eb0aa6"
 
-const uniswapExchangeAccount = "0x09cabec1ead1c0ba254b09efb3ee13841712be14"
+const uniswapExchangeAccount = "0x2a1530c4c41db0b0b2bb646cb5eb1a67b7158667"//"0x09cabec1ead1c0ba254b09efb3ee13841712be14"
 const uniswapContractObject = {
   address:uniswapExchangeAccount,
   abi:require("../contracts/Exchange.abi.js"),
@@ -1910,7 +1910,7 @@ export default class Exchange extends React.Component {
 
 
 
-                  //(0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359).approve(address guy, uint256 wad)
+                  //(0x6B175474E89094C44Da98b954EedeAC495271d0F).approve(address guy, uint256 wad)
                   //tokenToEthSwapInput(uint256 tokens_sold, uint256 min_eth, uint256 deadline)
                   /*this.props.tx(
                     uniswapContract.methods.tokenToEthSwapInput(""+amountOfDai,""+mineth,""+deadline)
@@ -2336,7 +2336,7 @@ export default class Exchange extends React.Component {
                 </div>
               </div>
             </div>
-          
+
 
 
           {sendEthRow}
