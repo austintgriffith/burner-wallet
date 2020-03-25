@@ -97,8 +97,8 @@ let titleImage = (
 
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
-  XDAI_PROVIDER = "http://localhost:8545"
-  WEB3_PROVIDER = "http://localhost:8545";
+  XDAI_PROVIDER = POA_XDAI_NODE//"http://localhost:8545"
+  WEB3_PROVIDER = POA_XDAI_NODE//"http://localhost:8545";
   CLAIM_RELAY = 'http://localhost:18462'
   if(true){
     ERC20NAME = false
@@ -355,7 +355,7 @@ class App extends Component {
         var contextElement = document.getElementById("context")
         contextElement.innerHTML = 'INCOGNITO';
       }else if (typeof web3 !== 'undefined') {
-        console.log("NOT INCOG",this.state.metaAccount)
+        //console.log("NOT INCOG",this.state.metaAccount)
         if (window.web3.currentProvider.isMetaMask === true) {
           document.getElementById("main").style.backgroundImage = "linear-gradient(#553319, #ca6e28)"
           document.body.style.backgroundColor = "#ca6e28"
@@ -456,10 +456,9 @@ class App extends Component {
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
     let xdaiweb3 = new Web3(new Web3.providers.HttpProvider(XDAI_PROVIDER))
-    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract},()=>{
-      intervalLong = setInterval(this.longPoll.bind(this),45000)
-      setTimeout(this.longPoll.bind(this),150)
-    })
+    this.setState({mainnetweb3,ensContract,xdaiweb3,daiContract})
+    intervalLong = setInterval(this.longPoll.bind(this),45000)
+    setTimeout(this.longPoll.bind(this),150)
   }
   componentWillUnmount() {
     clearInterval(interval)
@@ -595,12 +594,13 @@ class App extends Component {
 
   }
   async longPoll() {
-    let web3 = this.state.web3
-    if(web3){
-      let uniswapContract = new web3.eth.Contract(uniswapContractObject.abi,uniswapContractObject.address)
+    console.log("@#@ long poll")
+    let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
+    if(mainnetweb3){
+      let uniswapContract = new mainnetweb3.eth.Contract(uniswapContractObject.abi,uniswapContractObject.address)
       let outputPrice = await (uniswapContract.methods.getTokenToEthOutputPrice(10000000)).call()
       let ethprice = outputPrice/10000000
-      console.log("ethprice",ethprice)
+      console.log("@#@ ethprice",ethprice)
       this.setState({ethprice})
       //axios.get("https://api.coinmarketcap.com/v2/ticker/1027/")
       //.then((response)=>{
