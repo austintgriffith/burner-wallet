@@ -47,22 +47,6 @@ export default ({buttonStyle,ERC20TOKEN,address, balance, changeAlert, changeVie
           </button>
         </div>
       </div>
-      <div className="content ops row">
-        <div className="col-6 p-1" onClick={() => changeView('share')}>
-          <button className="btn btn-large w-100" onClick={() => changeView('share')} style={buttonStyle.secondary}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-share"/> {i18next.t('main_card.share')}
-            </Scaler>
-          </button>
-        </div>
-        <div className="col-6 p-1" onClick={() => changeView('send_with_link')}>
-          <button className="btn btn-large w-100" style={buttonStyle.secondary}>
-            <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              <i className="fas fa-money-bill-alt"  /> {i18next.t('main_card.link')}
-            </Scaler>
-          </button>
-        </div>
-      </div>
     </div>
   )
 
