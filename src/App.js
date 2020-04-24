@@ -701,7 +701,8 @@ class App extends Component {
     console.log("DOING CLAIM ONCHAIN", this.state.claimId, this.state.claimKey, this.state.account);
     this.setState({sending: true})
 
-    let fund = await contracts.Links.funds(this.state.claimId).call()
+    const LinksContract = new this.state.web3.eth.Contract(LINKS_CONTRACT_ABI,LINKS_CONTRACT_ADDRESS)
+    let fund = await LinksContract.methods.funds(this.state.claimId).call()
     console.log("FUND FOR "+this.state.claimId+" IS: ", fund)
     if (parseInt(fund[5].toString())>0) {
       this.setState({fund: fund})
@@ -711,7 +712,7 @@ class App extends Component {
         {type: 'bytes32', value: this.state.claimId}, // fund id
         {type: 'address', value: this.state.account}, // destination address
         {type: 'uint256', value: fund[5]}, // nonce
-        {type: 'address', value: contracts.Links._address} // contract address
+        {type: 'address', value: LinksContract._address} // contract address
       )
       console.log("claimHash", claimHash)
       console.log("this.state.claimKey", this.state.claimKey)
@@ -719,7 +720,7 @@ class App extends Component {
       sig = sig.signature;
 
       console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
-      tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account), 250000, false, 0, (result) => {
+      tx(LinksContract.methods.claim(this.state.claimId, sig, claimHash, this.state.account), 250000, false, 0, (result) => {
         if (result) {
           console.log("CLAIMED!!!", result)
           this.setState({claimed: true})
@@ -754,7 +755,8 @@ class App extends Component {
   }
   async relayClaim() {
     console.log("DOING CLAIM THROUGH RELAY")
-    let fund = await this.state.contracts.Links.funds(this.state.claimId).call()
+    const LinksContract = new this.state.web3.eth.Contract(LINKS_CONTRACT_ABI,LINKS_CONTRACT_ADDRESS)
+    let fund = await LinksContract.methods.funds(this.state.claimId).call()
       if (parseInt(fund[5].toString())>0) {
         this.setState({fund: fund})
         console.log("FUND: ", fund)
@@ -763,7 +765,7 @@ class App extends Component {
           {type: 'bytes32', value: this.state.claimId}, // fund id
           {type: 'address', value: this.state.account}, // destination address
           {type: 'uint256', value: fund[5]}, // nonce
-          {type: 'address', value: this.state.contracts.Links._address} // contract address
+          {type: 'address', value: LinksContract._address} // contract address
         )
         console.log("claimHash", claimHash)
         console.log("this.state.claimKey", this.state.claimKey)
@@ -782,7 +784,7 @@ class App extends Component {
           relayClient.useKeypairForSigning(this.state.metaAccount)
         }
         console.log("Calling encodeABU on Links.claim() ",this.state.claimId, sig, claimHash, this.state.account)
-        let claimData = this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account).encodeABI()
+        let claimData = LinksContract.methods.claim(this.state.claimId, sig, claimHash, this.state.account).encodeABI()
         //let network_gas_price = await this.state.web3.eth.getGasPrice();
         // Sometimes, xDai network returns '0'
         //if (!network_gas_price || network_gas_price == 0) {
@@ -790,7 +792,7 @@ class App extends Component {
         //}
         let options = {
           from: this.state.account,
-          to: this.state.contracts.Links._address,
+          to: LinksContract._address,
           txfee: 12,
           gas_limit: 150000,
           gas_price: Math.trunc(1000000000 * 25)
@@ -1769,18 +1771,19 @@ render() {
                       const expirationTime = 365; // Hard-coded to 1 year link expiration.
                       const amountToSend = amount*10**18 ; // Conversion to wei
                       // --
+                      const LinksContract = new this.state.web3.eth.Contract(LINKS_CONTRACT_ABI,LINKS_CONTRACT_ADDRESS)
                       if(!ERC20TOKEN)
                       {
-                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (receipt)=>{
+                        this.state.tx(LinksContract.methods.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (receipt)=>{
                           this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
                             console.log("STATE SAVED",this.state)
                           })
                           cb(receipt)
                         })
                       } else{
-                        this.state.tx(this.state.contracts[ERC20TOKEN].approve(this.state.contracts.Links._address, amountToSend),21000,false,0,async (approveReceipt)=>{
+                        this.state.tx(this.state.contracts[ERC20TOKEN].approve(LinksContract._address, amountToSend),21000,false,0,async (approveReceipt)=>{
                           //cb(approveReceipt)
-                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (sendReceipt)=>{
+                          this.state.tx(LinksContract.methods.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (sendReceipt)=>{
                             this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
                               console.log("STATE SAVED",this.state)
                             })
