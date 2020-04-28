@@ -95,10 +95,6 @@ let titleImage = (
   <span style={{paddingRight:20,paddingLeft:16}}><i className="fas fa-fire" /></span>
 )
 
-const LINKS_CONTRACT_ABI = [{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"address","name":""}],"name":"get_hub_addr","inputs":[],"constant":true},{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"bool","name":""}],"name":"isClaimValid","inputs":[{"type":"bytes32","name":"_id"},{"type":"bytes","name":"_signature"},{"type":"bytes32","name":"_claimHash"},{"type":"address","name":"_destination"}],"constant":true},{"type":"function","stateMutability":"nonpayable","payable":false,"outputs":[],"name":"set_hub","inputs":[{"type":"address","name":"rhub"}],"constant":false},{"type":"function","stateMutability":"payable","payable":true,"outputs":[{"type":"bool","name":""}],"name":"send","inputs":[{"type":"bytes32","name":"_id"},{"type":"bytes","name":"_signature"},{"type":"address","name":"_token"},{"type":"uint256","name":"_amount"},{"type":"uint256","name":"_expirationDays"}],"constant":false},{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"uint256","name":""}],"name":"contractNonce","inputs":[],"constant":true},{"type":"function","stateMutability":"pure","payable":false,"outputs":[{"type":"bytes4","name":""}],"name":"sig","inputs":[{"type":"string","name":"methodSig"}],"constant":true},{"type":"function","stateMutability":"nonpayable","payable":false,"outputs":[],"name":"post_relayed_call","inputs":[{"type":"address","name":""},{"type":"address","name":""},{"type":"bytes","name":""},{"type":"bool","name":""},{"type":"uint256","name":""},{"type":"uint256","name":""}],"constant":false},{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"uint32","name":""}],"name":"accept_relayed_call","inputs":[{"type":"address","name":""},{"type":"address","name":""},{"type":"bytes","name":"encoded_function"},{"type":"uint256","name":""},{"type":"uint256","name":""}],"constant":true},{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"address","name":"sender"},{"type":"address","name":"signer"},{"type":"address","name":"token"},{"type":"uint256","name":"amount"},{"type":"uint256","name":"msgVal"},{"type":"uint256","name":"nonce"},{"type":"uint256","name":"creationTime"},{"type":"uint256","name":"expirationTime"},{"type":"bool","name":"claimed"}],"name":"funds","inputs":[{"type":"bytes32","name":""}],"constant":true},{"type":"function","stateMutability":"pure","payable":false,"outputs":[{"type":"uint256","name":"result"}],"name":"extractUint","inputs":[{"type":"bytes","name":"source"},{"type":"uint256","name":"ofs"}],"constant":true},{"type":"function","stateMutability":"pure","payable":false,"outputs":[{"type":"bytes4","name":""}],"name":"getMethodSig","inputs":[{"type":"bytes","name":"msg_data"}],"constant":true},{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"bool","name":""}],"name":"isFundValid","inputs":[{"type":"bytes32","name":"_id"}],"constant":true},{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"bytes","name":""}],"name":"get_message_data","inputs":[],"constant":true},{"type":"function","stateMutability":"pure","payable":false,"outputs":[{"type":"bytes","name":"ret"}],"name":"extractBytes","inputs":[{"type":"bytes","name":"source"},{"type":"uint256","name":"ofs"},{"type":"uint256","name":"len"}],"constant":true},{"type":"function","stateMutability":"payable","payable":true,"outputs":[],"name":"deposit_to_relay_hub","inputs":[],"constant":false},{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"address","name":""}],"name":"get_sender","inputs":[],"constant":true},{"type":"function","stateMutability":"pure","payable":false,"outputs":[{"type":"string","name":""}],"name":"getStringParam","inputs":[{"type":"bytes","name":"msg_data"},{"type":"uint256","name":"index"}],"constant":true},{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"uint256","name":""}],"name":"balance","inputs":[{"type":"address","name":"_token"},{"type":"address","name":"_from"}],"constant":true},{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"address","name":""}],"name":"get_sender_from_data","inputs":[{"type":"address","name":"orig_sender"},{"type":"bytes","name":"msg_data"}],"constant":true},{"type":"function","stateMutability":"pure","payable":false,"outputs":[{"type":"uint256","name":""}],"name":"getParam","inputs":[{"type":"bytes","name":"msg_data"},{"type":"uint256","name":"index"}],"constant":true},{"type":"function","stateMutability":"pure","payable":false,"outputs":[{"type":"bytes","name":"ret"}],"name":"getBytesParam","inputs":[{"type":"bytes","name":"msg_data"},{"type":"uint256","name":"index"}],"constant":true},{"type":"function","stateMutability":"nonpayable","payable":false,"outputs":[{"type":"bool","name":""}],"name":"claim","inputs":[{"type":"bytes32","name":"_id"},{"type":"bytes","name":"_signature"},{"type":"bytes32","name":"_claimHash"},{"type":"address","name":"_destination"}],"constant":false},{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"bool","name":""}],"name":"isClaimExpired","inputs":[{"type":"bytes32","name":"_id"},{"type":"bytes","name":"_signature"},{"type":"bytes32","name":"_claimHash"},{"type":"address","name":"_destination"}],"constant":true},{"type":"function","stateMutability":"view","payable":false,"outputs":[{"type":"uint256","name":""}],"name":"get_recipient_balance","inputs":[],"constant":true},{"type":"fallback","stateMutability":"nonpayable","payable":false},{"type":"event","name":"Sent","inputs":[{"type":"bytes32","name":"id","indexed":true},{"type":"address","name":"sender","indexed":true},{"type":"uint256","name":"value","indexed":false},{"type":"uint256","name":"nonce","indexed":true},{"type":"bool","name":"sent","indexed":false}],"anonymous":false},{"type":"event","name":"Claimed","inputs":[{"type":"bytes32","name":"id","indexed":true},{"type":"address","name":"sender","indexed":false},{"type":"uint256","name":"value","indexed":false},{"type":"address","name":"receiver","indexed":true},{"type":"uint256","name":"nonce","indexed":true},{"type":"bool","name":"claimed","indexed":false}],"anonymous":false},{"type":"event","name":"VaultTransfer","inputs":[{"type":"address","name":"token","indexed":true},{"type":"address","name":"to","indexed":true},{"type":"uint256","name":"amount","indexed":false},{"type":"bool","name":"status","indexed":false}],"anonymous":false},{"type":"event","name":"VaultDeposit","inputs":[{"type":"address","name":"token","indexed":true},{"type":"address","name":"sender","indexed":true},{"type":"uint256","name":"amount","indexed":false},{"type":"bool","name":"status","indexed":false}],"anonymous":false}]
-
-const LINKS_CONTRACT_ADDRESS = "0x9971B0E163795c49cAF5DefF06C271fCd8f3Ebe9"
-
 //<i className="fas fa-fire" />
 if (window.location.hostname.indexOf("localhost") >= 0 || window.location.hostname.indexOf("10.0.0.107") >= 0) {
   XDAI_PROVIDER = POA_XDAI_NODE//"http://localhost:8545"
@@ -701,8 +697,7 @@ class App extends Component {
     console.log("DOING CLAIM ONCHAIN", this.state.claimId, this.state.claimKey, this.state.account);
     this.setState({sending: true})
 
-    const LinksContract = new this.state.web3.eth.Contract(LINKS_CONTRACT_ABI,LINKS_CONTRACT_ADDRESS)
-    let fund = await LinksContract.methods.funds(this.state.claimId).call()
+    let fund = await contracts.Links.funds(this.state.claimId).call()
     console.log("FUND FOR "+this.state.claimId+" IS: ", fund)
     if (parseInt(fund[5].toString())>0) {
       this.setState({fund: fund})
@@ -712,7 +707,7 @@ class App extends Component {
         {type: 'bytes32', value: this.state.claimId}, // fund id
         {type: 'address', value: this.state.account}, // destination address
         {type: 'uint256', value: fund[5]}, // nonce
-        {type: 'address', value: LinksContract._address} // contract address
+        {type: 'address', value: contracts.Links._address} // contract address
       )
       console.log("claimHash", claimHash)
       console.log("this.state.claimKey", this.state.claimKey)
@@ -720,7 +715,7 @@ class App extends Component {
       sig = sig.signature;
 
       console.log("CLAIM TX:", this.state.claimId, sig, claimHash, this.state.account)
-      tx(LinksContract.methods.claim(this.state.claimId, sig, claimHash, this.state.account), 250000, false, 0, (result) => {
+      tx(contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account), 250000, false, 0, (result) => {
         if (result) {
           console.log("CLAIMED!!!", result)
           this.setState({claimed: true})
@@ -755,8 +750,7 @@ class App extends Component {
   }
   async relayClaim() {
     console.log("DOING CLAIM THROUGH RELAY")
-    const LinksContract = new this.state.web3.eth.Contract(LINKS_CONTRACT_ABI,LINKS_CONTRACT_ADDRESS)
-    let fund = await LinksContract.methods.funds(this.state.claimId).call()
+    let fund = await this.state.contracts.Links.funds(this.state.claimId).call()
       if (parseInt(fund[5].toString())>0) {
         this.setState({fund: fund})
         console.log("FUND: ", fund)
@@ -765,7 +759,7 @@ class App extends Component {
           {type: 'bytes32', value: this.state.claimId}, // fund id
           {type: 'address', value: this.state.account}, // destination address
           {type: 'uint256', value: fund[5]}, // nonce
-          {type: 'address', value: LinksContract._address} // contract address
+          {type: 'address', value: this.state.contracts.Links._address} // contract address
         )
         console.log("claimHash", claimHash)
         console.log("this.state.claimKey", this.state.claimKey)
@@ -784,7 +778,7 @@ class App extends Component {
           relayClient.useKeypairForSigning(this.state.metaAccount)
         }
         console.log("Calling encodeABU on Links.claim() ",this.state.claimId, sig, claimHash, this.state.account)
-        let claimData = LinksContract.methods.claim(this.state.claimId, sig, claimHash, this.state.account).encodeABI()
+        let claimData = this.state.contracts.Links.claim(this.state.claimId, sig, claimHash, this.state.account).encodeABI()
         //let network_gas_price = await this.state.web3.eth.getGasPrice();
         // Sometimes, xDai network returns '0'
         //if (!network_gas_price || network_gas_price == 0) {
@@ -792,9 +786,9 @@ class App extends Component {
         //}
         let options = {
           from: this.state.account,
-          to: LinksContract._address,
-          txfee: 12,
-          gas_limit: 150000,
+          to: this.state.contracts.Links._address,
+          txfee: 70,
+          gas_limit: 200000,
           gas_price: Math.trunc(1000000000 * 25)
         }
         console.log("Hitting relayClient with relayTransaction()",claimData, options)
@@ -1771,19 +1765,18 @@ render() {
                       const expirationTime = 365; // Hard-coded to 1 year link expiration.
                       const amountToSend = amount*10**18 ; // Conversion to wei
                       // --
-                      const LinksContract = new this.state.web3.eth.Contract(LINKS_CONTRACT_ABI,LINKS_CONTRACT_ADDRESS)
                       if(!ERC20TOKEN)
                       {
-                        this.state.tx(LinksContract.methods.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (receipt)=>{
+                        this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (receipt)=>{
                           this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
                             console.log("STATE SAVED",this.state)
                           })
                           cb(receipt)
                         })
                       } else{
-                        this.state.tx(this.state.contracts[ERC20TOKEN].approve(LinksContract._address, amountToSend),21000,false,0,async (approveReceipt)=>{
+                        this.state.tx(this.state.contracts[ERC20TOKEN].approve(this.state.contracts.Links._address, amountToSend),21000,false,0,async (approveReceipt)=>{
                           //cb(approveReceipt)
-                          this.state.tx(LinksContract.methods.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (sendReceipt)=>{
+                          this.state.tx(this.state.contracts.Links.send(randomHash,sig.signature,tokenAddress,amountToSend,expirationTime),250000,false,amountToSend,async (sendReceipt)=>{
                             this.setState({sendLink: randomHash,sendKey: randomWallet.privateKey},()=>{
                               console.log("STATE SAVED",this.state)
                             })
