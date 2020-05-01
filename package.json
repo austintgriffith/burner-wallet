@@ -67,7 +67,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "clevis": "github:austintgriffith/clevis#master",
+    "clevis": "^0.2.39",
     "mocha": "^5.2.0",
     "openzeppelin-solidity": "2.0.0",
     "webpack": "^4.28.4"
