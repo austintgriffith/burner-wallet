@@ -787,8 +787,8 @@ class App extends Component {
         let options = {
           from: this.state.account,
           to: this.state.contracts.Links._address,
-          txfee: 12,
-          gas_limit: 150000,
+          txfee: 70,
+          gas_limit: 200000,
           gas_price: Math.trunc(1000000000 * 25)
         }
         console.log("Hitting relayClient with relayTransaction()",claimData, options)
