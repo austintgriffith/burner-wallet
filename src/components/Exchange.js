@@ -17,7 +17,9 @@ import wyrelogo from '../wyre.png';
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
 
-const GASBOOSTPRICE = 0.25
+const GASBOOSTPRICE = 0.0501
+
+const GAS_MAX = 19999
 
 const logoStyle = {
   maxWidth:50,
@@ -69,7 +71,7 @@ export default class Exchange extends React.Component {
     let xdaiMetaAccount = false
     let daiAddress = false
     let xdaiAddress = false
-    if(pk&&pk!="0"){
+    if(!window.ethereum && pk&&pk!="0"){
       mainnetMetaAccount =  mainnetweb3.eth.accounts.privateKeyToAccount(pk)
       daiAddress = mainnetMetaAccount.address.toLowerCase();
       xdaiMetaAccount = xdaiweb3.eth.accounts.privateKeyToAccount(pk)
@@ -184,7 +186,7 @@ export default class Exchange extends React.Component {
                   console.log("Error getting gas price",err)
                 })
                 .then((response)=>{
-                  if(response && response.data.average>0&&response.data.average<1000){
+                  if(response && response.data.average>0&&response.data.average<GAS_MAX){
                     console.log("gas prices",response.data.average)
                     let gwei = Math.round(response.data.average*100)/1000
                     console.log("gwei:",gwei)
@@ -510,7 +512,7 @@ export default class Exchange extends React.Component {
       console.log("Error getting gas price",err)
     })
     .then((response)=>{
-      if(response && response.data.average>0&&response.data.average<1000){
+      if(response && response.data.average>0&&response.data.average<GAS_MAX){
 
         this.setState({
           loaderBarColor:"#f5eb4a",
@@ -689,7 +691,7 @@ export default class Exchange extends React.Component {
         console.log("Error getting gas price",err)
       })
       .then((response)=>{
-        if(response && response.data.average>0&&response.data.average<1000){
+        if(response && response.data.average>0&&response.data.average<GAS_MAX){
 
           this.setState({
             loaderBarColor:"#f5eb4a",
@@ -1469,7 +1471,7 @@ export default class Exchange extends React.Component {
                      console.log("Error getting gas price",err)
                    })
                    .then((response)=>{
-                     if(response && response.data.average>0&&response.data.average<1000){
+                     if(response && response.data.average>0&&response.data.average<GAS_MAX){
                        response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
                        let gwei = Math.round(response.data.average*100)/1000
 
@@ -1712,7 +1714,7 @@ export default class Exchange extends React.Component {
                     console.log("Error getting gas price",err)
                   })
                   .then((response)=>{
-                    if(response && response.data.average>0&&response.data.average<1000){
+                    if(response && response.data.average>0&&response.data.average<GAS_MAX){
                       response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
                       let gwei = Math.round(response.data.average*100)/1000
 
@@ -2097,7 +2099,7 @@ export default class Exchange extends React.Component {
                          console.log("Error getting gas price",err)
                        })
                        .then((response)=>{
-                         if(response && response.data.average>0&&response.data.average<1000){
+                         if(response && response.data.average>0&&response.data.average<GAS_MAX){
                            response.data.average=response.data.average + (response.data.average*GASBOOSTPRICE)
                            let gwei = Math.round(response.data.average*100)/1000
 

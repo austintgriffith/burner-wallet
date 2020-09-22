@@ -265,7 +265,7 @@ class App extends Component {
     this.state = {
       web3: false,
       account: false,
-      gwei: 1.1,
+      gwei: 91.1,
       view: view,
       sendLink: "",
       sendKey: "",
@@ -594,6 +594,28 @@ class App extends Component {
 
   }
   async longPoll() {
+
+
+    axios.get("https://ethgasstation.info/json/ethgasAPI.json", { crossdomain: true })
+    .catch((err)=>{
+      console.log("Error getting gas price",err)
+    })
+    .then((response)=>{
+      if(response && response.data.fast>0&&response.data.fast<19999){
+
+        const GASBOOSTPRICE = 0.0501
+
+        response.data.fast=response.data.fast + (response.data.fast*GASBOOSTPRICE)
+        let gwei = Math.round(response.data.fast*100)/1000
+        console.log("⛽️ "+gwei)
+        this.setState({gwei: gwei})
+      }else{
+        console.log("GAS OUT OF RANGE")
+      }
+    })
+
+
+
     console.log("@#@ long poll")
     let mainnetweb3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws/v3/e0ea6e73570246bbb3d4bd042c4b5dac'))
     if(mainnetweb3){
@@ -2063,16 +2085,7 @@ render() {
           }
         }}
         />
-        <Gas
-        network={this.state.network}
-        onUpdate={(state)=>{
-          console.log("Gas price update:",state)
-          this.setState(state,()=>{
-            this.state.gwei += 0.1
-            console.log("GWEI set:",this.state)
-          })
-        }}
-        />
+
 
         <div id="context" style={{position:"absolute",right:5,top:-15,opacity:0.2,zIndex:100,fontSize:60,color:'#FFFFFF'}}>
         </div>
@@ -2087,6 +2100,18 @@ render() {
 
 //<iframe id="galleassFrame" style={{zIndex:99,position:"absolute",left:0,top:0,width:800,height:600}} src="https://galleass.io" />
 
+/*
+<Gas
+network={this.state.network}
+onUpdate={(state)=>{
+  console.log("Gas price update:",state)
+  this.setState(state,()=>{
+    this.state.gwei += 0.1
+    console.log("GWEI set:",this.state)
+  })
+}}
+/>
+*/
 
 async function tokenSend(to,value,gasLimit,txData,cb){
   let {account,web3} = this.state
