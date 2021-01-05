@@ -6,7 +6,7 @@
     "@burner-wallet/assets": "^1.1.5",
     "@burner-wallet/core": "0.0.10",
     "autolinker": "^2.2.1",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "base64url": "^3.0.1",
     "bfj": "6.1.1",
     "bootstrap": "^4.1.3",
