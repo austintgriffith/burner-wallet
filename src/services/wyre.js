@@ -3,16 +3,23 @@ const Wyre = window.Wyre;
 
 /** Constants **/
 const DEVICE_TOKEN__KEY = 'WYRE__DEVICE_TOKEN';
-
+if (!Wyre) {
+    console.error('Wyre SDK not found. Not properly loaded.');
+} else {
 class WyreWrapper {
     async configure() {
-        let deviceToken = localStorage.getItem(DEVICE_TOKEN__KEY);
+        try {
+        let deviceToken = localStorage.getItem(DEVICE_TOKEN__KEY);npm install -g ganache-cli
+        ganache-cli
         if (!deviceToken) {
             let array = new Uint8Array(25);
             window.crypto.getRandomValues(array);
             deviceToken = Array.prototype.map.call(array, x => ('00' + x.toString(16)).slice(-2)).join('');
             localStorage.setItem(DEVICE_TOKEN__KEY, deviceToken);
         }
+    } catch (error) {
+        console.error('Error configuring Wyre:', error);
+      }
     }
 
     displayWidget(
@@ -44,6 +51,7 @@ class WyreWrapper {
             widget.open();
         })
     }
+}
 }
 
 export default new WyreWrapper();
